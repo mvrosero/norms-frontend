@@ -4,7 +4,6 @@ import { useNavigate } from 'react-router-dom';
 import Table from 'react-bootstrap/Table';
 
 import { jwtDecode } from 'jwt-decode';
-
 import Navbar from 'react-bootstrap/Navbar';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';

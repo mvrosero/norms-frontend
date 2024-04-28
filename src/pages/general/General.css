@@ -1,0 +1,119 @@
+/*imports*/
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+
+
+/*side navigation bar*/
+.container {
+    max-width: 100%;
+    margin-left: 0%;
+    margin-bottom: 0%;
+    padding-left: 0%;
+    padding-bottom: 0%;
+    background-color: transparent;
+    border-radius: 8px;
+}
+
+.sidebar-custom {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 70px; /* default width */
+    transition: width 0.3s ease-in-out;
+    background-color: #f4f4f4; /* example background color */
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1); /* example shadow */
+    z-index: 1000;
+  }
+  
+  @media (min-width: 768px) {
+    .sidebar-custom {
+      width: 252px; /* wider on larger screens */
+    }
+  }
+
+.custom-shadow {
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  }
+
+/*user info*/
+.profile-container {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 16%; /* Make the rectangle longer */
+  background-color: #0D4809; /* Green color */
+  padding: 15px; /* Adjust padding */
+  border-bottom-left-radius: 100px; /* More rounded corners */
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+  z-index: 999; /* Ensure it's on top of other elements */
+  display: flex;
+  align-items: center;
+}
+
+.profileInfo {
+  display: flex;
+  align-items: center;
+  margin-right: 10px;
+}
+
+.profilePhoto {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  margin-right: 5px;
+  margin-left: 20px; /* Add margin for spacing */
+}
+
+.userInfo {
+  color: white; /* Font color white */
+  text-align: center; /* Center text */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  margin-left: 10px;
+  margin-right: 5px;
+}
+
+.name {
+  font-weight: bold;
+  font-size: 12px; /* Adjust font size */
+}
+
+.role {
+  font-size: 10px; /* Adjust font size */
+}
+
+.dropdownIcon {
+  cursor: pointer; /* Change cursor to pointer for better UX */
+  margin-left: auto; /* Pushes the dropdown icon to the right */
+}
+
+.dropdownMenu {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background-color: #fff;
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+  border-radius: 4px;
+  z-index: 1000;
+  min-width: 120px;
+  margin-top: 5px; /* Add space between the green rectangle and dropdown */
+}
+
+.dropdownItem {
+  padding: 8px 12px;
+  cursor: pointer;
+  border-bottom: 1px solid #ddd;
+  font-size: 14px;
+}
+
+
+/*title or label texts*/
+.page-title {
+  font-size: 50px; 
+  font-weight: 900;
+  color: #000000;
+  margin-top: 80px;
+  font-family: 'Poppins'; 
+  text-align: center; 
+}

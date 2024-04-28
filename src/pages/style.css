@@ -1,0 +1,26 @@
+.records-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    margin-top: 20px;
+   
+  }
+
+  
+  .record {
+    background-color: #141e92;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+    padding: 20px;
+    width: 48%;
+  }
+  
+  .record h3 {
+    margin-top: 0;
+  }
+  
+  .record p {
+    margin-bottom: 10px;
+  }
+ 

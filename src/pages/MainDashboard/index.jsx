@@ -1,13 +1,63 @@
-import React from "react";
 import { Helmet } from "react-helmet";
 import { CloseSVG } from "../../assets/images/close";
 import { Text, Img, Heading, Input, Button } from "../../components";
 import { MenuItem, Menu, Sidebar } from "react-pro-sidebar";
 
+import React, { useEffect , useState } from 'react';
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
+import Table from 'react-bootstrap/Table';
+import Navbar from 'react-bootstrap/Navbar';
+
+import { jwtDecode } from 'jwt-decode';
+
 
 export default function MainDashboardPage() {
   const [collapsed, setCollapsed] = React.useState(false);
   const [searchBarValue2, setSearchBarValue2] = React.useState("");
+
+  const [user, setUser] = useState(null);
+  const navigate = useNavigate();
+
+    /*verify if user in-session in localstorage*/
+    useEffect(() => {
+        const fetchUser = async () => {
+            try {
+                const response = JSON.parse(localStorage.getItem('token'))
+                /*setUser (response.data)*/
+
+                const decoded_token = jwtDecode(response.data.token);
+                /*console.log (decoded token)*/
+                setUser(decoded_token);
+
+            } catch (error) {
+
+                navigate("/student-login");
+
+            }
+        };
+
+        fetchUser();
+    }, []);
+
+    /*performs logout method*/
+    const handleLogout = async () => {
+
+        try {
+            localStorage.removeItem('token');
+            navigate("/student-login");
+
+        } catch (error) {
+            console.error('Logout failed', error);
+        }
+    };
+
+    const handleProfileClick = () => {
+      // Add your logic here to handle the profile click event
+      // For example, you can navigate to the user's profile page
+      // or open a dropdown menu with profile options
+      console.log('Profile clicked');
+    };
 
   return (
     <>
@@ -52,11 +102,21 @@ export default function MainDashboardPage() {
                       <Button shape="circle" className="w-[50px]">
                         <Img src="images/img_002_notification_1.svg" />
                       </Button>
-                      <Img
-                        src="images/img_pexels_christin.png"
-                        alt="pexelschristin"
-                        className="h-[60px] w-[60px] rounded-[50%]"
-                      />
+                      <div className="flex items-center">
+
+<Navbar.Text className='nav-text'>
+  Welcome: {user ? user.user_id : 'id'} {user ? user.name : 'name'}
+</Navbar.Text>
+
+<Button variant='secondary' onClick={handleLogout}>Logout</Button>
+
+<Img
+  src="images/myphoto.jpg"
+  alt="pexelschristin"
+  className="h-[40px] w-[40px] rounded-[50%] ml-3 cursor-pointer"
+  onClick={handleProfileClick} // Add your profile click handler function here
+/>
+</div>
                     </div>
                   </div>
                 </div>
