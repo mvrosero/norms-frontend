@@ -1,42 +1,45 @@
 import React from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import { MenuItem, Menu, Sidebar } from "react-pro-sidebar";
-import "../general/General.css";
 
-import { MdSpaceDashboard } from "react-icons/md";
-import { FaUsers } from "react-icons/fa";
-import { IoDocuments } from "react-icons/io5";
-import { IoFileTrayFull } from "react-icons/io5";
-import { FaUserClock } from "react-icons/fa";
-import { RiFileHistoryFill } from "react-icons/ri";
-import { FaUserShield } from "react-icons/fa6";
+import { IoFolder } from "react-icons/io5";
+import { IoDocumentText } from "react-icons/io5";
+import { FaFileSignature } from "react-icons/fa6";
+import { RiBook2Fill } from "react-icons/ri";
+import { MdAnnouncement } from "react-icons/md";
+import { PiGavelFill } from "react-icons/pi";
+import { MdInfo } from "react-icons/md";
 import { FaGear } from "react-icons/fa6";
 
-import { Helmet } from "react-helmet";
-import { CloseSVG } from "../../assets/images/close";
-import { Text, Img, Heading, Input, Button } from "../../components";
-
-import { AiOutlineAudit } from "react-icons/ai";
-import { BiSolidCommentDots } from "react-icons/bi";
-import { FaTrash } from "react-icons/fa";
-import { useNavigate } from "react-router-dom";
-
 import logo from "../../assets/images/norms_logo.png";
+import "../general/General.css";
 
 export default function StudentNavigation() {
-  const [collapsed, setCollapsed] = React.useState(true); // Default state is collapsed
-  const [searchBarValue2, setSearchBarValue2] = React.useState("");
+  const [collapsed, setCollapsed] = React.useState(true);
   const navigate = useNavigate();
-
-  // Define font size and icon size variables
+  const location = useLocation();
   const menuItemFontSize = "16px";
   const iconSize = "24px";
+  const [activeMenuItem, setActiveMenuItem] = React.useState(null);
 
-  // State to store the active menu item
-  const [activeMenuItem, setActiveMenuItem] = React.useState("Dashboard");
-
-  // Function to handle menu item click
   const handleMenuItemClick = (menuItem) => {
     setActiveMenuItem(menuItem);
+    let path = menuItem.toLowerCase().replace(/\s+/g, '-'); // Replace spaces with dashes
+    if (menuItem === "My Records" || menuItem === "Online Clearance") {
+      path = "student-" + path;
+    } else if (menuItem === "About and Contact") {
+      path = "aboutcontact"; // Directly set path for "About and Contact"
+    }
+    navigate(`/${path}`);
+  };
+
+  React.useEffect(() => {
+    const pageName = location.pathname.split("/").pop().replace('-', ' ');
+    setActiveMenuItem(pageName);
+  }, [location.pathname]);
+
+  const getItemColor = (menuItem) => {
+    return activeMenuItem === menuItem ? "#134E0F" : "#b1b1b1";
   };
 
   return (
@@ -44,35 +47,27 @@ export default function StudentNavigation() {
       <div className="w-full bg-white-A700">
         <div className="self-end">
           <div className="flex md:flex-col items-start">
-            <div className="sidebar-container"> {/* Container with drop shadow */}
+            <div className="sidebar-container">
               <div
-                className="rounded-lg shadow" // Apply rounded corners and lighter drop shadow
+                className="rounded-lg shadow"
                 style={{
-                  backgroundColor: "#FFFFFF", // White background color
-                  transition: "width 0.3s ease-in-out", // Ensure smooth transition of sidebar width
+                  backgroundColor: "#FFFFFF",
+                  transition: "width 0.3s ease-in-out",
                   position: "fixed",
                   left: 0,
+                  top: 0,
                   zIndex: 1000,
-                  padding: collapsed ? "0" : "10px", // Add padding when expanded
+                  padding: collapsed ? "0" : "10px",
                 }}
               >
                 <Sidebar
-                  width={collapsed ? "70px !important" : "252px !important"}
                   collapsedWidth="70px !important"
                   collapsed={collapsed}
                   onClick={() => {
                     setCollapsed(!collapsed);
                   }}
                   className="flex flex-col h-screen top-0 py-[13px] !sticky overflow-auto"
-                  style={{
-                    position: "absolute",
-                    left: 0,
-                    top: 0,
-                    bottom: 0,
-                    zIndex: 1000,
-                  }}
                 >
-                  
                   <Menu
                     menuItemStyles={{
                       button: {
@@ -82,81 +77,87 @@ export default function StudentNavigation() {
                         color: "#b1b1b1",
                         fontWeight: 500,
                         fontSize: menuItemFontSize,
-                        [`&:hover, &.ps-active`]: { color: "#042b1b" },
+                        [`&:hover, &.ps-active`]: {
+                          color: "#134E0F",
+                          "& svg": {
+                            fill: "#134E0F",
+                          },
+                        },
                       },
                       menuItemActive: {
-                        color: "green", // Set the active color to green
+                        color: "#134E0F",
+                        "& svg": {
+                          fill: "#134E0F",
+                        },
                       },
                     }}
+
                     rootStyles={{
                       ["&>ul"]: {
                         gap: "4px",
-                        paddingTop: collapsed ? "13px" : "0", // Adjust paddingTop dynamically
+                        paddingTop: collapsed ? "13px" : "0",
                       },
                     }}
                     className="flex flex-col items-center w-full"
-                    style={{ maxHeight: "calc(100vh - 100px)", overflowY: collapsed ? "hidden" : "auto" }} // Hide overflowY when collapsed
+                    style={{ maxHeight: "calc(100vh - 20px)", overflowY: collapsed ? "hidden" : "auto"}}
                   >
+                    <div style={{ display: "flex", alignItems: "center", justifyContent: collapsed ? "center" : "flex-start", height: "auto", padding: "10px", marginBottom: collapsed ? "0" : "10px" }}>
+                      <img src={logo} alt="NORMS Logo" style={{ width: collapsed ? "50px" : "auto", height: collapsed ? "50px" : "auto", maxWidth: collapsed ? "100%" : "100%", transition: "width 0.1s ease-in-out, height 0.1s ease-in-out" }} />
+                    </div>
 
-                 <div style={{ display: "flex", alignItems: "center", justifyContent: collapsed ? "center" : "flex-start", height: "auto", padding: "10px", marginBottom: collapsed ? "0" : "10px" }}>
-                    <img src={logo} alt="NORMS Logo" style={{ width: collapsed ? "50px" : "auto", height: collapsed ? "50px" : "auto", maxWidth: collapsed ? "100%" : "100%", transition: "width 0.1s ease-in-out, height 0.1s ease-in-out" }} />
-                  </div>
-
                     <MenuItem
-                      icon={<MdSpaceDashboard style={{ fontSize: iconSize }} />}
-                      onClick={() => handleMenuItemClick("Dashboard")} // Set the active menu item on click
-                      active={activeMenuItem === "Dashboard"} // Set the active state based on the active menu item
+                      icon={<IoFolder style={{ fontSize: iconSize, color: getItemColor("My Records") }} />}
+                      onClick={() => handleMenuItemClick("My Records")}
+                      active={activeMenuItem === "My Records"}
                     >
-                      Dashboard
+                      My Records 
                     </MenuItem>
                     <MenuItem
-                      icon={<FaUsers style={{ fontSize: iconSize }} />}
-                      onClick={() => handleMenuItemClick("User Management")} // Set the active menu item on click
-                      active={activeMenuItem === "User Management"} // Set the active state based on the active menu item
+                      icon={<IoDocumentText style={{ fontSize: iconSize, color: getItemColor("Incident Report") }} />}
+                      onClick={() => handleMenuItemClick("Incident Report")}
+                      active={activeMenuItem === "Incident Report"}
                     >
-                      User Management
+                      Incident Reports
                     </MenuItem>
                     <MenuItem
-                      icon={<IoFileTrayFull style={{ fontSize: iconSize }} />}
-                      onClick={() => handleMenuItemClick("Record Management")} // Set the active menu item on click
-                      active={activeMenuItem === "Record Management"} // Set the active state based on the active menu item
+                      icon={<FaFileSignature style={{ fontSize: iconSize, color: getItemColor("Online Clearance") }} />}
+                      onClick={() => handleMenuItemClick("Online Clearance")}
+                      active={activeMenuItem === "Online Clearance"}
                     >
-                      Record Management
+                      Online Clearance
                     </MenuItem>
                     <MenuItem
-                      icon={<IoDocuments style={{ fontSize: iconSize }} />}
-                      onClick={() => handleMenuItemClick("Report Management")} // Set the active menu item on click
-                      active={activeMenuItem === "Report Management"} // Set the active state based on the active menu item
+                      icon={<RiBook2Fill style={{ fontSize: iconSize, color: getItemColor("Handbook") }} />}
+                      onClick={() => handleMenuItemClick("Handbook")}
+                      active={activeMenuItem === "Handbook"}
                     >
-                      Report Management
+                      Handbook
                     </MenuItem>
                     <MenuItem
-                      icon={<FaUserClock style={{ fontSize: iconSize }} />}
-                      onClick={() => handleMenuItemClick("Login History")} // Set the active menu item on click
-                      active={activeMenuItem === "Login History"} // Set the active state based on the active menu item
+                      icon={<MdAnnouncement style={{ fontSize: iconSize, color: getItemColor("Announcements") }} />}
+                      onClick={() => handleMenuItemClick("Announcements")}
+                      active={activeMenuItem === "Announcements"}
                     >
-                      Login History
+                      Announcements
                     </MenuItem>
                     <MenuItem
-                      icon={
-                        <RiFileHistoryFill style={{ fontSize: iconSize }} />
-                      }
-                      onClick={() => handleMenuItemClick("User History")} // Set the active menu item on click
-                      active={activeMenuItem === "User History"} // Set the active state based on the active menu item
+                      icon={<PiGavelFill style={{ fontSize: iconSize, color: getItemColor("Legislations") }} />}
+                      onClick={() => handleMenuItemClick("Legislations")}
+                      active={activeMenuItem === "Legislations"}
                     >
-                      User History
+                      Legislations
                     </MenuItem>
                     <MenuItem
-                      icon={<FaUserShield style={{ fontSize: iconSize }} />}
-                      onClick={() => handleMenuItemClick("Admin Audit Log")} // Set the active menu item on click
-                      active={activeMenuItem === "Admin Audit Log"} // Set the active state based on the active menu item
+                      icon={<MdInfo style={{ fontSize: iconSize, color: getItemColor("About and Contact") }} />}
+                      onClick={() => handleMenuItemClick("About and Contact")}
+                      active={activeMenuItem === "About and Contact"}
                     >
-                      Admin Audit Log
+                      About and Contact
                     </MenuItem>
                     <MenuItem
-                      icon={<FaGear style={{ fontSize: iconSize }} />}
-                      onClick={() => handleMenuItemClick("Settings")} // Set the active menu item on click
-                      active={activeMenuItem === "Settings"} // Set the active state based on the active menu item
+                      icon={<FaGear style={{ fontSize: iconSize, color: getItemColor("Settings") }} />}
+                      onClick={() => handleMenuItemClick("Settings")}
+                      active={activeMenuItem === "Settings"}
                     >
                       Settings
                     </MenuItem>

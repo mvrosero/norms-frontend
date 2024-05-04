@@ -6,10 +6,10 @@ import { FaUsers, FaUserClock, FaUserShield, FaGear } from 'react-icons/fa';
 import { IoDocuments, IoFileTrayFull } from 'react-icons/io5';
 import { RiFileHistoryFill } from 'react-icons/ri';
 import logo from '../../assets/images/norms_logo.png'; // Path to the logo image
-import User from '../../User';
+import User from './Student';
 import AdminNavigation from "./AdminNavigation";
 import UserInfo from "../general/UserInfo";
-import Employee from '../../Employees';
+import Employee from './Employees';
 export default function AdminUserManagement() {
     return (
         <div>

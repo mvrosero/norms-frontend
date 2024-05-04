@@ -44,13 +44,6 @@
     box-sizing: border-box;
 }
 
-body{
-    background-color: #eee;
-    height: 100%;
-    font-family: 'Poppins', sans-serif; 
-    background: linear-gradient(to top, #dcdda0 10%, rgba(5, 70, 13, 0.4) 90%) no-repeat;
-}
-
 
 .wrapper{
     max-width: 500px;

@@ -11,13 +11,6 @@ import { RiFileHistoryFill } from "react-icons/ri";
 import { FaUserShield } from "react-icons/fa6";
 import { FaGear } from "react-icons/fa6";
 
-import { Helmet } from "react-helmet";
-import { CloseSVG } from "../../assets/images/close";
-import { Text, Img, Heading, Input, Button } from "../../components";
-
-import { AiOutlineAudit } from "react-icons/ai";
-import { BiSolidCommentDots } from "react-icons/bi";
-import { FaTrash } from "react-icons/fa";
 import { useNavigate, useLocation } from "react-router-dom";
 
 import logo from "../../assets/images/norms_logo.png";
@@ -38,38 +31,24 @@ export default function AdminNavigation() {
   // Function to handle menu item click
   const handleMenuItemClick = (menuItem) => {
     setActiveMenuItem(menuItem);
-    switch (menuItem) { 
-      case "Dashboard": navigate('/admin-dashboard');
-      break;
-
-      case "User Management": navigate('/admin-usermanagement');
-      break;
-
-      case "Record Management": navigate('/admin-recordmanagement');
-      break;
-
-      case "Report Management": navigate('/admin-reportmanagement');
-      break;
-
-      case "Login History": navigate('/admin-loginhistory');
-      break;
-
-      case "User History": navigate('/admin-userhistory');
-      break;
-
-      case "Admin Audit Trail": navigate('/admin-audittrail');
-      break;
-
-      case "Settings": navigate('/admin-settings');
-      break;
-    }
+    navigate(`/admin-${menuItem.toLowerCase().replace(' ', '')}`);
   };
 
   React.useEffect(() => {
     // Extract the page name from the URL path
-    const pageName = location.pathname.split("/").pop();
+    const pageName = location.pathname.split("/").pop().replace('admin-', '').replace('-', ' ');
     setActiveMenuItem(pageName);
   }, [location.pathname]);
+
+  // Function to get the color for the menu item based on its activity
+  const getItemColor = (menuItem) => {
+    return activeMenuItem === menuItem ? "#134E0F" : "#b1b1b1";
+  };
+
+  // Function to get the icon color for the collapsed sidebar
+  const getCollapsedIconColor = (menuItem) => {
+    return activeMenuItem === menuItem ? "#134E0F" : "initial";
+  };
 
   return (
     <>
@@ -97,7 +76,6 @@ export default function AdminNavigation() {
                   }}
                   className="flex flex-col h-screen top-0 py-[13px] !sticky overflow-auto"
                 >
-                  
                   <Menu
                     menuItemStyles={{
                       button: {
@@ -107,12 +85,23 @@ export default function AdminNavigation() {
                         color: "#b1b1b1",
                         fontWeight: 500,
                         fontSize: menuItemFontSize,
-                        [`&:hover, &.ps-active`]: { color: "#042b1b" },
+                        [`&:hover, &.ps-active`]: {
+                          color: "#134E0F", // Change text color on hover
+                          "& svg": {
+                            // Change icon color on hover
+                            fill: "#134E0F",
+                          },
+                        },
                       },
                       menuItemActive: {
-                        color: "green", // Set the active color to green
+                        color: "#134E0F", // Set the active color to green
+                        "& svg": {
+                          // Set active icon color
+                          fill: "#134E0F",
+                        },
                       },
                     }}
+
                     rootStyles={{
                       ["&>ul"]: {
                         gap: "4px",
@@ -122,62 +111,61 @@ export default function AdminNavigation() {
                     className="flex flex-col items-center w-full"
                     style={{ maxHeight: "calc(100vh - 20px)", overflowY: collapsed ? "hidden" : "auto"}} // Hide overflowY when collapsed
                   >
-
-                 <div style={{ display: "flex", alignItems: "center", justifyContent: collapsed ? "center" : "flex-start", height: "auto", padding: "10px", marginBottom: collapsed ? "0" : "10px" }}>
-                    <img src={logo} alt="NORMS Logo" style={{ width: collapsed ? "50px" : "auto", height: collapsed ? "50px" : "auto", maxWidth: collapsed ? "100%" : "100%", transition: "width 0.1s ease-in-out, height 0.1s ease-in-out" }} />
-                  </div>
+                    <div style={{ display: "flex", alignItems: "center", justifyContent: collapsed ? "center" : "flex-start", height: "auto", padding: "10px", marginBottom: collapsed ? "0" : "10px" }}>
+                      <img src={logo} alt="NORMS Logo" style={{ width: collapsed ? "50px" : "auto", height: collapsed ? "50px" : "auto", maxWidth: collapsed ? "100%" : "100%", transition: "width 0.1s ease-in-out, height 0.1s ease-in-out" }} />
+                    </div>
 
                     <MenuItem
-                      icon={<MdSpaceDashboard style={{ fontSize: iconSize, color: activeMenuItem === "Dashboard" ? "green" : "#b1b1b1" }} />}
+                      icon={<MdSpaceDashboard style={{ fontSize: iconSize, color: getItemColor("Dashboard") }} />}
                       onClick={() => handleMenuItemClick("Dashboard")}
                       active={activeMenuItem === "Dashboard"}
                     >
                       Dashboard
                     </MenuItem>
                     <MenuItem
-                      icon={<FaUsers style={{ fontSize: iconSize, color: activeMenuItem === "User Management" ? "green" : "#b1b1b1" }} />}
+                      icon={<FaUsers style={{ fontSize: iconSize, color: getItemColor("User Management") }} />}
                       onClick={() => handleMenuItemClick("User Management")}
                       active={activeMenuItem === "User Management"}
                     >
                       User Management
                     </MenuItem>
                     <MenuItem
-                      icon={<IoFileTrayFull style={{ fontSize: iconSize, color: activeMenuItem === "Record Management" ? "green" : "#b1b1b1" }} />}
+                      icon={<IoFileTrayFull style={{ fontSize: iconSize, color: getItemColor("Record Management") }} />}
                       onClick={() => handleMenuItemClick("Record Management")}
                       active={activeMenuItem === "Record Management"}
                     >
                       Record Management
                     </MenuItem>
                     <MenuItem
-                      icon={<IoDocuments style={{ fontSize: iconSize, color: activeMenuItem === "Report Management" ? "green" : "#b1b1b1" }} />}
+                      icon={<IoDocuments style={{ fontSize: iconSize, color: getItemColor("Report Management") }} />}
                       onClick={() => handleMenuItemClick("Report Management")}
                       active={activeMenuItem === "Report Management"}
                     >
                       Report Management
                     </MenuItem>
                     <MenuItem
-                      icon={<FaUserClock style={{ fontSize: iconSize, color: activeMenuItem === "Login History" ? "green" : "#b1b1b1" }} />}
+                      icon={<FaUserClock style={{ fontSize: iconSize, color: getItemColor("Login History") }} />}
                       onClick={() => handleMenuItemClick("Login History")}
                       active={activeMenuItem === "Login History"}
                     >
                       Login History
                     </MenuItem>
                     <MenuItem
-                      icon={<RiFileHistoryFill style={{ fontSize: iconSize, color: activeMenuItem === "User History" ? "green" : "#b1b1b1" }} />}
+                      icon={<RiFileHistoryFill style={{ fontSize: iconSize, color: getItemColor("User History") }} />}
                       onClick={() => handleMenuItemClick("User History")}
                       active={activeMenuItem === "User History"}
                     >
                       User History
                     </MenuItem>
                     <MenuItem
-                      icon={<FaUserShield style={{ fontSize: iconSize, color: activeMenuItem === "Admin Audit Trail" ? "green" : "#b1b1b1" }} />}
-                      onClick={() => handleMenuItemClick("Admin Audit Trail")}
-                      active={activeMenuItem === "Admin Audit Trail"}
+                      icon={<FaUserShield style={{ fontSize: iconSize, color: getItemColor("Audit Trail") }} />}
+                      onClick={() => handleMenuItemClick("Audit Trail")}
+                      active={activeMenuItem === "Audit Trail"}
                     >
                       Admin Audit Trail
                     </MenuItem>
                     <MenuItem
-                      icon={<FaGear style={{ fontSize: iconSize, color: activeMenuItem === "Settings" ? "green" : "#b1b1b1" }} />}
+                      icon={<FaGear style={{ fontSize: iconSize, color: getItemColor("Settings") }} />}
                       onClick={() => handleMenuItemClick("Settings")}
                       active={activeMenuItem === "Settings"}
                     >

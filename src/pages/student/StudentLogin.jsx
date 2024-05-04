@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faUser, faLock, faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
+import { FiUser } from 'react-icons/fi';
+import { FiLock } from 'react-icons/fi';
 import Swal from 'sweetalert2';
 
+import osaMotto from '../../components/images/osa_motto.png'; // Importing the background image
+import osaLogo from '../../components/images/osa_logo.png'; // Importing the profile image
 
 const StudentLogin = () => {
     const navigate = useNavigate();
@@ -40,39 +42,38 @@ const StudentLogin = () => {
     };
 
     return (
-        <div className="wrapper bg-white">
-            <div className="h2 text-center">Creativity</div>
-            <div className="h4 text-muted text-center pt-2">Enter your login details</div>
-            <form className="pt-3" onSubmit={handleLogin}>
-                <div className="form-group py-2">
-                    <div className="input-field">
-                        <FontAwesomeIcon icon={faUser} className="p-2" />
-                        <input type="text" placeholder="Student Number" value={student_idnumber} onChange={(e) => setUserNumber(e.target.value)} required />
+        <div style={{ backgroundImage: `url(${osaMotto})`, backgroundSize: '100% 100%', width: '100vw', height: '100vh', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+            <div className="wrapper" style={{ display: 'flex', justifyContent: 'flex-end', width: '100%', maxWidth: '500px', marginLeft: '600px', marginRight: '10px', marginTop: '50px' }}>
+                <div className="bg-green" style={{ backgroundColor: '#134E0F', width: '390px', height: '380px', padding: '20px', borderRadius: '20px', position: 'relative' }}>
+                    <div className="white-circle" style={{ width: '130px', height: '130px', borderRadius: '50%', backgroundColor: 'white', position: 'absolute', top: '-60px', left: '50%', transform: 'translateX(-50%)' }}></div>
+                    <div className="profile-image" style={{ width: '120px', height: '120px', borderRadius: '50%', overflow: 'hidden', position: 'absolute', top: '-55px', left: '50%', transform: 'translateX(-50%)' }}>
+                        <img src={osaLogo} alt="OSA Logo" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                     </div>
+                    <div className="h4 text-center pt-4" style={{ fontFamily: 'Inter', fontWeight: '900', fontSize: '35px', color: '#FFFFFF', marginTop: '50px' }}>Student Login</div>
+                    <form className="pt-3" onSubmit={handleLogin}>
+                        <div className="form-group py-1" style={{ marginBottom: '1px' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1px', marginTop: '1px' }}> {/* Reduced marginBottom */}
+                                <div style={{ backgroundColor: 'white', borderRadius: '20% 0 0 20%', width: '50px', height: '40px', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                                    <FiUser size={22} style={{ color: '#134E0F' }}/>
+                                </div>
+                                <input type="text" placeholder="Student Number" value={student_idnumber} onChange={(e) => setUserNumber(e.target.value)} required style={{ backgroundColor: 'rgba(255, 255, 255, 0.8)', borderRadius: '0 7px 7px 0', padding: '10px', marginLeft: '0px', width: '100%', '::placeholder': { color: '#818181' } }} />
+                            </div>
+                        </div>
+                        <div className="form-group py-2" style={{ marginBottom: '15px' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1px', marginTop: '1px' }}> {/* Reduced marginBottom */}
+                                <div style={{ backgroundColor: 'white', borderRadius: '20% 0 0 20%', width: '50px', height: '40px', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                                    <FiLock size={20} style={{ color: '#134E0F' }}/>
+                                </div>
+                                <input type={showPassword ? 'text' : 'password'} placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} required style={{ backgroundColor: 'rgba(255, 255, 255, 0.8)', borderRadius: '0 7px 7px 0', padding: '10px', marginLeft: '0px', width: '100%', '::placeholder': { color: '#818181' } }} />
+                            </div>
+                        </div>
+
+                        <button type="submit" className="btn btn-block text-center" style={{ marginTop: '1px', marginBottom: '1px', backgroundColor: '#FAD32E', borderRadius: '10px', color: 'white', padding: '10px 15px', width: '100%', fontWeight: '600', fontSize: '20px' }}>Login</button>
+
+
+                    </form>
                 </div>
-                <div className="form-group py-1 pb-2">
-                    <div className="input-field">
-                        <FontAwesomeIcon icon={faLock} className="p-2" />
-                        <input type={showPassword ? 'text' : 'password'} placeholder="Enter your Password" value={password} onChange={(e) => setPassword(e.target.value)} required />
-                        <button type="button" className="btn bg-white text-muted" onClick={togglePasswordVisibility}>
-                            <FontAwesomeIcon icon={showPassword ? faEye : faEyeSlash} />
-                        </button>
-                    </div>
-                </div>
-                <div className="d-flex align-items-start">
-                    <div className="remember">
-                        <label className="option text-muted"> Remember me
-                            <input type="checkbox" />
-                            <span className="checkmark"></span>
-                        </label>
-                    </div>
-                    <div className="ml-auto">
-                        <a href="#" id="forgot">Forgot Password?</a>
-                    </div>
-                </div>
-                <button type="submit" className="btn btn-block text-center my-3">Log in</button>
-                <div className="text-center pt-3 text-muted">Not a member? <a href="/registration">Sign up</a></div>
-            </form>
+            </div>
         </div>
     );
 };
