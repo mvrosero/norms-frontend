@@ -9,13 +9,42 @@ import logo from '../../assets/images/norms_logo.png'; // Path to the logo image
 
 import CoordinatorNavigation from './CoordinatorNavigation';
 import UserInfo from "../general/UserInfo";
+import SeachAndFilter from '../corefunctions/SearchAndFilter';
 
 export default function CoordinatorOnlineClearance() {
+    const navigate = useNavigate();
+
+    const handleViewPending = () => {
+        // Redirect to CoordinatorPendingClearance
+        navigate('/coordinator-pendingclearance');
+    };
+
     return (
         <div>
             <CoordinatorNavigation />
             <UserInfo />
-            <h6 className="page-title"> ONLINE CLEARANCE </h6>
+            <h6 className="page-title" style={{ marginRight: '10px' }}> ONLINE CLEARANCE </h6>
+            <div style={{ display: 'flex', alignItems: 'center', margin: '40px' }}>
+                <SeachAndFilter />
+                <button 
+                    onClick={handleViewPending} 
+                    style={{
+                        backgroundColor: '#FAD32E', // Yellow background color
+                        color: 'white',
+                        fontWeight: '900',
+                        padding: '12px 15px', // Increased padding to accommodate the icon
+                        border: 'none',
+                        borderRadius: '10px',
+                        cursor: 'pointer',
+                        marginLeft: '10px', // Add margin to separate search/filter and button
+                        display: 'flex', // To align icon and text horizontally
+                        alignItems: 'center', // To align icon and text vertically
+                        boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)', // Shadow effect
+                    }}
+                >
+                    View Pending
+                </button>
+            </div>
         </div>
     );
 }

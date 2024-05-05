@@ -17,7 +17,7 @@ const EmployeeLogin = () => {
     const handleLogin = async (e) => {
         e.preventDefault(); // Prevent default form submission behavior
         try {
-            const response = await axios.post('http://localhost:3001/EmployeeLogin', {
+            const response = await axios.post('http://localhost:3001/employee-login', {
                 employee_idnumber,
                 password,
             });

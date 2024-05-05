@@ -1,6 +1,9 @@
 /*imports*/
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
 
+body {
+  background-color: #F8F8F8;
+}
 
 /*side navigation bar*/
 .container {

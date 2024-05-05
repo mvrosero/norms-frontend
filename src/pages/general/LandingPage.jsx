@@ -33,7 +33,7 @@ const LandingPage = () => {
           bottom: '0', // Positioned at the bottom
           right: '0', // Positioned at the right
           marginBottom: '80px', // Added space to align with the line on the background image
-          marginRight: '80px', // Added space to align with the line on the background image
+          marginRight: '100px', // Added space to align with the line on the background image
           color: 'white',
           fontSize: '3em',
           cursor: 'pointer',

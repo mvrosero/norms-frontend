@@ -25,8 +25,10 @@ export default function StudentNavigation() {
   const handleMenuItemClick = (menuItem) => {
     setActiveMenuItem(menuItem);
     let path = menuItem.toLowerCase().replace(/\s+/g, '-'); // Replace spaces with dashes
-    if (menuItem === "My Records" || menuItem === "Online Clearance") {
-      path = "student-" + path;
+    if (menuItem === "My Records") {
+      path = "student-myrecords";
+    } else if (menuItem === "Online Clearance") {
+      path = "student-myclearances";
     } else if (menuItem === "About and Contact") {
       path = "aboutcontact"; // Directly set path for "About and Contact"
     }

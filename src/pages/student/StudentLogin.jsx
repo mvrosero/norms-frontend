@@ -18,7 +18,7 @@ const StudentLogin = () => {
     const handleLogin = async (e) => {
         e.preventDefault(); // Prevent default form submission behavior
         try {
-            const response = await axios.post('http://localhost:3001/StudentLogin', {
+            const response = await axios.post('http://localhost:3000/student-login', {
                 student_idnumber,
                 password,
                 birthdate: 'YYYY-MM-DD' // Replace 'YYYY-MM-DD' with the actual birthdate string

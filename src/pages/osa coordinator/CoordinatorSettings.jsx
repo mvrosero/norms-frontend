@@ -10,6 +10,9 @@ import logo from '../../assets/images/norms_logo.png'; // Path to the logo image
 import CoordinatorNavigation from './CoordinatorNavigation';
 import UserInfo from "../general/UserInfo";
 
+import CreateIncidentReport from '../corefunctions/CreateIncidentReport';
+
+
 export default function CoordinatorSettings() {
     return (
         <div>

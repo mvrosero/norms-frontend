@@ -38,7 +38,7 @@ const BirthdateVerification = () => {
                 Swal.fire({
                     icon: 'success',
                     title: 'Success',
-                    text: 'Birthdate verified successfully!',
+                    text: 'Logged in successfully!',
                     confirmButtonColor: '#47B881',
                 });
             } else {
@@ -94,31 +94,31 @@ const BirthdateVerification = () => {
                         <img src={osaLogo} alt="OSA Logo" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                     </div>
                     <div className="h4 text-center pt-4" style={{ fontFamily: 'Inter', fontWeight: '900', fontSize: '35px', color: '#FFFFFF', marginTop: '50px' }}>Verify Account</div>
-                    <h2 className="title" style={{ fontFamily: 'Poppins', fontWeight: '800', fontSize: '18px', color: '#FFFFFF', marginTop: '20px', marginBottom: '10px', marginLeft: '13px' }}>Date of Birth</h2>
+                    <h2 className="title" style={{ fontFamily: 'Poppins', fontWeight: '800', fontSize: '18px', color: '#FFFFFF', marginTop: '20px', marginBottom: '10px', marginLeft: '03px' }}>Date of Birth</h2>
                     <div className="container" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', paddingLeft: '13px' }}>
                         <form onSubmit={handleSubmit} style={{ display: 'flex', alignItems: 'center', gap: '10px', flexDirection: 'column' }}>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                                <div className="dropdown-container">
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexDirection: 'row' }}>
+                                <div className="dropdown-container" style={{ display: 'flex', flexDirection: 'column' }}>
                                     <label htmlFor="month" className="dropdown-label" style={{ color: '#FFFFFF', marginBottom: '5px' }}>Month:</label>
-                                    <select id="month" className="dropdown" value={month} onChange={(e) => setMonth(e.target.value)} required style={{ backgroundColor: '#FFFFFF', color: '#134E0F', boxShadow: 'inset 0px 0px 5px 2px rgba(0, 0, 0, 0.2)', paddingTop: '0.5em', paddingBottom: '0.5em' }}>
+                                    <select id="month" className="dropdown" value={month} onChange={(e) => setMonth(e.target.value)} required style={{ width: '150px', height: '50px', backgroundColor: '#FFFFFF', color: '#134E0F', boxShadow: 'inset 0px 0px 5px 2px rgba(0, 0, 0, 0.2)', paddingTop: '0.5em', paddingBottom: '0.5em' }}>
                                         <option value=""></option>
                                         {months.map((month, index) => (
                                             <option key={index} value={String(index + 1).padStart(2, '0')}>{month}</option>
                                         ))}
                                     </select>
                                 </div>
-                                <div className="dropdown-container">
+                                <div className="dropdown-container" style={{ display: 'flex', flexDirection: 'column' }}>
                                     <label htmlFor="day" className="dropdown-label" style={{ color: '#FFFFFF', marginBottom: '5px' }}>Day:</label>
-                                    <select id="day" className="dropdown" value={day} onChange={(e) => setDay(e.target.value)} required style={{ backgroundColor: '#FFFFFF', color: '#134E0F', boxShadow: 'inset 0px 0px 5px 2px rgba(0, 0, 0, 0.2)', paddingTop: '0.5em', paddingBottom: '0.5em' }}>
+                                    <select id="day" className="dropdown" value={day} onChange={(e) => setDay(e.target.value)} required style={{ width: '70px', height: '50px', backgroundColor: '#FFFFFF', color: '#134E0F', boxShadow: 'inset 0px 0px 5px 2px rgba(0, 0, 0, 0.2)', paddingTop: '0.5em', paddingBottom: '0.5em' }}>
                                         <option value=""></option>
                                         {Array.from({ length: 31 }, (_, i) => (
                                             <option key={i} value={String(i + 1).padStart(2, '0')}>{String(i + 1).padStart(2, '0')}</option>
                                         ))}
                                     </select>
                                 </div>
-                                <div className="dropdown-container">
+                                <div className="dropdown-container" style={{ display: 'flex', flexDirection: 'column'}}>
                                     <label htmlFor="year" className="dropdown-label" style={{ color: '#FFFFFF', marginBottom: '5px' }}>Year:</label>
-                                    <select id="year" className="dropdown" value={year} onChange={(e) => setYear(e.target.value)} required style={{ backgroundColor: '#FFFFFF', color: '#134E0F', boxShadow: 'inset 0px 0px 5px 2px rgba(0, 0, 0, 0.2)', paddingTop: '0.5em', paddingBottom: '0.5em' }}>
+                                    <select id="year" className="dropdown" value={year} onChange={(e) => setYear(e.target.value)} required style={{ width: '100px', height: '50px', backgroundColor: '#FFFFFF', color: '#134E0F', boxShadow: 'inset 0px 0px 5px 2px rgba(0, 0, 0, 0.2)', paddingTop: '0.5em', paddingBottom: '0.5em' }}>
                                         <option value=""></option>
                                         {Array.from({ length: 100 }, (_, i) => (
                                             <option key={i} value={new Date().getFullYear() - i}>{new Date().getFullYear() - i}</option>

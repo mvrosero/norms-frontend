@@ -1,0 +1,219 @@
+/* TYPOGRAPHY */
+h1 {
+    font-family: 'Poppins';
+    font-size: 40px;
+    font-weight: 900;
+    color: white;
+}
+
+h4 {
+    color: #7ed321;
+}
+
+/* FORM */
+input {
+    width: 100%;
+    padding: 1em;
+    line-height: 1.4;
+    border-radius: 3px;
+    transition: all 0.35s ease-in-out;
+}
+
+
+/* Adjust font and font size of select element */
+select {
+    font-family: 'Inter', sans-serif; /* Set font family */
+    font-size: 16px; /* Set font size */
+    color: #6C7484;
+    line-height: 15px; /* Center text vertically */
+    padding: 0; /* Remove padding */
+}
+
+/* Adjust font and font size of options */
+select option {
+    font-family: 'Inter', sans-serif; /* Set font family */
+    font-size: 16px; /* Set font size */
+}
+
+
+
+.option {
+    display: inline-block;
+    width: 50%;
+    text-align: center;
+    float: left;
+}
+
+.option:first-of-type {
+    border-top-left-radius: 3px;
+    border-bottom-left-radius: 3px;
+}
+
+.option:last-of-type {
+    border-top-right-radius: 3px;
+    border-bottom-right-radius: 3px;
+}
+
+/* INPUT GROUP */
+.input-group {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.input-group label {
+    flex: 0 0 165px; /* Set a fixed width for the labels */
+    padding-right: 1px; /* Add some spacing between the labels and input fields */
+}
+
+.input-group input[type="text"],
+.input-group input[type="email"],
+.input-group input[type="password"],
+.input-group input[type="role"],
+.input-group input[type="department"],
+.input-group input[type="date"],
+.input-group select {
+    flex: 1; /* Allow input fields to take up remaining space */
+    background-color: #eeeeee;
+    padding: 8px; /* Adjust padding */
+    height: 32px; /* Adjust height */
+    border: 1px solid #e5e5e5;
+    border-radius: 3px;
+}
+
+.input-group input {
+    padding-right: 40px; /* Add padding to the right to prevent text from overlapping with icon */
+}
+
+.label {
+    font-size: 15px;
+    font-family: 'Inter', sans-serif;
+    font-weight: 500;
+    color: rgb(43, 43, 43);
+}
+
+
+
+/* STRUCTURE */
+.registration-group {
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Center items horizontally */
+    margin-bottom: 50px; /* Add margin between containers */
+}
+
+.container1 {
+    width: 1000px;
+    height: 50px;
+    padding: 50px 50px 50px 0px;
+    margin-top: 50px;
+    background-image: url('../../components/images/registration_background.png'); /* Adjust the path to your image */
+    background-size: cover;
+    box-shadow: 0px 3px 10px -2px rgba(0, 0, 0, 0.6);
+    border-radius: 3px 3px 0 0;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-bottom: none;
+    padding-top: 40px;
+    padding-bottom: 40px;
+    padding-left: 30px;
+    display: flex;
+    align-items: center; /* Vertically center the content */
+}
+
+.container2 {
+    width: 1000px;
+    height: 550px;
+    padding: 0px 50px 50px 50px;
+    background-color: #fff;
+    box-shadow: 0px 3px 10px -2px rgba(0, 0, 0, 0.2);
+    border-radius: 0 0 3px 3px; /* Specify border radius for each corner */
+    border: 1px solid rgba(0, 0, 0, 0.1); /* Add border instead of box-shadow */
+    border-top: none;
+    padding-top: 40px;
+    padding-bottom: 40px;
+}
+
+.row::before,
+.row::after {
+    content: '';
+    display: table;
+    clear: both;
+}
+
+.col-half {
+    padding-right: 40px;
+    float: left;
+    width: 50%;
+}
+
+.col-third {
+    padding-right: 10px;
+    float: left;
+    width: 33.33%;
+}
+
+@media only screen and (max-width: 540px) {
+    .col-half {
+        width: 100%;
+        padding-right: 0;
+    }
+}
+
+
+.short-select {
+    width: 50%; /* Adjust the width as needed */
+    margin-left: 60px;
+    height: 57px;
+}
+
+.custom-button {
+    background-color: #075f24; /* Set background color */
+    color: white; /* Set text color */
+    border: none; /* Remove border */
+    padding: 10px 20px; /* Set padding */
+    border-radius: 5px; /* Add border radius */
+    cursor: pointer; /* Add cursor pointer */
+    transition: background-color 0.3s ease; /* Add transition effect */
+}
+
+.custom-button:hover {
+    background-color: #00b33c; /* Change background color on hover */
+}
+
+
+/* button */
+.btn-container {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.cancel-btn {
+    display: inline-block;
+    border: none;
+    cursor: pointer;
+    text-decoration: none;
+    background-color: #8C8C8C;
+    color: white;
+    padding: 8px 30px;
+    margin-right: 10px;
+    border-radius: 10px;
+    font-weight: 600;
+    font-size: 20px;
+}
+
+.btn {
+    display: inline-block;
+    border: none;
+    cursor: pointer;
+    text-decoration: none;
+    background-color: #DAC50C;
+    color: white;
+    padding: 8px 40px;
+    border-radius: 10px;
+    font-weight: 600;
+    font-size: 20px;
+}
+
+.text-center {
+    text-align: center;
+}

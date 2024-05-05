@@ -5,6 +5,7 @@ import styled from "@emotion/styled";
 import AdminNavigation from "./AdminNavigation";
 import UserInfo from "../general/UserInfo";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts'; 
+import Card from 'react-bootstrap/Card';
 import "../../pages/style.css";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFile, faChartBar, faUser } from '@fortawesome/free-solid-svg-icons';
@@ -52,17 +53,19 @@ export default function AdminDashboard() {
     <>
       <AdminNavigation />
       <UserInfo />
+      <h6 className="page-title" > DASHBOARD </h6>
+      <div>
       <div className="buttons-container d-flex justify-content-center mt-4">
         <StyledButton
           variant="primary"
           onClick={handleRecordsClick}
           className="mr-3"
           style={{
-            width: "200px",
-            height: "100px",
+            width: "300px",
+            height: "150px",
             fontSize: "20px",
             marginRight: "20px",
-            marginTop: "120px"
+            marginTop: "30px"
           }}
         >
           <FontAwesomeIcon icon={faFile} /> Records
@@ -72,11 +75,11 @@ export default function AdminDashboard() {
           onClick={handleReportsClick}
           className="mr-3"
           style={{
-            width: "200px",
-            height: "100px",
+            width: "300px",
+            height: "150px",
             fontSize: "20px",
             marginRight: "20px",
-            marginTop: "120px"
+            marginTop: "30px"
           }}
         >
           <FontAwesomeIcon icon={faChartBar} /> Reports
@@ -85,24 +88,24 @@ export default function AdminDashboard() {
           variant="primary"
           onClick={handleClearanceClick}
           style={{
-            width: "200px",
-            height: "100px",
+            width: "300px",
+            height: "150px",
             fontSize: "20px",
-            marginTop: "120px"
+            marginTop: "30px"
           }}
         >
-          <FontAwesomeIcon icon={faUser} /> Clearance
+          <FontAwesomeIcon icon={faUser} /> Users
         </StyledButton>
       </div>
 
-      <div className="chart-container bg-white-A700 p-4">
+      <div className="chart-container p-4" style={{ marginLeft: '120px', marginTop: '50px' }}>
         <BarChart
           width={500}
           height={300}
           data={data}
           margin={{
             top: 5,
-            right: 30,
+            right: 5,
             left: 20,
             bottom: 5,
           }}
@@ -114,6 +117,7 @@ export default function AdminDashboard() {
           <Legend />
           <Bar dataKey="pv" fill="#006400" />
         </BarChart>
+      </div>
       </div>
     </>
   );

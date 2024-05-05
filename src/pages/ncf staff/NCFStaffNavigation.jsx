@@ -8,7 +8,6 @@ import { RiShirtFill } from "react-icons/ri";
 import { MdAnnouncement } from "react-icons/md";
 import { FaGear } from "react-icons/fa6";
 
-
 import logo from "../../assets/images/norms_logo.png";
 import "../general/General.css";
 
@@ -24,9 +23,13 @@ export default function NCFStaffNavigation() {
   const handleMenuItemClick = (menuItem) => {
     setActiveMenuItem(menuItem);
     let path = menuItem.toLowerCase().replace(' ', '');
+
     if (menuItem === "Online Clearance" || menuItem === "Dashboard") {
       path = "ncfstaff-" + path;
+    } else if (menuItem === "Uniform Defiance") {
+      path = "ncfstaff-uniformdefiance"; // Update the path for Uniform Defiance
     }
+
     navigate(`/${path}`);
   };
 
