@@ -8,7 +8,7 @@ import CoordinatorInfo from './CoordinatorInfo';
 import Students from './Students';
 import SearchAndFilter from '../general/SearchAndFilter';
 
-import CreateViolationRecordForm from './CreateViolationRecordModal';
+import CreateViolationRecordForm from './CreateViolationRecord';
 
 export default function CoordinatorStudentRecords() {
     const [searchQuery, setSearchQuery] = useState('');

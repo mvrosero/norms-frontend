@@ -18,12 +18,12 @@ export default function IndividualStudentRecord() {
     useEffect(() => {
         const fetchStudentInfo = async () => {
             try {
-                const user_id = location.pathname.split('/').pop();
-                const studentResponse = await axios.get(`http://localhost:9000/student/${user_id}`);
+                const student_idnumber = location.pathname.split('/').pop();
+                const studentResponse = await axios.get(`http://localhost:9000/student/${student_idnumber}`);
                 setStudentInfo(studentResponse.data[0]);
           
                 // Fetch violation records specific to the student
-                const violationResponse = await axios.get(`http://localhost:9000/violation_record/${user_id}`);
+                const violationResponse = await axios.get(`http://localhost:9000/violation_record/${student_idnumber}`);
                 setViolationRecords(violationResponse.data);
             } catch (error) {
                 console.error('Error fetching student info:', error);

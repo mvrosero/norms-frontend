@@ -13,7 +13,6 @@ const StudentLogin = () => {
     const [student_idnumber, setStudentIdNumber] = useState('');
     const [password, setPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
-
     const handleLogin = async (e) => {
         e.preventDefault();
         try {
@@ -21,6 +20,10 @@ const StudentLogin = () => {
                 student_idnumber,
                 password
             });
+
+            const { token, student_idnumber: loggedInStudentIdNumber } = response.data; // Extract student_idnumber from response
+            localStorage.setItem('token', token); // Store the token in local storage
+            localStorage.setItem('student_idnumber', loggedInStudentIdNumber); // Store the student_idnumber in local storage
 
             navigate(`/student-myrecords`);
         } catch (error) {

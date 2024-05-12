@@ -39,6 +39,7 @@ export default function AdminDashboard() {
       console.error('Error fetching user counts:', error);
     }
   };
+  
 
   return (
     <>
@@ -47,7 +48,7 @@ export default function AdminDashboard() {
       <h6 className="page-title"> DASHBOARD </h6>
 
       {/* Department Cards */}
-      <div className="department-cards-container" style={{ padding: '10px', marginTop: '30px', paddingLeft: '120px' }}> 
+      <div className="department-cards-container" style={{ padding: '10px', marginTop: '30px', paddingLeft: '120px' }}>
         <div className="row" style={{ padding: '10px', marginRight: '10px' }}>
           {departments.slice(0, 4).map((department, index) => (
             <div key={index} className="col-md-3 mb-4">

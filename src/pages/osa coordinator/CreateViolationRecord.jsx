@@ -2,15 +2,16 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Swal from 'sweetalert2';
 
-export default function CreateViolationRecordForm({ handleCloseModal }) {
+export default function CreateViolationRecordForm({ handleCloseModal, loggedInUserId }) {
     const [formData, setFormData] = useState({
         user_id: '',
         description: '',
-        acadyear_id: '',
-        semester_id: '',
+       
         category_id: '',
         offense_id: '',
-        sanction_id: ''
+        sanction_id: '',
+        acadyear_id: '',
+        semester_id: '',
     });
     const [students, setStudents] = useState([]);
     const [categories, setCategories] = useState([]);
@@ -56,6 +57,19 @@ export default function CreateViolationRecordForm({ handleCloseModal }) {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        // Validate form data
+        if (
+            formData.user_id === '' ||
+            formData.description === '' ||
+            formData.category_id === '' ||
+            formData.offense_id === '' ||
+            formData.sanction_id === '' ||
+            formData.acadyear_id === '' ||
+            formData.semester_id === ''
+        ) {
+            console.error('All fields are required.');
+            return;
+        }
         try {
             const response = await axios.post('http://localhost:9000/create-violationrecord', formData);
             console.log(response.data);
@@ -81,11 +95,12 @@ export default function CreateViolationRecordForm({ handleCloseModal }) {
                 <div>
                     <label>Student ID Number:</label>
                     <select name="user_id" value={formData.user_id} onChange={handleChange} required>
-                        <option value="">Select User</option>
-                        {students.map(student => (
-                            <option key={student.id} value={student.id}>{student.student_idnumber}</option>
-                        ))}
-                    </select>
+    <option value="">Select User</option>
+    {students.map(student => (
+        <option key={student.user_id} value={student.user_id}>{student.student_idnumber}</option>
+    ))}
+</select>
+
                 </div>
                 <div>
                     <label>Description:</label>
@@ -136,6 +151,7 @@ export default function CreateViolationRecordForm({ handleCloseModal }) {
                         ))}
                     </select>
                 </div>
+           
                 <div className="buttons">
                     <button
                         type="button"

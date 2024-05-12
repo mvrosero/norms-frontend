@@ -21,19 +21,46 @@ const EmployeeLogin = () => {
                 employee_idnumber,
                 password,
             });
-
-            navigate(`/coordinator-dashboard`);
+    
+            if (response.status === 200) {
+                // Check if the response data contains the token property
+                if (response.data.hasOwnProperty('token')) {
+                    // Access the token from the response data
+                    const token = response.data.token;
+                    // Store the token in localStorage
+                    localStorage.setItem('token', token);
+                    // Redirect to the dashboard or other page
+                    navigate(`/coordinator-dashboard`);
+                } else {
+                    // If the token property is not found in the response data
+                    console.error('Token not found in response data');
+                    // Display an error message to the user
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Login Failed',
+                        text: 'An error occurred while processing the login data. Please try again later.',
+                    });
+                }
+            } else {
+                console.error('Login failed with status:', response.status);
+                // Display an error message to the user
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Login Failed',
+                    text: 'Invalid credentials. Please try again.',
+                });
+            }
         } catch (error) {
-            console.error('Login failed', error);
+            console.error('Login failed:', error);
+            // Display an error message to the user
             Swal.fire({
                 icon: 'error',
                 title: 'Login Failed',
-                text: 'Invalid credentials. Please try again.',
+                text: 'An error occurred while processing your request. Please try again later.',
             });
         }
     };
-
-
+    
 
     const togglePasswordVisibility = () => {
         setShowPassword(!showPassword);
@@ -42,6 +69,7 @@ const EmployeeLogin = () => {
     const handleLogout = () => {
         // Clear user session data (example)
         localStorage.removeItem('token');
+        localStorage.removeItem('otherData');
 
         // Redirect to the login page
         navigate('/employee-login'); // Replace '/employee-login' with the actual login page URL

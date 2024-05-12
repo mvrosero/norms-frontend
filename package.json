@@ -19,6 +19,7 @@
     "axios": "^1.6.7",
     "bootstrap": "^5.3.3",
     "fa-icons": "^0.2.0",
+    "fuse.js": "^7.0.0",
     "jsonwebtoken": "^9.0.2",
     "jwt-decode": "^4.0.0",
     "postcss": "^8.4.35",
