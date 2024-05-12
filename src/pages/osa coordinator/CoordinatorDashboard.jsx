@@ -3,7 +3,7 @@ import { Button } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import styled from "@emotion/styled";
 import CoordinatorNavigation from "./CoordinatorNavigation";
-import UserInfo from "../general/UserInfo";
+import CoordinatorInfo from "./CoordinatorInfo";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts'; 
 import "../../pages/style.css";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -45,13 +45,13 @@ export default function CoordinatorDashboard() {
   };
 
   const handleClearanceClick = () => {
-    navigate('//coordinator-onlineclearance'); // navigate to online clearance page
+    navigate('/coordinator-onlineclearance'); // navigate to online clearance page
   };
 
   return (
     <>
       <CoordinatorNavigation />
-      <UserInfo />
+      <CoordinatorInfo />
       <h6 className="page-title" > DASHBOARD </h6>
       <div>
       <div className="buttons-container d-flex justify-content-center mt-4">

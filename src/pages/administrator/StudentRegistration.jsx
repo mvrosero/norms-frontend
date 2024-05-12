@@ -1,12 +1,15 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router';
 import axios from 'axios';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
-import './Registration.css';
 import Swal from 'sweetalert2';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 
+import './Registration.css';
 export default function StudentRegistration() {
+    const navigate = useNavigate(); 
+
     const [student_idnumber, setStudentIdNumber] = useState('');
     const [first_name, setFirstName] = useState('');
     const [middle_name, setMiddleName] = useState('');
@@ -20,10 +23,12 @@ export default function StudentRegistration() {
     const [department_id, setDepartment] = useState('');
     const [programs, setPrograms] = useState([]);
     const [departments, setDepartments] = useState([]);
+    const [profile_photo_filename, setPhoto] = useState(null);
     const [error, setError] = useState('');
+    const [role_id] = useState(3); 
 
     useEffect(() => {
-        axios.get('http://localhost:3001/programs')
+        axios.get('http://localhost:9000/programs')
             .then(response => {
                 setPrograms(response.data);
             })
@@ -31,7 +36,7 @@ export default function StudentRegistration() {
                 console.error('Error fetching programs', error);
             });
 
-        axios.get('http://localhost:3001/departments')
+        axios.get('http://localhost:9000/departments')
             .then(response => {
                 setDepartments(response.data);
             })
@@ -43,7 +48,7 @@ export default function StudentRegistration() {
     const handleRegistration = async (e) => {
         e.preventDefault();
         try {
-            const response = await axios.post('http://localhost:3001/register-student', {
+            const response = await axios.post('http://localhost:9000/register-student', {
                 student_idnumber,
                 first_name,
                 middle_name,
@@ -53,8 +58,10 @@ export default function StudentRegistration() {
                 email,
                 password,
                 year_level,
+                profile_photo_filename,
                 program_id,
                 department_id,
+                role_id
             });
             console.log(response.data);
             Swal.fire({
@@ -62,6 +69,8 @@ export default function StudentRegistration() {
                 title: 'Registration Successful!',
                 text: 'You successfully registered a new student.',
             });
+            // Navigate back to admin user management page after successful registration
+            navigate('/admin-usermanagement');
         } catch (error) {
             console.error('Registration failed', error);
             setError(error.message);
@@ -71,6 +80,11 @@ export default function StudentRegistration() {
                 text: 'Registration failed. Please try again later!',
             });
         }
+    };
+
+    const handleCancel = () => {
+        // Navigate back to admin user management page when cancel button is clicked
+        navigate('/admin-usermanagement');
     };
 
     return (
@@ -123,11 +137,11 @@ export default function StudentRegistration() {
                             <label htmlFor="year_level" className="label">Year Level:</label>
                             <select id="year_level" className="short-select" value={year_level} onChange={(e) => setYearLevel(e.target.value)} required>
                                 <option value="">Select Year Level</option>
-                                <option value="1">First Year</option>
-                                <option value="2">Second Year</option>
-                                <option value="3">Third Year</option>
-                                <option value="4">Fourth Year</option>
-                                <option value="4">Fifth Year</option>
+                                <option value="First Year">First Year</option>
+                                <option value="Second Year">Second Year</option>
+                                <option value="Third Year">Third Year</option>
+                                <option value="Fourth Year">Fourth Year</option>
+                                <option value="Fifth Year">Fifth Year</option>
                             </select>
                         </div>
                         <div className="input-group">
@@ -150,7 +164,7 @@ export default function StudentRegistration() {
                         </div>
                     </div>
                     <div className="btn-container">
-                        <button type="button" className="cancel-btn">Cancel</button>
+                        <button type="button" className="cancel-btn" onClick={handleCancel}>Cancel</button>
                         <button type="submit" className="btn">Save</button>
                     </div>
                 </form>

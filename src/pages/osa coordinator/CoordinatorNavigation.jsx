@@ -2,9 +2,7 @@ import React from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { MenuItem, Menu, Sidebar } from "react-pro-sidebar";
 import { MdSpaceDashboard } from "react-icons/md";
-import { IoBook, IoFolder } from "react-icons/io5";
-import { IoDocumentText } from "react-icons/io5";
-import { FaFileSignature } from "react-icons/fa6";
+import { IoFolder } from "react-icons/io5";
 import { RiBook2Fill } from "react-icons/ri";
 import { MdAnnouncement } from "react-icons/md";
 import { FaGear } from "react-icons/fa6";
@@ -120,27 +118,6 @@ export default function CoordinatorNavigation() {
                       active={activeMenuItem === "Student Records"}
                     >
                       Student Records
-                    </MenuItem>
-                    <MenuItem
-                      icon={<IoDocumentText style={{ fontSize: iconSize, color: getItemColor("Incident Reports") }} />}
-                      onClick={() => handleMenuItemClick("Incident Reports")}
-                      active={activeMenuItem === "Incident Reports"}
-                    >
-                      Incident Reports
-                    </MenuItem>
-                    <MenuItem
-                      icon={<FaFileSignature style={{ fontSize: iconSize, color: getItemColor("Online Clearance") }} />}
-                      onClick={() => handleMenuItemClick("Online Clearance")}
-                      active={activeMenuItem === "Online Clearance"}
-                    >
-                      Online Clearance
-                    </MenuItem>
-                    <MenuItem
-                      icon={<IoBook style={{ fontSize: iconSize, color: getItemColor("Violations") }} />}
-                      onClick={() => handleMenuItemClick("Violations")}
-                      active={activeMenuItem === "Violations"}
-                    >
-                      Violations
                     </MenuItem>
                     <MenuItem
                       icon={<RiBook2Fill style={{ fontSize: iconSize, color: getItemColor("Handbook") }} />}

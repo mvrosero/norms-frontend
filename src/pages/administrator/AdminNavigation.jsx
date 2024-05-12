@@ -4,11 +4,6 @@ import "../general/General.css";
 
 import { MdSpaceDashboard } from "react-icons/md";
 import { FaUsers } from "react-icons/fa";
-import { IoDocuments } from "react-icons/io5";
-import { IoFileTrayFull } from "react-icons/io5";
-import { FaUserClock } from "react-icons/fa";
-import { RiFileHistoryFill } from "react-icons/ri";
-import { FaUserShield } from "react-icons/fa6";
 import { FaGear } from "react-icons/fa6";
 
 import { useNavigate, useLocation } from "react-router-dom";
@@ -128,41 +123,6 @@ export default function AdminNavigation() {
                       active={activeMenuItem === "User Management"}
                     >
                       User Management
-                    </MenuItem>
-                    <MenuItem
-                      icon={<IoFileTrayFull style={{ fontSize: iconSize, color: getItemColor("Record Management") }} />}
-                      onClick={() => handleMenuItemClick("Record Management")}
-                      active={activeMenuItem === "Record Management"}
-                    >
-                      Record Management
-                    </MenuItem>
-                    <MenuItem
-                      icon={<IoDocuments style={{ fontSize: iconSize, color: getItemColor("Report Management") }} />}
-                      onClick={() => handleMenuItemClick("Report Management")}
-                      active={activeMenuItem === "Report Management"}
-                    >
-                      Report Management
-                    </MenuItem>
-                    <MenuItem
-                      icon={<FaUserClock style={{ fontSize: iconSize, color: getItemColor("Login History") }} />}
-                      onClick={() => handleMenuItemClick("Login History")}
-                      active={activeMenuItem === "Login History"}
-                    >
-                      Login History
-                    </MenuItem>
-                    <MenuItem
-                      icon={<RiFileHistoryFill style={{ fontSize: iconSize, color: getItemColor("User History") }} />}
-                      onClick={() => handleMenuItemClick("User History")}
-                      active={activeMenuItem === "User History"}
-                    >
-                      User History
-                    </MenuItem>
-                    <MenuItem
-                      icon={<FaUserShield style={{ fontSize: iconSize, color: getItemColor("Audit Trail") }} />}
-                      onClick={() => handleMenuItemClick("Audit Trail")}
-                      active={activeMenuItem === "Audit Trail"}
-                    >
-                      Admin Audit Trail
                     </MenuItem>
                     <MenuItem
                       icon={<FaGear style={{ fontSize: iconSize, color: getItemColor("Settings") }} />}

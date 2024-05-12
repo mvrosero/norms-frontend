@@ -1,6 +1,4 @@
-/* App.css */
-
-/* Styles for the table */
+/*styles for the table*/
 .table-container {
     margin: auto;
     margin-left: 20px;
@@ -37,7 +35,7 @@
   
   }
   
-  /* Styles for the modal */
+  /*styles for the modal*/
   .modal-content {
     padding: 20px;
     border: 2px solid #28831f; /* Specify the border color */
@@ -50,7 +48,7 @@
   }
   
   .modal-title {
-    margin-bottom: 20px;
+    margin-bottom: 5px;
   }
   
   .modal-body {

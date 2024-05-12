@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { FiArrowRightCircle } from 'react-icons/fi'; // Changed icon import
+import { FiArrowRightCircle } from 'react-icons/fi'; 
 import backgroundImage from '../../components/images/norms_welcome_page.png';
 
 const LandingPage = () => {
@@ -15,7 +15,7 @@ const LandingPage = () => {
       style={{
         position: 'relative',
         backgroundImage: `url(${backgroundImage})`,
-        backgroundSize: '100% 100%', // Adjusted background size
+        backgroundSize: '100% 100%', 
         backgroundPosition: 'center',
         width: '100vw',
         height: '100vh',

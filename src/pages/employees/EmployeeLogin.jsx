@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import { FiUser, FiLock, FiEye, FiEyeOff } from 'react-icons/fi';
+import { FiUser, FiLock } from 'react-icons/fi';
 import Swal from 'sweetalert2';
 
-import osaMotto from '../../components/images/osa_motto.png'; // Importing the background image
-import osaLogo from '../../components/images/osa_logo.png'; // Importing the profile image
+import osaMotto from '../../components/images/osa_motto.png'; 
+import osaLogo from '../../components/images/osa_logo.png'; 
 
 const EmployeeLogin = () => {
     const navigate = useNavigate();
@@ -17,20 +17,34 @@ const EmployeeLogin = () => {
     const handleLogin = async (e) => {
         e.preventDefault(); // Prevent default form submission behavior
         try {
-            const response = await axios.post('http://localhost:3001/employee-login', {
+            const response = await axios.post('http://localhost:9000/employee-login', {
                 employee_idnumber,
                 password,
             });
 
-            navigate('/admin-usermanagement'); // Handle redirection based on role  
+            navigate(`/coordinator-dashboard`);
         } catch (error) {
             console.error('Login failed', error);
-            // Handle error (e.g., display error message)
+            Swal.fire({
+                icon: 'error',
+                title: 'Login Failed',
+                text: 'Invalid credentials. Please try again.',
+            });
         }
     };
 
+
+
     const togglePasswordVisibility = () => {
         setShowPassword(!showPassword);
+    };
+
+    const handleLogout = () => {
+        // Clear user session data (example)
+        localStorage.removeItem('token');
+
+        // Redirect to the login page
+        navigate('/employee-login'); // Replace '/employee-login' with the actual login page URL
     };
 
     return (
@@ -61,8 +75,6 @@ const EmployeeLogin = () => {
                         </div>
 
                         <button type="submit" className="btn btn-block text-center" style={{ marginTop: '1px', marginBottom: '1px', backgroundColor: '#FAD32E', borderRadius: '10px', color: 'white', padding: '10px 15px', width: '100%', fontWeight: '600', fontSize: '20px' }}>Login</button>
-
-
                     </form>
                 </div>
             </div>

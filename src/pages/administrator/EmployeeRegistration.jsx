@@ -1,12 +1,15 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom'; 
 import axios from 'axios';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
-import './Registration.css'; // Updated CSS file import
 import Swal from 'sweetalert2'; // Import Swal from sweetalert2
 import '@fortawesome/fontawesome-free/css/all.min.css';
 
+import './Registration.css';
+
 export default function EmployeeRegistration() {
+    const navigate = useNavigate(); // Initialize useNavigate
     const [employee_idnumber, setEmployeeIdNumber] = useState('');
     const [first_name, setFirstName] = useState('');
     const [middle_name, setMiddleName] = useState('');
@@ -15,34 +18,25 @@ export default function EmployeeRegistration() {
     const [birthdate, setBirthdate] = useState(null);
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [ profile_photo_filename, setphoto] = useState(null);
     const [role_id, setRole] = useState('');
-    const [department_id, setDepartment] = useState('');
     const [roles, setRoles] = useState([]);
-    const [departments, setDepartments] = useState([]);
     const [error, setError] = useState('');
 
     useEffect(() => {
-        axios.get('http://localhost:3001/roles')
+        axios.get('http://localhost:9000/roles')
             .then(response => {
                 setRoles(response.data);
             })
             .catch(error => {
                 console.error('Error fetching roles', error);
             });
-
-        axios.get('http://localhost:3001/departments')
-            .then(response => {
-                setDepartments(response.data);
-            })
-            .catch(error => {
-                console.error('Error fetching departments', error);
-            });
     }, []);
 
     const handleRegistration = async (e) => {
         e.preventDefault();
         try {
-            const response = await axios.post('http://localhost:3001/register-employee', {
+            const response = await axios.post('http://localhost:9000/register-employee', {
                 employee_idnumber,
                 first_name,
                 middle_name,
@@ -51,8 +45,8 @@ export default function EmployeeRegistration() {
                 birthdate,
                 email,
                 password,
-                role_id,
-                department_id,
+                profile_photo_filename,
+                role_id
             });
             console.log(response.data);
             Swal.fire({
@@ -60,6 +54,8 @@ export default function EmployeeRegistration() {
                 title: 'Registration Successful!',
                 text: 'You successfully registered a new user.',
             });
+            // Navigate back to admin user management page after successful registration
+            navigate('/admin-usermanagement');
         } catch (error) {
             console.error('Registration failed', error);
             setError(error.message);
@@ -70,6 +66,12 @@ export default function EmployeeRegistration() {
             });
         }
     };
+
+    const handleCancel = () => {
+        // Navigate to user management page when cancel button is clicked
+        navigate('/admin-usermanagement');
+    };
+
 
     return (
         <div className="registration-group">
@@ -126,19 +128,9 @@ export default function EmployeeRegistration() {
                             ))}
                         </select>
                     </div>
-                    <div className="input-group">
-                        <label htmlFor="department" className="label">Department:</label>
-                        <select id="department" className="short-select" value={department_id} onChange={(e) => setDepartment(e.target.value)} required>
-                            <option value="">Select Department</option>
-                            {departments.map(department => (
-                                <option key={department.department_id} value={department.department_id}>{department.department_name}</option>
-                            ))}
-                        </select>
-                    </div>
-
                     </div>
                     <div class="btn-container">
-                        <button type="button" className="cancel-btn">Cancel</button>
+                        <button type="button" className="cancel-btn" onClick={handleCancel}>Cancel</button>
                         <button type="submit" class="btn">Save</button>
                     </div>
                 </form>

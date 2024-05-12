@@ -8,13 +8,13 @@ import { RiFileHistoryFill } from 'react-icons/ri';
 import logo from '../../assets/images/norms_logo.png'; // Path to the logo image
 
 import CoordinatorNavigation from './CoordinatorNavigation';
-import UserInfo from "../general/UserInfo";
+import CoordinatorInfo from './CoordinatorInfo';
 
 export default function CoordinatorAnnouncements() {
     return (
         <div>
             <CoordinatorNavigation />
-            <UserInfo />
+            <CoordinatorInfo />
             <h6 className="page-title"> ANNOUNCEMENTS </h6>
         </div>
     );

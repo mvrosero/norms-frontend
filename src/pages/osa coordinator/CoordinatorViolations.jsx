@@ -1,30 +1,31 @@
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Sidebar, Menu, MenuItem } from 'react-pro-sidebar'; // Assuming these are from 'react-pro-sidebar'
-import { MdSpaceDashboard } from 'react-icons/md';
-import { FaUsers, FaUserClock, FaUserShield, FaGear, FaPlus } from 'react-icons/fa'; // Added FaPlus for plus icon
-import { IoDocuments, IoFileTrayFull } from 'react-icons/io5';
-import { RiFileHistoryFill } from 'react-icons/ri';
-import logo from '../../assets/images/norms_logo.png'; // Path to the logo image
+import React, { useState } from 'react';
+import { FaPlus } from 'react-icons/fa'; 
+
 
 import CoordinatorNavigation from './CoordinatorNavigation';
-import UserInfo from "../general/UserInfo";
-import SeachAndFilter from '../corefunctions/SearchAndFilter';
+import CoordinatorInfo from './CoordinatorInfo';
+import SearchAndFilter from '../general/SearchAndFilter';
+import VRtable from "./IndividualViolationRecordsTable";
 
 export default function CoordinatorViolations() {
-    const navigate = useNavigate();
+    const [isCreateViolationModalOpen, setIsCreateViolationModalOpen] = useState(false);
 
     const handleAddViolation = () => {
-        // Handle adding a new violation
+        setIsCreateViolationModalOpen(true);
+    };
+    
+    const handleCloseModal = () => {
+        setIsCreateViolationModalOpen(false);
     };
 
     return (
         <div>
             <CoordinatorNavigation />
-            <UserInfo />
+            <CoordinatorInfo />
             <h6 className="page-title"> VIOLATIONS </h6>
             <div style={{ display: 'flex', alignItems: 'center', margin: '40px' }}>
-                <SeachAndFilter />
+                <SearchAndFilter />
+           
                 <button 
                     onClick={handleAddViolation} 
                     style={{
@@ -45,6 +46,7 @@ export default function CoordinatorViolations() {
                     <FaPlus style={{ marginLeft: '10px' }} /> {/* Plus icon */}
                 </button>
             </div>
+            <VRtable />
         </div>
     );
 }

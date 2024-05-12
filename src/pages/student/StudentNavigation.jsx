@@ -3,8 +3,6 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { MenuItem, Menu, Sidebar } from "react-pro-sidebar";
 
 import { IoFolder } from "react-icons/io5";
-import { IoDocumentText } from "react-icons/io5";
-import { FaFileSignature } from "react-icons/fa6";
 import { RiBook2Fill } from "react-icons/ri";
 import { MdAnnouncement } from "react-icons/md";
 import { PiGavelFill } from "react-icons/pi";
@@ -27,10 +25,12 @@ export default function StudentNavigation() {
     let path = menuItem.toLowerCase().replace(/\s+/g, '-'); // Replace spaces with dashes
     if (menuItem === "My Records") {
       path = "student-myrecords";
-    } else if (menuItem === "Online Clearance") {
-      path = "student-myclearances";
-    } else if (menuItem === "About and Contact") {
-      path = "aboutcontact"; // Directly set path for "About and Contact"
+    }  else if (menuItem === "About and Contact") {
+      path = "aboutcontact"; 
+    } else if (menuItem === "Settings") {
+      path = "student-settings"; 
+    } else if (menuItem === "Announcements") {
+      path = "student-announcements"; 
     }
     navigate(`/${path}`);
   };
@@ -113,20 +113,6 @@ export default function StudentNavigation() {
                       active={activeMenuItem === "My Records"}
                     >
                       My Records 
-                    </MenuItem>
-                    <MenuItem
-                      icon={<IoDocumentText style={{ fontSize: iconSize, color: getItemColor("Incident Report") }} />}
-                      onClick={() => handleMenuItemClick("Incident Report")}
-                      active={activeMenuItem === "Incident Report"}
-                    >
-                      Incident Reports
-                    </MenuItem>
-                    <MenuItem
-                      icon={<FaFileSignature style={{ fontSize: iconSize, color: getItemColor("Online Clearance") }} />}
-                      onClick={() => handleMenuItemClick("Online Clearance")}
-                      active={activeMenuItem === "Online Clearance"}
-                    >
-                      Online Clearance
                     </MenuItem>
                     <MenuItem
                       icon={<RiBook2Fill style={{ fontSize: iconSize, color: getItemColor("Handbook") }} />}

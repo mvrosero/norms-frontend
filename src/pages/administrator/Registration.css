@@ -1,4 +1,4 @@
-/* TYPOGRAPHY */
+/*typography*/
 h1 {
     font-family: 'Poppins';
     font-size: 40px;
@@ -10,7 +10,7 @@ h4 {
     color: #7ed321;
 }
 
-/* FORM */
+/*form*/
 input {
     width: 100%;
     padding: 1em;
@@ -20,7 +20,7 @@ input {
 }
 
 
-/* Adjust font and font size of select element */
+/*adjust font and font size of select element*/
 select {
     font-family: 'Inter', sans-serif; /* Set font family */
     font-size: 16px; /* Set font size */
@@ -29,12 +29,11 @@ select {
     padding: 0; /* Remove padding */
 }
 
-/* Adjust font and font size of options */
+/*adjust font and font size of options*/
 select option {
     font-family: 'Inter', sans-serif; /* Set font family */
     font-size: 16px; /* Set font size */
 }
-
 
 
 .option {
@@ -54,7 +53,7 @@ select option {
     border-bottom-right-radius: 3px;
 }
 
-/* INPUT GROUP */
+/*input group*/
 .input-group {
     display: flex;
     align-items: center;
@@ -93,8 +92,7 @@ select option {
 }
 
 
-
-/* STRUCTURE */
+/*structure*/
 .registration-group {
     display: flex;
     flex-direction: column;
@@ -181,7 +179,7 @@ select option {
 }
 
 
-/* button */
+/*button*/
 .btn-container {
     display: flex;
     justify-content: flex-end;
