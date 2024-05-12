@@ -3,41 +3,47 @@ import axios from 'axios';
 import { FaPlus } from 'react-icons/fa'; 
 import SearchAndFilter from '../general/SearchAndFilter';
 import { useLocation } from 'react-router-dom';
+import Modal from 'react-bootstrap/Modal';
 
 import CoordinatorNavigation from './CoordinatorNavigation';
 import CoordinatorInfo from './CoordinatorInfo';
 import IndividualViolationRecordsTable from './IndividualViolationRecordsTable';
-
+import AddViolationRecordForm from './AddViolationRecord';
 
 export default function IndividualStudentRecord() {
-    const [isModalOpen, setIsModalOpen] = useState(false);
     const [studentInfo, setStudentInfo] = useState(null);
     const [violationRecords, setViolationRecords] = useState([]);
+    const [showAddViolationModal, setShowAddViolationModal] = useState(false); // State for managing the Add Violation modal
     const location = useLocation();
 
+    // Fetch student info function
+    const fetchStudentInfo = async (student_idnumber) => {
+        try {
+            const studentResponse = await axios.get(`http://localhost:9000/student/${student_idnumber}`);
+            setStudentInfo(studentResponse.data[0]);
+      
+            // Fetch violation records specific to the student
+            const violationResponse = await axios.get(`http://localhost:9000/violation_record/${student_idnumber}`);
+            setViolationRecords(violationResponse.data);
+        } catch (error) {
+            console.error('Error fetching student info:', error);
+        }
+    };
+
     useEffect(() => {
-        const fetchStudentInfo = async () => {
-            try {
-                const student_idnumber = location.pathname.split('/').pop();
-                const studentResponse = await axios.get(`http://localhost:9000/student/${student_idnumber}`);
-                setStudentInfo(studentResponse.data[0]);
-          
-                // Fetch violation records specific to the student
-                const violationResponse = await axios.get(`http://localhost:9000/violation_record/${student_idnumber}`);
-                setViolationRecords(violationResponse.data);
-            } catch (error) {
-                console.error('Error fetching student info:', error);
-            }
-        };
-        fetchStudentInfo();
+        const student_idnumber = location.pathname.split('/').pop();
+        fetchStudentInfo(student_idnumber);
     }, [location.pathname]);
 
     const handleCreateNewRecord = () => {
-        setIsModalOpen(true);
+        setShowAddViolationModal(true); // Open the Add Violation modal
     };
 
-    const handleCloseModal = () => {
-        setIsModalOpen(false);
+    const handleCloseModal = async () => {
+        setShowAddViolationModal(false); // Close the Add Violation modal
+        // Refetch the violation records data
+        const student_idnumber = location.pathname.split('/').pop();
+        await fetchStudentInfo(student_idnumber);
     };
 
     return (
@@ -101,6 +107,16 @@ export default function IndividualStudentRecord() {
             <div style={{ marginTop: '20px', marginLeft: '20px', marginRight: '30px' }}>
                 <IndividualViolationRecordsTable records={violationRecords} />
             </div>
+            {/* AddViolationRecordForm modal */}
+            <Modal show={showAddViolationModal} onHide={handleCloseModal}>
+                <Modal.Header closeButton>
+                    <Modal.Title>Add Violation Record</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    {/* Pass handleCloseModal function as onClose prop */}
+                    <AddViolationRecordForm handleCloseModal={handleCloseModal} />
+                </Modal.Body>
+            </Modal>
         </div>
     );
 }

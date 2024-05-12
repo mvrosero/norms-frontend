@@ -93,14 +93,13 @@ export default function CreateViolationRecordForm({ handleCloseModal, loggedInUs
         <div className="violation-record-form-container">
             <form onSubmit={handleSubmit}>
                 <div>
-                    <label>Student ID Number:</label>
-                    <select name="user_id" value={formData.user_id} onChange={handleChange} required>
-    <option value="">Select User</option>
-    {students.map(student => (
-        <option key={student.user_id} value={student.user_id}>{student.student_idnumber}</option>
-    ))}
-</select>
-
+                        <label>Student ID Number:</label>
+                        <select name="user_id" value={formData.user_id} onChange={handleChange} required>
+                    <option value="">Select User</option>
+                    {students.map(student => (
+                        <option key={student.user_id} value={student.user_id}>{student.student_idnumber}</option>
+                    ))}
+                </select>
                 </div>
                 <div>
                     <label>Description:</label>
