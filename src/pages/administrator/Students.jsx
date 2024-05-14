@@ -4,7 +4,7 @@ import { Modal, Button, Table } from 'react-bootstrap';
 import Swal from 'sweetalert2';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
-import PermIdentityIcon from '@mui/icons-material/PermIdentity';
+import PersonIcon from '@mui/icons-material/Person';
 
 // Assuming StudentUpdate component is defined in './StudentUpdate.js'
 import StudentUpdate from './StudentUpdate';
@@ -119,17 +119,17 @@ const StudentTable = () => {
         <>
             <div className='container'>
                 <br />
-                <Table bordered hover responsive style={{ borderRadius: '20px' }}>
+                <Table bordered hover responsive style={{ borderRadius: '20px', marginLeft: '110px' }}>
                     <thead>
                         <tr>
-                            <th>ID</th>
-                            <th>ID Number</th>
+                            <th style={{ width: '5%'}} >ID</th>
+                            <th style={{ width: '10%' }}>ID Number</th>
                             <th>Full Name</th>
+                            <th style={{ width: '10%' }}>Year Level</th>
                             <th>Department</th>
                             <th>Program</th>
-                            <th>Year Level</th>
-                            <th>Status</th>
-                            <th>Action</th>
+                            <th style={{ width: '10%' }}>Status</th>
+                            <th style={{ width: '15%' }}>Action</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -138,14 +138,14 @@ const StudentTable = () => {
                                 <td>{user.user_id}</td>
                                 <td>{user.student_idnumber}</td>
                                 <td>{`${user.first_name} ${user.middle_name} ${user.last_name} ${user.suffix}`}</td>
+                                <td>{user.year_level}</td>
                                 <td>{getDepartmentName(user.department_id)}</td>
                                 <td>{getProgramName(user.program_id)}</td>
-                                <td>{user.year_level}</td>
                                 <td>{user.status}</td>
                                 <td>
                                     <div className="d-flex justify-content-around">
                                         <Button className='btn btn-secondary btn-sm' onClick={() => handleReadModalShow(user)}>
-                                            <PermIdentityIcon />
+                                            <PersonIcon />
                                         </Button>
                                         <Button className='btn btn-success btn-sm' onClick={() => handleUpdateModalShow(user)}>
                                             <EditIcon />
@@ -161,27 +161,73 @@ const StudentTable = () => {
                 </Table>
             </div>
  
-            <Modal show={showReadModal} onHide={handleReadModalClose} dialogClassName="modal-90w">
+ 
+            <Modal show={showReadModal} onHide={handleReadModalClose}>
                 <Modal.Header closeButton>
-                    <Modal.Title>View Student Record</Modal.Title>
+                    <Modal.Title style = {{marginLeft: '65px'}}>VIEW STUDENT RECORD</Modal.Title>
+                    <button
+                        type="button"
+                        className="close"
+                        onClick={handleReadModalClose}
+                        style={{
+                            color: '#6c757d',
+                            border: 'none',
+                            background: 'transparent',
+                            fontSize: '30px',
+                            position: 'absolute',
+                            top: '2px',
+                            right: '12px',
+                            cursor: 'pointer',
+                        }}
+                    >
+                        &times;
+                    </button>
                 </Modal.Header>
                 <Modal.Body>
                     {selectedUser && (
-                        <div>
-                            <p><strong>Student ID Number:</strong> {selectedUser.student_idnumber}</p>
-                            <p><strong>Name:</strong> {selectedUser.first_name} {selectedUser.middle_name} {selectedUser.last_name} {selectedUser.suffix}</p>
-                            <p><strong>Email:</strong> {selectedUser.email}</p>
-                            <p><strong>Department:</strong> {getDepartmentName(selectedUser.department_id)}</p>
-                            <p><strong>Program:</strong> {getProgramName(selectedUser.program_id)}</p>
-                            <p><strong>Year Level:</strong> {selectedUser.year_level}</p>
-                        </div>
+                        <div className="row">
+                            <div className="col-md-4">
+                                <p><strong>ID Number:</strong></p>
+                                <p><strong>Name:</strong></p>
+                                <p><strong>Email:</strong></p>
+                                <p><strong>Year Level:</strong></p>
+                                <p><strong>Department:</strong></p>
+                                <p><strong>Program:<br></br></strong></p>
+                            </div>
+                            <div className="col-md-8" style={{ display: 'flex', flexDirection: 'column' }}>
+                                <p>{selectedUser.student_idnumber}</p>
+                                <p>{selectedUser.first_name} {selectedUser.middle_name} {selectedUser.last_name} {selectedUser.suffix}</p>
+                                <p>{selectedUser.email}</p>
+                                <p>{selectedUser.year_level}</p>
+                                <p>{getDepartmentName(selectedUser.department_id)}</p>
+                                <p>{getProgramName(selectedUser.program_id)}</p>
+                                </div>
+                            </div>
                     )}
                 </Modal.Body>
             </Modal>
 
-            <Modal show={showUpdateModal} onHide={handleUpdateModalClose}>
+
+            <Modal show={showUpdateModal} onHide={handleUpdateModalClose} dialogClassName="modal-lg">
                 <Modal.Header closeButton>
-                    <Modal.Title>Edit Student</Modal.Title>
+                    <Modal.Title style = {{ marginLeft: '100px'}}>UPDATE STUDENT RECORD</Modal.Title>
+                    <button
+                        type="button"
+                        className="close"
+                        onClick={handleUpdateModalClose}
+                        style={{
+                        color: '#6c757d',
+                        border: 'none',
+                        background: 'transparent',
+                        fontSize: '30px',
+                        position: 'absolute',
+                        top: '2px',
+                        right: '12px',
+                        cursor: 'pointer',
+                        }}
+                    >
+                        &times;
+                    </button>
                 </Modal.Header>
                 <Modal.Body>
                     <StudentUpdate 

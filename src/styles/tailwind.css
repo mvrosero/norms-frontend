@@ -15,8 +15,7 @@ input:where(:not([type])),
 [type="tel"],
 [type="time"],
 [type="week"],
-[multiple],
-textarea,
+[multiple]
 select {
   appearance: none;
   background-color: transparent;

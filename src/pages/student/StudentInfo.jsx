@@ -13,8 +13,7 @@ const StudentInfo = ({ name, role, profilePhoto }) => {
   };
 
   const handleLogout = () => {
-    localStorage.removeItem('token');
-
+    localStorage.clear();  // Clear all items in local storage
     navigate('/student-login'); 
   };
 
@@ -23,9 +22,9 @@ const StudentInfo = ({ name, role, profilePhoto }) => {
   };
 
   return (
-    <div className="profile-container"> {/* Use className instead of style */}
+    <div className="profile-container">
       <div className="profileInfo">
-        <img src={user_icon} alt="Profile" className="profilePhoto" />
+        <img src={profilePhoto || user_icon} alt="Profile" className="profilePhoto" />
         <div className="userInfo">
           <p className="name">{name}</p>
           <p className="role">{role}</p>
@@ -53,13 +52,13 @@ const StudentInfo = ({ name, role, profilePhoto }) => {
 StudentInfo.propTypes = {
   name: PropTypes.string.isRequired,
   role: PropTypes.string.isRequired,
-  profilePhoto: PropTypes.string.isRequired,
+  profilePhoto: PropTypes.string,
 };
 
 StudentInfo.defaultProps = {
   name: 'FULL NAME',
   role: 'Student',
-  profilePhoto: 'default-profile-photo.jpg',
+  profilePhoto: user_icon,
 };
 
 export default StudentInfo;

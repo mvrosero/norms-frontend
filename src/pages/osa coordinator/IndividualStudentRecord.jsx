@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { FaPlus } from 'react-icons/fa'; 
 import SearchAndFilter from '../general/SearchAndFilter';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import Modal from 'react-bootstrap/Modal';
 
 import CoordinatorNavigation from './CoordinatorNavigation';
@@ -15,6 +15,7 @@ export default function IndividualStudentRecord() {
     const [violationRecords, setViolationRecords] = useState([]);
     const [showAddViolationModal, setShowAddViolationModal] = useState(false); // State for managing the Add Violation modal
     const location = useLocation();
+    const navigate = useNavigate();
 
     // Fetch student info function
     const fetchStudentInfo = async (student_idnumber) => {
@@ -31,9 +32,19 @@ export default function IndividualStudentRecord() {
     };
 
     useEffect(() => {
-        const student_idnumber = location.pathname.split('/').pop();
-        fetchStudentInfo(student_idnumber);
-    }, [location.pathname]);
+        // Check if token and role_id exist in localStorage
+        const token = localStorage.getItem('token');
+        const roleId = localStorage.getItem('role_id');
+
+        // If token or role_id is invalid, redirect to unauthorized page
+        if (!token || roleId !== '2') {
+            navigate('/unauthorized');
+        } else {
+            // If token and role_id are valid, fetch student info
+            const student_idnumber = location.pathname.split('/').pop();
+            fetchStudentInfo(student_idnumber);
+        }
+    }, [location.pathname, navigate]);
 
     const handleCreateNewRecord = () => {
         setShowAddViolationModal(true); // Open the Add Violation modal
@@ -45,6 +56,7 @@ export default function IndividualStudentRecord() {
         const student_idnumber = location.pathname.split('/').pop();
         await fetchStudentInfo(student_idnumber);
     };
+    
 
     return (
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>

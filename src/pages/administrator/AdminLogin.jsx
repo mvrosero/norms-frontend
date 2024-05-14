@@ -22,10 +22,34 @@ const AdminLogin = () => {
                 password
             });
 
-            navigate('/admin-dashboard');
+            if (response.status === 200) {
+                const { token, role_id } = response.data;
+                localStorage.setItem('token', token);
+                localStorage.setItem('role_id', role_id);
+
+                if (role_id === 1) {  // Assuming role_id 1 is for admin
+                    navigate('/admin-dashboard');
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Login Successful',
+                        text: 'Welcome back, Admin!',
+                    });
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Access Denied',
+                        text: 'You do not have permission to access this page.',
+                    });
+                }
+            } else {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Login Failed',
+                    text: 'Invalid credentials. Please try again.',
+                });
+            }
         } catch (error) {
             console.error('Login failed', error);
-    
             Swal.fire({
                 icon: 'error',
                 title: 'Login Failed',

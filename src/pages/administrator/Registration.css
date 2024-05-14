@@ -57,20 +57,17 @@ select option {
 .input-group {
     display: flex;
     align-items: center;
-    margin-bottom: 20px;
+    margin-bottom: 10px; /* Reduce vertical margin */
 }
 
 .input-group label {
     flex: 0 0 165px; /* Set a fixed width for the labels */
-    padding-right: 1px; /* Add some spacing between the labels and input fields */
+    padding-right: 10px; /* Adjust horizontal spacing between label and input */
 }
 
 .input-group input[type="text"],
 .input-group input[type="email"],
 .input-group input[type="password"],
-.input-group input[type="role"],
-.input-group input[type="department"],
-.input-group input[type="date"],
 .input-group select {
     flex: 1; /* Allow input fields to take up remaining space */
     background-color: #eeeeee;
@@ -78,11 +75,21 @@ select option {
     height: 32px; /* Adjust height */
     border: 1px solid #e5e5e5;
     border-radius: 3px;
+    margin-right: 10px; /* Adjust spacing between input fields */
 }
 
-.input-group input {
-    padding-right: 40px; /* Add padding to the right to prevent text from overlapping with icon */
+/* Align the text and input fields */
+.input-group label,
+.input-group input[type="text"],
+.input-group input[type="email"],
+.input-group input[type="password"],
+.input-group input[type="role"],
+.input-group input[type="department"],
+.input-group input[type="date"],
+.input-group select {
+    margin-bottom: 10px; /* Add vertical margin between label and input */
 }
+
 
 .label {
     font-size: 15px;
@@ -96,8 +103,8 @@ select option {
 .registration-group {
     display: flex;
     flex-direction: column;
-    align-items: center; /* Center items horizontally */
-    margin-bottom: 50px; /* Add margin between containers */
+    align-items: center; 
+    margin-bottom: 50px; 
 }
 
 .container1 {
@@ -115,17 +122,16 @@ select option {
     padding-bottom: 40px;
     padding-left: 30px;
     display: flex;
-    align-items: center; /* Vertically center the content */
+    align-items: center; 
 }
 
 .container2 {
     width: 1000px;
-    height: 550px;
     padding: 0px 50px 50px 50px;
     background-color: #fff;
     box-shadow: 0px 3px 10px -2px rgba(0, 0, 0, 0.2);
-    border-radius: 0 0 3px 3px; /* Specify border radius for each corner */
-    border: 1px solid rgba(0, 0, 0, 0.1); /* Add border instead of box-shadow */
+    border-radius: 0 0 3px 3px; 
+    border: 1px solid rgba(0, 0, 0, 0.1); 
     border-top: none;
     padding-top: 40px;
     padding-bottom: 40px;
@@ -183,6 +189,7 @@ select option {
 .btn-container {
     display: flex;
     justify-content: flex-end;
+    margin-right: 15px;
 }
 
 .cancel-btn {
@@ -192,14 +199,14 @@ select option {
     text-decoration: none;
     background-color: #8C8C8C;
     color: white;
-    padding: 8px 30px;
+    padding: 8px 40px;
     margin-right: 10px;
     border-radius: 10px;
     font-weight: 600;
     font-size: 20px;
 }
 
-.btn {
+.save-btn {
     display: inline-block;
     border: none;
     cursor: pointer;

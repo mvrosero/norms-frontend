@@ -27,8 +27,10 @@ const EmployeeLogin = () => {
                 if (response.data.hasOwnProperty('token')) {
                     // Access the token from the response data
                     const token = response.data.token;
+                    const role_id = response.data.role_id;
                     // Store the token in localStorage
                     localStorage.setItem('token', token);
+                    localStorage.setItem('role_id', role_id);
                     // Redirect to the dashboard or other page
                     navigate(`/coordinator-dashboard`);
                 } else {

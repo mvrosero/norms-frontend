@@ -1,19 +1,29 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { FaPlus } from 'react-icons/fa';
-import { Modal, Button } from 'react-bootstrap';
+import { Modal } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 
 import CoordinatorNavigation from './CoordinatorNavigation';
 import CoordinatorInfo from './CoordinatorInfo';
 import Students from './Students';
 import SearchAndFilter from '../general/SearchAndFilter';
-
 import CreateViolationRecordForm from './CreateViolationRecord';
 
 export default function CoordinatorStudentRecords() {
     const [searchQuery, setSearchQuery] = useState('');
     const [showModal, setShowModal] = useState(false); // State for controlling modal visibility
     const navigate = useNavigate();
+
+    useEffect(() => {
+        // Check if token and role_id exist in localStorage
+        const token = localStorage.getItem('token');
+        const roleId = localStorage.getItem('role_id');
+
+        // If token or role_id is invalid, redirect to unauthorized page
+        if (!token || roleId !== '2') {
+            navigate('/unauthorized');
+        }
+    }, [navigate]);
 
     const handleCreateNewRecord = () => {
         setShowModal(true); // Show the modal when creating a new record

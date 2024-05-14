@@ -24,13 +24,20 @@ export default function EmployeeRegistration() {
     const [error, setError] = useState('');
 
     useEffect(() => {
-        axios.get('http://localhost:9000/roles')
-            .then(response => {
-                setRoles(response.data);
-            })
-            .catch(error => {
-                console.error('Error fetching roles', error);
-            });
+        const token = localStorage.getItem('token');
+        const roleId = localStorage.getItem('role_id');
+        if (token && roleId === '1') {
+            axios.get('http://localhost:9000/roles')
+                .then(response => {
+                    setRoles(response.data);
+                })
+                .catch(error => {
+                    console.error('Error fetching roles', error);
+                });
+        } else {
+            // Redirect or handle unauthorized access
+            console.error("Token with role_id 1 is required for accessing this page.");
+        }
     }, []);
 
     const handleRegistration = async (e) => {
@@ -72,18 +79,23 @@ export default function EmployeeRegistration() {
         navigate('/admin-usermanagement');
     };
 
+    if (!localStorage.getItem('token') || localStorage.getItem('role_id') !== '1') {
+        return null; // Do not render anything if token or role_id is invalid
+    }
 
     return (
         <div className="registration-group">
             <div className="container1">
                 <h1>Employee Registration</h1>
             </div>
-            <div className="container2">
+            <div className="container2" style={{ height: '420px'}}>
                 <form className="form" onSubmit={handleRegistration}>
                     <div className="row">
                     <div className="input-group">
                         <label htmlFor="employeeId" className="label" >Employee ID Number:</label>
                         <input id="employeeId" type="text" placeholder="00-00000" value={employee_idnumber} onChange={(e) => setEmployeeIdNumber(e.target.value)} required />
+                        <label htmlFor="email" className="label" style={{ marginLeft: '10px' }}>Email Address:</label>
+                        <input id="email" type="email" placeholder="username@gbox.ncf.edu.ph" value={email} onChange={(e) => setEmail(e.target.value)} required />
                     </div>
                     <div className="input-group">
                         <label htmlFor="first_name" className="label">First Name:</label>
@@ -112,10 +124,6 @@ export default function EmployeeRegistration() {
                         />
                     </div>
                     <div className="input-group">
-                        <label htmlFor="email" className="label">Email Address:</label>
-                        <input id="email" type="email" placeholder="username@gbox.ncf.edu.ph" value={email} onChange={(e) => setEmail(e.target.value)} required />
-                    </div>
-                    <div className="input-group">
                         <label htmlFor="password" className="label">Password:</label>
                         <input id="password" type="password" placeholder="Enter Password" value={password} onChange={(e) => setPassword(e.target.value)} required />
                     </div>
@@ -131,7 +139,7 @@ export default function EmployeeRegistration() {
                     </div>
                     <div class="btn-container">
                         <button type="button" className="cancel-btn" onClick={handleCancel}>Cancel</button>
-                        <button type="submit" class="btn">Save</button>
+                        <button type="submit" class="save-btn">Save</button>
                     </div>
                 </form>
             </div>

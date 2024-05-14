@@ -1,5 +1,5 @@
 /*imports*/
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;800&display=swap');
 
 body {
   background-color: #F8F8F8;
@@ -114,10 +114,11 @@ body {
 
 /*title or label texts*/
 .page-title {
-  font-size: 50px; 
-  font-weight: 900;
-  color: #000000;
+  font-size: 55px; 
+  font-weight: 550;
+  color: #242424;
   margin-top: 80px;
   font-family: 'Poppins'; 
   text-align: center; 
+  letter-spacing: 2px;
 }

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import AdminNavigation from "./AdminNavigation";
@@ -11,6 +11,15 @@ import ImportCSVButton from '../../components/Button/ImportCSVButton';
 
 export default function AdminUserManagement() {
     const [selectedComponent, setSelectedComponent] = useState('students');
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        const token = localStorage.getItem('token');
+        const roleId = localStorage.getItem('role_id');
+        if (!token || roleId !== '1') {
+            navigate('/unauthorized');
+        }
+    }, [navigate]);
 
     const handleComponentChange = (event) => {
         setSelectedComponent(event.target.value);

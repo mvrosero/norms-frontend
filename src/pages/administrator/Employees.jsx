@@ -4,7 +4,7 @@ import { Modal, Button, Table } from 'react-bootstrap';
 import Swal from 'sweetalert2';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
-import PermIdentityIcon from '@mui/icons-material/PermIdentity';
+import PersonIcon from '@mui/icons-material/Person';
 
 // Assuming EmployeeUpdate component is defined in './EmployeeUpdate.js'
 import EmployeeUpdate from './EmployeeUpdate';
@@ -99,23 +99,20 @@ const EmployeeTable = () => {
         }
     };
     
-    
-    
-
 
     return (
         <>
             <div className='container'>
                 <br />
-                <Table bordered hover responsive style={{ borderRadius: '20px' }}>
+                <Table bordered hover responsive style={{ borderRadius: '20px', marginLeft: '110px' }}>
                     <thead>
                         <tr>
-                            <th>ID</th>
-                            <th>ID Number</th>
+                            <th style={{ width: '5%'}}>ID</th>
+                            <th style={{ width: '10%' }}>ID Number</th>
                             <th>Full Name</th>
-                            <th>Role</th>
-                            <th>Status</th>
-                            <th>Action</th>
+                            <th style={{ width: '15%' }}>Role</th>
+                            <th style={{ width: '15%' }}>Status</th>
+                            <th style={{ width: '15%' }}>Action</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -129,7 +126,7 @@ const EmployeeTable = () => {
                                 <td>
                                     <div className="d-flex justify-content-around">
                                         <Button className='btn btn-secondary btn-sm' onClick={() => handleReadModalShow(user)}>
-                                            <PermIdentityIcon />
+                                            <PersonIcon />
                                         </Button>
                                         <Button className='btn btn-success btn-sm' onClick={() => handleUpdateModalShow(user)}>
                                             <EditIcon />
@@ -146,25 +143,67 @@ const EmployeeTable = () => {
 
             </div>
  
-            <Modal show={showReadModal} onHide={handleReadModalClose} dialogClassName="modal-90w">
+            <Modal show={showReadModal} onHide={handleReadModalClose} dialogClassName="modal-700w">
                 <Modal.Header closeButton>
-                    <Modal.Title>View Employee Record</Modal.Title>
+                    <Modal.Title style = {{ marginLeft: '60px'}}>VIEW EMPLOYEE RECORD</Modal.Title>
+                    <button
+                        type="button"
+                        className="close"
+                        onClick={handleReadModalClose}
+                        style={{
+                        color: '#6c757d',
+                        border: 'none',
+                        background: 'transparent',
+                        fontSize: '30px',
+                        position: 'absolute',
+                        top: '2px',
+                        right: '12px',
+                        cursor: 'pointer',
+                        }}
+                    >
+                        &times;
+                    </button>
                 </Modal.Header>
                 <Modal.Body>
                     {selectedUser && (
-                        <div>
-                            <p><strong>Employee ID Number:</strong> {selectedUser.employee_idnumber}</p>
-                            <p><strong>Name:</strong> {selectedUser.first_name} {selectedUser.middle_name} {selectedUser.last_name} {selectedUser.suffix}</p>
-                            <p><strong>Email:</strong> {selectedUser.email}</p>
-                            <p><strong>Role:</strong> {getRoleName(selectedUser.role_id)}</p>
+                        <div className="row">
+                            <div className="col-md-4"> 
+                                <p><strong>ID Number:</strong></p>
+                                <p><strong>Name:</strong></p>
+                                <p><strong>Email:</strong></p>
+                                <p><strong>Role:</strong></p>
+                            </div>
+                            <div className="col-md-8"> 
+                                <p>{selectedUser.employee_idnumber}</p>
+                                <p>{selectedUser.first_name} {selectedUser.middle_name} {selectedUser.last_name} {selectedUser.suffix}</p>
+                                <p>{selectedUser.email}</p>
+                                <p>{getRoleName(selectedUser.role_id)}</p>
+                            </div>
                         </div>
                     )}
                 </Modal.Body>
             </Modal>
 
-            <Modal show={showUpdateModal} onHide={handleUpdateModalClose}>
+            <Modal show={showUpdateModal} onHide={handleUpdateModalClose} dialogClassName="modal-lg">
                 <Modal.Header closeButton>
-                    <Modal.Title>Edit Employee</Modal.Title>
+                    <Modal.Title style = {{ marginLeft: '45px'}}>UPDATE EMPLOYEE RECORD</Modal.Title>
+                    <button
+                        type="button"
+                        className="close"
+                        onClick={handleUpdateModalClose}
+                        style={{
+                        color: '#6c757d',
+                        border: 'none',
+                        background: 'transparent',
+                        fontSize: '30px',
+                        position: 'absolute',
+                        top: '2px',
+                        right: '12px',
+                        cursor: 'pointer',
+                        }}
+                    >
+                        &times;
+                    </button>
                 </Modal.Header>
                 <Modal.Body>
                     <EmployeeUpdate 

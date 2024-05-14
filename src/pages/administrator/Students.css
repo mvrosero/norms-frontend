@@ -1,60 +1,77 @@
-/*styles for the table*/
-.table-container {
+  /*styles for the table*/
+  .table-container {
     margin: auto;
     margin-left: 20px;
     padding-left: 20px;
   }
-  
+
   .table {
-    width: 90%;
-    border-collapse: collapse;
-    margin-left: 90px;
-    padding-left: 50px;
-    
+  width: 90%;
+  border-collapse: collapse;
+  margin-left: 90px;
+  padding-left: 50px;
+
   }
-  
-  .table th,
-  .table td {
-    
-    text-align: center;
-    border: 1px solid #ddd;
-    padding: 8px;
-    white-space: nowrap; /* Prevent text from wrapping */
-    overflow: hidden; /* Hide overflowing content */
-    text-overflow: ellipsis; /* Display ellipsis (...) for overflowed content */
-  }
-  
+
   .table th {
-    text-align: left;
-    padding: 8px;
-    background-color: #f2f2f2;
+  text-align: center;
+  border: 1px solid #ddd;
+  padding: 8px;
+  white-space: nowrap; /* Prevent text from wrapping */
+  overflow: hidden; /* Hide overflowing content */
+  text-overflow: ellipsis; /* Display ellipsis (...) for overflowed content */
+  background-color: #a8a8a8; 
+  color: white;
   }
-  
+
+  .table td {
+  text-align: left;
+  border: 1px solid #ddd;
+  padding: 8px;
+  white-space: nowrap; /* Prevent text from wrapping */
+  overflow: hidden; /* Hide overflowing content */
+  text-overflow: ellipsis; /* Display ellipsis (...) for overflowed content */
+  }
+
   .table tbody tr:nth-child(even) {
-    background-color: #f2f2f2;
-  
+  background-color: #f2f2f2;
   }
   
-  /*styles for the modal*/
+  /* Styles for the modal */
   .modal-content {
     padding: 20px;
-    border: 2px solid #28831f; /* Specify the border color */
-    border-radius: 10px; /* Specify the border radius */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 10px; 
+    border: none; 
   }
   
   .modal-header {
     border-bottom: none;
-   
+    flex-shrink: 0;
   }
   
   .modal-title {
-    margin-bottom: 5px;
-  }
+    align-items: center;
+    margin-bottom: 1px;
+    color: #0D4809; 
+    font-family: 'Poppins', sans-serif; 
+    font-weight: 600;
+    letter-spacing: 1px;
+}
   
   .modal-body {
     padding-bottom: 20px;
+    
   }
+
+  .modal-body p {
+    margin-bottom: 12px; 
+    font-size: 16px;
+    word-wrap: break-word; /* Add this line */
+}
+
   
+
   .modal-footer {
     border-top: none;
   }
@@ -101,9 +118,11 @@
     background-color: #0c7c2e;
     border-color: #1f8615;
   }
-  .students-title {
-    margin-top: 25px;
+
+  .student-title {
     text-align: center;
     font-size: 50px;
     font-weight:800;
   }
+
+  
