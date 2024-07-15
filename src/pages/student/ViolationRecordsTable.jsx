@@ -84,6 +84,17 @@ const MyRecordsTable = () => {
         setSelectedRecord(record);
     };
 
+    const buttonStyles = {
+        borderRadius: '20px',
+        background: 'linear-gradient(45deg, #015901, #006637, #4AA616)',
+        color: 'white',
+        border: 'none',
+        padding: '5px 30px',
+        cursor: 'pointer',
+        textAlign: 'center',
+    };
+
+
     return (
         <>
             {loading && <Spinner animation="border" role="status">
@@ -92,29 +103,29 @@ const MyRecordsTable = () => {
             {error && <Alert variant="danger">{error}</Alert>}
             {!loading && !error && (
                 <>
-                    <Table bordered hover style={{ marginTop: '30px', borderRadius: '20px' }}>
+                    <Table bordered hover style={{ marginTop: '30px', marginBottom: '50px', marginLeft: '105px', borderRadius: '20px' }}>
                         <thead style={{ backgroundColor: '#f8f9fa' }}>
                             <tr>
-                                <th>Record ID</th>
-                                <th>Category</th>
+                                <th style={{ width: '5%'}}> ID</th>
+                                <th style={{ width: '13%'}}>Category</th>
                                 <th>Offense Name</th>
-                                <th>Sanction</th>
-                                <th>Academic Year</th>
-                                <th>Semester</th>
-                                <th>Action</th> {/* Updated column header */}
+                                <th style={{ width: '15%'}}>Sanction</th>
+                                <th style={{ width: '13%'}}>Academic Year</th>
+                                <th style={{ width: '15%'}}>Semester</th>
+                                <th style={{ width: '10%'}}>Action</th> {/* Updated column header */}
                             </tr>
                         </thead>
                         <tbody>
                             {records.map(record => (
                                 <tr key={record.record_id}>
-                                    <td>{record.record_id}</td>
+                                    <td style={{ textAlign: 'center' }}>{record.record_id}</td>
                                     <td>{getCategoryName(record.category_id)}</td>
                                     <td>{getOffenseName(record.offense_id)}</td>
                                     <td>{getSanctionName(record.sanction_id)}</td>
                                     <td>{getAcademicYearName(record.acadyear_id)}</td>
                                     <td>{getSemesterName(record.semester_id)}</td>
-                                    <td>
-                                        <Button variant="info" onClick={() => handleViewDetails(record)}>
+                                    <td style={{ display: 'flex', justifyContent: 'center' }}>
+                                        <Button style={buttonStyles} onClick={() => handleViewDetails(record)}>
                                             View
                                         </Button>
                                     </td>
@@ -126,7 +137,7 @@ const MyRecordsTable = () => {
                     {selectedRecord && (
                         <Modal show={selectedRecord !== null} onHide={() => setSelectedRecord(null)}>
                             <Modal.Header closeButton>
-                                <Modal.Title>Record Details</Modal.Title>
+                                <Modal.Title style={{ marginLeft: '100px' }}>RECORD DETAILS</Modal.Title>
                             </Modal.Header>
                             <Modal.Body>
                                 <p><strong>Record ID:</strong> {selectedRecord.record_id}</p>

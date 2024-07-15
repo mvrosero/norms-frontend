@@ -3,6 +3,7 @@ import axios from 'axios';
 import Table from 'react-bootstrap/Table';
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
+import styled from '@emotion/styled';
 
 const IndividualViolationRecordsTable = ({ records }) => {
     const [categories, setCategories] = useState([]);
@@ -77,33 +78,46 @@ const IndividualViolationRecordsTable = ({ records }) => {
         setShowDetailsModal(false);
     };
 
+    const ViewButton = styled.button`
+    border-radius: 20px;
+    background: linear-gradient(45deg, #015901, #006637, #4AA616);
+    color: white;
+    border: none;
+    padding: 5px 30px;
+    cursor: pointer;
+    text-align: center;
+    &:hover {
+        background: linear-gradient(45deg, #4AA616, #006637, #015901);
+    }
+`;
+
     return (
         <>
-            <Table bordered hover style={{ borderRadius: '20px' }}>
+            <Table bordered hover style={{ borderRadius: '20px', marginBottom: '50px', marginLeft: '100px' }}>
                 <thead style={{ backgroundColor: '#f8f9fa' }}>
                     <tr>
-                        <th>Record ID</th>
-                        <th>Category</th>
+                        <th style={{ width: '5%'}}>ID</th>
+                        <th style={{ width: '12%'}}>Category</th>
                         <th>Offense</th>
-                        <th>Sanction</th>
-                        <th>Academic Year</th>
-                        <th>Semester</th>
-                        <th>Action</th>
+                        <th style={{ width: '15%'}}>Sanction</th>
+                        <th style={{ width: '14%'}}>Academic Year</th>
+                        <th style={{ width: '14%'}}>Semester</th>
+                        <th style={{ width: '12%'}}>Action</th>
                     </tr>
                 </thead>
                 <tbody>
                     {records.map((record, index) => (
                         <tr key={index}>
-                            <td>{record.record_id}</td>
+                            <td style={{ textAlign: 'center' }}>{record.record_id}</td>
                             <td>{getCategoryName(record.category_id)}</td>
                             <td>{getOffenseName(record.offense_id)}</td>
                             <td>{getSanctionName(record.sanction_id)}</td>
                             <td>{getAcademicYearName(record.acadyear_id)}</td>
                             <td>{getSemesterName(record.semester_id)}</td>
-                            <td>
-                                <Button variant="primary" onClick={() => handleViewDetails(record)}>
+                            <td style={{ display: 'flex', justifyContent: 'center' }}>
+                                <ViewButton onClick={() => handleViewDetails(record)} >
                                     View
-                                </Button>
+                                </ViewButton>
                             </td>
                         </tr>
                     ))}
@@ -112,7 +126,7 @@ const IndividualViolationRecordsTable = ({ records }) => {
             {/* Modal to display record details */}
             <Modal show={showDetailsModal} onHide={handleCloseDetailsModal}>
                 <Modal.Header closeButton>
-                    <Modal.Title>Record Details</Modal.Title>
+                    <Modal.Title style={{ marginLeft: '100px' }}>RECORD DETAILS</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                     {selectedRecord && (

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
+import axios from 'axios';
+import { useNavigate } from "react-router-dom"; // Add import statement
 import { Button, Card } from "react-bootstrap";
-import { useNavigate } from "react-router-dom";
 import styled from "@emotion/styled";
 import CoordinatorNavigation from "./CoordinatorNavigation";
 import CoordinatorInfo from "./CoordinatorInfo";
@@ -8,16 +9,56 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'rec
 import "../../pages/style.css";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFile, faChartBar, faUser } from '@fortawesome/free-solid-svg-icons';
-import yellowBackgroundImage from "../../components/images/yellow_background.png";
 
-const StyledButton = styled(Button)`
-  background-color: #006400!important;
-  border-color: #0000ff!important;
-  &:hover {
-    background-color:#eee600!important;
-    border-color: #0000ff!important;
-  }
+import yellowBackgroundImage from "../../components/images/yellow_background.png";
+import cafBackgroundImage from "../../components/images/caf.png";
+import casBackgroundImage from "../../components/images/cas.png";
+import cbmBackgroundImage from "../../components/images/cbm.png"; 
+import ccjeBackgroundImage from "../../components/images/ccje.png";
+import ccsBackgroundImage from "../../components/images/ccs.png"; 
+import chsBackgroundImage from "../../components/images/chs.png";
+import coeBackgroundImage from "../../components/images/coe.png";
+import ctedBackgroundImage from "../../components/images/cted.png";
+import offensesImage from "../../components/images/offenses.png";
+import sanctionsImage from "../../components/images/sanctions.png";
+import academicYearImage from "../../components/images/academic_year.png";
+
+const OffensesButton = styled(Button)`
+  background-image: url(${offensesImage})!important;
+  background-size: cover;
+  border-color: transparent!important;
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-start;
+  font-size: 30px;
+  font-weight: 600;
+  padding: 20px;
 `;
+
+const SanctionsButton = styled(Button)`
+  background-image: url(${sanctionsImage})!important;
+  background-size: cover;
+  border-color: transparent!important;
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-start;
+  font-size: 30px;
+  font-weight: 600;
+  padding: 20px;
+`;
+
+const AcademicYearButton = styled(Button)`
+  background-image: url(${academicYearImage})!important;
+  background-size: cover;
+  border-color: transparent!important;
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-start;
+  font-size: 30px;
+  font-weight: 600;
+  padding: 20px;
+`;
+
 
 const data = [
   { name: 'Jan', pv: 2400 },
@@ -46,51 +87,55 @@ const departments = [
 ];
 
 const CoordinatorDashboard = () => {
-  const navigate = useNavigate();
+  const navigate = useNavigate(); // Initialize useNavigate hook
+
   const [userCounts, setUserCounts] = useState({});
-  const role_id = parseInt(localStorage.getItem('role_id'), 10); // Assuming the roleId is stored in localStorage
 
   useEffect(() => {
-    if (role_id !== 2) {
-      navigate('/unauthorized'); // Redirect to an unauthorized page or login if roleId is not 2
+    const token = localStorage.getItem('token');
+    const roleId = localStorage.getItem('role_id');
+    if (token && roleId === '2') {
+      // Fetch user counts for each department from the backend
+      fetchUserCounts(token);
     } else {
-      fetchUserCounts();
+      // Redirect to login page or handle unauthorized access
+      console.error("Token is required for accessing the dashboard or invalid role.");
     }
-  }, [role_id, navigate]);
+  }, []);
 
-  const fetchUserCounts = async () => {
+  const fetchUserCounts = async (token) => {
     try {
-      const userCountsData = {
-        CAS: 10,
-        CAF: 10,
-        CBM: 11,
-        CCJE: 17,
-        CCS: 20,
-        CHS: 9,
-        COE: 7,
-        CTED: 4
-      };
-      setUserCounts(userCountsData);
+      // Fetch user counts from the backend
+      const response = await axios.get(`http://localhost:9000/user-counts`, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+
+      // Update state with user counts
+      setUserCounts(response.data);
     } catch (error) {
       console.error('Error fetching user counts:', error);
     }
   };
 
+  if (!localStorage.getItem('token') || localStorage.getItem('role_id') !== '2') {
+    return null; // Do not render anything if token or role_id is invalid
+  }
+
   const handleRecordsClick = () => {
     navigate('/coordinator-studentrecords');
   };
 
-  const handleReportsClick = () => {
+  const handleSanctionsClick = () => {
     navigate('/coordinator-incidentreports');
   };
 
-  const handleClearanceClick = () => {
+  const handleOffensesClick = () => {
     navigate('/coordinator-onlineclearance');
   };
 
-  if (role_id !== 2) {
-    return null; // Optionally, render a loading or unauthorized message here
-  }
+  
 
   return (
     <>
@@ -99,58 +144,59 @@ const CoordinatorDashboard = () => {
       <h6 className="page-title" style={{ marginBottom: '40px' }}> DASHBOARD </h6>
       <text style={{ fontSize: '20px', fontWeight: '600', marginLeft: '120px' }}>My Shortcuts</text>
       <div className="buttons-container d-flex justify-content-center mt-4">
-        <StyledButton
+        <OffensesButton
+          variant="primary"
+          onClick={handleOffensesClick}
+          className="mr-3"
+          style={{
+            width: "300px",
+            height: "150px",
+            marginLeft: "100px",
+            marginRight: "40px",
+            marginBottom: "40px"
+          }}
+        >
+          Offenses
+        </OffensesButton>
+        <SanctionsButton
+          variant="primary"
+          onClick={handleSanctionsClick}
+          className="mr-3"
+          style={{
+            width: "300px",
+            height: "150px",
+            marginRight: "40px",
+            marginBottom: "40px"
+          }}
+        >
+           Sanctions
+        </SanctionsButton>
+        <AcademicYearButton
           variant="primary"
           onClick={handleRecordsClick}
-          className="mr-3"
           style={{
             width: "300px",
             height: "150px",
-            fontSize: "20px",
-            marginRight: "20px",
-            marginBottom: "40px"
+            marginBottom: "40px",
+            textAlign: 'left'
           }}
         >
-          <FontAwesomeIcon icon={faFile} /> Offenses
-        </StyledButton>
-        <StyledButton
-          variant="primary"
-          onClick={handleReportsClick}
-          className="mr-3"
-          style={{
-            width: "300px",
-            height: "150px",
-            fontSize: "20px",
-            marginRight: "20px",
-            marginBottom: "40px"
-          }}
-        >
-          <FontAwesomeIcon icon={faChartBar} /> Sanctions
-        </StyledButton>
-        <StyledButton
-          variant="primary"
-          onClick={handleClearanceClick}
-          style={{
-            width: "300px",
-            height: "150px",
-            fontSize: "20px",
-            marginBottom: "40px"
-          }}
-        >
-          <FontAwesomeIcon icon={faUser} /> Records
-        </StyledButton>
+          Academic <br></br> Year
+        </AcademicYearButton>
       </div>
 
       <text style={{ fontSize: '20px', fontWeight: '600', marginLeft: '120px' }}>Departments</text>
-      <div className="department-cards-container" style={{ padding: '10px', paddingLeft: '120px' }}>
+      {/* Department Cards */}
+      <div className="department-cards-container" style={{ padding: '10px', marginTop: '30px', paddingLeft: '120px' }}>
         <div className="row" style={{ padding: '10px', marginRight: '10px' }}>
           {departments.map((department, index) => (
             <div key={index} className="col-md-3 mb-4">
-              <DepartmentCard department={department} userCount={userCounts[department.name]} />
+              <DepartmentCard department={department} userCount={userCounts[department.fullName]} />
             </div>
           ))}
         </div>
       </div>
+
       <text style={{ fontSize: '20px', fontWeight: '600', marginLeft: '120px' }}>Graphs</text>
       <div className="chart-container p-4" style={{ marginLeft: '120px', marginTop: '20px' }}>
         <BarChart

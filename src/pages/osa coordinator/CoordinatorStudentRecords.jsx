@@ -65,7 +65,7 @@ export default function CoordinatorStudentRecords() {
             {/* Modal for creating new record */}
             <Modal show={showModal} onHide={handleCloseModal}>
                 <Modal.Header closeButton>
-                    <Modal.Title>Create Violation Record</Modal.Title>
+                    <Modal.Title style = {{marginLeft: '35px'}}>CREATE VIOLATION RECORD</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                     {/* Render ViolationRecordForm component within the modal */}

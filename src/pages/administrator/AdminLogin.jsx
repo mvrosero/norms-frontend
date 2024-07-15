@@ -23,9 +23,10 @@ const AdminLogin = () => {
             });
 
             if (response.status === 200) {
-                const { token, role_id } = response.data;
+                const { token, role_id, loggedInEmployeeIdNumber } = response.data;
                 localStorage.setItem('token', token);
                 localStorage.setItem('role_id', role_id);
+                localStorage.setItem('employee_idnumber', loggedInEmployeeIdNumber);
 
                 if (role_id === 1) {  // Assuming role_id 1 is for admin
                     navigate('/admin-dashboard');
@@ -61,6 +62,7 @@ const AdminLogin = () => {
     const togglePasswordVisibility = () => {
         setShowPassword(!showPassword);
     };
+
 
     return (
         <div style={{ backgroundImage: `url(${osaMotto})`, backgroundSize: '100% 100%', width: '100vw', height: '100vh', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>

@@ -1,18 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Swal from 'sweetalert2';
+import { Form, Button, Row, Col } from 'react-bootstrap';
+import { AiOutlineClose } from 'react-icons/ai';
 
-export default function CreateViolationRecordForm({ handleCloseModal, loggedInUserId }) {
+export default function CreateViolationRecordForm({ handleCloseModal}) {
     const [formData, setFormData] = useState({
         user_id: '',
         description: '',
-       
         category_id: '',
         offense_id: '',
         sanction_id: '',
         acadyear_id: '',
         semester_id: '',
     });
+
     const [students, setStudents] = useState([]);
     const [categories, setCategories] = useState([]);
     const [offenses, setOffenses] = useState([]);
@@ -57,7 +59,6 @@ export default function CreateViolationRecordForm({ handleCloseModal, loggedInUs
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        // Validate form data
         if (
             formData.user_id === '' ||
             formData.description === '' ||
@@ -89,100 +90,147 @@ export default function CreateViolationRecordForm({ handleCloseModal, loggedInUs
         }
     };
 
+    const inputStyle = {
+        backgroundColor: '#f2f2f2',
+        border: '1px solid #ced4da',
+        borderRadius: '.25rem',
+        height: '40px',  // Ensure consistent height for all input fields
+        width: '100%'   // Make input fields take the full width of the container
+    };
+
+    const buttonStyle = {
+        backgroundColor: '#28a745',  // Change button color to green
+        color: 'white',
+        fontWeight: '600',
+        padding: '12px 15px',
+        border: 'none',
+        borderRadius: '10px',
+        cursor: 'pointer',
+        marginLeft: '10px',
+        display: 'flex',
+        alignItems: 'center',
+        boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)'
+    };
+
     return (
         <div className="violation-record-form-container">
-            <form onSubmit={handleSubmit}>
-                <div>
-                        <label>Student ID Number:</label>
-                        <select name="user_id" value={formData.user_id} onChange={handleChange} required>
-                    <option value="">Select User</option>
-                    {students.map(student => (
-                        <option key={student.user_id} value={student.user_id}>{student.student_idnumber}</option>
-                    ))}
-                </select>
-                </div>
-                <div>
-                    <label>Description:</label>
-                    <textarea name="description" value={formData.description} onChange={handleChange} required />
-                </div>
-                <div>
-                    <label>Academic Year:</label>
-                    <select name="acadyear_id" value={formData.acadyear_id} onChange={handleChange} required>
-                        <option value="">Select Academic Year</option>
-                        {academic_years.map(academic_year => (
-                            <option key={academic_year.acadyear_id} value={academic_year.acadyear_id}>{academic_year.acadyear_name} {academic_year.semester}</option>
-                        ))}
-                    </select>
-                </div>
-                <div>
-                    <label>Semester:</label>
-                    <select name="semester_id" value={formData.semester_id} onChange={handleChange} required>
-                        <option value="">Select Semester</option>
-                        {semesters.map(semester => (
-                            <option key={semester.semester_id} value={semester.semester_id}>{semester.semester_name}</option>
-                        ))}
-                    </select>
-                </div>
-                <div>
-                    <label>Category:</label>
-                    <select name="category_id" value={formData.category_id} onChange={handleChange} required>
-                        <option value="">Select Category</option>
-                        {categories.map(category => (
-                            <option key={category.category_id} value={category.category_id}>{category.category_name}</option>
-                        ))}
-                    </select>
-                </div>
-                <div>
-                    <label>Offense:</label>
-                    <select name="offense_id" value={formData.offense_id} onChange={handleChange} required>
-                        <option value="">Select Offense</option>
-                        {offenses.map(offense => (
-                            <option key={offense.offense_id} value={offense.offense_id}>{offense.offense_name}</option>
-                        ))}
-                    </select>
-                </div>
-                <div>
-                    <label>Sanction:</label>
-                    <select name="sanction_id" value={formData.sanction_id} onChange={handleChange} required>
-                        <option value="">Select Sanction</option>
-                        {sanctions.map(sanction => (
-                            <option key={sanction.sanction_id} value={sanction.sanction_id}>{sanction.sanction_name}</option>
-                        ))}
-                    </select>
-                </div>
-           
-                <div className="buttons">
-                    <button
-                        type="button"
-                        className="cancel-button"
-                        onClick={handleCancel}
-                        style={{
-                            backgroundColor: '#8C8C8C',
-                            color: '#fff',
-                            border: 'none',
-                            borderRadius: '5px',
-                            padding: '10px 20px',
-                            cursor: 'pointer'
-                        }}
-                    >
-                        Cancel
-                    </button>
-                    <button
-                        type="submit"
-                        className="submit-button"
-                        style={{
-                            backgroundColor: '#FAD32E',
-                            color: '#000',
-                            border: 'none',
-                            borderRadius: '5px',
-                            padding: '10px 20px',
-                            cursor: 'pointer'
-                        }}
-                    >
+            <Form onSubmit={handleSubmit}>
+                <Row>
+                    <Col md={12}>
+                        <Form.Group controlId='user_id'>
+                            <Form.Label className="fw-bold">Student ID Number</Form.Label>
+                            <Form.Select
+                                name='user_id' 
+                                value={formData.user_id} 
+                                onChange={handleChange} 
+                                style={inputStyle}>
+
+                                <option value=''>Select Student ID Number</option>
+                                {students.map((student) => (
+                                    <option key={student.user_id} value={student.user_id}>
+                                        {student.student_idnumber}
+                                    </option>
+                                ))}
+                            </Form.Select>
+                        </Form.Group>
+                        <Form.Group controlId='description'>
+                            <Form.Label className="fw-bold">Description</Form.Label>
+                            <Form.Control 
+                                type='text' 
+                                name='description' 
+                                value={formData.description} 
+                                onChange={handleChange} 
+                                style={inputStyle} 
+                            />
+                        </Form.Group>
+                        <Form.Group controlId='acadyear_id'>
+                            <Form.Label className="fw-bold">Academic Year</Form.Label>
+                            <Form.Select
+                                name='acadyear_id' 
+                                value={formData.acadyear_id} 
+                                onChange={handleChange} 
+                                style={inputStyle}>
+                            
+                                <option value=''>Select Academic Year</option>
+                                    {academic_years.map((academic_year) => (
+                                        <option key={academic_year.acadyear_id} value={academic_year.acadyear_id}>
+                                            {academic_year.acadyear_name}
+                                        </option>
+                                    ))}
+                                </Form.Select> 
+                        </Form.Group>
+                        <Form.Group controlId='semester_id'>
+                            <Form.Label className="fw-bold">Semester</Form.Label>
+                            <Form.Select
+                                name='semester_id' 
+                                value={formData.semester_id} 
+                                onChange={handleChange} 
+                                style={inputStyle}>
+                            
+                                <option value=''>Select Semester</option>
+                                    {semesters.map((semester) => (
+                                        <option key={semester.semester_id} value={semester.semester_id}>
+                                            {semester.semester_name}
+                                        </option>
+                                    ))}
+                                </Form.Select> 
+                        </Form.Group>
+                        <Form.Group controlId='category_id'>
+                            <Form.Label className="fw-bold">Category</Form.Label>
+                            <Form.Select
+                                name='category_id' 
+                                value={formData.category_id} 
+                                onChange={handleChange} 
+                                style={inputStyle}>
+                            
+                                <option value=''>Select Category</option>
+                                    {categories.map((category) => (
+                                        <option key={category.category_id} value={category.category_id}>
+                                            {category.category_name}
+                                        </option>
+                                    ))}
+                                </Form.Select> 
+                        </Form.Group>
+                        <Form.Group controlId='offense_id'>
+                            <Form.Label className="fw-bold">Offense</Form.Label>
+                            <Form.Select
+                                name='offense_id' 
+                                value={formData.offense_id} 
+                                onChange={handleChange} 
+                                style={inputStyle}>
+                            
+                                <option value=''>Select Offense</option>
+                                    {offenses.map((offense) => (
+                                        <option key={offense.offense_id} value={offense.offense_id}>
+                                            {offense.offense_name}
+                                        </option>
+                                    ))}
+                                </Form.Select> 
+                        </Form.Group>
+                        <Form.Group controlId='sanction_id'>
+                            <Form.Label className="fw-bold">Sanction</Form.Label>
+                            <Form.Select
+                                name='sanction_id' 
+                                value={formData.sanction_id} 
+                                onChange={handleChange} 
+                                style={inputStyle}>
+                            
+                                <option value=''>Select Sanction</option>
+                                    {sanctions.map((sanction) => (
+                                        <option key={sanction.sanction_id} value={sanction.sanction_id}>
+                                            {sanction.sanction_name}
+                                        </option>
+                                    ))}
+                                </Form.Select> 
+                        </Form.Group>
+                    </Col>
+                </Row>
+                <div className="d-flex justify-content-end mt-3">
+                    <Button type="submit" style={buttonStyle}>
                         Submit
-                    </button>
+                    </Button>
                 </div>
-            </form>
+            </Form>
         </div>
     );
 }

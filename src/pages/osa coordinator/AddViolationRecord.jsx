@@ -6,7 +6,6 @@ import Swal from 'sweetalert2';
 
 export default function AddViolationRecordForm({ handleCloseModal }) {
     const [formData, setFormData] = useState({
-        user_id: '',
         description: '',
         category_id: '',
         offense_id: '',
@@ -14,7 +13,6 @@ export default function AddViolationRecordForm({ handleCloseModal }) {
         acadyear_id: '',
         semester_id: '',
     });
-    const [students, setStudents] = useState([]);
     const [categories, setCategories] = useState([]);
     const [offenses, setOffenses] = useState([]);
     const [sanctions, setSanctions] = useState([]);
@@ -24,14 +22,12 @@ export default function AddViolationRecordForm({ handleCloseModal }) {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const studentsResponse = await axios.get('http://localhost:9000/students');
                 const categoriesResponse = await axios.get('http://localhost:9000/categories');
                 const offensesResponse = await axios.get('http://localhost:9000/offenses');
                 const sanctionsResponse = await axios.get('http://localhost:9000/sanctions');
                 const academicYearsResponse = await axios.get('http://localhost:9000/academic_years');
                 const semestersResponse = await axios.get('http://localhost:9000/semesters');
 
-                setStudents(studentsResponse.data);
                 setCategories(categoriesResponse.data);
                 setOffenses(offensesResponse.data);
                 setSanctions(sanctionsResponse.data);
@@ -58,9 +54,8 @@ export default function AddViolationRecordForm({ handleCloseModal }) {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        // Validate form data
         if (
-            formData.user_id === '' ||
+
             formData.description === '' ||
             formData.category_id === '' ||
             formData.offense_id === '' ||
@@ -72,7 +67,7 @@ export default function AddViolationRecordForm({ handleCloseModal }) {
             return;
         }
         try {
-            const response = await axios.post('http://localhost:9000/create-violationrecord', formData);
+            const response = await axios.post('http://localhost:9000/create-violationrecord/:student_idnumber', formData);
             console.log(response.data);
             Swal.fire({
                 icon: 'success',
@@ -91,85 +86,113 @@ export default function AddViolationRecordForm({ handleCloseModal }) {
     };
 
     return (
-                <form onSubmit={handleSubmit}>
-                    <div>
-                        <label>Student ID Number:</label>
-                        <select name="user_id" value={formData.user_id} onChange={handleChange} required>
-                            <option value="">Select User</option>
-                            {students.map((student) => (
-                                <option key={student.user_id} value={student.user_id}>
-                                    {student.student_idnumber}
-                                </option>
-                            ))}
-                        </select>
-                    </div>
-                    <div>
-                        <label>Description:</label>
-                        <textarea name="description" value={formData.description} onChange={handleChange} required />
-                    </div>
-                    <div>
-                        <label>Academic Year:</label>
-                        <select name="acadyear_id" value={formData.acadyear_id} onChange={handleChange} required>
-                            <option value="">Select Academic Year</option>
-                            {academicYears.map((academicYear) => (
-                                <option key={academicYear.acadyear_id} value={academicYear.acadyear_id}>
-                                    {academicYear.acadyear_name} {academicYear.semester}
-                                </option>
-                            ))}
-                        </select>
-                    </div>
-                    <div>
-                        <label>Semester:</label>
-                        <select name="semester_id" value={formData.semester_id} onChange={handleChange} required>
-                            <option value="">Select Semester</option>
-                            {semesters.map((semester) => (
-                                <option key={semester.semester_id} value={semester.semester_id}>
-                                    {semester.semester_name}
-                                </option>
-                            ))}
-                        </select>
-                    </div>
-                    <div>
-                        <label>Category:</label>
-                        <select name="category_id" value={formData.category_id} onChange={handleChange} required>
-                            <option value="">Select Category</option>
-                            {categories.map((category) => (
-                                <option key={category.category_id} value={category.category_id}>
-                                    {category.category_name}
-                                </option>
-                            ))}
-                        </select>
-                    </div>
-                    <div>
-                        <label>Offense:</label>
-                        <select name="offense_id" value={formData.offense_id} onChange={handleChange} required>
-                            <option value="">Select Offense</option>
-                            {offenses.map((offense) => (
-                                <option key={offense.offense_id} value={offense.offense_id}>
-                                    {offense.offense_name}
-                                </option>
-                            ))}
-                        </select>
-                    </div>
-                    <div>
-                        <label>Sanction:</label>
-                        <select name="sanction_id" value={formData.sanction_id} onChange={handleChange} required>
-                            <option value="">Select Sanction</option>
-                            {sanctions.map((sanction) => (
-                                <option key={sanction.sanction_id} value={sanction.sanction_id}>
-                                    {sanction.sanction_name}
-                                </option>
-                            ))}
-                        </select>
-                    </div>
-                    <div className="buttons">
-                        <Button variant="secondary" onClick={handleCancel}>
-                            Cancel
-                        </Button>
-                        <Button variant="primary" type="submit">
-                            Submit
-                        </Button>
-                    </div>
-                </form>
+        <form
+            onSubmit={handleSubmit}
+            style={{ display: 'flex', flexDirection: 'column', maxWidth: '600px', margin: 'auto', padding: '20px' }}
+        >
+            <div style={{ marginBottom: '20px', display: 'flex', flexDirection: 'column' }}>
+                <label style={{ fontWeight: 'bold', marginBottom: '5px', width: '150px' }}>Description:</label>
+                <textarea
+                    name="description"
+                    value={formData.description}
+                    onChange={handleChange}
+                    required
+                    style={{ padding: '10px', border: '1px solid #ccc', borderRadius: '4px', backgroundColor: '#e0e0e0' }}
+                />
+            </div>
+            <div style={{ marginBottom: '20px', display: 'flex', flexDirection: 'column' }}>
+                <label style={{ fontWeight: 'bold', marginBottom: '5px', width: '150px' }}>Academic Year:</label>
+                <select
+                    name="acadyear_id"
+                    value={formData.acadyear_id}
+                    onChange={handleChange}
+                    required
+                    style={{ padding: '10px', border: '1px solid #ccc', borderRadius: '4px', backgroundColor: '#e0e0e0' }}
+                >
+                    <option value="">Select Academic Year</option>
+                    {academicYears.map((academicYear) => (
+                        <option key={academicYear.acadyear_id} value={academicYear.acadyear_id}>
+                            {academicYear.acadyear_name} {academicYear.semester}
+                        </option>
+                    ))}
+                </select>
+            </div>
+            <div style={{ marginBottom: '20px', display: 'flex', flexDirection: 'column' }}>
+                <label style={{ fontWeight: 'bold', marginBottom: '5px', width: '150px' }}>Semester:</label>
+                <select
+                    name="semester_id"
+                    value={formData.semester_id}
+                    onChange={handleChange}
+                    required
+                    style={{ padding: '10px', border: '1px solid #ccc', borderRadius: '4px', backgroundColor: '#e0e0e0' }}
+                >
+                    <option value="">Select Semester</option>
+                    {semesters.map((semester) => (
+                        <option key={semester.semester_id} value={semester.semester_id}>
+                            {semester.semester_name}
+                        </option>
+                    ))}
+                </select>
+            </div>
+            <div style={{ marginBottom: '20px', display: 'flex', flexDirection: 'column' }}>
+                <label style={{ fontWeight: 'bold', marginBottom: '5px', width: '150px' }}>Category:</label>
+                <select
+                    name="category_id"
+                    value={formData.category_id}
+                    onChange={handleChange}
+                    required
+                    style={{ padding: '10px', border: '1px solid #ccc', borderRadius: '4px', backgroundColor: '#e0e0e0' }}
+                >
+                    <option value="">Select Category</option>
+                    {categories.map((category) => (
+                        <option key={category.category_id} value={category.category_id}>
+                            {category.category_name}
+                        </option>
+                    ))}
+                </select>
+            </div>
+            <div style={{ marginBottom: '20px', display: 'flex', flexDirection: 'column' }}>
+                <label style={{ fontWeight: 'bold', marginBottom: '5px', width: '150px' }}>Offense:</label>
+                <select
+                    name="offense_id"
+                    value={formData.offense_id}
+                    onChange={handleChange}
+                    required
+                    style={{ padding: '10px', border: '1px solid #ccc', borderRadius: '4px', backgroundColor: '#e0e0e0' }}
+                >
+                    <option value="">Select Offense</option>
+                    {offenses.map((offense) => (
+                        <option key={offense.offense_id} value={offense.offense_id}>
+                            {offense.offense_name}
+                        </option>
+                    ))}
+                </select>
+            </div>
+            <div style={{ marginBottom: '20px', display: 'flex', flexDirection: 'column' }}>
+                <label style={{ fontWeight: 'bold', marginBottom: '5px', width: '150px' }}>Sanction:</label>
+                <select
+                    name="sanction_id"
+                    value={formData.sanction_id}
+                    onChange={handleChange}
+                    required
+                    style={{ padding: '10px', border: '1px solid #ccc', borderRadius: '4px', backgroundColor: '#e0e0e0' }}
+                >
+                    <option value="">Select Sanction</option>
+                    {sanctions.map((sanction) => (
+                        <option key={sanction.sanction_id} value={sanction.sanction_id}>
+                            {sanction.sanction_name}
+                        </option>
+                    ))}
+                </select>
+            </div>
+            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px' }}>
+                <Button variant="secondary" onClick={handleCancel}>
+                    Cancel
+                </Button>
+                <Button variant="primary" type="submit">
+                    Submit
+                </Button>
+            </div>
+        </form>
     );
 }

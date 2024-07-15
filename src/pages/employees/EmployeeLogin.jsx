@@ -33,6 +33,13 @@ const EmployeeLogin = () => {
                     localStorage.setItem('role_id', role_id);
                     // Redirect to the dashboard or other page
                     navigate(`/coordinator-dashboard`);
+                    if (role_id === 2) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Login Successful',
+                            text: 'Welcome back, Coordinator!',
+                        });
+                    }
                 } else {
                     // If the token property is not found in the response data
                     console.error('Token not found in response data');
@@ -62,7 +69,6 @@ const EmployeeLogin = () => {
             });
         }
     };
-    
 
     const togglePasswordVisibility = () => {
         setShowPassword(!showPassword);

@@ -18,7 +18,7 @@ export default function EmployeeRegistration() {
     const [birthdate, setBirthdate] = useState(null);
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [ profile_photo_filename, setphoto] = useState(null);
+    const [profile_photo_filename, setphoto] = useState(null);
     const [role_id, setRole] = useState('');
     const [roles, setRoles] = useState([]);
     const [error, setError] = useState('');
@@ -131,7 +131,7 @@ export default function EmployeeRegistration() {
                         <label htmlFor="role" className="label">Role:</label>
                         <select id="role" className="short-select" value={role_id} onChange={(e) => setRole(e.target.value)} required>
                             <option value="">Select Role</option>
-                            {roles.map(role => (
+                            {roles.filter(role => role.role_name.toLowerCase() !== 'student').map(role => (
                                 <option key={role.role_id} value={role.role_id}>{role.role_name}</option>
                             ))}
                         </select>

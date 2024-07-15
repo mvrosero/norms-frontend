@@ -4,6 +4,7 @@ import { FaPlus } from 'react-icons/fa';
 import SearchAndFilter from '../general/SearchAndFilter';
 import { useLocation, useNavigate } from 'react-router-dom';
 import Modal from 'react-bootstrap/Modal';
+import { AiOutlineClose } from 'react-icons/ai'; 
 
 import CoordinatorNavigation from './CoordinatorNavigation';
 import CoordinatorInfo from './CoordinatorInfo';
@@ -55,6 +56,10 @@ export default function IndividualStudentRecord() {
         // Refetch the violation records data
         const student_idnumber = location.pathname.split('/').pop();
         await fetchStudentInfo(student_idnumber);
+    };
+
+    const handleCancel = () => {
+        handleCloseModal();
     };
     
 
@@ -122,7 +127,7 @@ export default function IndividualStudentRecord() {
             {/* AddViolationRecordForm modal */}
             <Modal show={showAddViolationModal} onHide={handleCloseModal}>
                 <Modal.Header closeButton>
-                    <Modal.Title>Add Violation Record</Modal.Title>
+                    <Modal.Title style = {{marginLeft: '60px'}}>ADD VIOLATION RECORD</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                     {/* Pass handleCloseModal function as onClose prop */}

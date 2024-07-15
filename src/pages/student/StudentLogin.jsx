@@ -3,7 +3,6 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { FiUser, FiLock } from 'react-icons/fi';
 import Swal from 'sweetalert2';
-
 import osaMotto from '../../components/images/osa_motto.png';
 import osaLogo from '../../components/images/osa_logo.png';
 
@@ -13,6 +12,7 @@ const StudentLogin = () => {
     const [student_idnumber, setStudentIdNumber] = useState('');
     const [password, setPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
+
     const handleLogin = async (e) => {
         e.preventDefault();
         try {
@@ -21,11 +21,21 @@ const StudentLogin = () => {
                 password
             });
 
-            const { token, student_idnumber: loggedInStudentIdNumber } = response.data; // Extract student_idnumber from response
+            const { token, role_id, student_idnumber: loggedInStudentIdNumber } = response.data; // Extract student_idnumber from response
             localStorage.setItem('token', token); // Store the token in local storage
+            localStorage.setItem('role_id', role_id); // Store the role_id in local storage
             localStorage.setItem('student_idnumber', loggedInStudentIdNumber); // Store the student_idnumber in local storage
 
-            navigate(`/student-myrecords`);
+            if (role_id === 3) {
+                navigate(`/student-myrecords`);
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Login Successful',
+                    text: 'Welcome back, Student!',
+                });
+            } else {
+                navigate('/unauthorized');
+            }
         } catch (error) {
             console.error('Login failed', error);
             Swal.fire({
@@ -34,6 +44,13 @@ const StudentLogin = () => {
                 text: 'Invalid credentials. Please try again.',
             });
         }
+    };
+
+    const handleLogout = () => {
+        localStorage.removeItem('token'); // Remove token from local storage
+        localStorage.removeItem('role_id'); // Remove role_id from local storage
+        localStorage.removeItem('student_idnumber'); // Remove student_idnumber from local storage
+        navigate('/login'); // Redirect to the login page
     };
 
     const togglePasswordVisibility = () => {

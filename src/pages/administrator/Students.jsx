@@ -119,7 +119,7 @@ const StudentTable = () => {
         <>
             <div className='container'>
                 <br />
-                <Table bordered hover responsive style={{ borderRadius: '20px', marginLeft: '110px' }}>
+                <Table bordered hover responsive style={{ borderRadius: '20px', marginBottom: '50px', marginLeft: '110px' }}>
                     <thead>
                         <tr>
                             <th style={{ width: '5%'}} >ID</th>
@@ -128,20 +128,40 @@ const StudentTable = () => {
                             <th style={{ width: '10%' }}>Year Level</th>
                             <th>Department</th>
                             <th>Program</th>
-                            <th style={{ width: '10%' }}>Status</th>
-                            <th style={{ width: '15%' }}>Action</th>
+                            <th style={{ width: '12%' }}>Status</th>
+                            <th style={{ width: '13%' }}>Action</th>
                         </tr>
                     </thead>
                     <tbody>
                         {users.map((user, index) => (
                             <tr key={index}>
-                                <td>{user.user_id}</td>
+                                <td style={{ textAlign: 'center' }}>{user.user_id}</td>
                                 <td>{user.student_idnumber}</td>
                                 <td>{`${user.first_name} ${user.middle_name} ${user.last_name} ${user.suffix}`}</td>
                                 <td>{user.year_level}</td>
                                 <td>{getDepartmentName(user.department_id)}</td>
                                 <td>{getProgramName(user.program_id)}</td>
-                                <td>{user.status}</td>
+                                <td style={{ textAlign: 'center' }}>
+                                    <div style={{
+                                        backgroundColor: user.status === 'active' ? '#DBF0DC' : '#F0DBDB',
+                                        color: user.status === 'active' ? '#30A530' : '#D9534F',
+                                        fontWeight: '600',
+                                        fontSize: '14px',
+                                        borderRadius: '30px',
+                                        padding: '5px 20px', 
+                                        display: 'inline-flex', 
+                                        alignItems: 'center', 
+                                    }}>
+                                        <div style={{
+                                            width: '8px',
+                                            height: '8px',
+                                            borderRadius: '50%',
+                                            backgroundColor: user.status === 'active' ? '#30A530' : '#D9534F',
+                                            marginRight: '7px', 
+                                        }} />
+                                        {user.status}
+                                    </div>
+                                </td>
                                 <td>
                                     <div className="d-flex justify-content-around">
                                         <Button className='btn btn-secondary btn-sm' onClick={() => handleReadModalShow(user)}>
@@ -210,7 +230,7 @@ const StudentTable = () => {
 
             <Modal show={showUpdateModal} onHide={handleUpdateModalClose} dialogClassName="modal-lg">
                 <Modal.Header closeButton>
-                    <Modal.Title style = {{ marginLeft: '100px'}}>UPDATE STUDENT RECORD</Modal.Title>
+                    <Modal.Title style = {{ marginLeft: '180px'}}>UPDATE STUDENT RECORD</Modal.Title>
                     <button
                         type="button"
                         className="close"
