@@ -4,95 +4,76 @@ import { useNavigate } from 'react-router-dom';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import styled from '@emotion/styled';
-
 const SecurityCreateSlip = () => {
-    const [studentId, setStudentId] = useState('');
-    const [violationNature, setViolationNature] = useState('');
-    const [file, setFile] = useState(null);
-    const [submittedBy, setSubmittedBy] = useState(''); // Replace with actual user ID
-    const navigate = useNavigate();
+    const [formData, setFormData] = useState({
+        student_idnumber: '',
+        violation_nature: '',
+        submitted_by: '',
+        photo_video_file: null
+    });
+    const [message, setMessage] = useState('');
 
-    const handleFileChange = (event) => {
-        setFile(event.target.files[0]);
-    };
-
-    const handleSubmit = async (event) => {
-        event.preventDefault();
-
-        const formData = new FormData();
-        formData.append('student_idnumber', studentId);
-        formData.append('violation_nature', violationNature);
-        formData.append('photo_video_filename', file);
-        formData.append('submitted_by', submittedBy);
-
-        try {
-            await axios.post('http://localhost:9000/uniform_defiances', formData, {
-                headers: {
-                    'Content-Type': 'multipart/form-data',
-                },
-            });
-            navigate('/success'); // Adjust to your success page route
-        } catch (error) {
-            console.error('Error submitting form:', error);
+    const handleInputChange = (e) => {
+        if (e.target.name === 'photo_video_file') {
+            setFormData({ ...formData, [e.target.name]: e.target.files[0] });
+        } else {
+            setFormData({ ...formData, [e.target.name]: e.target.value });
         }
     };
 
-    const FormContainer = styled.div`
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        height: 100vh;
-        background-color: #f8f9fa;
-        padding: 20px;
-    `;
+    const handleSubmit = async (e) => {
+        e.preventDefault();
 
-    const FormTitle = styled.h2`
-        margin-bottom: 20px;
-        color: #015901;
-    `;
+        try {
+            const formDataToSend = new FormData();
+            formDataToSend.append('student_idnumber', formData.student_idnumber);
+            formDataToSend.append('violation_nature', formData.violation_nature);
+            formDataToSend.append('submitted_by', formData.submitted_by);
+            formDataToSend.append('photo_video_file', formData.photo_video_file);
+
+            const response = await axios.post('http://localhost:9000/create-uniformdefiance', formDataToSend, {
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                }
+            });
+
+            setMessage(response.data.message);
+            // Optionally reset the form after successful submission
+            setFormData({
+                student_idnumber: '',
+                violation_nature: '',
+                submitted_by: '',
+                photo_video_file: null
+            });
+        } catch (error) {
+            console.error('Error submitting form:', error);
+            setMessage('An error occurred. Please try again later.');
+        }
+    };
 
     return (
-        <FormContainer>
-            <Form onSubmit={handleSubmit} style={{ width: '400px' }}>
-                <FormTitle>Create Uniform Defiance Slip</FormTitle>
-                <Form.Group controlId="studentId">
-                    <Form.Label>Student ID Number</Form.Label>
-                    <Form.Control
-                        type="text"
-                        placeholder="Enter student ID number"
-                        value={studentId}
-                        onChange={(e) => setStudentId(e.target.value)}
-                        required
-                    />
-                </Form.Group>
+        <div>
+            <h2>Upload Uniform Defiance</h2>
+            <form onSubmit={handleSubmit}>
+                <label htmlFor="studentId">Student ID Number:</label>
+                <input type="text" id="studentId" name="student_idnumber" value={formData.student_idnumber} onChange={handleInputChange} required /><br /><br />
 
-                <Form.Group controlId="violationNature">
-                    <Form.Label>Nature of Violation</Form.Label>
-                    <Form.Control
-                        type="text"
-                        placeholder="Enter nature of violation"
-                        value={violationNature}
-                        onChange={(e) => setViolationNature(e.target.value)}
-                        required
-                    />
-                </Form.Group>
+                <label htmlFor="violationNature">Violation Nature:</label>
+                <input type="text" id="violationNature" name="violation_nature" value={formData.violation_nature} onChange={handleInputChange} required /><br /><br />
 
-                <Form.Group controlId="file">
-                    <Form.Label>Upload Photo/Video</Form.Label>
-                    <Form.Control
-                        type="file"
-                        onChange={handleFileChange}
-                        required
-                    />
-                </Form.Group>
+                <label htmlFor="submittedBy">Submitted By:</label>
+                <input type="text" id="submittedBy" name="submitted_by" value={formData.submitted_by} onChange={handleInputChange} required /><br /><br />
 
-                <Button variant="primary" type="submit" style={{ marginTop: '20px', width: '100%' }}>
-                    Submit
-                </Button>
-            </Form>
-        </FormContainer>
+                <label htmlFor="photoVideoFile">Upload Photo/Video:</label>
+                <input type="file" id="photoVideoFile" name="photo_video_file" onChange={handleInputChange} accept="image/*, video/*" required /><br /><br />
+
+                <button type="submit">Submit</button>
+            </form>
+
+            {message && <p>{message}</p>}
+        </div>
     );
 };
+
 
 export default SecurityCreateSlip;
