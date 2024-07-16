@@ -31,13 +31,27 @@ const EmployeeLogin = () => {
                     // Store the token in localStorage
                     localStorage.setItem('token', token);
                     localStorage.setItem('role_id', role_id);
-                    // Redirect to the dashboard or other page
-                    navigate(`/coordinator-dashboard`);
+                    
+                    // Redirect based on role_id
                     if (role_id === 2) {
+                        navigate(`/coordinator-dashboard`);
                         Swal.fire({
                             icon: 'success',
                             title: 'Login Successful',
                             text: 'Welcome back, Coordinator!',
+                        });
+                    } else if (role_id === 4) {
+                        navigate(`/defiance-selection`);
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Login Successful',
+                            text: 'Welcome back, Security Personnel!',
+                        });
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Login Failed',
+                            text: 'Unauthorized role.',
                         });
                     }
                 } else {
@@ -77,7 +91,7 @@ const EmployeeLogin = () => {
     const handleLogout = () => {
         // Clear user session data (example)
         localStorage.removeItem('token');
-        localStorage.removeItem('otherData');
+        localStorage.removeItem('role_id');
 
         // Redirect to the login page
         navigate('/employee-login'); // Replace '/employee-login' with the actual login page URL

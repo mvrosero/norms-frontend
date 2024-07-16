@@ -34,6 +34,11 @@ import CoordinatorAnnouncements from './pages/osa coordinator/CoordinatorAnnounc
 import CoordinatorSettings from './pages/osa coordinator/CoordinatorSettings';
 import IndividualStudentRecord from './pages/osa coordinator/IndividualStudentRecord';
 
+/*security personnel*/
+import SecurityLandingPage from './pages/security/SecurityLandingPage';
+import SecurityViewSlips from './pages/security/SecurityViewSlips';
+import SecurityCreateSlip from './pages/security/SecurityCreateSlip';
+
 /*student*/
 import StudentAboutAndContact from './pages/student/StudentAboutAndContact';
 import StudentAnnouncements from './pages/student/StudentAnnouncements';
@@ -75,7 +80,10 @@ function App() {
                 <Route path='/coordinator-settings' element={<CoordinatorSettings />} />
                 <Route path='/individualstudentrecord/:student_idnumber' element={<IndividualStudentRecord />} />
 
-                
+                <Route path='/defiance-selection' element={<SecurityLandingPage />} />
+                <Route path='/view-slips' element={<SecurityViewSlips />} />
+                <Route path='/create-slip' element={<SecurityCreateSlip />} />
+
                 <Route path='/aboutcontact' element={<StudentAboutAndContact/>} />
                 <Route path='/student-announcements' element={<StudentAnnouncements />} />
                 <Route path='/legislations' element={<StudentLegislations />} />
