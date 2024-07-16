@@ -89,6 +89,7 @@ const UniformDefianceTable = () => {
                             <p><strong>Photo/Video Filename:</strong> {selectedRecord.photo_video_filename}</p>
                             <p><strong>Status:</strong> {selectedRecord.status}</p>
                             <p><strong>Created At:</strong> {new Date(selectedRecord.created_at).toLocaleString()}</p>
+                            <p><strong>Submitted By:</strong> {selectedRecord.submitted_by}</p>
                         </div>
                     )}
                 </Modal.Body>
