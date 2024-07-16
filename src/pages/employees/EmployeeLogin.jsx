@@ -3,17 +3,13 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { FiUser, FiLock } from 'react-icons/fi';
 import Swal from 'sweetalert2';
-
 import osaMotto from '../../components/images/osa_motto.png'; 
 import osaLogo from '../../components/images/osa_logo.png'; 
-
 const EmployeeLogin = () => {
     const navigate = useNavigate();
-
     const [employee_idnumber, setUserNumber] = useState('');
     const [password, setPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false); // State to toggle password visibility
-
     const handleLogin = async (e) => {
         e.preventDefault(); // Prevent default form submission behavior
         try {
@@ -31,7 +27,9 @@ const EmployeeLogin = () => {
                     // Store the token in localStorage
                     localStorage.setItem('token', token);
                     localStorage.setItem('role_id', role_id);
-                    
+                    // Redirect to the dashboard or other page
+                    navigate(`/coordinator-dashboard`);
+
                     // Redirect based on role_id
                     if (role_id === 2) {
                         navigate(`/coordinator-dashboard`);
@@ -83,20 +81,18 @@ const EmployeeLogin = () => {
             });
         }
     };
-
     const togglePasswordVisibility = () => {
         setShowPassword(!showPassword);
     };
-
     const handleLogout = () => {
         // Clear user session data (example)
         localStorage.removeItem('token');
+        localStorage.removeItem('otherData');
         localStorage.removeItem('role_id');
 
         // Redirect to the login page
         navigate('/employee-login'); // Replace '/employee-login' with the actual login page URL
     };
-
     return (
         <div style={{ backgroundImage: `url(${osaMotto})`, backgroundSize: '100% 100%', width: '100vw', height: '100vh', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
             <div className="wrapper" style={{ display: 'flex', justifyContent: 'flex-end', width: '100%', maxWidth: '500px', marginLeft: '600px', marginRight: '10px', marginTop: '50px' }}>
@@ -123,7 +119,6 @@ const EmployeeLogin = () => {
                                 <input type={showPassword ? 'text' : 'password'} placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} required style={{ backgroundColor: 'rgba(255, 255, 255, 0.8)', borderRadius: '0 7px 7px 0', padding: '10px', marginLeft: '0px', width: '100%', '::placeholder': { color: '#818181' } }} />
                             </div>
                         </div>
-
                         <button type="submit" className="btn btn-block text-center" style={{ marginTop: '1px', marginBottom: '1px', backgroundColor: '#FAD32E', borderRadius: '10px', color: 'white', padding: '10px 15px', width: '100%', fontWeight: '600', fontSize: '20px' }}>Login</button>
                     </form>
                 </div>
@@ -131,5 +126,4 @@ const EmployeeLogin = () => {
         </div>
     );
 };
-
 export default EmployeeLogin;

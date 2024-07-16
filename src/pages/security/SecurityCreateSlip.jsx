@@ -3,12 +3,13 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
-import styled from '@emotion/styled';
+
 const SecurityCreateSlip = () => {
+    const navigate = useNavigate();
+
     const [formData, setFormData] = useState({
         student_idnumber: '',
         violation_nature: '',
-        submitted_by: '',
         photo_video_file: null
     });
     const [message, setMessage] = useState('');
@@ -23,26 +24,24 @@ const SecurityCreateSlip = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-
+    
         try {
             const formDataToSend = new FormData();
             formDataToSend.append('student_idnumber', formData.student_idnumber);
             formDataToSend.append('violation_nature', formData.violation_nature);
-            formDataToSend.append('submitted_by', formData.submitted_by);
             formDataToSend.append('photo_video_file', formData.photo_video_file);
-
+    
             const response = await axios.post('http://localhost:9000/create-uniformdefiance', formDataToSend, {
                 headers: {
-                    'Content-Type': 'multipart/form-data'
+                    'Content-Type': 'multipart/form-data',
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`
                 }
             });
-
+    
             setMessage(response.data.message);
-            // Optionally reset the form after successful submission
             setFormData({
                 student_idnumber: '',
                 violation_nature: '',
-                submitted_by: '',
                 photo_video_file: null
             });
         } catch (error) {
@@ -50,30 +49,34 @@ const SecurityCreateSlip = () => {
             setMessage('An error occurred. Please try again later.');
         }
     };
-
+    
     return (
         <div>
             <h2>Upload Uniform Defiance</h2>
-            <form onSubmit={handleSubmit}>
-                <label htmlFor="studentId">Student ID Number:</label>
-                <input type="text" id="studentId" name="student_idnumber" value={formData.student_idnumber} onChange={handleInputChange} required /><br /><br />
+            <Form onSubmit={handleSubmit}>
+                <Form.Group controlId="studentId">
+                    <Form.Label>Student ID Number:</Form.Label>
+                    <Form.Control type="text" name="student_idnumber" value={formData.student_idnumber} onChange={handleInputChange} required />
+                </Form.Group>
 
-                <label htmlFor="violationNature">Violation Nature:</label>
-                <input type="text" id="violationNature" name="violation_nature" value={formData.violation_nature} onChange={handleInputChange} required /><br /><br />
+                <Form.Group controlId="violationNature">
+                    <Form.Label>Violation Nature:</Form.Label>
+                    <Form.Control type="text" name="violation_nature" value={formData.violation_nature} onChange={handleInputChange} required />
+                </Form.Group>
 
-                <label htmlFor="submittedBy">Submitted By:</label>
-                <input type="text" id="submittedBy" name="submitted_by" value={formData.submitted_by} onChange={handleInputChange} required /><br /><br />
+                <Form.Group controlId="photoVideoFile">
+                    <Form.Label>Upload Photo/Video:</Form.Label>
+                    <Form.Control type="file" name="photo_video_file" onChange={handleInputChange} accept="image/*, video/*" required />
+                </Form.Group>
 
-                <label htmlFor="photoVideoFile">Upload Photo/Video:</label>
-                <input type="file" id="photoVideoFile" name="photo_video_file" onChange={handleInputChange} accept="image/*, video/*" required /><br /><br />
-
-                <button type="submit">Submit</button>
-            </form>
+                <Button variant="primary" type="submit">
+                    Submit
+                </Button>
+            </Form>
 
             {message && <p>{message}</p>}
         </div>
     );
 };
-
 
 export default SecurityCreateSlip;
