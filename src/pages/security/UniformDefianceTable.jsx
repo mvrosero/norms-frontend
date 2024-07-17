@@ -23,7 +23,7 @@ const UniformDefianceTable = () => {
         fetchData();
     }, []);
 
-    const handleViewDetails = (record) => {
+    const handleViewDetails = async (record) => {
         setSelectedRecord(record);
         setShowDetailsModal(true);
     };
@@ -44,6 +44,26 @@ const UniformDefianceTable = () => {
             background: linear-gradient(45deg, #4AA616, #006637, #015901);
         }
     `;
+    const renderFile = () => {
+        if (selectedRecord) {
+            const { photo_video_filename } = selectedRecord;
+            const fileExtension = photo_video_filename.split('.').pop().toLowerCase();
+    
+            if (fileExtension === 'mp4' || fileExtension === 'avi' || fileExtension === 'mov') {
+                return (
+                    <video controls src={`http://localhost:9000/uniform_defiance/${selectedRecord.slip_id}`} style={{ maxWidth: '100%' }} />
+                );
+            } else if (fileExtension === 'jpg' || fileExtension === 'jpeg' || fileExtension === 'png' || fileExtension === 'gif') {
+                return (
+                    <img src={`http://localhost:9000/uniform_defiance/${selectedRecord.slip_id}`} alt="File Preview" style={{ maxWidth: '100%' }} />
+                );
+            } else {
+                return <p>Unsupported file format</p>; // Handle unsupported formats
+            }
+        }
+        return null;
+    };
+    
 
     return (
         <>
@@ -86,7 +106,8 @@ const UniformDefianceTable = () => {
                             <p><strong>Slip ID:</strong> {selectedRecord.slip_id}</p>
                             <p><strong>Student ID:</strong> {selectedRecord.student_idnumber}</p>
                             <p><strong>Violation Nature:</strong> {selectedRecord.violation_nature}</p>
-                            <p><strong>Photo/Video Filename:</strong> {selectedRecord.photo_video_filename}</p>
+                            <p><strong>File Preview:</strong></p>
+                            {renderFile()}
                             <p><strong>Status:</strong> {selectedRecord.status}</p>
                             <p><strong>Created At:</strong> {new Date(selectedRecord.created_at).toLocaleString()}</p>
                             <p><strong>Submitted By:</strong> {selectedRecord.submitted_by}</p>
