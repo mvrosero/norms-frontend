@@ -10,7 +10,7 @@ const EmployeeLogin = () => {
     const navigate = useNavigate();
     const [employee_idnumber, setEmployeeNumber] = useState('');
     const [password, setPassword] = useState('');
-    const [showPassword, setShowPassword] = useState(false); // State to toggle password visibility
+    const [showPassword, setShowPassword] = useState(false); 
 
     const handleLogin = async (e) => {
         e.preventDefault();
