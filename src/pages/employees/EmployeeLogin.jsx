@@ -20,51 +20,41 @@ const EmployeeLogin = () => {
                 password,
             });
     
-            if (response.status === 200) {
-                if (response.data.hasOwnProperty('token')) {
-                    const token = response.data.token;
-                    const role_id = response.data.role_id;
+            if (response.status === 200 && response.data.hasOwnProperty('token')) {
+                const { token, role_id } = response.data;
+
+                // Store the token, role_id, and employee_idnumber in localStorage
+                localStorage.setItem('token', token);
+                localStorage.setItem('role_id', role_id);
+                localStorage.setItem('employee_idnumber', employee_idnumber); // Store employee_idnumber
     
-                    // Store the token, role_id, and employee_idnumber in localStorage
-                    localStorage.setItem('token', token);
-                    localStorage.setItem('role_id', role_id);
-                    localStorage.setItem('employee_idnumber', employee_idnumber); // Store employee_idnumber
-    
-                    if (role_id === 2) {
-                        navigate(`/coordinator-dashboard`);
-                        Swal.fire({
-                            icon: 'success',
-                            title: 'Login Successful',
-                            text: 'Welcome back, Coordinator!',
-                        });
-                    } else if (role_id === 4) {
-                        navigate(`/defiance-selection`);
-                        Swal.fire({
-                            icon: 'success',
-                            title: 'Login Successful',
-                            text: 'Welcome back, Security Personnel!',
-                        });
-                    } else {
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Login Failed',
-                            text: 'Unauthorized role.',
-                        });
-                    }
+                if (role_id === 2) {
+                    navigate(`/coordinator-dashboard`);
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Login Successful',
+                        text: 'Welcome back, Coordinator!',
+                    });
+                } else if (role_id === 4) {
+                    navigate(`/defiance-selection`);
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Login Successful',
+                        text: 'Welcome back, Security Personnel!',
+                    });
                 } else {
-                    console.error('Token not found in response data');
                     Swal.fire({
                         icon: 'error',
                         title: 'Login Failed',
-                        text: 'An error occurred while processing the login data. Please try again later.',
+                        text: 'Unauthorized role.',
                     });
                 }
             } else {
-                console.error('Login failed with status:', response.status);
+                console.error('Token not found in response data');
                 Swal.fire({
                     icon: 'error',
                     title: 'Login Failed',
-                    text: 'Invalid credentials. Please try again.',
+                    text: 'An error occurred while processing the login data. Please try again later.',
                 });
             }
         } catch (error) {
@@ -76,7 +66,6 @@ const EmployeeLogin = () => {
             });
         }
     };
-    
 
     const togglePasswordVisibility = () => {
         setShowPassword(!showPassword);
@@ -97,7 +86,14 @@ const EmployeeLogin = () => {
                                 <div style={{ backgroundColor: 'white', borderRadius: '20% 0 0 20%', width: '50px', height: '40px', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                                     <FiUser size={22} style={{ color: '#134E0F' }}/>
                                 </div>
-                                <input type="text" placeholder="Employee Number" value={employee_idnumber} onChange={(e) => setEmployeeNumber(e.target.value)} required style={{ backgroundColor: 'rgba(255, 255, 255, 0.8)', borderRadius: '0 7px 7px 0', padding: '10px', marginLeft: '0px', width: '100%', '::placeholder': { color: '#818181' } }} />
+                                <input 
+                                    type="text" 
+                                    placeholder="Employee Number" 
+                                    value={employee_idnumber} 
+                                    onChange={(e) => setEmployeeNumber(e.target.value)} 
+                                    required 
+                                    style={{ backgroundColor: 'rgba(255, 255, 255, 0.8)', borderRadius: '0 7px 7px 0', padding: '10px', marginLeft: '0px', width: '100%', '::placeholder': { color: '#818181' } }} 
+                                />
                             </div>
                         </div>
                         <div className="form-group py-2" style={{ marginBottom: '15px' }}>
@@ -105,13 +101,30 @@ const EmployeeLogin = () => {
                                 <div style={{ backgroundColor: 'white', borderRadius: '20% 0 0 20%', width: '50px', height: '40px', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                                     <FiLock size={20} style={{ color: '#134E0F' }}/>
                                 </div>
-                                <input type={showPassword ? 'text' : 'password'} placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} required style={{ backgroundColor: 'rgba(255, 255, 255, 0.8)', borderRadius: '0 7px 7px 0', padding: '10px', marginLeft: '0px', width: '100%', '::placeholder': { color: '#818181' } }} />
-                                <button type="button" onClick={togglePasswordVisibility} style={{ backgroundColor: 'transparent', border: 'none', outline: 'none', marginLeft: '-40px', marginTop: '3px' }}>
+                                <input 
+                                    type={showPassword ? 'text' : 'password'} 
+                                    placeholder="Password" 
+                                    value={password} 
+                                    onChange={(e) => setPassword(e.target.value)} 
+                                    required 
+                                    style={{ backgroundColor: 'rgba(255, 255, 255, 0.8)', borderRadius: '0 7px 7px 0', padding: '10px', marginLeft: '0px', width: '100%', '::placeholder': { color: '#818181' } }} 
+                                />
+                                <button 
+                                    type="button" 
+                                    onClick={togglePasswordVisibility} 
+                                    style={{ backgroundColor: 'transparent', border: 'none', outline: 'none', marginLeft: '-40px', marginTop: '3px' }}
+                                >
                                     {showPassword ? 'Hide' : 'Show'}
                                 </button>
                             </div>
                         </div>
-                        <button type="submit" className="btn btn-block text-center" style={{ marginTop: '1px', marginBottom: '1px', backgroundColor: '#FAD32E', borderRadius: '10px', color: 'white', padding: '10px 15px', width: '100%', fontWeight: '600', fontSize: '20px' }}>Login</button>
+                        <button 
+                            type="submit" 
+                            className="btn btn-block text-center" 
+                            style={{ marginTop: '1px', marginBottom: '1px', backgroundColor: '#FAD32E', borderRadius: '10px', color: 'white', padding: '10px 15px', width: '100%', fontWeight: '600', fontSize: '20px' }}
+                        >
+                            Login
+                        </button>
                     </form>
                 </div>
             </div>
