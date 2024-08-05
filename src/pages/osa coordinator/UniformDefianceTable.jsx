@@ -110,10 +110,10 @@ const UniformDefianceTable = ({ searchQuery }) => {
                                 <td>{defiance.submitted_by}</td>
                                 <td>
                                     <div className="d-flex justify-content-around">
-                                        <Button className='btn btn-success btn-md ms-2' onClick={() => updateStatus(defiance.slip_id, 'Approved')}>
+                                        <Button className='btn btn-success btn-md ms-2' onClick={() => updateStatus(defiance.slip_id, 'Approved')} style={{ backgroundColor: '#28a745', borderColor: '#28a745' }}>
                                             <CheckIcon />
                                         </Button>
-                                        <Button className='btn btn-danger btn-md ms-2' onClick={() => updateStatus(defiance.slip_id, 'Rejected')}>
+                                        <Button className='btn btn-danger btn-md ms-2' onClick={() => updateStatus(defiance.slip_id, 'Rejected')} style={{ backgroundColor: '#dc3545', borderColor: '#dc3545' }}>
                                             <CloseIcon />
                                         </Button>
                                     </div>
