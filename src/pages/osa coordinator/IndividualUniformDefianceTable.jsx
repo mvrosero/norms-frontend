@@ -167,18 +167,7 @@ const IndividualUniformDefiance = () => {
                         {defiances.map((defiance, index) => (
                             <tr key={index}>
                                 <td style={{ textAlign: 'center' }}>{defiance.slip_id}</td>
-                                <td>
-                                    <a
-                                        href="#"
-                                        onClick={(e) => {
-                                            e.preventDefault();
-                                            handleStudentRedirect(defiance.student_idnumber);
-                                        }}
-                                        style={{ textAlign: 'center', textDecoration: 'underline' }}
-                                    >
-                                        {defiance.student_idnumber}
-                                    </a>
-                                </td>
+                                <td>{defiance.student_idnumber}</td>
                                 <td>{defiance.violation_nature}</td>
                                 <td>{defiance.created_at}</td>
                                 <td>{defiance.submitted_by}</td>
