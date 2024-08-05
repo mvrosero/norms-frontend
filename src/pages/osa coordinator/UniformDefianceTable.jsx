@@ -9,7 +9,6 @@ import Fuse from 'fuse.js';
 
 const UniformDefianceTable = ({ searchQuery }) => {
     const [defiances, setDefiances] = useState([]);
-    const [deletionStatus, setDeletionStatus] = useState(false);
     const navigate = useNavigate();
 
     const headers = useMemo(() => {
@@ -19,24 +18,24 @@ const UniformDefianceTable = ({ searchQuery }) => {
 
     const fetchDefiances = useCallback(async () => {
         try {
-            let response;
-            if (searchQuery) {
-                response = await axios.get('http://localhost:9000/uniform_defiances', { headers });
+            let response = await axios.get('http://localhost:9000/uniform_defiances', { headers });
+            let data = response.data;
 
-                const fuse = new Fuse(response.data, {
+            // Filter data to include only those with status 'Pending'
+            data = data.filter(defiance => defiance.status === 'Pending');
+
+            if (searchQuery) {
+                const fuse = new Fuse(data, {
                     keys: ['slip_id', 'student_idnumber', 'violation_nature', 'status', 'submitted_by'],
                     includeScore: true,
                     threshold: 0.4,
                 });
 
                 const searchResults = fuse.search(searchQuery);
-                const filteredDefiances = searchResults.map(result => result.item);
-
-                setDefiances(filteredDefiances);
-            } else {
-                response = await axios.get('http://localhost:9000/uniform_defiances', { headers });
-                setDefiances(response.data);
+                data = searchResults.map(result => result.item);
             }
+
+            setDefiances(data);
         } catch (error) {
             console.error('Error fetching defiances:', error);
         }
@@ -69,9 +68,7 @@ const UniformDefianceTable = ({ searchQuery }) => {
                 text: `Successfully Updated to ${newStatus}`
             });
             setDefiances(prevDefiances => 
-                prevDefiances.map(defiance =>
-                    defiance.slip_id === slipId ? { ...defiance, status: newStatus } : defiance
-                )
+                prevDefiances.filter(defiance => defiance.slip_id !== slipId)
             );
         } catch (error) {
             console.error('Error updating defiance status:', error);
