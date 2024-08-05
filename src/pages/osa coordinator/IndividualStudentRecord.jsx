@@ -78,7 +78,6 @@ export default function IndividualStudentRecord() {
                             borderRadius: '5px',
                             margin: '20px'
                         }}>
-                            {/* You can also display an image here if available */}
                         </div>
                         <div style={{
                             marginLeft: '20px',
