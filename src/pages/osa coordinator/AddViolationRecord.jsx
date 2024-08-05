@@ -4,7 +4,7 @@ import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
 import Swal from 'sweetalert2';
 
-export default function AddViolationRecordForm({ handleCloseModal }) {
+export default function AddViolationRecordForm({ handleCloseModal, student_idnumber }) {
     const [formData, setFormData] = useState({
         description: '',
         category_id: '',
@@ -55,19 +55,18 @@ export default function AddViolationRecordForm({ handleCloseModal }) {
     const handleSubmit = async (e) => {
         e.preventDefault();
         if (
-
-            formData.description === '' ||
-            formData.category_id === '' ||
-            formData.offense_id === '' ||
-            formData.sanction_id === '' ||
-            formData.acadyear_id === '' ||
-            formData.semester_id === ''
+            !formData.description ||
+            !formData.category_id ||
+            !formData.offense_id ||
+            !formData.sanction_id ||
+            !formData.acadyear_id ||
+            !formData.semester_id
         ) {
             console.error('All fields are required.');
             return;
         }
         try {
-            const response = await axios.post('http://localhost:9000/create-violationrecord/:student_idnumber', formData);
+            const response = await axios.post(`http://localhost:9000/create-violationrecord/${student_idnumber}`, formData);
             console.log(response.data);
             Swal.fire({
                 icon: 'success',
