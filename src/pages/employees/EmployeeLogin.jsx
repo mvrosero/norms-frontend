@@ -70,6 +70,7 @@ const EmployeeLogin = () => {
     const togglePasswordVisibility = () => {
         setShowPassword(!showPassword);
     };
+    
 
     return (
         <div style={{ backgroundImage: `url(${osaMotto})`, backgroundSize: '100% 100%', width: '100vw', height: '100vh', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
@@ -109,13 +110,6 @@ const EmployeeLogin = () => {
                                     required 
                                     style={{ backgroundColor: 'rgba(255, 255, 255, 0.8)', borderRadius: '0 7px 7px 0', padding: '10px', marginLeft: '0px', width: '100%', '::placeholder': { color: '#818181' } }} 
                                 />
-                                <button 
-                                    type="button" 
-                                    onClick={togglePasswordVisibility} 
-                                    style={{ backgroundColor: 'transparent', border: 'none', outline: 'none', marginLeft: '-40px', marginTop: '3px' }}
-                                >
-                                    {showPassword ? 'Hide' : 'Show'}
-                                </button>
                             </div>
                         </div>
                         <button 
