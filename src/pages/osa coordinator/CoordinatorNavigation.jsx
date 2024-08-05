@@ -3,7 +3,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { MenuItem, Menu, Sidebar } from "react-pro-sidebar";
 import { MdSpaceDashboard } from "react-icons/md";
 import { IoFolder } from "react-icons/io5";
-import { RiBook2Fill } from "react-icons/ri";
+import { RiBook2Fill, RiShirtFill } from "react-icons/ri";
 import { MdAnnouncement } from "react-icons/md";
 import { FaGear } from "react-icons/fa6";
 
@@ -118,6 +118,13 @@ export default function CoordinatorNavigation() {
                       active={activeMenuItem === "Student Records"}
                     >
                       Student Records
+                    </MenuItem>
+                    <MenuItem
+                      icon={<RiShirtFill style={{ fontSize: iconSize, color: getItemColor("Uniform Defiance") }} />}
+                      onClick={() => handleMenuItemClick("Uniform Defiance")}
+                      active={activeMenuItem === "Uniform Defiance"}
+                    >
+                      Uniform Defiance
                     </MenuItem>
                     <MenuItem
                       icon={<RiBook2Fill style={{ fontSize: iconSize, color: getItemColor("Handbook") }} />}

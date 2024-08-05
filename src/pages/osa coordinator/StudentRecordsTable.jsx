@@ -8,7 +8,7 @@ import { useNavigate } from 'react-router';
 import Fuse from 'fuse.js'; // Import fuse.js
 import "../administrator/Students.css";
 
-const Students = ({ searchQuery }) => {
+const StudentRecordsTable = ({ searchQuery }) => {
     const [users, setUsers] = useState([]);
     const [departments, setDepartments] = useState([]);
     const [programs, setPrograms] = useState([]);
@@ -203,4 +203,4 @@ const Students = ({ searchQuery }) => {
     );
 }
 
-export default Students;
+export default StudentRecordsTable;

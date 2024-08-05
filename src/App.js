@@ -29,10 +29,12 @@ import AdminSettings from './pages/administrator/AdminSettings';
 /*osa coordinator*/
 import CoordinatorDashboard from './pages/osa coordinator/CoordinatorDashboard';
 import CoordinatorStudentRecords from './pages/osa coordinator/CoordinatorStudentRecords';
+import CoordinatorUniformDefiance from './pages/osa coordinator/CoordinatorUniformDefiance';
 import CoordinatorViolations from './pages/osa coordinator/CoordinatorViolations';
 import CoordinatorAnnouncements from './pages/osa coordinator/CoordinatorAnnouncements';
 import CoordinatorSettings from './pages/osa coordinator/CoordinatorSettings';
 import IndividualStudentRecord from './pages/osa coordinator/IndividualStudentRecord';
+import UniformDefianceHistory from './pages/osa coordinator/UniformDefianceHistory';
 
 /*security personnel*/
 import SecurityLandingPage from './pages/security/SecurityLandingPage';
@@ -45,7 +47,6 @@ import StudentAnnouncements from './pages/student/StudentAnnouncements';
 import StudentLegislations from './pages/student/StudentLegislation';
 import StudentMyRecords from './pages/student/StudentMyRecords';
 import StudentSettings from './pages/student/StudentSettings';
-
 
 
 function App() {
@@ -75,10 +76,12 @@ function App() {
 
                 <Route path='/coordinator-dashboard' element={<CoordinatorDashboard />} />
                 <Route path='/coordinator-studentrecords' element={<CoordinatorStudentRecords />} />
+                <Route path='/coordinator-uniformdefiance' element={<CoordinatorUniformDefiance />} />
                 <Route path='/coordinator-violations' element={<CoordinatorViolations />} />
                 <Route path='/coordinator-announcements' element={<CoordinatorAnnouncements />} />
                 <Route path='/coordinator-settings' element={<CoordinatorSettings />} />
                 <Route path='/individualstudentrecord/:student_idnumber' element={<IndividualStudentRecord />} />
+                <Route path='/uniformdefiance-history' element={<UniformDefianceHistory />} />
 
                 <Route path='/defiance-selection' element={<SecurityLandingPage />} />
                 <Route path='/view-slips' element={<SecurityViewSlips />} />

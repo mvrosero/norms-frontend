@@ -1,17 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { FaPlus } from 'react-icons/fa';
-import { Modal } from 'react-bootstrap';
+import { FaEye } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 
 import CoordinatorNavigation from './CoordinatorNavigation';
 import CoordinatorInfo from './CoordinatorInfo';
-import StudentRecordsTable from './StudentRecordsTable';
 import SearchAndFilter from '../general/SearchAndFilter';
-import CreateViolationRecordForm from './CreateViolationRecord';
+import UniformDefianceTable from './UniformDefianceTable';
 
-export default function CoordinatorStudentRecords() {
+export default function CoordinatorUniformDefiance() {
     const [searchQuery, setSearchQuery] = useState('');
-    const [showModal, setShowModal] = useState(false); // State for controlling modal visibility
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -25,23 +22,19 @@ export default function CoordinatorStudentRecords() {
         }
     }, [navigate]);
 
-    const handleCreateNewRecord = () => {
-        setShowModal(true); // Show the modal when creating a new record
-    };
-
-    const handleCloseModal = () => {
-        setShowModal(false); // Hide the modal
+    const handleViewHistory = () => {
+        navigate('/uniformdefiance-history'); // Redirect to uniform defiance history page
     };
 
     return (
         <div>
             <CoordinatorNavigation />
             <CoordinatorInfo />
-            <h6 className="page-title"> STUDENT RECORDS </h6>
+            <h6 className="page-title">UNIFORM DEFIANCE</h6>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', marginTop: '30px' }}>
                 <SearchAndFilter setSearchQuery={setSearchQuery} />
                 <button 
-                    onClick={handleCreateNewRecord} 
+                    onClick={handleViewHistory} 
                     style={{
                         backgroundColor: '#FAD32E',
                         color: 'white',
@@ -56,22 +49,11 @@ export default function CoordinatorStudentRecords() {
                         boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
                     }}
                 >
-                    Add Violation
-                    <FaPlus style={{ marginLeft: '10px' }} />
+                    View History
+                    <FaEye style={{ marginLeft: '10px' }} />
                 </button>
             </div>
-            <StudentRecordsTable searchQuery={searchQuery} />
-
-            {/* Modal for creating new record */}
-            <Modal show={showModal} onHide={handleCloseModal}>
-                <Modal.Header closeButton>
-                    <Modal.Title style = {{marginLeft: '35px'}}>CREATE VIOLATION RECORD</Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-                    {/* Render ViolationRecordForm component within the modal */}
-                    <CreateViolationRecordForm handleCloseModal={handleCloseModal} />
-                </Modal.Body>
-            </Modal>
+            <UniformDefianceTable searchQuery={searchQuery} />
         </div>
     );
 }
