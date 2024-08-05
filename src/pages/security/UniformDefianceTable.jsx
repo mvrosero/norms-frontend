@@ -1,100 +1,153 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import axios from 'axios';
-import Table from 'react-bootstrap/Table';
-import Modal from 'react-bootstrap/Modal';
-import Button from 'react-bootstrap/Button';
-import styled from '@emotion/styled';
+import { Button, Table, Modal } from 'react-bootstrap';
+import Swal from 'sweetalert2';
+import CheckIcon from '@mui/icons-material/Check';
+import CloseIcon from '@mui/icons-material/Close';
+import VisibilityIcon from '@mui/icons-material/Visibility';
+import { useNavigate } from 'react-router';
+import Fuse from 'fuse.js';
 
-const UniformDefianceTable = () => {
-    const [records, setRecords] = useState([]);
-    const [selectedRecord, setSelectedRecord] = useState(null);
+const UniformDefianceTable = ({ searchQuery }) => {
+    const [defiances, setDefiances] = useState([]);
     const [showDetailsModal, setShowDetailsModal] = useState(false);
+    const [selectedRecord, setSelectedRecord] = useState(null);
+    const navigate = useNavigate();
 
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const response = await axios.get('http://localhost:9000/uniform_defiances');
-                setRecords(response.data);
-            } catch (error) {
-                console.error('Error fetching data:', error);
-            }
-        };
-
-        fetchData();
+    const headers = useMemo(() => {
+        const token = localStorage.getItem('token');
+        return token ? { Authorization: `Bearer ${token}` } : {};
     }, []);
 
-    const handleViewDetails = async (record) => {
+    const fetchDefiances = useCallback(async () => {
+        try {
+            let response = await axios.get('http://localhost:9000/uniform_defiances', { headers });
+            let data = response.data;
+
+            // Filter data to include only those with status 'Pending'
+            data = data.filter(defiance => defiance.status === 'Pending');
+
+            if (searchQuery) {
+                const fuse = new Fuse(data, {
+                    keys: ['slip_id', 'student_idnumber', 'violation_nature', 'status', 'submitted_by'],
+                    includeScore: true,
+                    threshold: 0.4,
+                });
+
+                const searchResults = fuse.search(searchQuery);
+                data = searchResults.map(result => result.item);
+            }
+
+            setDefiances(data);
+        } catch (error) {
+            console.error('Error fetching defiances:', error);
+        }
+    }, [headers, searchQuery]);
+
+    useEffect(() => {
+        fetchDefiances();
+    }, [fetchDefiances]);
+
+    const handleRedirect = async (slip_id) => {
+        try {
+            const response = await axios.get(`http://localhost:9000/uniform_defiance/${slip_id}`);
+            const defiance = response.data;
+            localStorage.setItem('selectedDefiance', JSON.stringify(defiance));
+            navigate(`/individualdefiancerecord/${slip_id}`);
+        } catch (error) {
+            console.error('Error fetching defiance:', error);
+            Swal.fire({
+                icon: 'error',
+                text: 'An error occurred while fetching defiance data. Please try again later.',
+            });
+        }
+    };
+
+    const updateStatus = async (slipId, newStatus) => {
+        try {
+            await axios.put(`http://localhost:9000/uniform_defiance/${slipId}`, { status: newStatus }, { headers });
+            Swal.fire({
+                icon: 'success',
+                text: `Successfully Updated to ${newStatus}`
+            });
+            setDefiances(prevDefiances => 
+                prevDefiances.filter(defiance => defiance.slip_id !== slipId)
+            );
+        } catch (error) {
+            console.error('Error updating defiance status:', error);
+            Swal.fire({
+                icon: 'error',
+                text: 'An error occurred while updating defiance status. Please try again later.',
+            });
+        }
+    };
+
+    const handleShowDetailsModal = (record) => {
         setSelectedRecord(record);
         setShowDetailsModal(true);
     };
 
     const handleCloseDetailsModal = () => {
+        setSelectedRecord(null);
         setShowDetailsModal(false);
     };
 
-    const ViewButton = styled.button`
-        border-radius: 20px;
-        background: linear-gradient(45deg, #015901, #006637, #4AA616);
-        color: white;
-        border: none;
-        padding: 5px 30px;
-        cursor: pointer;
-        text-align: center;
-        &:hover {
-            background: linear-gradient(45deg, #4AA616, #006637, #015901);
-        }
-    `;
     const renderFile = () => {
-        if (selectedRecord) {
-            const { photo_video_filename } = selectedRecord;
-            const fileExtension = photo_video_filename.split('.').pop().toLowerCase();
-    
-            if (fileExtension === 'mp4' || fileExtension === 'avi' || fileExtension === 'mov') {
-                return (
-                    <video controls src={`http://localhost:9000/uniform_defiance/${selectedRecord.slip_id}`} style={{ maxWidth: '100%' }} />
-                );
-            } else if (fileExtension === 'jpg' || fileExtension === 'jpeg' || fileExtension === 'png' || fileExtension === 'gif') {
-                return (
-                    <img src={`http://localhost:9000/uniform_defiance/${selectedRecord.slip_id}`} alt="File Preview" style={{ maxWidth: '100%' }} />
-                );
-            } else {
-                return <p>Unsupported file format</p>; // Handle unsupported formats
-            }
+        if (selectedRecord && selectedRecord.file) {
+            return (
+                <a href={selectedRecord.file} target="_blank" rel="noopener noreferrer">
+                    View File
+                </a>
+            );
         }
-        return null;
+        return <p>No file available</p>;
     };
-    
 
     return (
         <>
-            <Table bordered hover style={{ borderRadius: '20px', marginTop: '30px', marginLeft: '100px' }}>
-                <thead style={{ backgroundColor: '#f8f9fa' }}>
-                    <tr>
-                        <th>ID</th>
-                        <th>ID Number</th>
-                        <th>Nature of Violation</th>
-                        <th>Status</th>
-                        <th>Date</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {records.map((record, index) => (
-                        <tr key={index}>
-                            <td style={{ textAlign: 'center' }}>{record.slip_id}</td>
-                            <td>{record.student_idnumber}</td>
-                            <td>{record.violation_nature}</td>
-                            <td>{record.status}</td>
-                            <td>{new Date(record.created_at).toLocaleString()}</td>
-                            <td style={{ display: 'flex', justifyContent: 'center' }}>
-                                <ViewButton onClick={() => handleViewDetails(record)}>
-                                    View
-                                </ViewButton>
-                            </td>
+            <div className='container'>
+                <br />
+                <div className='col-12'>
+                </div>
+
+                <Table bordered hover style={{ borderRadius: '20px', marginLeft: '110px' }}>
+                    <thead style={{ backgroundColor: '#f8f9fa' }}>
+                        <tr>
+                            <th style={{ width: '5%' }}>Slip ID</th>
+                            <th style={{ width: '10%' }}>Student ID Number</th>
+                            <th>Violation Nature</th>
+                            <th>Status</th>
+                            <th>Submitted By</th>
+                            <th style={{ width: '15%' }}>Action</th>
                         </tr>
-                    ))}
-                </tbody>
-            </Table>
+                    </thead>
+                    <tbody>
+                        {defiances.map((defiance, index) => (
+                            <tr key={index}>
+                                <td style={{ textAlign: 'center' }}>{defiance.slip_id}</td>
+                                <td>{defiance.student_idnumber}</td>
+                                <td>{defiance.violation_nature}</td>
+                                <td>{defiance.status}</td>
+                                <td>{defiance.submitted_by}</td>
+                                <td>
+                                    <div className="d-flex justify-content-around">
+                                        <Button className='btn btn-success btn-md ms-2' onClick={() => updateStatus(defiance.slip_id, 'Approved')} style={{ backgroundColor: '#28a745', borderColor: '#28a745' }}>
+                                            <CheckIcon />
+                                        </Button>
+                                        <Button className='btn btn-danger btn-md ms-2' onClick={() => updateStatus(defiance.slip_id, 'Rejected')} style={{ backgroundColor: '#dc3545', borderColor: '#dc3545' }}>
+                                            <CloseIcon />
+                                        </Button>
+                                        <Button className='btn btn-info btn-md ms-2' onClick={() => handleShowDetailsModal(defiance)} style={{ backgroundColor: '#17a2b8', borderColor: '#17a2b8' }}>
+                                            <VisibilityIcon />
+                                        </Button>
+                                    </div>
+                                </td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </Table>
+            </div>
+
             {/* Modal to display record details */}
             <Modal show={showDetailsModal} onHide={handleCloseDetailsModal}>
                 <Modal.Header closeButton>
@@ -122,6 +175,6 @@ const UniformDefianceTable = () => {
             </Modal>
         </>
     );
-};
+}
 
 export default UniformDefianceTable;

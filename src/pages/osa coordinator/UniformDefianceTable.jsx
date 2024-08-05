@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import axios from 'axios';
-import { Button, Table } from 'react-bootstrap';
+import { Button, Table, Modal } from 'react-bootstrap';
 import Swal from 'sweetalert2';
 import CheckIcon from '@mui/icons-material/Check';
 import CloseIcon from '@mui/icons-material/Close';
@@ -9,6 +9,8 @@ import Fuse from 'fuse.js';
 
 const UniformDefianceTable = ({ searchQuery }) => {
     const [defiances, setDefiances] = useState([]);
+    const [showDetailsModal, setShowDetailsModal] = useState(false);
+    const [selectedRecord, setSelectedRecord] = useState(null);
     const navigate = useNavigate();
 
     const headers = useMemo(() => {
@@ -79,6 +81,27 @@ const UniformDefianceTable = ({ searchQuery }) => {
         }
     };
 
+    const handleShowDetailsModal = (record) => {
+        setSelectedRecord(record);
+        setShowDetailsModal(true);
+    };
+
+    const handleCloseDetailsModal = () => {
+        setSelectedRecord(null);
+        setShowDetailsModal(false);
+    };
+
+    const renderFile = () => {
+        if (selectedRecord && selectedRecord.file) {
+            return (
+                <a href={selectedRecord.file} target="_blank" rel="noopener noreferrer">
+                    View File
+                </a>
+            );
+        }
+        return <p>No file available</p>;
+    };
+
     return (
         <>
             <div className='container'>
@@ -89,12 +112,12 @@ const UniformDefianceTable = ({ searchQuery }) => {
                 <Table bordered hover style={{ borderRadius: '20px', marginLeft: '110px' }}>
                     <thead style={{ backgroundColor: '#f8f9fa' }}>
                         <tr>
-                            <th style={{ width: '5%' }}>Slip ID</th>
-                            <th style={{ width: '10%' }}>Student ID Number</th>
-                            <th>Violation Nature</th>
-                            <th>Status</th>
+                            <th style={{ width: '5%' }}>ID</th>
+                            <th style={{ width: '10%' }}>ID Number</th>
+                            <th>Nature of Violation</th>
                             <th>Submitted By</th>
-                            <th style={{ width: '10%' }}>Action</th>
+                            <th>Actions</th>
+                            <th>Status</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -103,8 +126,16 @@ const UniformDefianceTable = ({ searchQuery }) => {
                                 <td style={{ textAlign: 'center' }}>{defiance.slip_id}</td>
                                 <td>{defiance.student_idnumber}</td>
                                 <td>{defiance.violation_nature}</td>
-                                <td>{defiance.status}</td>
                                 <td>{defiance.submitted_by}</td>
+                                <td>
+                                    <div 
+                                            className="d-flex align-items-center" 
+                                            style={{ cursor: 'pointer', color: '#000000', textDecoration: 'underline', fontWeight: 'bold' }} 
+                                            onClick={() => handleShowDetailsModal(defiance)}
+                                        >
+                                            View
+                                    </div>
+                                </td>
                                 <td>
                                     <div className="d-flex justify-content-around">
                                         <Button className='btn btn-success btn-md ms-2' onClick={() => updateStatus(defiance.slip_id, 'Approved')} style={{ backgroundColor: '#28a745', borderColor: '#28a745' }}>
@@ -119,8 +150,33 @@ const UniformDefianceTable = ({ searchQuery }) => {
                         ))}
                     </tbody>
                 </Table>
-
             </div>
+
+            {/* Modal to display record details */}
+            <Modal show={showDetailsModal} onHide={handleCloseDetailsModal}>
+                <Modal.Header closeButton>
+                    <Modal.Title style={{ marginLeft: '60px' }}>UNIFORM DEFIANCE SLIP</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    {selectedRecord && (
+                        <div>
+                            <p><strong>Slip ID:</strong> {selectedRecord.slip_id}</p>
+                            <p><strong>Student ID:</strong> {selectedRecord.student_idnumber}</p>
+                            <p><strong>Violation Nature:</strong> {selectedRecord.violation_nature}</p>
+                            <p><strong>File Preview:</strong></p>
+                            {renderFile()}
+                            <p><strong>Status:</strong> {selectedRecord.status}</p>
+                            <p><strong>Created At:</strong> {new Date(selectedRecord.created_at).toLocaleString()}</p>
+                            <p><strong>Submitted By:</strong> {selectedRecord.submitted_by}</p>
+                        </div>
+                    )}
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button variant="secondary" onClick={handleCloseDetailsModal}>
+                        Close
+                    </Button>
+                </Modal.Footer>
+            </Modal>
         </>
     );
 }
