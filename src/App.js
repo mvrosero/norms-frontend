@@ -33,8 +33,9 @@ import CoordinatorUniformDefiance from './pages/osa coordinator/CoordinatorUnifo
 import CoordinatorViolations from './pages/osa coordinator/CoordinatorViolations';
 import CoordinatorAnnouncements from './pages/osa coordinator/CoordinatorAnnouncements';
 import CoordinatorSettings from './pages/osa coordinator/CoordinatorSettings';
-import IndividualStudentRecord from './pages/osa coordinator/IndividualStudentRecord';
 import UniformDefianceHistory from './pages/osa coordinator/UniformDefianceHistory';
+import IndividualStudentRecord from './pages/osa coordinator/IndividualStudentRecord';
+import IndividualUniformDefiance from './pages/osa coordinator/IndividualUniformDefianceTable';
 
 /*security personnel*/
 import SecurityLandingPage from './pages/security/SecurityLandingPage';
@@ -80,8 +81,9 @@ function App() {
                 <Route path='/coordinator-violations' element={<CoordinatorViolations />} />
                 <Route path='/coordinator-announcements' element={<CoordinatorAnnouncements />} />
                 <Route path='/coordinator-settings' element={<CoordinatorSettings />} />
-                <Route path='/individualstudentrecord/:student_idnumber' element={<IndividualStudentRecord />} />
                 <Route path='/uniformdefiance-history' element={<UniformDefianceHistory />} />
+                <Route path='/individualstudentrecord/:student_idnumber' element={<IndividualStudentRecord />} />
+                <Route path='/individualuniformdefiance/:student_idnumber' element={<IndividualUniformDefiance />} />
 
                 <Route path='/defiance-selection' element={<SecurityLandingPage />} />
                 <Route path='/view-slips' element={<SecurityViewSlips />} />

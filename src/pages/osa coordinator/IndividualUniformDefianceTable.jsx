@@ -1,17 +1,15 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import axios from 'axios';
 import { Modal, Button, Table } from 'react-bootstrap';
-import Swal from 'sweetalert2';
-import DeleteIcon from '@mui/icons-material/Delete';
-import PersonIcon from '@mui/icons-material/Person';
-import { useNavigate } from 'react-router';
+import { useNavigate, useLocation } from 'react-router-dom';
 import Fuse from 'fuse.js'; // Import fuse.js
 
-const HistoryTable = ({ searchQuery }) => {
+const IndividualUniformDefiance = () => {
     const [defiances, setDefiances] = useState([]);
-    const [deletionStatus, setDeletionStatus] = useState(false); // State to track deletion status
     const [showModal, setShowModal] = useState(false); // State to manage modal visibility
     const [selectedFile, setSelectedFile] = useState(''); // State to manage selected file
+    const [searchQuery, setSearchQuery] = useState('');
+    const location = useLocation();
     const navigate = useNavigate();
 
     const headers = useMemo(() => {
@@ -21,89 +19,34 @@ const HistoryTable = ({ searchQuery }) => {
 
     const fetchDefiances = useCallback(async () => {
         try {
-            let response;
+            const student_idnumber = location.pathname.split('/').pop();
+            const response = await axios.get(`http://localhost:9000/uniform_defiances/${student_idnumber}`, { headers });
+            
             if (searchQuery) {
-                response = await axios.get('http://localhost:9000/uniform_defiances', { headers });
-
-                // Create a new instance of Fuse with the defiances data and search options
                 const fuse = new Fuse(response.data, {
                     keys: ['slip_id', 'student_idnumber', 'violation_nature', 'photo_video_filename', 'status', 'submitted_by'],
                     includeScore: true,
                     threshold: 0.4, // Adjust threshold as needed
                 });
 
-                // Perform fuzzy search
                 const searchResults = fuse.search(searchQuery);
-
-                // Extract the item from search results and filter out those with "Pending" status
                 const filteredDefiances = searchResults
                     .map(result => result.item)
                     .filter(defiance => defiance.status !== 'Pending');
 
                 setDefiances(filteredDefiances);
             } else {
-                response = await axios.get('http://localhost:9000/uniform_defiances', { headers });
-                // Filter out those with "Pending" status
                 const nonPendingDefiances = response.data.filter(defiance => defiance.status !== 'Pending');
                 setDefiances(nonPendingDefiances);
             }
         } catch (error) {
             console.error('Error fetching defiances:', error);
         }
-    }, [headers, searchQuery]);
+    }, [headers, searchQuery, location.pathname]);
 
     useEffect(() => {
         fetchDefiances();
     }, [fetchDefiances]);
-
-    const handleRedirect = async (slip_id) => {
-        try {
-            const response = await axios.get(`http://localhost:9000/uniform_defiance/${slip_id}`);
-            const defiance = response.data;
-            localStorage.setItem('selectedDefiance', JSON.stringify(defiance)); // Store selected defiance data in localStorage
-            navigate(`/individualdefiancerecord/${slip_id}`);
-        } catch (error) {
-            console.error('Error fetching defiance:', error);
-            Swal.fire({
-                icon: 'error',
-                text: 'An error occurred while fetching defiance data. Please try again later.',
-            });
-        }
-    };
-
-    const deleteDefiance = async (slipId) => {
-        const isConfirm = await Swal.fire({
-            title: 'Are you sure?',
-            text: "You won't be able to revert this!",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Yes, Delete it!'
-        }).then((result) => {
-            return result.isConfirmed;
-        });
-        if (!isConfirm) {
-            return;
-        }
-
-        try {
-            await axios.delete(`http://localhost:9000/uniform_defiance/${slipId}`, { headers });
-            Swal.fire({
-                icon: 'success',
-                text: "Successfully Deleted"
-            });
-            setDeletionStatus(prevStatus => !prevStatus); // Toggle deletionStatus to trigger re-fetch
-            // Update the defiances state by removing the deleted defiance
-            setDefiances(prevDefiances => prevDefiances.filter(defiance => defiance.slip_id !== slipId));
-        } catch (error) {
-            console.error('Error deleting defiance:', error);
-            Swal.fire({
-                icon: 'error',
-                text: 'An error occurred while deleting defiance. Please try again later.',
-            });
-        }
-    };
 
     const handleShowModal = (file) => {
         setSelectedFile(file);
@@ -116,14 +59,25 @@ const HistoryTable = ({ searchQuery }) => {
     };
 
     const handleStudentRedirect = (student_idnumber) => {
-        navigate(`/individualuniformdefiance/${student_idnumber}`);
+        navigate(`/individualstudentrecord/${student_idnumber}`);
     };
 
     return (
         <>
             <div className='container'>
-                <br />
                 <div className='col-12'>
+                    <input
+                        type="text"
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        placeholder="Search..."
+                        style={{
+                            padding: '8px',
+                            margin: '10px',
+                            borderRadius: '5px',
+                            border: '1px solid #ccc'
+                        }}
+                    />
                 </div>
 
                 {/* Defiance table */}
@@ -205,4 +159,4 @@ const HistoryTable = ({ searchQuery }) => {
     );
 }
 
-export default HistoryTable;
+export default IndividualUniformDefiance;
