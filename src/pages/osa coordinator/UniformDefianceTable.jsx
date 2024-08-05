@@ -1,16 +1,15 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import axios from 'axios';
-import { Modal, Button, Form, Table } from 'react-bootstrap';
+import { Button, Table } from 'react-bootstrap';
 import Swal from 'sweetalert2';
-import DeleteIcon from '@mui/icons-material/Delete';
-import PersonIcon from '@mui/icons-material/Person';
+import CheckIcon from '@mui/icons-material/Check';
+import CloseIcon from '@mui/icons-material/Close';
 import { useNavigate } from 'react-router';
-import Fuse from 'fuse.js'; // Import fuse.js
-
+import Fuse from 'fuse.js';
 
 const UniformDefianceTable = ({ searchQuery }) => {
     const [defiances, setDefiances] = useState([]);
-    const [deletionStatus, setDeletionStatus] = useState(false); // State to track deletion status
+    const [deletionStatus, setDeletionStatus] = useState(false);
     const navigate = useNavigate();
 
     const headers = useMemo(() => {
@@ -24,17 +23,13 @@ const UniformDefianceTable = ({ searchQuery }) => {
             if (searchQuery) {
                 response = await axios.get('http://localhost:9000/uniform_defiances', { headers });
 
-                // Create a new instance of Fuse with the defiances data and search options
                 const fuse = new Fuse(response.data, {
-                    keys: ['defiance_id', 'student_idnumber', 'violation_date', 'remarks'],
+                    keys: ['slip_id', 'student_idnumber', 'violation_nature', 'status', 'submitted_by'],
                     includeScore: true,
-                    threshold: 0.4, // Adjust threshold as needed
+                    threshold: 0.4,
                 });
 
-                // Perform fuzzy search
                 const searchResults = fuse.search(searchQuery);
-
-                // Extract the item from search results
                 const filteredDefiances = searchResults.map(result => result.item);
 
                 setDefiances(filteredDefiances);
@@ -51,12 +46,12 @@ const UniformDefianceTable = ({ searchQuery }) => {
         fetchDefiances();
     }, [fetchDefiances]);
 
-    const handleRedirect = async (defiance_id) => {
+    const handleRedirect = async (slip_id) => {
         try {
-            const response = await axios.get(`http://localhost:9000/uniform_defiance/${defiance_id}`);
+            const response = await axios.get(`http://localhost:9000/uniform_defiance/${slip_id}`);
             const defiance = response.data;
-            localStorage.setItem('selectedDefiance', JSON.stringify(defiance)); // Store selected defiance data in localStorage
-            navigate(`/individualdefiancerecord/${defiance_id}`);
+            localStorage.setItem('selectedDefiance', JSON.stringify(defiance));
+            navigate(`/individualdefiancerecord/${slip_id}`);
         } catch (error) {
             console.error('Error fetching defiance:', error);
             Swal.fire({
@@ -66,36 +61,23 @@ const UniformDefianceTable = ({ searchQuery }) => {
         }
     };
 
-    const deleteDefiance = async (defianceId) => {
-        const isConfirm = await Swal.fire({
-            title: 'Are you sure?',
-            text: "You won't be able to revert this!",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Yes, Delete it!'
-        }).then((result) => {
-            return result.isConfirmed;
-        });
-        if (!isConfirm) {
-            return;
-        }
-
+    const updateStatus = async (slipId, newStatus) => {
         try {
-            await axios.delete(`http://localhost:9000/uniform_defiance/${defianceId}`, { headers });
+            await axios.put(`http://localhost:9000/uniform_defiance/${slipId}`, { status: newStatus }, { headers });
             Swal.fire({
                 icon: 'success',
-                text: "Successfully Deleted"
+                text: `Successfully Updated to ${newStatus}`
             });
-            setDeletionStatus(prevStatus => !prevStatus); // Toggle deletionStatus to trigger re-fetch
-            // Update the defiances state by removing the deleted defiance
-            setDefiances(prevDefiances => prevDefiances.filter(defiance => defiance.defiance_id !== defianceId));
+            setDefiances(prevDefiances => 
+                prevDefiances.map(defiance =>
+                    defiance.slip_id === slipId ? { ...defiance, status: newStatus } : defiance
+                )
+            );
         } catch (error) {
-            console.error('Error deleting defiance:', error);
+            console.error('Error updating defiance status:', error);
             Swal.fire({
                 icon: 'error',
-                text: 'An error occurred while deleting defiance. Please try again later.',
+                text: 'An error occurred while updating defiance status. Please try again later.',
             });
         }
     };
@@ -107,31 +89,32 @@ const UniformDefianceTable = ({ searchQuery }) => {
                 <div className='col-12'>
                 </div>
 
-                {/*defiance table*/}
                 <Table bordered hover style={{ borderRadius: '20px', marginLeft: '110px' }}>
-                    <thead style={{ backgroundColor: '#f8f9fa' }}> {/* Setting header background color */}
+                    <thead style={{ backgroundColor: '#f8f9fa' }}>
                         <tr>
-                            <th style={{ width: '5%' }}>ID</th>
-                            <th style={{ width: '10%' }}>ID Number</th>
-                            <th>Violation Date</th>
-                            <th>Remarks</th>
+                            <th style={{ width: '5%' }}>Slip ID</th>
+                            <th style={{ width: '10%' }}>Student ID Number</th>
+                            <th>Violation Nature</th>
+                            <th>Status</th>
+                            <th>Submitted By</th>
                             <th style={{ width: '10%' }}>Action</th>
                         </tr>
                     </thead>
                     <tbody>
                         {defiances.map((defiance, index) => (
                             <tr key={index}>
-                                <td style={{ textAlign: 'center' }}>{defiance.defiance_id}</td>
+                                <td style={{ textAlign: 'center' }}>{defiance.slip_id}</td>
                                 <td>{defiance.student_idnumber}</td>
-                                <td>{defiance.violation_date}</td>
-                                <td>{defiance.remarks}</td>
+                                <td>{defiance.violation_nature}</td>
+                                <td>{defiance.status}</td>
+                                <td>{defiance.submitted_by}</td>
                                 <td>
                                     <div className="d-flex justify-content-around">
-                                        <Button className='btn btn-secondary btn-md ms-2' onClick={() => handleRedirect(defiance.defiance_id)}>
-                                            <PersonIcon />
+                                        <Button className='btn btn-success btn-md ms-2' onClick={() => updateStatus(defiance.slip_id, 'Approved')}>
+                                            <CheckIcon />
                                         </Button>
-                                        <Button className='btn btn-danger btn-md ms-2' onClick={() => deleteDefiance(defiance.defiance_id)}>
-                                            <DeleteIcon />
+                                        <Button className='btn btn-danger btn-md ms-2' onClick={() => updateStatus(defiance.slip_id, 'Rejected')}>
+                                            <CloseIcon />
                                         </Button>
                                     </div>
                                 </td>
