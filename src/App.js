@@ -10,6 +10,7 @@ import "./styles/font.css";
 import BirthdateVerification from './pages/general/BirthdateVerification';
 import Handbook from './pages/general/Handbook';
 import LandingPage from './pages/general/LandingPage';
+import AccountSettings from './pages/general/AccountSettings';
 
 /*login*/
 import LoginSelectionPage from './pages/general/LoginSelection';
@@ -62,6 +63,7 @@ function App() {
                 <Route path="/birthdate-verification/:id" element={<BirthdateVerification />} />
                 <Route path='/handbook' element={<Handbook />} />
                 <Route path='/' element={<LandingPage />} />
+                <Route path='/' element={<AccountSettings />} />
 
                 <Route path='/login-selection' element={<LoginSelectionPage/>} /> 
                 <Route path='/admin-login' element={<AdminLogin />} />
