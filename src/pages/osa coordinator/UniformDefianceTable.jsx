@@ -92,14 +92,23 @@ const UniformDefianceTable = ({ searchQuery }) => {
     };
 
     const renderFile = () => {
-        if (selectedRecord && selectedRecord.file) {
-            return (
-                <a href={selectedRecord.file} target="_blank" rel="noopener noreferrer">
-                    View File
-                </a>
-            );
+        if (selectedRecord) {
+            const { photo_video_filename } = selectedRecord;
+            const fileExtension = photo_video_filename.split('.').pop().toLowerCase();
+    
+            if (fileExtension === 'mp4' || fileExtension === 'avi' || fileExtension === 'mov') {
+                return (
+                    <video controls src={`http://localhost:9000/uniform_defiance/${selectedRecord.slip_id}`} style={{ maxWidth: '100%' }} />
+                );
+            } else if (fileExtension === 'jpg' || fileExtension === 'jpeg' || fileExtension === 'png' || fileExtension === 'gif') {
+                return (
+                    <img src={`http://localhost:9000/uniform_defiance/${selectedRecord.slip_id}`} alt="File Preview" style={{ maxWidth: '100%' }} />
+                );
+            } else {
+                return <p>Unsupported file format</p>; // Handle unsupported formats
+            }
         }
-        return <p>No file available</p>;
+        return null;
     };
 
     return (
