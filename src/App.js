@@ -63,7 +63,7 @@ function App() {
                 <Route path="/birthdate-verification/:id" element={<BirthdateVerification />} />
                 <Route path='/handbook' element={<Handbook />} />
                 <Route path='/' element={<LandingPage />} />
-                <Route path='/' element={<AccountSettings />} />
+                <Route path='/account-settings' element={<AccountSettings />} />
 
                 <Route path='/login-selection' element={<LoginSelectionPage/>} /> 
                 <Route path='/admin-login' element={<AdminLogin />} />
