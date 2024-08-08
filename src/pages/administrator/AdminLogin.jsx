@@ -9,25 +9,29 @@ import osaLogo from '../../components/images/osa_logo.png';
 
 const AdminLogin = () => {
     const navigate = useNavigate();
-
-    const [employee_idnumber, setUserNumber] = useState('');
+    const [employee_idnumber, setEmployeeNumber] = useState('');
     const [password, setPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false); 
 
     const handleLogin = async (e) => {
-        e.preventDefault(); 
+        e.preventDefault();
         try {
             const response = await axios.post('http://localhost:9000/admin-login', {
                 employee_idnumber,
                 password
             });
-
-            if (response.status === 200) {
-                const { token, role_id, loggedInEmployeeIdNumber } = response.data;
+    
+            console.log('Server Response:', response.data); // Debugging statement
+    
+            if (response.status === 200 && response.data.hasOwnProperty('token')) {
+                const { token, role_id, employee_idnumber: loggedInEmployeeIdNumber } = response.data;
+    
+                // Store the token, role_id, and employee_idnumber in localStorage
                 localStorage.setItem('token', token);
                 localStorage.setItem('role_id', role_id);
-                localStorage.setItem('employee_idnumber', loggedInEmployeeIdNumber);
-
+                localStorage.setItem('employee_idnumber', employee_idnumber); // Store employee_idnumber
+    
+                // Redirect if role_id is 1
                 if (role_id === 1) {  // Assuming role_id 1 is for admin
                     navigate('/admin-dashboard');
                     Swal.fire({
@@ -38,31 +42,32 @@ const AdminLogin = () => {
                 } else {
                     Swal.fire({
                         icon: 'error',
-                        title: 'Access Denied',
-                        text: 'You do not have permission to access this page.',
+                        title: 'Login Failed',
+                        text: 'Unauthorized role.',
                     });
                 }
             } else {
+                console.error('Token not found in response data');
                 Swal.fire({
                     icon: 'error',
                     title: 'Login Failed',
-                    text: 'Invalid credentials. Please try again.',
+                    text: 'An error occurred while processing the login data. Please try again later.',
                 });
             }
         } catch (error) {
-            console.error('Login failed', error);
+            console.error('Login failed:', error);
             Swal.fire({
                 icon: 'error',
                 title: 'Login Failed',
-                text: 'Invalid credentials. Please try again.',
+                text: 'An error occurred while processing your request. Please try again later.',
             });
         }
     };
+    
 
     const togglePasswordVisibility = () => {
         setShowPassword(!showPassword);
     };
-
 
     return (
         <div style={{ backgroundImage: `url(${osaMotto})`, backgroundSize: '100% 100%', width: '100vw', height: '100vh', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
@@ -79,7 +84,7 @@ const AdminLogin = () => {
                                 <div style={{ backgroundColor: 'white', borderRadius: '20% 0 0 20%', width: '50px', height: '40px', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                                     <FontAwesomeIcon icon={faUser} size="lg" style={{ color: '#134E0F' }}/>
                                 </div>
-                                <input type="text" placeholder="Employee Number" value={employee_idnumber} onChange={(e) => setUserNumber(e.target.value)} required style={{ backgroundColor: 'rgba(255, 255, 255, 0.8)', borderRadius: '0 7px 7px 0', padding: '10px', marginLeft: '0px', width: '100%', '::placeholder': { color: '#818181' } }} />
+                                <input type="text" placeholder="Employee Number" value={employee_idnumber} onChange={(e) => setEmployeeNumber(e.target.value)} required style={{ backgroundColor: 'rgba(255, 255, 255, 0.8)', borderRadius: '0 7px 7px 0', padding: '10px', marginLeft: '0px', width: '100%', '::placeholder': { color: '#818181' } }} />
                             </div>
                         </div>
                         <div className="form-group py-2" style={{ marginBottom: '15px' }}>
