@@ -12,15 +12,15 @@ const AdminInfo = ({ name, role, profilePhoto }) => {
     setIsDropdownOpen(!isDropdownOpen);
   };
 
-  
+
   const handleSettings = () => {
     navigate('/admin-settings'); 
   };
   
-  
   const handleLogout = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('role_id');
+    localStorage.removeItem('employee_idnumber');
     navigate('/admin-login'); 
   };
 

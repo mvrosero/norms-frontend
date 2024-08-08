@@ -46,12 +46,6 @@ const StudentLogin = () => {
         }
     };
 
-    const handleLogout = () => {
-        localStorage.removeItem('token'); // Remove token from local storage
-        localStorage.removeItem('role_id'); // Remove role_id from local storage
-        localStorage.removeItem('student_idnumber'); // Remove student_idnumber from local storage
-        navigate('/login'); // Redirect to the login page
-    };
 
     const togglePasswordVisibility = () => {
         setShowPassword(!showPassword);

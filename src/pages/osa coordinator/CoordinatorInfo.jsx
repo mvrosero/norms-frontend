@@ -15,6 +15,7 @@ const CoordinatorInfo = ({ name, role, profilePhoto }) => {
   const handleLogout = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('role_id');
+    localStorage.removeItem('employee_idnumber');
 
     navigate('/employee-login'); 
   };
