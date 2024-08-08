@@ -14,9 +14,6 @@ export default function AccountSettings() {
     const roleId = localStorage.getItem('role_id');
     const [user, setUser] = useState({});
     const [profilePhoto, setProfilePhoto] = useState(null);
-    const [password, setPassword] = useState('');
-    const [currentPassword, setCurrentPassword] = useState('');
-    const [newPassword, setNewPassword] = useState('');
 
     useEffect(() => {
         const token = localStorage.getItem('token');
@@ -53,8 +50,11 @@ export default function AccountSettings() {
         }
 
         try {
-            const response = await axios.post('/api/user/update', formData, {
-                headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+            const response = await axios.put('/employee/photo', formData, {
+                headers: { 
+                    Authorization: `Bearer ${localStorage.getItem('token')}`, 
+                    'Content-Type': 'multipart/form-data' 
+                }
             });
             Swal.fire({
                 icon: 'success',
@@ -66,32 +66,6 @@ export default function AccountSettings() {
                 icon: 'error',
                 title: 'Profile update failed',
                 text: 'Please try again later!',
-            });
-        }
-    };
-
-    const handlePasswordChangeSubmit = async (event) => {
-        event.preventDefault();
-
-        try {
-            const response = await axios.put(`/api/change-password/${user.user_id}`, {
-                current_password: currentPassword,
-                new_password: newPassword
-            }, {
-                headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
-            });
-            Swal.fire({
-                icon: 'success',
-                title: response.data.message,
-            });
-            setCurrentPassword('');
-            setNewPassword('');
-        } catch (error) {
-            console.error('Failed to change password', error);
-            Swal.fire({
-                icon: 'error',
-                title: 'Password change failed',
-                text: error.response?.data?.error || 'Please try again later!',
             });
         }
     };
@@ -143,39 +117,6 @@ export default function AccountSettings() {
                         </button>
                     </div>
                 </form>
-                <div style={{ marginTop: '40px' }}>
-                    <h2 style={{ fontFamily: 'Poppins', fontSize: '24px', fontWeight: '700' }}>Change Password</h2>
-                    <form onSubmit={handlePasswordChangeSubmit}>
-                        <div style={{ marginBottom: '20px', width: '100%' }}>
-                            <label htmlFor="current-password" style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>Current Password:</label>
-                            <input 
-                                type="password" 
-                                id="current-password" 
-                                placeholder="Enter Current Password" 
-                                value={currentPassword} 
-                                onChange={(e) => setCurrentPassword(e.target.value)} 
-                                style={{ width: '100%', padding: '10px', borderRadius: '3px', border: '1px solid #ccc' }}
-                            />
-                        </div>
-                        <div style={{ marginBottom: '20px', width: '100%' }}>
-                            <label htmlFor="new-password" style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>New Password:</label>
-                            <input 
-                                type="password" 
-                                id="new-password" 
-                                placeholder="Enter New Password" 
-                                value={newPassword} 
-                                onChange={(e) => setNewPassword(e.target.value)} 
-                                style={{ width: '100%', padding: '10px', borderRadius: '3px', border: '1px solid #ccc' }}
-                            />
-                        </div>
-                        <button 
-                            type="submit" 
-                            style={{ padding: '10px 20px', borderRadius: '3px', backgroundColor: '#4CAF50', color: 'white', border: 'none', cursor: 'pointer' }}
-                        >
-                            Change Password
-                        </button>
-                    </form>
-                </div>
             </div>
         </div>
     );
