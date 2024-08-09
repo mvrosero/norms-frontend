@@ -44,10 +44,10 @@ body {
   position: fixed;
   top: 0;
   right: 0;
-  width: 16%; /* Make the rectangle longer */
+  width: 17%; /* Adjust width as needed */
   background-color: #0D4809; /* Green color */
   padding: 15px; /* Adjust padding */
-  border-bottom-left-radius: 100px; /* More rounded corners */
+  border-bottom-left-radius: 100px; /* Rounded corners */
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
   z-index: 999; /* Ensure it's on top of other elements */
   display: flex;
@@ -57,20 +57,20 @@ body {
 .profileInfo {
   display: flex;
   align-items: center;
-  margin-right: 10px;
+  margin-right: 5px;
 }
 
 .profilePhoto {
   width: 30px;
   height: 30px;
   border-radius: 50%;
-  margin-right: 5px;
-  margin-left: 20px; /* Add margin for spacing */
+  margin-right: 2px;
+  margin-left: 15px; /* Add margin for spacing */
 }
 
 .userInfo {
   color: white; /* Font color white */
-  text-align: center; /* Center text */
+  text-align: left; /* Align text to the left */
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -81,15 +81,21 @@ body {
 .name {
   font-weight: bold;
   font-size: 12px; /* Adjust font size */
+  white-space: nowrap; /* Prevent text from wrapping */
+  overflow: hidden; /* Handle overflow */
+  text-overflow: ellipsis; /* Add ellipsis if the text is too long */
 }
 
 .role {
   font-size: 10px; /* Adjust font size */
+  color: #ccc; /* Lighter color for the role */
+  margin-top: 2px; /* Small margin to separate from name */
 }
+
 
 .dropdownIcon {
   cursor: pointer; /* Change cursor to pointer for better UX */
-  margin-left: auto; /* Pushes the dropdown icon to the right */
+  margin-left: 20px; /* Pushes the dropdown icon to the right */
 }
 
 .dropdownMenu {

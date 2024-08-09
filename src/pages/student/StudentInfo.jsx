@@ -5,35 +5,42 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import user_icon from '../../assets/images/default_profile.jpg';
 
-const StudentInfo = ({ name, role }) => {
+const StudentInfo = ({ role }) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const [profilePhoto, setProfilePhoto] = useState(user_icon); // Default to user_icon initially
+  const [profilePhoto, setProfilePhoto] = useState(user_icon);
+  const [userName, setUserName] = useState(''); // State to hold the user's name
   const navigate = useNavigate();
-  const userId = localStorage.getItem('user_id'); // Get user ID from local storage
+  const studentId = localStorage.getItem('student_idnumber'); // Get student ID from local storage
 
   useEffect(() => {
-    const fetchProfilePhoto = async () => {
+    const fetchProfileData = async () => {
       try {
-        const response = await axios.get(`http://localhost:9000/profile-photo/${userId}`, {
+        const response = await axios.get(`http://localhost:9000/student/${studentId}`, {
           headers: {
             'Authorization': `Bearer ${localStorage.getItem('token')}` // Add token for authentication
           }
         });
 
-        const photoFilename = response.data.profile_photo_filename;
-        if (photoFilename) {
-          const photoUrl = `http://localhost:9000/uploads/profile_photo/${photoFilename}`;
-          setProfilePhoto(photoUrl);
+        const studentData = response.data[0];
+        if (studentData) {
+          const fullName = `${studentData.first_name} ${studentData.last_name}`.trim();
+          setUserName(fullName);
+
+          const photoFilename = studentData.profile_photo_filename;
+          if (photoFilename) {
+            const photoUrl = `http://localhost:9000/uploads/profile_photo/${photoFilename}`;
+            setProfilePhoto(photoUrl);
+          }
         }
       } catch (error) {
-        console.error('Error fetching profile photo:', error);
+        console.error('Error fetching student data:', error);
       }
     };
 
-    if (userId) {
-      fetchProfilePhoto();
+    if (studentId) {
+      fetchProfileData();
     }
-  }, [userId]);
+  }, [studentId]);
 
   const toggleDropdown = () => {
     setIsDropdownOpen(!isDropdownOpen);
@@ -61,7 +68,7 @@ const StudentInfo = ({ name, role }) => {
           }}
         />
         <div className="userInfo">
-          <p className="name">{name}</p>
+          <p className="name">{userName}</p>
           <p className="role">{role}</p>
         </div>
       </div>
@@ -85,12 +92,10 @@ const StudentInfo = ({ name, role }) => {
 };
 
 StudentInfo.propTypes = {
-  name: PropTypes.string.isRequired,
   role: PropTypes.string.isRequired,
 };
 
 StudentInfo.defaultProps = {
-  name: 'FULL NAME',
   role: 'Student',
 };
 

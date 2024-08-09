@@ -5,33 +5,40 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import user_icon from '../../assets/images/default_profile.jpg';
 
-const SecurityInfo = ({ name, role }) => {
+const SecurityInfo = ({ role }) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [profilePhoto, setProfilePhoto] = useState(user_icon); // Default to user_icon initially
+  const [userName, setUserName] = useState(''); // State to hold the user's name
   const navigate = useNavigate();
   const userId = localStorage.getItem('user_id'); // Get user ID from local storage
 
   useEffect(() => {
-    const fetchProfilePhoto = async () => {
+    const fetchProfileData = async () => {
       try {
-        const response = await axios.get(`http://localhost:9000/profile-photo/${userId}`, {
+        const response = await axios.get(`http://localhost:9000/employee/${userId}`, {
           headers: {
             'Authorization': `Bearer ${localStorage.getItem('token')}` // Add token for authentication
           }
         });
 
-        const photoFilename = response.data.profile_photo_filename;
-        if (photoFilename) {
-          const photoUrl = `http://localhost:9000/uploads/profile_photo/${photoFilename}`;
-          setProfilePhoto(photoUrl);
+        const userData = response.data[0]; // Assuming the response is an array with the user data
+        if (userData) {
+          const fullName = `${userData.first_name} ${userData.last_name}`.trim();
+          setUserName(fullName);
+
+          const photoFilename = userData.profile_photo_filename;
+          if (photoFilename) {
+            const photoUrl = `http://localhost:9000/uploads/profile_photo/${photoFilename}`;
+            setProfilePhoto(photoUrl);
+          }
         }
       } catch (error) {
-        console.error('Error fetching profile photo:', error);
+        console.error('Error fetching profile data:', error);
       }
     };
 
     if (userId) {
-      fetchProfilePhoto();
+      fetchProfileData();
     }
   }, [userId]);
 
@@ -65,7 +72,7 @@ const SecurityInfo = ({ name, role }) => {
           }}
         />
         <div className="userInfo">
-          <p className="name">{name}</p>
+          <p className="name">{userName}</p>
           <p className="role">{role}</p>
         </div>
       </div>
@@ -89,15 +96,11 @@ const SecurityInfo = ({ name, role }) => {
 };
 
 SecurityInfo.propTypes = {
-  name: PropTypes.string.isRequired,
   role: PropTypes.string.isRequired,
-  profilePhoto: PropTypes.string,
 };
 
 SecurityInfo.defaultProps = {
-  name: 'FULL NAME',
   role: 'Security',
-  profilePhoto: user_icon,
 };
 
 export default SecurityInfo;
