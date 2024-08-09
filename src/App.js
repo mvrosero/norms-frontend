@@ -42,6 +42,7 @@ import IndividualUniformDefiance from './pages/osa coordinator/IndividualUniform
 import SecurityLandingPage from './pages/security/SecurityLandingPage';
 import SecurityViewSlips from './pages/security/SecurityViewSlips';
 import SecurityCreateSlip from './pages/security/SecurityCreateSlip';
+import SecuritySettings from './pages/security/SecuritySettings';
 
 /*student*/
 import StudentAboutAndContact from './pages/student/StudentAboutAndContact';
@@ -90,6 +91,7 @@ function App() {
                 <Route path='/defiance-selection' element={<SecurityLandingPage />} />
                 <Route path='/view-slips' element={<SecurityViewSlips />} />
                 <Route path='/create-slip' element={<SecurityCreateSlip />} />
+                <Route path='/security-settings' element={<SecuritySettings />} />
 
                 <Route path='/aboutcontact' element={<StudentAboutAndContact/>} />
                 <Route path='/student-announcements' element={<StudentAnnouncements />} />

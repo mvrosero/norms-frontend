@@ -49,7 +49,7 @@ const SecurityInfo = ({ name, role }) => {
   };
 
   const handleSettings = () => {
-    navigate('/account-settings'); // Adjust path as needed
+    navigate('/security-settings'); // Adjust path as needed
   };
 
   return (
