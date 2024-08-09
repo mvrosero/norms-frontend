@@ -40,6 +40,9 @@ import CoordinatorSettings from './pages/osa coordinator/CoordinatorSettings';
 import UniformDefianceHistory from './pages/osa coordinator/UniformDefianceHistory';
 import IndividualStudentRecord from './pages/osa coordinator/IndividualStudentRecord';
 import IndividualUniformDefiance from './pages/osa coordinator/IndividualUniformDefianceTable';
+import ManageCategories from './pages/osa coordinator/ManageCategories';
+import ManageOffenses from './pages/osa coordinator/ManageOffenses';
+import ManageSanctions from './pages/osa coordinator/ManageSanctions';
 
 /*security personnel*/
 import SecurityLandingPage from './pages/security/SecurityLandingPage';
@@ -53,7 +56,6 @@ import StudentAnnouncements from './pages/student/StudentAnnouncements';
 import StudentLegislations from './pages/student/StudentLegislation';
 import StudentMyRecords from './pages/student/StudentMyRecords';
 import StudentSettings from './pages/student/StudentSettings';
-
 
 function App() {
   return (
@@ -93,6 +95,9 @@ function App() {
                 <Route path='/uniformdefiance-history' element={<UniformDefianceHistory />} />
                 <Route path='/individualstudentrecord/:student_idnumber' element={<IndividualStudentRecord />} />
                 <Route path='/individualuniformdefiance/:student_idnumber' element={<IndividualUniformDefiance />} />
+                <Route path='/manage-offenses' element={<ManageOffenses />} />
+                <Route path='/manage-sanctions' element={<ManageSanctions />} />
+                <Route path='/manage-categories' element={<ManageCategories />} />
 
                 <Route path='/defiance-selection' element={<SecurityLandingPage />} />
                 <Route path='/view-slips' element={<SecurityViewSlips />} />
