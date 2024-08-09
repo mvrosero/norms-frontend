@@ -20,6 +20,7 @@ const AdminInfo = ({ name, role, profilePhoto }) => {
   const handleLogout = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('role_id');
+    localStorage.removeItem('user_id');
     localStorage.removeItem('employee_idnumber');
     navigate('/admin-login'); 
   };

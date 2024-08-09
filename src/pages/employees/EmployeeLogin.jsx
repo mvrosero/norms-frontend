@@ -21,11 +21,12 @@ const EmployeeLogin = () => {
             });
     
             if (response.status === 200 && response.data.hasOwnProperty('token')) {
-                const { token, role_id } = response.data;
+                const { token, role_id, user_id } = response.data;
 
                 // Store the token, role_id, and employee_idnumber in localStorage
                 localStorage.setItem('token', token);
                 localStorage.setItem('role_id', role_id);
+                localStorage.setItem('user_id', user_id);
                 localStorage.setItem('employee_idnumber', employee_idnumber); // Store employee_idnumber
     
                 if (role_id === 2) {

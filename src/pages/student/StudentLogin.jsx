@@ -21,9 +21,10 @@ const StudentLogin = () => {
                 password
             });
 
-            const { token, role_id, student_idnumber: loggedInStudentIdNumber } = response.data; // Extract student_idnumber from response
+            const { token, role_id, user_id, student_idnumber: loggedInStudentIdNumber } = response.data; // Extract student_idnumber from response
             localStorage.setItem('token', token); // Store the token in local storage
             localStorage.setItem('role_id', role_id); // Store the role_id in local storage
+            localStorage.setItem('user_id', user_id);
             localStorage.setItem('student_idnumber', loggedInStudentIdNumber); // Store the student_idnumber in local storage
 
             if (role_id === 3) {
