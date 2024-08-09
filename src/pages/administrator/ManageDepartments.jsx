@@ -212,7 +212,7 @@ export default function ManageDepartments() {
                     <FaPlus style={{ marginLeft: '10px' }} />
                 </button>
             </div>
-            <div style={{ margin: 'auto', marginLeft: '20px', paddingLeft: '20px' }}>
+            <div style={{ margin: 'auto', marginTop: '20px', marginBottom: '30px', marginLeft: '20px', paddingLeft: '20px' }}>
                 <table style={{ width: '90%', borderCollapse: 'collapse', marginLeft: '90px', paddingLeft: '50px' }}>
                     <thead>
                         <tr>
