@@ -10,11 +10,9 @@ export default function SecuritySettings() {
     const user_id = localStorage.getItem('user_id');
 
     const handleNavigation = (path) => {
-        if (user_id) {
-            navigate(`${path}/${user_id}`);
-        } else {
-            console.error('User ID not found');
-        }
+        // Only add user_id for the '/account-settings' path
+        const fullPath = path === '/account-settings' && user_id ? `${path}/${user_id}` : path;
+        navigate(fullPath);
     };
 
     const containerStyle = {

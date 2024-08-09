@@ -26,6 +26,7 @@ import StudentRegistration from './pages/administrator/StudentRegistration';
 import AdminDashboard from './pages/administrator/AdminDashboard';
 import AdminUserManagement from './pages/administrator/AdminUserManagement';
 import AdminSettings from './pages/administrator/AdminSettings';
+import ManageDepartments from './pages/administrator/ManageDepartments';
 
 /*osa coordinator*/
 import CoordinatorDashboard from './pages/osa coordinator/CoordinatorDashboard';
@@ -77,6 +78,7 @@ function App() {
                 <Route path='/admin-dashboard' element={<AdminDashboard />} />
                 <Route path='/admin-usermanagement' element={<AdminUserManagement />} />
                 <Route path='/admin-settings' element={<AdminSettings />} />
+                <Route path='/manage-departments' element={<ManageDepartments />} />
 
                 <Route path='/coordinator-dashboard' element={<CoordinatorDashboard />} />
                 <Route path='/coordinator-studentrecords' element={<CoordinatorStudentRecords />} />
