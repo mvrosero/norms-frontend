@@ -9,6 +9,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 
 import AdminNavigation from './AdminNavigation';
 import AdminInfo from './AdminInfo';
+import SearchAndFilter from '../general/SearchAndFilter';
 
 export default function ManageAcademicYears() {
     const [academicYears, setAcademicYears] = useState([]);
@@ -138,6 +139,7 @@ export default function ManageAcademicYears() {
             <AdminNavigation />
             <AdminInfo />
             <h6 className="page-title">Manage Academic Years</h6>
+            <SearchAndFilter/>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', marginTop: '30px' }}>
                 <Button onClick={handleOpenModal} style={{ backgroundColor: '#FAD32E', color: 'white', fontWeight: '900' }}>
                     Add Academic Year
@@ -174,7 +176,7 @@ export default function ManageAcademicYears() {
                 </table>
             </div>
 
-            {/* Modal for Add/Edit Academic Year */}
+            {/* Modal for the Add/Edit Academic Year */}
             <Modal show={showModal} onHide={handleCloseModal}>
                 <Modal.Header closeButton>
                     <Modal.Title>{editMode ? 'Edit Academic Year' : 'Add New Academic Year'}</Modal.Title>
