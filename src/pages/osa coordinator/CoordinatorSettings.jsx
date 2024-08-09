@@ -9,24 +9,29 @@ import CoordinatorInfo from './CoordinatorInfo';
 
 export default function CoordinatorSettings() {
     const navigate = useNavigate();
+    const user_id = localStorage.getItem('user_id');
 
     const handleNavigation = (path) => {
-        navigate(path);
+        if (user_id) {
+            navigate(`${path}/${user_id}`);
+        } else {
+            console.error('User ID not found');
+        }
     };
 
     const containerStyle = {
         backgroundColor: '#f8f9fa',
         border: '1px solid #dee2e6',
-        borderRadius: '8px', // Adjusted to px
+        borderRadius: '8px',
         padding: '10px 20px',
-        textAlign: 'left', // Align text to the left
+        textAlign: 'left',
         cursor: 'pointer',
         transition: 'background-color 0.3s, box-shadow 0.3s',
         marginBottom: '10px',
         height: '80px',
         maxWidth: '100%',
         display: 'flex',
-        alignItems: 'center', // Center the icon and text vertically
+        alignItems: 'center',
     };
 
     const containerHoverStyle = {
@@ -35,13 +40,13 @@ export default function CoordinatorSettings() {
     };
 
     const iconStyle = {
-        fontSize: '35px', // Adjusted to px
+        fontSize: '35px',
         marginLeft: '20px',
-        marginRight: '30px' // Space between icon and text
+        marginRight: '30px',
     };
 
     const textStyle = {
-        fontSize: '20px', // Adjusted to px
+        fontSize: '20px',
         fontWeight: '500',
         marginLeft: '10px',
     };
@@ -52,7 +57,7 @@ export default function CoordinatorSettings() {
         position: 'absolute',
         right: '20px',
         top: '50%',
-        transform: 'translateY(-50%)', // Center the arrow vertically
+        transform: 'translateY(-50%)',
     };
 
     return (
