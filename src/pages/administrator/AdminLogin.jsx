@@ -24,11 +24,12 @@ const AdminLogin = () => {
             console.log('Server Response:', response.data); // Debugging statement
     
             if (response.status === 200 && response.data.hasOwnProperty('token')) {
-                const { token, role_id, employee_idnumber: loggedInEmployeeIdNumber } = response.data;
+                const { token, role_id, user_id, employee_idnumber: loggedInEmployeeIdNumber } = response.data;
     
                 // Store the token, role_id, and employee_idnumber in localStorage
                 localStorage.setItem('token', token);
                 localStorage.setItem('role_id', role_id);
+                localStorage.setItem('user_id', user_id);
                 localStorage.setItem('employee_idnumber', employee_idnumber); // Store employee_idnumber
     
                 // Redirect if role_id is 1
