@@ -1,8 +1,7 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUserCog, faBuilding, faBook, faCalendarAlt, faChevronRight } from '@fortawesome/free-solid-svg-icons';
-
 
 import CoordinatorNavigation from './CoordinatorNavigation';
 import CoordinatorInfo from './CoordinatorInfo';
@@ -32,6 +31,7 @@ export default function CoordinatorSettings() {
         maxWidth: '100%',
         display: 'flex',
         alignItems: 'center',
+        position: 'relative', // Added relative positioning
     };
 
     const containerHoverStyle = {
@@ -49,6 +49,7 @@ export default function CoordinatorSettings() {
         fontSize: '20px',
         fontWeight: '500',
         marginLeft: '10px',
+        flex: 1, // Ensure text takes up space for arrow to be positioned correctly
     };
 
     const arrowStyle = {
@@ -66,7 +67,7 @@ export default function CoordinatorSettings() {
             <CoordinatorInfo />
             <h6 className="page-title"> SETTINGS </h6>
             <div className="container mt-4">
-            <div className="row">
+                <div className="row">
                     <div className="col-md-12">
                         <div
                             style={containerStyle}
@@ -114,4 +115,3 @@ export default function CoordinatorSettings() {
         </div>
     );
 }
-

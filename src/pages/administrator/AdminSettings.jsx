@@ -31,6 +31,7 @@ export default function AdminSettings() {
         maxWidth: '100%',
         display: 'flex',
         alignItems: 'center',
+        position: 'relative', // Added relative positioning
     };
 
     const containerHoverStyle = {
@@ -48,6 +49,7 @@ export default function AdminSettings() {
         fontSize: '20px',
         fontWeight: '500',
         marginLeft: '10px',
+        flex: 1, // Ensure text takes up space for arrow to be positioned correctly
     };
 
     const arrowStyle = {
@@ -113,4 +115,3 @@ export default function AdminSettings() {
         </div>
     );
 }
-
