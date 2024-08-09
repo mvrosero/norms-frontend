@@ -1,34 +1,68 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import '../general/General.css';
-import { useNavigate } from "react-router-dom";
-import user_icon from "../../assets/images/default_profile.jpg";
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import user_icon from '../../assets/images/default_profile.jpg';
 
-const AdminInfo = ({ name, role, profilePhoto }) => {
+const AdminInfo = ({ name, role }) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [profilePhoto, setProfilePhoto] = useState(user_icon); // Default to user_icon initially
   const navigate = useNavigate();
+  const userId = localStorage.getItem('user_id'); // Get user ID from local storage
+
+  useEffect(() => {
+    const fetchProfilePhoto = async () => {
+      try {
+        const response = await axios.get(`http://localhost:9000/profile-photo/${userId}`, {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}` // Add token for authentication
+          }
+        });
+
+        const photoFilename = response.data.profile_photo_filename;
+        if (photoFilename) {
+          const photoUrl = `http://localhost:9000/uploads/profile_photo/${photoFilename}`;
+          setProfilePhoto(photoUrl);
+        }
+      } catch (error) {
+        console.error('Error fetching profile photo:', error);
+      }
+    };
+
+    if (userId) {
+      fetchProfilePhoto();
+    }
+  }, [userId]);
 
   const toggleDropdown = () => {
     setIsDropdownOpen(!isDropdownOpen);
   };
 
-
   const handleSettings = () => {
-    navigate('/admin-settings'); 
+    navigate('/admin-settings');
   };
-  
+
   const handleLogout = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('role_id');
     localStorage.removeItem('user_id');
     localStorage.removeItem('employee_idnumber');
-    navigate('/admin-login'); 
+    navigate('/admin-login');
   };
 
   return (
-    <div className="profile-container"> {/* Use className instead of style */}
+    <div className="profile-container">
       <div className="profileInfo">
-        <img src={user_icon} alt="Profile" className="profilePhoto" />
+        <img
+          src={profilePhoto}
+          alt="Profile"
+          className="profilePhoto"
+          onError={(e) => {
+            console.error('Error loading image:', e.target.src);
+            e.target.src = user_icon; // Fallback to default image on error
+          }}
+        />
         <div className="userInfo">
           <p className="name">{name}</p>
           <p className="role">{role}</p>
@@ -56,13 +90,13 @@ const AdminInfo = ({ name, role, profilePhoto }) => {
 AdminInfo.propTypes = {
   name: PropTypes.string.isRequired,
   role: PropTypes.string.isRequired,
-  profilePhoto: PropTypes.string.isRequired,
+  profilePhoto: PropTypes.string,
 };
 
 AdminInfo.defaultProps = {
   name: 'FULL NAME',
   role: 'Administrator',
-  profilePhoto: 'default-profile-photo.jpg',
+  profilePhoto: user_icon,
 };
 
 export default AdminInfo;

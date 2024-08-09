@@ -10,6 +10,7 @@ import CoordinatorNavigation from '../osa coordinator/CoordinatorNavigation';
 import CoordinatorInfo from '../osa coordinator/CoordinatorInfo';
 import StudentNavigation from '../student/StudentNavigation';
 import StudentInfo from '../student/StudentInfo';
+import SecurityInfo from '../security/SecurityInfo';
 
 export default function AccountSettings() {
     const navigate = useNavigate();
@@ -24,6 +25,8 @@ export default function AccountSettings() {
                 return <><CoordinatorNavigation /><CoordinatorInfo /></>;
             case '3':
                 return <><StudentNavigation /><StudentInfo /></>;
+            case '4':
+                return <SecurityInfo />; 
             default:
                 return null;
         }
