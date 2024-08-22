@@ -3,21 +3,16 @@ import axios from 'axios';
 import { Modal, Button, Form, Table } from 'react-bootstrap';
 import Swal from 'sweetalert2';
 import DeleteIcon from '@mui/icons-material/Delete';
-import EditIcon from '@mui/icons-material/Edit';
+import PersonIcon from '@mui/icons-material/Person';
 import { useNavigate } from 'react-router';
-import Fuse from 'fuse.js'; // Import fuse.js for search functionality
+import Fuse from 'fuse.js'; // Import fuse.js
 import "../administrator/Students.css";
 
-const ManageDepartments = ({ searchQuery }) => {
+const StudentRecordsTable = ({ searchQuery }) => {
+    const [users, setUsers] = useState([]);
     const [departments, setDepartments] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [showDepartmentModal, setShowDepartmentModal] = useState(false);
-    const [departmentFormData, setDepartmentFormData] = useState({
-        department_code: '',
-        department_name: '',
-        status: '',
-    });
-    const [deletionStatus, setDeletionStatus] = useState(false);
+    const [programs, setPrograms] = useState([]);
+    const [deletionStatus, setDeletionStatus] = useState(false); // State to track deletion status
     const navigate = useNavigate();
 
     const headers = useMemo(() => {
@@ -25,64 +20,75 @@ const ManageDepartments = ({ searchQuery }) => {
         return token ? { Authorization: `Bearer ${token}` } : {};
     }, []);
 
+    const fetchUsers = useCallback(async () => {
+        try {
+            let response;
+            if (searchQuery) {
+                response = await axios.get('http://localhost:9000/students', { headers });
+
+                // Create a new instance of Fuse with the users data and search options
+                const fuse = new Fuse(response.data, {
+                    keys: ['student_idnumber', 'first_name', 'middle_name', 'last_name', 'suffix'],
+                    includeScore: true,
+                    threshold: 0.4, // Adjust threshold as needed
+                });
+
+                // Perform fuzzy search
+                const searchResults = fuse.search(searchQuery);
+
+                // Extract the item from search results
+                const filteredUsers = searchResults.map(result => result.item);
+
+                setUsers(filteredUsers);
+            } else {
+                response = await axios.get('http://localhost:9000/students', { headers });
+                setUsers(response.data);
+            }
+        } catch (error) {
+            console.error('Error fetching users:', error);
+        }
+    }, [headers, searchQuery]);
+
     const fetchDepartments = useCallback(async () => {
         try {
             const response = await axios.get('http://localhost:9000/departments', { headers });
             setDepartments(response.data);
-            setLoading(false);
         } catch (error) {
             console.error('Error fetching departments:', error);
-            setLoading(false);
+        }
+    }, [headers]);
+
+    const fetchPrograms = useCallback(async () => {
+        try {
+            const response = await axios.get('http://localhost:9000/programs', { headers });
+            setPrograms(response.data);
+        } catch (error) {
+            console.error('Error fetching programs:', error);
         }
     }, [headers]);
 
     useEffect(() => {
+        fetchUsers();
         fetchDepartments();
-    }, [fetchDepartments]);
+        fetchPrograms();
+    }, [fetchUsers, fetchDepartments, fetchPrograms]);
 
-    const handleCreateNewDepartment = () => {
-        setShowDepartmentModal(true);
-    };
-
-    const handleCloseDepartmentModal = () => {
-        setShowDepartmentModal(false);
-    };
-
-    const handleDepartmentChange = (e) => {
-        const { name, value } = e.target;
-        setDepartmentFormData(prevState => ({
-            ...prevState,
-            [name]: value
-        }));
-    };
-
-    const handleDepartmentSubmit = async (e) => {
-        e.preventDefault();
+    const handleRedirect = async (student_idnumber) => {
         try {
-            const response = await axios.post('http://localhost:9000/register-department', departmentFormData, { headers });
-            Swal.fire({
-                icon: 'success',
-                title: 'Department Added Successfully!',
-                text: 'The new department has been added successfully.',
-            });
-            handleCloseDepartmentModal();
-            fetchDepartments(); // Re-fetch departments to include the new one
+            const response = await axios.get(`http://localhost:9000/student/${student_idnumber}`);
+            const student = response.data;
+            localStorage.setItem('selectedStudent', JSON.stringify(student)); // Store selected student data in localStorage
+            navigate(`/individualstudentrecord/${student_idnumber}`);
         } catch (error) {
-            console.error('Error adding department:', error);
+            console.error('Error fetching student:', error);
             Swal.fire({
                 icon: 'error',
-                title: 'Oops...',
-                text: 'An error occurred while adding the department. Please try again later!',
+                text: 'An error occurred while fetching student data. Please try again later.',
             });
         }
     };
 
-    const handleEditDepartment = async (departmentId) => {
-        console.log('Edit department with id:', departmentId);
-        // Implement the edit logic here
-    };
-
-    const deleteDepartment = async (departmentId) => {
+    const deleteUser = async (userId) => {
         const isConfirm = await Swal.fire({
             title: 'Are you sure?',
             text: "You won't be able to revert this!",
@@ -91,26 +97,39 @@ const ManageDepartments = ({ searchQuery }) => {
             confirmButtonColor: '#3085d6',
             cancelButtonColor: '#d33',
             confirmButtonText: 'Yes, Delete it!'
-        }).then(result => result.isConfirmed);
-        
-        if (!isConfirm) return;
+        }).then((result) => {
+            return result.isConfirmed;
+        });
+        if (!isConfirm) {
+            return;
+        }
     
         try {
-            await axios.delete(`http://localhost:9000/departments/${departmentId}`, { headers });
+            await axios.delete(`http://localhost:9000/student/${userId}`, { headers });
             Swal.fire({
                 icon: 'success',
                 text: "Successfully Deleted"
             });
             setDeletionStatus(prevStatus => !prevStatus); // Toggle deletionStatus to trigger re-fetch
-            setDepartments(prevDepartments => prevDepartments.filter(department => department.department_id !== departmentId));
+            // Update the users state by removing the deleted user
+            setUsers(prevUsers => prevUsers.filter(user => user.user_id !== userId));
         } catch (error) {
-            console.error('Error deleting department:', error);
+            console.error('Error deleting user:', error);
             Swal.fire({
                 icon: 'error',
-                title: 'Oops...',
-                text: 'An error occurred while deleting the department. Please try again later!',
+                text: 'An error occurred while deleting user. Please try again later.',
             });
         }
+    };
+
+    const getDepartmentName = (departmentId) => {
+        const department = departments.find((d) => d.department_id === departmentId);
+        return department ? department.department_name : '';
+    };
+
+    const getProgramName = (programId) => {
+        const program = programs.find((p) => p.program_id === programId);
+        return program ? program.program_name : '';
     };
 
     return (
@@ -118,53 +137,58 @@ const ManageDepartments = ({ searchQuery }) => {
             <div className='container'>
                 <br />
                 <div className='col-12'>
-                    {/* Add a search bar or filter here if needed */}
                 </div>
 
-                {/* Departments table */}
+                {/*student table*/}
                 <Table bordered hover style={{ borderRadius: '20px', marginLeft: '110px' }}>
-                    <thead style={{ backgroundColor: '#f8f9fa' }}>
+                    <thead style={{ backgroundColor: '#f8f9fa' }}> {/* Setting header background color */}
                         <tr>
-                            <th style={{ width: '5%' }}>ID</th>
-                            <th style={{ width: '10%' }}>Department Code</th>
-                            <th>Department Name</th>
-                            <th style={{ width: '10%' }}>Status</th>
-                            <th style={{ width: '10%' }}>Actions</th>
+                            <th style={{ width: '5%'}}>ID</th>
+                            <th style={{ width: '10%'}}>ID Number</th>
+                            <th>Full Name</th>
+                            <th style={{ width: '10%'}}>Year Level</th>
+                            <th>Department</th>
+                            <th>Program</th>
+                            <th style={{ width: '12%'}}>Status</th>
+                            <th style={{ width: '10%'}}>Action</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {departments.map((department, index) => (
+                        {users.map((user, index) => (
                             <tr key={index}>
-                                <td style={{ textAlign: 'center' }}>{department.department_id}</td>
-                                <td>{department.department_code}</td>
-                                <td>{department.department_name}</td>
+                                <td style={{ textAlign: 'center' }}>{user.user_id}</td>
+                                <td>{user.student_idnumber}</td>
+                                <td>{`${user.first_name} ${user.middle_name} ${user.last_name} ${user.suffix}`.trim()}</td>
+                                <td>{user.year_level}</td>
+                                <td>{getDepartmentName(user.department_id)}</td>
+                                <td>{getProgramName(user.program_id)}</td>
                                 <td style={{ textAlign: 'center' }}>
                                     <div style={{
-                                        backgroundColor: department.status === 'Active' ? '#DBF0DC' : '#F0DBDB',
-                                        color: department.status === 'Active' ? '#30A530' : '#D9534F',
+                                        backgroundColor: user.status === 'active' ? '#DBF0DC' : '#F0DBDB',
+                                        color: user.status === 'active' ? '#30A530' : '#D9534F',
                                         fontWeight: '600',
                                         fontSize: '14px',
                                         borderRadius: '30px',
-                                        padding: '5px 20px',
-                                        display: 'inline-flex',
-                                        alignItems: 'center',
+                                        padding: '5px 20px', 
+                                        display: 'inline-flex', 
+                                        alignItems: 'center', 
                                     }}>
                                         <div style={{
                                             width: '8px',
                                             height: '8px',
                                             borderRadius: '50%',
-                                            backgroundColor: department.status === 'Active' ? '#30A530' : '#D9534F',
-                                            marginRight: '7px',
+                                            backgroundColor: user.status === 'active' ? '#30A530' : '#D9534F',
+                                            marginRight: '7px', 
                                         }} />
-                                        {department.status}
+                                        {user.status}
                                     </div>
                                 </td>
                                 <td>
                                     <div className="d-flex justify-content-around">
-                                        <Button className='btn btn-secondary btn-md ms-2' onClick={() => handleEditDepartment(department.department_id)}>
-                                            <EditIcon />
+                                        <Button className='btn btn-secondary btn-md ms-2' onClick={() => handleRedirect(user.student_idnumber)}>
+                                            <PersonIcon />
                                         </Button>
-                                        <Button className='btn btn-danger btn-md ms-2' onClick={() => deleteDepartment(department.department_id)}>
+                                        <Button className='btn btn-danger btn-md ms-2' onClick={() => deleteUser(user.user_id)}>
                                             <DeleteIcon />
                                         </Button>
                                     </div>
@@ -174,56 +198,9 @@ const ManageDepartments = ({ searchQuery }) => {
                     </tbody>
                 </Table>
 
-                <Modal show={showDepartmentModal} onHide={handleCloseDepartmentModal}>
-                    <Modal.Header closeButton>
-                        <Modal.Title>Add New Department</Modal.Title>
-                    </Modal.Header>
-                    <Modal.Body>
-                        <Form onSubmit={handleDepartmentSubmit}>
-                            <Form.Group controlId='department_code'>
-                                <Form.Label className="fw-bold">Department Code</Form.Label>
-                                <Form.Control 
-                                    type='text' 
-                                    name='department_code' 
-                                    value={departmentFormData.department_code} 
-                                    onChange={handleDepartmentChange} 
-                                    style={{ backgroundColor: '#f2f2f2', border: '1px solid #ced4da', borderRadius: '.25rem', height: '40px', width: '100%' }} 
-                                />
-                            </Form.Group>
-                            <Form.Group controlId='department_name'>
-                                <Form.Label className="fw-bold">Department Name</Form.Label>
-                                <Form.Control 
-                                    type='text' 
-                                    name='department_name' 
-                                    value={departmentFormData.department_name} 
-                                    onChange={handleDepartmentChange} 
-                                    style={{ backgroundColor: '#f2f2f2', border: '1px solid #ced4da', borderRadius: '.25rem', height: '40px', width: '100%' }} 
-                                />
-                            </Form.Group>
-                            <Form.Group controlId='status'>
-                                <Form.Label className="fw-bold">Status</Form.Label>
-                                <Form.Select 
-                                    name='status' 
-                                    value={departmentFormData.status} 
-                                    onChange={handleDepartmentChange} 
-                                    style={{ backgroundColor: '#f2f2f2', border: '1px solid #ced4da', borderRadius: '.25rem', height: '40px', width: '100%' }}
-                                >
-                                    <option value=''>Select Status</option>
-                                    <option value='Active'>Active</option>
-                                    <option value='Inactive'>Inactive</option>
-                                </Form.Select>
-                            </Form.Group>
-                            <div className="d-flex justify-content-end mt-3">
-                                <Button type="submit" style={{ backgroundColor: '#28a745', color: 'white', fontWeight: '600', padding: '12px 15px', border: 'none', borderRadius: '10px', cursor: 'pointer', display: 'flex', alignItems: 'center', boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)' }}>
-                                    Submit
-                                </Button>
-                            </div>
-                        </Form>
-                    </Modal.Body>
-                </Modal>
             </div>
         </>
     );
-};
+}
 
-export default ManageDepartments;
+export default StudentRecordsTable;
