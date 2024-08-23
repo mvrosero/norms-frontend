@@ -25,6 +25,7 @@ import StudentRegistration from './pages/administrator/StudentRegistration';
 /*administrator*/
 import AdminDashboard from './pages/administrator/AdminDashboard';
 import AdminUserManagement from './pages/administrator/AdminUserManagement';
+import DepartmentUsersList from './pages/administrator/DepartmentUsersList';
 import AdminSettings from './pages/administrator/AdminSettings';
 import ManageDepartments from './pages/administrator/ManageDepartments';
 import ManagePrograms from './pages/administrator/ManagePrograms';
@@ -81,6 +82,7 @@ function App() {
 
                 <Route path='/admin-dashboard' element={<AdminDashboard />} />
                 <Route path='/admin-usermanagement' element={<AdminUserManagement />} />
+                <Route path="/admin-usermanagement/:department_code" element={<DepartmentUsersList />} />
                 <Route path='/admin-settings' element={<AdminSettings />} />
                 <Route path='/manage-departments' element={<ManageDepartments />} />
                 <Route path='/manage-programs' element={<ManagePrograms />} />
