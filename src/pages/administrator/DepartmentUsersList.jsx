@@ -5,13 +5,12 @@ import Swal from 'sweetalert2';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import PersonIcon from '@mui/icons-material/Person';
-
-// Assuming StudentUpdate component is defined in './StudentUpdate.js'
+import { useParams } from 'react-router-dom';
 import StudentUpdate from './StudentUpdate';
 import "./Students.css";
 
-
 const DepartmentUsersList = () => {
+    const { department_code } = useParams(); // Get department_code from URL
     const [users, setUsers] = useState([]);
     const [departments, setDepartments] = useState([]);
     const [programs, setPrograms] = useState([]);
@@ -21,39 +20,38 @@ const DepartmentUsersList = () => {
     const [headers, setHeaders] = useState({});
     const [deletionStatus, setDeletionStatus] = useState(false); // State to track deletion status
 
-    
-    const fetchUsers = useCallback(async () => {  
+    const fetchUsers = useCallback(async () => {
         try {
-            const response = await axios.get('http://localhost:9000/students', { headers });
+            const response = await axios.get(`http://localhost:9000/admin-usermanagement/${department_code}`, { headers });
             setUsers(response.data);
         } catch (error) {
             console.error('Error fetching students:', error);
         }
-    }, [headers, deletionStatus]); // Update fetchUsers dependency to include deletionStatus
+    }, [headers, deletionStatus, department_code]); // Include department_code in dependencies
 
-    const fetchDepartments = useCallback(async () => {  
+    const fetchDepartments = useCallback(async () => {
         try {
             const response = await axios.get('http://localhost:9000/departments', { headers });
             setDepartments(response.data);
         } catch (error) {
             console.error('Error fetching departments:', error);
         }
-    }, [headers]); 
+    }, [headers]);
 
-    const fetchPrograms = useCallback(async () => {  
+    const fetchPrograms = useCallback(async () => {
         try {
             const response = await axios.get('http://localhost:9000/programs', { headers });
             setPrograms(response.data);
         } catch (error) {
             console.error('Error fetching programs:', error);
         }
-    }, [headers]); 
+    }, [headers]);
 
     useEffect(() => {
         fetchUsers();
         fetchDepartments();
         fetchPrograms();
-    }, [fetchUsers]); 
+    }, [fetchUsers]);  
 
     const handleReadModalShow = (user) => {
         setSelectedUser(user);
