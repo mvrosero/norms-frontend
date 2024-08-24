@@ -6,11 +6,11 @@ import Swal from 'sweetalert2';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import PersonIcon from '@mui/icons-material/Person';
+import { FaPlus } from 'react-icons/fa';
 
 import AdminNavigation from "./AdminNavigation";
 import AdminInfo from "./AdminInfo";
 import SearchAndFilter from '../general/SearchAndFilter';
-import UserDropdownButton from '../../components/Button/UserDropdownButton';
 import ImportCSVButton from '../../components/Button/ImportCSVButton';
 import StudentUpdate from './StudentUpdate';
 import "./Students.css";
@@ -150,7 +150,25 @@ const DepartmentUsersList = () => {
                 <div style={{ width: '900px', marginLeft: '20px' }}>
                     <SearchAndFilter />
                 </div>
-                <UserDropdownButton />
+                <button 
+                    onClick={() => window.location.href = "http://localhost:3000/register-student"}  
+                    style={{
+                        backgroundColor: '#FAD32E',
+                        color: 'white',
+                        fontWeight: '900',
+                        padding: '12px 15px',
+                        border: 'none',
+                        borderRadius: '10px',
+                        cursor: 'pointer',
+                        marginLeft: '10px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
+                    }}
+                >
+                    Add Student
+                    <FaPlus style={{ marginLeft: '10px' }} />
+                </button>
                 <ImportCSVButton />
             </div>
             {/* Breadcrumbs */}
