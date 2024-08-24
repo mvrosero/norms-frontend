@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Swal from 'sweetalert2';
-import { Modal, Button, Form } from 'react-bootstrap';
+import { Modal, Form, Button } from 'react-bootstrap';
 import { FaPlus } from 'react-icons/fa';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -134,14 +134,36 @@ export default function ManageAcademicYears() {
         });
     };
 
+    const inputStyle = {
+        backgroundColor: '#f2f2f2',
+        border: '1px solid #ced4da',
+        borderRadius: '.25rem',
+        height: '40px',
+        width: '100%'
+    };
+
+    const buttonStyle = {
+        backgroundColor: '#FAD32E',
+        color: 'white',
+        fontWeight: '900',
+        padding: '12px 15px',
+        border: 'none',
+        borderRadius: '10px',
+        cursor: 'pointer',
+        marginLeft: '10px',
+        display: 'flex',
+        alignItems: 'center',
+        boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)'
+    };
+
     return (
         <div>
             <AdminNavigation />
             <AdminInfo />
             <h6 className="page-title">Manage Academic Years</h6>
-            <SearchAndFilter/>
+            <SearchAndFilter />
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', marginTop: '30px' }}>
-                <Button onClick={handleOpenModal} style={{ backgroundColor: '#FAD32E', color: 'white', fontWeight: '900' }}>
+                <Button onClick={handleOpenModal} style={buttonStyle}>
                     Add Academic Year
                     <FaPlus style={{ marginLeft: '10px' }} />
                 </Button>
@@ -192,9 +214,10 @@ export default function ManageAcademicYears() {
                                 value={formData.acadyear_name}
                                 onChange={handleChange}
                                 required
+                                style={inputStyle}
                             />
                         </Form.Group>
-                        <Form.Group controlId="formStatus" className="mt-3">
+                        <Form.Group controlId="formStatus">
                             <Form.Label>Status</Form.Label>
                             <Form.Control
                                 as="select"
@@ -202,14 +225,17 @@ export default function ManageAcademicYears() {
                                 value={formData.status}
                                 onChange={handleChange}
                                 required
+                                style={inputStyle}
                             >
                                 <option value="active">Active</option>
                                 <option value="inactive">Inactive</option>
                             </Form.Control>
                         </Form.Group>
-                        <Button variant="primary" type="submit" className="mt-3">
-                            {editMode ? 'Save Changes' : 'Add Academic Year'}
-                        </Button>
+                        <div style={{ marginTop: '20px' }}>
+                            <Button variant="primary" type="submit" style={buttonStyle}>
+                                {editMode ? 'Update Academic Year' : 'Add Academic Year'}
+                            </Button>
+                        </div>
                     </Form>
                 </Modal.Body>
             </Modal>
