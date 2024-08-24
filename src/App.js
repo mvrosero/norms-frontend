@@ -31,6 +31,7 @@ import ManageDepartments from './pages/administrator/ManageDepartments';
 import ManagePrograms from './pages/administrator/ManagePrograms';
 import ManageAcademicYears from './pages/administrator/ManageAcademicYears';
 
+
 /*osa coordinator*/
 import CoordinatorDashboard from './pages/osa coordinator/CoordinatorDashboard';
 import CoordinatorStudentRecords from './pages/osa coordinator/CoordinatorStudentRecords';
