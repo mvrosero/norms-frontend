@@ -1,11 +1,13 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import { Modal, Button, Table } from 'react-bootstrap';
+import { useParams } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import PersonIcon from '@mui/icons-material/Person';
-import { useParams } from 'react-router-dom';
+
+// Assuming StudentUpdate component is defined in './StudentUpdate.js'
 import StudentUpdate from './StudentUpdate';
 import "./Students.css";
 
@@ -20,6 +22,7 @@ const DepartmentUsersList = () => {
     const [headers, setHeaders] = useState({});
     const [deletionStatus, setDeletionStatus] = useState(false); // State to track deletion status
 
+    
     const fetchUsers = useCallback(async () => {
         try {
             const response = await axios.get(`http://localhost:9000/admin-usermanagement/${department_code}`, { headers });
@@ -28,30 +31,31 @@ const DepartmentUsersList = () => {
             console.error('Error fetching students:', error);
         }
     }, [headers, deletionStatus, department_code]); // Include department_code in dependencies
-
-    const fetchDepartments = useCallback(async () => {
+   
+   
+    const fetchDepartments = useCallback(async () => {  
         try {
             const response = await axios.get('http://localhost:9000/departments', { headers });
             setDepartments(response.data);
         } catch (error) {
             console.error('Error fetching departments:', error);
         }
-    }, [headers]);
+    }, [headers]); 
 
-    const fetchPrograms = useCallback(async () => {
+    const fetchPrograms = useCallback(async () => {  
         try {
             const response = await axios.get('http://localhost:9000/programs', { headers });
             setPrograms(response.data);
         } catch (error) {
             console.error('Error fetching programs:', error);
         }
-    }, [headers]);
+    }, [headers]); 
 
     useEffect(() => {
         fetchUsers();
         fetchDepartments();
         fetchPrograms();
-    }, [fetchUsers]);  
+    }, [fetchUsers]); 
 
     const handleReadModalShow = (user) => {
         setSelectedUser(user);
@@ -93,19 +97,24 @@ const DepartmentUsersList = () => {
         }).then((result) => {
             return result.isConfirmed;
         });
+        
         if (!isConfirm) {
             return;
         }
     
         try {
-            await axios.delete(`http://localhost:9000/student/${userId}`, { headers });
-            Swal.fire({
-                icon: 'success',
-                text: "Successfully Deleted"
-            });
-            setDeletionStatus(prevStatus => !prevStatus); // Toggle deletionStatus to trigger re-fetch
-            // Update the users state by removing the deleted user
-            setUsers(prevUsers => prevUsers.filter(user => user.user_id !== userId));
+            // Ensure that the endpoint URL matches the backend route
+            const response = await axios.delete(`http://localhost:9000/student/${userId}`);
+            if (response.status === 200) {  // Check if the delete was successful
+                Swal.fire({
+                    icon: 'success',
+                    text: "Successfully Deleted"
+                });
+                setDeletionStatus(prevStatus => !prevStatus); // Toggle deletionStatus to trigger re-fetch
+                setUsers(prevUsers => prevUsers.filter(user => user.user_id !== userId));
+            } else {
+                throw new Error('Failed to delete');
+            }
         } catch (error) {
             console.error('Error deleting user:', error);
             Swal.fire({
@@ -114,6 +123,7 @@ const DepartmentUsersList = () => {
             });
         }
     };
+    
 
     return (
         <>
