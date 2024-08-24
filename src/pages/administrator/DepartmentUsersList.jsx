@@ -26,14 +26,14 @@ const DepartmentUsersList = () => {
     const fetchUsers = useCallback(async () => {
         try {
             const response = await axios.get(`http://localhost:9000/admin-usermanagement/${department_code}`, { headers });
-            console.log('Fetched users:', response.data); // Log the response
+            console.log('Fetched users:', response.data); 
             setUsers(response.data);
         } catch (error) {
             console.error('Error fetching users:', error);
+            Swal.fire('Error', 'Failed to fetch users.', 'error');
         }
-    }, [headers, department_code]);
-    
-   
+    }, [headers, department_code, deletionStatus]);    
+      
     const fetchDepartments = useCallback(async () => {  
         try {
             const response = await axios.get('http://localhost:9000/departments', { headers });
@@ -56,7 +56,7 @@ const DepartmentUsersList = () => {
         fetchUsers();
         fetchDepartments();
         fetchPrograms();
-    }, [fetchUsers]); 
+    }, [fetchUsers, fetchDepartments, fetchPrograms]);        
 
     const handleReadModalShow = (user) => {
         setSelectedUser(user);
