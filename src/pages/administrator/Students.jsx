@@ -93,18 +93,21 @@ const StudentTable = () => {
         }).then((result) => {
             return result.isConfirmed;
         });
+    
         if (!isConfirm) {
             return;
         }
     
         try {
+            // Ensure headers are correctly set
             await axios.delete(`http://localhost:9000/student/${userId}`, { headers });
+            
             Swal.fire({
                 icon: 'success',
                 text: "Successfully Deleted"
             });
-            setDeletionStatus(prevStatus => !prevStatus); // Toggle deletionStatus to trigger re-fetch
-            // Update the users state by removing the deleted user
+    
+            // Update state to remove the deleted user
             setUsers(prevUsers => prevUsers.filter(user => user.user_id !== userId));
         } catch (error) {
             console.error('Error deleting user:', error);
@@ -114,6 +117,7 @@ const StudentTable = () => {
             });
         }
     };
+    
 
     return (
         <>
