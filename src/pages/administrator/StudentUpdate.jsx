@@ -35,6 +35,7 @@ const StudentUpdate = ({ user, handleClose, fetchUsers, headers, departments, pr
             });
         }
     };
+    
 
     const inputStyle = {
         backgroundColor: '#f2f2f2',

@@ -26,12 +26,13 @@ const DepartmentUsersList = () => {
     const fetchUsers = useCallback(async () => {
         try {
             const response = await axios.get(`http://localhost:9000/admin-usermanagement/${department_code}`, { headers });
+            console.log('Fetched users:', response.data); // Log the response
             setUsers(response.data);
         } catch (error) {
-            console.error('Error fetching students:', error);
+            console.error('Error fetching users:', error);
         }
-    }, [headers, deletionStatus, department_code]); // Include department_code in dependencies
-   
+    }, [headers, department_code]);
+    
    
     const fetchDepartments = useCallback(async () => {  
         try {
@@ -136,7 +137,6 @@ const DepartmentUsersList = () => {
                             <th style={{ width: '10%' }}>ID Number</th>
                             <th>Full Name</th>
                             <th style={{ width: '10%' }}>Year Level</th>
-                            <th>Department</th>
                             <th>Program</th>
                             <th style={{ width: '12%' }}>Status</th>
                             <th style={{ width: '13%' }}>Action</th>
@@ -149,7 +149,6 @@ const DepartmentUsersList = () => {
                                 <td>{user.student_idnumber}</td>
                                 <td>{`${user.first_name} ${user.middle_name} ${user.last_name} ${user.suffix}`}</td>
                                 <td>{user.year_level}</td>
-                                <td>{getDepartmentName(user.department_id)}</td>
                                 <td>{getProgramName(user.program_id)}</td>
                                 <td style={{ textAlign: 'center' }}>
                                     <div style={{
