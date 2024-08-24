@@ -11,9 +11,19 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUser } from '@fortawesome/free-solid-svg-icons';
 
 import yellowBackgroundImage from "../../components/images/yellow_background.png";
+import cafBackgroundImage from "../../components/images/caf.png";
+import casBackgroundImage from "../../components/images/cas.png";
+import cbmBackgroundImage from "../../components/images/cbm.png"; 
+import ccjeBackgroundImage from "../../components/images/ccje.png";
+import ccsBackgroundImage from "../../components/images/ccs.png"; 
+import chsBackgroundImage from "../../components/images/chs.png";
+import coeBackgroundImage from "../../components/images/coe.png";
+import ctedBackgroundImage from "../../components/images/cted.png";
+
 import offensesImage from "../../components/images/offenses.png";
 import sanctionsImage from "../../components/images/sanctions.png";
 import academicYearImage from "../../components/images/academic_year.png";
+
 
 const OffensesButton = styled(Button)`
   background-image: url(${offensesImage})!important;
@@ -170,7 +180,7 @@ const CoordinatorDashboard = () => {
       </div>
 
       <text style={{ fontSize: '20px', fontWeight: '600', marginLeft: '120px' }}>Departments</text>
-      <div className="department-cards-container" style={{ padding: '10px', marginTop: '30px', paddingLeft: '120px' }}>
+      <div className="department-cards-container" style={{ padding: '10px', marginTop: '10px', paddingLeft: '120px' }}>
         <div className="row" style={{ padding: '10px', marginRight: '10px' }}>
           {departments.map((department, index) => (
             <div key={index} className="col-md-3 mb-4">
@@ -205,15 +215,70 @@ const CoordinatorDashboard = () => {
   );
 };
 
-const DepartmentCard = ({ department, userCount }) => (
-  <Card style={{ width: '250px', height: '120px', backgroundImage: `url(${yellowBackgroundImage})` }}>
-    <Card.Body>
-      <Card.Title style={{ fontWeight: 'bold', color: 'white' }}>{department.fullName}</Card.Title>
-      <Card.Text>
-        <FontAwesomeIcon icon={faUser} /> {userCount || 0} Users
-      </Card.Text>
-    </Card.Body>
-  </Card>
-);
+const DepartmentCard = ({ department, userCount }) => {
+  let backgroundImage;
+  switch (department.name) {
+    case 'CAS':
+      backgroundImage = casBackgroundImage;
+      break;
+    case 'CAF':
+      backgroundImage = cafBackgroundImage;
+      break;
+    case 'CBM':
+      backgroundImage = cbmBackgroundImage;
+      break;
+    case 'CCJE':
+      backgroundImage = ccjeBackgroundImage;
+      break;
+    case 'CCS':
+      backgroundImage = ccsBackgroundImage;
+      break;
+    case 'CHS':
+      backgroundImage = chsBackgroundImage;
+      break;
+    case 'COE':
+      backgroundImage = coeBackgroundImage;
+      break;
+    case 'CTED':
+      backgroundImage = ctedBackgroundImage;
+      break;
+    default:
+      backgroundImage = yellowBackgroundImage; // Fallback image
+  }
+
+  return (
+    <Card
+      style={{
+        backgroundImage: `url(${backgroundImage})`,
+        backgroundSize: 'cover',
+        height: '150px',
+        border: 'none',
+        textAlign: 'center',
+        color: 'white',
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
+        alignItems: 'center'
+      }}
+    >
+      <Card.Body style={{ position: 'absolute', bottom: 0, left: 0, color: 'black', fontSize: '12px', zIndex: 1 }}>
+        <Card.Title style={{ 
+          fontWeight: 'bold', 
+          fontSize: '14px', 
+          width: '60%', 
+          textAlign: 'start', 
+          whiteSpace: 'normal', 
+          marginBottom: '10px' 
+        }}>
+          {department.fullName}
+        </Card.Title>
+        <Card.Text style={{ textAlign: 'left' }}>
+          <FontAwesomeIcon icon={faUser} /> {userCount || 0} Users
+        </Card.Text>
+      </Card.Body>
+    </Card>
+  );
+};
+
 
 export default CoordinatorDashboard;
