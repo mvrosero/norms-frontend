@@ -17,7 +17,9 @@ export default function ManageAcademicYears() {
     const [error, setError] = useState(null);
     const [showModal, setShowModal] = useState(false);
     const [formData, setFormData] = useState({
-        acadyear_name: '',
+        acadyear_code: '',
+        start_year: '',
+        end_year: '',
         status: 'active',
     });
     const [editMode, setEditMode] = useState(false);
@@ -52,7 +54,7 @@ export default function ManageAcademicYears() {
     const handleOpenModal = () => setShowModal(true);
     const handleCloseModal = () => {
         setShowModal(false);
-        setFormData({ acadyear_name: '', status: 'active' });
+        setFormData({ acadyear_code: '', start_year: '', end_year: '', status: 'active' });
         setEditMode(false);
         setCurrentAcademicYearId(null);
     };
@@ -96,7 +98,7 @@ export default function ManageAcademicYears() {
 
     const handleEdit = (id) => {
         const academicYear = academicYears.find((year) => year.acadyear_id === id);
-        setFormData({ acadyear_name: academicYear.acadyear_name, status: academicYear.status });
+        setFormData({ acadyear_code: academicYear.acadyear_code, start_year: academicYear.start_year, end_year: academicYear.end_year, status: academicYear.status });
         setEditMode(true);
         setCurrentAcademicYearId(id);
         handleOpenModal();
@@ -172,7 +174,9 @@ export default function ManageAcademicYears() {
                 <table style={{ width: '90%', borderCollapse: 'collapse', marginLeft: 'auto', marginRight: 'auto' }}>
                     <thead>
                         <tr>
-                            <th style={{ textAlign: 'center', border: '1px solid #ddd', padding: '8px', backgroundColor: '#a8a8a8', color: 'white' }}>Academic Year</th>
+                            <th style={{ textAlign: 'center', border: '1px solid #ddd', padding: '8px', backgroundColor: '#a8a8a8', color: 'white' }}>Academic Year Code</th>
+                            <th style={{ textAlign: 'center', border: '1px solid #ddd', padding: '8px', backgroundColor: '#a8a8a8', color: 'white' }}>Start Year</th>
+                            <th style={{ textAlign: 'center', border: '1px solid #ddd', padding: '8px', backgroundColor: '#a8a8a8', color: 'white' }}>End Year</th>
                             <th style={{ textAlign: 'center', border: '1px solid #ddd', padding: '8px', backgroundColor: '#a8a8a8', color: 'white' }}>Status</th>
                             <th style={{ textAlign: 'center', border: '1px solid #ddd', padding: '8px', backgroundColor: '#a8a8a8', color: 'white' }}>Actions</th>
                         </tr>
@@ -180,7 +184,9 @@ export default function ManageAcademicYears() {
                     <tbody>
                         {academicYears.map((year, index) => (
                             <tr key={year.acadyear_id} style={{ backgroundColor: index % 2 === 0 ? 'white' : '#f2f2f2' }}>
-                                <td style={{ textAlign: 'center', border: '1px solid #ddd', padding: '8px' }}>{year.acadyear_name}</td>
+                                <td style={{ textAlign: 'center', border: '1px solid #ddd', padding: '8px' }}>{year.acadyear_code}</td>
+                                <td style={{ textAlign: 'center', border: '1px solid #ddd', padding: '8px' }}>{year.start_year}</td>
+                                <td style={{ textAlign: 'center', border: '1px solid #ddd', padding: '8px' }}>{year.end_year}</td>
                                 <td style={{ textAlign: 'center', border: '1px solid #ddd', padding: '8px' }}>{year.status}</td>
                                 <td style={{ textAlign: 'center', border: '1px solid #ddd', padding: '8px' }}>
                                     <EditIcon 
@@ -198,44 +204,64 @@ export default function ManageAcademicYears() {
                 </table>
             </div>
 
-            {/* Modal for the Add/Edit Academic Year */}
             <Modal show={showModal} onHide={handleCloseModal}>
                 <Modal.Header closeButton>
-                    <Modal.Title>{editMode ? 'Edit Academic Year' : 'Add New Academic Year'}</Modal.Title>
+                    <Modal.Title>{editMode ? 'Edit Academic Year' : 'Add Academic Year'}</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                     <Form onSubmit={handleSubmit}>
-                        <Form.Group controlId="formAcademicYearName">
-                            <Form.Label>Academic Year Name</Form.Label>
+                        <Form.Group className="mb-3">
+                            <Form.Label>Academic Year Code</Form.Label>
                             <Form.Control
                                 type="text"
-                                placeholder="Enter academic year name"
-                                name="acadyear_name"
-                                value={formData.acadyear_name}
+                                name="acadyear_code"
+                                value={formData.acadyear_code}
                                 onChange={handleChange}
-                                required
+                                placeholder="Enter academic year code"
                                 style={inputStyle}
+                                required
                             />
                         </Form.Group>
-                        <Form.Group controlId="formStatus">
+                        <Form.Group className="mb-3">
+                            <Form.Label>Start Year</Form.Label>
+                            <Form.Control
+                                type="number"
+                                name="start_year"
+                                value={formData.start_year}
+                                onChange={handleChange}
+                                placeholder="Enter start year"
+                                style={inputStyle}
+                                required
+                            />
+                        </Form.Group>
+                        <Form.Group className="mb-3">
+                            <Form.Label>End Year</Form.Label>
+                            <Form.Control
+                                type="number"
+                                name="end_year"
+                                value={formData.end_year}
+                                onChange={handleChange}
+                                placeholder="Enter end year"
+                                style={inputStyle}
+                                required
+                            />
+                        </Form.Group>
+                        <Form.Group className="mb-3">
                             <Form.Label>Status</Form.Label>
                             <Form.Control
                                 as="select"
                                 name="status"
                                 value={formData.status}
                                 onChange={handleChange}
-                                required
                                 style={inputStyle}
                             >
                                 <option value="active">Active</option>
                                 <option value="inactive">Inactive</option>
                             </Form.Control>
                         </Form.Group>
-                        <div style={{ marginTop: '20px' }}>
-                            <Button variant="primary" type="submit" style={buttonStyle}>
-                                {editMode ? 'Update Academic Year' : 'Add Academic Year'}
-                            </Button>
-                        </div>
+                        <Button type="submit" variant="primary">
+                            {editMode ? 'Update Academic Year' : 'Add Academic Year'}
+                        </Button>
                     </Form>
                 </Modal.Body>
             </Modal>
