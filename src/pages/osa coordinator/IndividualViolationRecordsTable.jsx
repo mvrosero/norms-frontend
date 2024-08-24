@@ -61,7 +61,10 @@ const IndividualViolationRecordsTable = ({ records }) => {
 
     const getAcademicYearName = (acadyear_id) => {
         const academicYear = academicYears.find(academicYear => academicYear.acadyear_id === acadyear_id);
-        return academicYear ? academicYear.acadyear_name : 'Unknown';
+        if (academicYear) {
+            return `${academicYear.start_year} - ${academicYear.end_year}`;
+        }
+        return 'Unknown';
     };
 
     const getSemesterName = (semester_id) => {

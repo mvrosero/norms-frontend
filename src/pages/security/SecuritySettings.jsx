@@ -8,12 +8,18 @@ import SecurityInfo from './SecurityInfo';
 export default function SecuritySettings() {
     const navigate = useNavigate();
     const user_id = localStorage.getItem('user_id');
+    const role_id = localStorage.getItem('role_id'); // Get role_id from localStorage
 
     const handleNavigation = (path) => {
         // Only add user_id for the '/account-settings' path
         const fullPath = path === '/account-settings' && user_id ? `${path}/${user_id}` : path;
         navigate(fullPath);
     };
+
+    if (role_id !== "4") {
+        // Redirect or display an error if the user does not have the required role
+        return <p>You do not have access to this page.</p>;
+    }
 
     const containerStyle = {
         backgroundColor: '#f8f9fa',

@@ -1,24 +1,16 @@
 import React, { useState, useEffect } from "react";
 import axios from 'axios';
-import { useNavigate } from "react-router-dom"; // Add import statement
+import { useNavigate } from "react-router-dom";
 import { Button, Card } from "react-bootstrap";
 import styled from "@emotion/styled";
 import CoordinatorNavigation from "./CoordinatorNavigation";
 import CoordinatorInfo from "./CoordinatorInfo";
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts'; 
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
 import "../../pages/style.css";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faFile, faChartBar, faUser } from '@fortawesome/free-solid-svg-icons';
+import { faUser } from '@fortawesome/free-solid-svg-icons';
 
 import yellowBackgroundImage from "../../components/images/yellow_background.png";
-import cafBackgroundImage from "../../components/images/caf.png";
-import casBackgroundImage from "../../components/images/cas.png";
-import cbmBackgroundImage from "../../components/images/cbm.png"; 
-import ccjeBackgroundImage from "../../components/images/ccje.png";
-import ccsBackgroundImage from "../../components/images/ccs.png"; 
-import chsBackgroundImage from "../../components/images/chs.png";
-import coeBackgroundImage from "../../components/images/coe.png";
-import ctedBackgroundImage from "../../components/images/cted.png";
 import offensesImage from "../../components/images/offenses.png";
 import sanctionsImage from "../../components/images/sanctions.png";
 import academicYearImage from "../../components/images/academic_year.png";
@@ -59,7 +51,6 @@ const AcademicYearButton = styled(Button)`
   padding: 20px;
 `;
 
-
 const data = [
   { name: 'Jan', pv: 2400 },
   { name: 'Feb', pv: 1398 },
@@ -87,7 +78,7 @@ const departments = [
 ];
 
 const CoordinatorDashboard = () => {
-  const navigate = useNavigate(); // Initialize useNavigate hook
+  const navigate = useNavigate();
 
   const [userCounts, setUserCounts] = useState({});
 
@@ -95,24 +86,19 @@ const CoordinatorDashboard = () => {
     const token = localStorage.getItem('token');
     const roleId = localStorage.getItem('role_id');
     if (token && roleId === '2') {
-      // Fetch user counts for each department from the backend
       fetchUserCounts(token);
     } else {
-      // Redirect to login page or handle unauthorized access
       console.error("Token is required for accessing the dashboard or invalid role.");
     }
   }, []);
 
   const fetchUserCounts = async (token) => {
     try {
-      // Fetch user counts from the backend
       const response = await axios.get(`http://localhost:9000/user-counts`, {
         headers: {
           Authorization: `Bearer ${token}`
         }
       });
-
-      // Update state with user counts
       setUserCounts(response.data);
     } catch (error) {
       console.error('Error fetching user counts:', error);
@@ -124,18 +110,16 @@ const CoordinatorDashboard = () => {
   }
 
   const handleRecordsClick = () => {
-    navigate('/coordinator-studentrecords');
+    navigate('/manage-categories');
   };
 
   const handleSanctionsClick = () => {
-    navigate('/coordinator-incidentreports');
+    navigate('/manage-sanctions');
   };
 
   const handleOffensesClick = () => {
-    navigate('/coordinator-onlineclearance');
+    navigate('/manage-offenses');
   };
-
-  
 
   return (
     <>
@@ -169,7 +153,7 @@ const CoordinatorDashboard = () => {
             marginBottom: "40px"
           }}
         >
-           Sanctions
+          Sanctions
         </SanctionsButton>
         <AcademicYearButton
           variant="primary"
@@ -181,12 +165,11 @@ const CoordinatorDashboard = () => {
             textAlign: 'left'
           }}
         >
-          Academic <br></br> Year
+          Categories
         </AcademicYearButton>
       </div>
 
       <text style={{ fontSize: '20px', fontWeight: '600', marginLeft: '120px' }}>Departments</text>
-      {/* Department Cards */}
       <div className="department-cards-container" style={{ padding: '10px', marginTop: '30px', paddingLeft: '120px' }}>
         <div className="row" style={{ padding: '10px', marginRight: '10px' }}>
           {departments.map((department, index) => (

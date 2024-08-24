@@ -132,6 +132,8 @@ const StudentRecordsTable = ({ searchQuery }) => {
         return program ? program.program_name : '';
     };
 
+    
+
     return (
         <>
             <div className='container'>
