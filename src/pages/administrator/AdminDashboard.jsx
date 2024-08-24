@@ -3,6 +3,7 @@ import Card from 'react-bootstrap/Card';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUser } from '@fortawesome/free-solid-svg-icons';
 import axios from 'axios';
+import { Link } from 'react-router-dom'; // Import Link
 
 import AdminNavigation from "./AdminNavigation";
 import AdminInfo from "./AdminInfo";
@@ -64,7 +65,6 @@ export default function AdminDashboard() {
   if (!localStorage.getItem('token') || localStorage.getItem('role_id') !== '1') {
     return null; // Do not render anything if token or role_id is invalid
   }
-  
 
   return (
     <>
@@ -77,7 +77,9 @@ export default function AdminDashboard() {
         <div className="row" style={{ padding: '10px', marginRight: '10px' }}>
           {departments.map((department, index) => (
             <div key={index} className="col-md-3 mb-4">
-              <DepartmentCard department={department} userCount={userCounts[department.fullName]} />
+              <Link to={`/admin-usermanagement/${department.name}`} style={{ textDecoration: 'none' }}>
+                <DepartmentCard department={department} userCount={userCounts[department.fullName]} />
+              </Link>
             </div>
           ))}
         </div>
@@ -123,22 +125,22 @@ const DepartmentCard = ({ department, userCount }) => {
       width: '250px', 
       height: '120px', 
       backgroundImage: `url(${backgroundImage})`, 
-      backgroundRepeat: 'no-repeat', // Prevent background image from repeating
-      backgroundSize: 'cover', // Adjust background size as needed
-      position: 'relative' // Set position to relative to allow absolute positioning of text
+      backgroundRepeat: 'no-repeat',
+      backgroundSize: 'cover', 
+      position: 'relative' 
     }}>
       <Card.Body style={{ position: 'absolute', bottom: 0, left: 0, color: 'black', fontSize: '12px', zIndex: 1 }}>
-      <Card.Title style={{ 
-  fontWeight: 'bold', 
-  fontSize: '14px', 
-  width: '60%', 
-  textAlign: 'start', 
-  whiteSpace: 'normal', 
-  display: 'inline-block', 
-  marginBottom: '5px' 
-}}>
-  {department.fullName}
-</Card.Title>
+        <Card.Title style={{ 
+          fontWeight: 'bold', 
+          fontSize: '14px', 
+          width: '60%', 
+          textAlign: 'start', 
+          whiteSpace: 'normal', 
+          display: 'inline-block', 
+          marginBottom: '5px' 
+        }}>
+          {department.fullName}
+        </Card.Title>
         <Card.Text style={{ textAlign: 'left' }}>
           <FontAwesomeIcon icon={faUser} /> {userCount || 0} Users
         </Card.Text>
