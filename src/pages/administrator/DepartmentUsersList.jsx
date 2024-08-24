@@ -42,17 +42,20 @@ const DepartmentUsersList = () => {
         try {
             const response = await axios.get('http://localhost:9000/departments', { headers });
             setDepartments(response.data);
-
+            
             // Find the department name based on the department_code
             const department = response.data.find(d => d.department_code === department_code);
             if (department) {
                 setDepartmentName(department.department_name);
+            } else {
+                console.log('Department not found for code:', department_code);
             }
         } catch (error) {
             console.error('Error fetching departments:', error);
         }
     }, [headers, department_code]);
-
+       
+    
     const fetchPrograms = useCallback(async () => {  
         try {
             const response = await axios.get('http://localhost:9000/programs', { headers });
@@ -66,7 +69,7 @@ const DepartmentUsersList = () => {
         fetchUsers();
         fetchDepartments();
         fetchPrograms();
-    }, [fetchUsers, fetchDepartments, fetchPrograms]);        
+    }, [fetchUsers, fetchDepartments, fetchPrograms]);            
 
     const handleReadModalShow = (user) => {
         setSelectedUser(user);
@@ -138,7 +141,7 @@ const DepartmentUsersList = () => {
         <>
             <AdminNavigation />
             <AdminInfo />
-            <h6 className="page-title">{departmentName || 'USER MANAGEMENT'}</h6>
+            <h6 className="page-title">{departmentName || department_code || 'USER MANAGEMENT'}</h6>
             <div style={{ display: 'flex', marginTop: '20px', alignItems: 'center' }}>
                 <div style={{ width: '900px', marginLeft: '20px' }}>
                     <SearchAndFilter />
@@ -208,7 +211,7 @@ const DepartmentUsersList = () => {
                 </Table>
             </div>
  
- 
+            {/* Read Modal */}
             <Modal show={showReadModal} onHide={handleReadModalClose}>
                 <Modal.Header closeButton>
                     <Modal.Title style = {{marginLeft: '65px'}}>VIEW STUDENT RECORD</Modal.Title>
@@ -248,13 +251,13 @@ const DepartmentUsersList = () => {
                                 <p>{selectedUser.year_level}</p>
                                 <p>{getDepartmentName(selectedUser.department_id)}</p>
                                 <p>{getProgramName(selectedUser.program_id)}</p>
-                                </div>
                             </div>
+                        </div>
                     )}
                 </Modal.Body>
             </Modal>
 
-
+            {/* Update Modal */}
             <Modal show={showUpdateModal} onHide={handleUpdateModalClose} dialogClassName="modal-lg">
                 <Modal.Header closeButton>
                     <Modal.Title style = {{ marginLeft: '180px'}}>UPDATE STUDENT RECORD</Modal.Title>
