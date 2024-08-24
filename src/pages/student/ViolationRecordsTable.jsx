@@ -72,7 +72,10 @@ const MyRecordsTable = () => {
 
     const getAcademicYearName = (acadyear_id) => {
         const academicYear = academicYears.find(academicYear => academicYear.acadyear_id === acadyear_id);
-        return academicYear ? academicYear.acadyear_name : 'Unknown';
+        if (academicYear) {
+            return `${academicYear.start_year} - ${academicYear.end_year}`;
+        }
+        return 'Unknown';
     };
 
     const getSemesterName = (semester_id) => {
@@ -94,7 +97,6 @@ const MyRecordsTable = () => {
         textAlign: 'center',
     };
 
-
     return (
         <>
             {loading && <Spinner animation="border" role="status">
@@ -112,7 +114,7 @@ const MyRecordsTable = () => {
                                 <th style={{ width: '15%'}}>Sanction</th>
                                 <th style={{ width: '13%'}}>Academic Year</th>
                                 <th style={{ width: '15%'}}>Semester</th>
-                                <th style={{ width: '10%'}}>Action</th> {/* Updated column header */}
+                                <th style={{ width: '10%'}}>Action</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -147,7 +149,7 @@ const MyRecordsTable = () => {
                                 <p><strong>Academic Year:</strong> {getAcademicYearName(selectedRecord.acadyear_id)}</p>
                                 <p><strong>Semester:</strong> {getSemesterName(selectedRecord.semester_id)}</p>
                                 <p><strong>Description:</strong> {selectedRecord.description}</p>
-                                <p><strong>Created At:</strong>{selectedRecord.created_at}</p>
+                                <p><strong>Created At:</strong> {selectedRecord.created_at}</p>
                             </Modal.Body>
                             <Modal.Footer>
                                 <Button variant="secondary" onClick={() => setSelectedRecord(null)}>Close</Button>
