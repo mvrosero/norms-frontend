@@ -11,7 +11,8 @@ const HistoryTable = ({ searchQuery }) => {
     const [defiances, setDefiances] = useState([]);
     const [deletionStatus, setDeletionStatus] = useState(false); // State to track deletion status
     const [showModal, setShowModal] = useState(false); // State to manage modal visibility
-    const [selectedFile, setSelectedFile] = useState(''); // State to manage selected file
+    const [fileUrl, setFileUrl] = useState(''); // State to manage file URL
+    const [fileType, setFileType] = useState(''); // State to manage file type
     const navigate = useNavigate();
 
     const headers = useMemo(() => {
@@ -105,18 +106,49 @@ const HistoryTable = ({ searchQuery }) => {
         }
     };
 
-    const handleShowModal = (file) => {
-        setSelectedFile(file);
-        setShowModal(true);
+    const handleShowModal = async (slip_id) => {
+        try {
+            const response = await axios.get(`http://localhost:9000/uniform_defiance/${slip_id}`, { responseType: 'blob' });
+            const contentType = response.headers['content-type'];
+            setFileType(contentType);
+            const fileUrl = URL.createObjectURL(response.data);
+            setFileUrl(fileUrl);
+            setShowModal(true);
+        } catch (error) {
+            console.error('Error fetching file:', error);
+            Swal.fire({
+                icon: 'error',
+                text: 'An error occurred while fetching the file. Please try again later.',
+            });
+        }
     };
 
     const handleCloseModal = () => {
-        setSelectedFile('');
+        setFileUrl('');
+        setFileType('');
         setShowModal(false);
     };
 
     const handleStudentRedirect = (student_idnumber) => {
         navigate(`/individualuniformdefiance/${student_idnumber}`);
+    };
+
+    const renderFilePreview = () => {
+        if (fileType) {
+            if (fileType.startsWith('image/')) {
+                return <img src={fileUrl} alt="Preview" style={{ width: '100%', height: 'auto' }} />;
+            } else if (fileType.startsWith('video/')) {
+                return (
+                    <video controls style={{ width: '100%' }}>
+                        <source src={fileUrl} type={fileType} />
+                        Your browser does not support the video tag.
+                    </video>
+                );
+            } else {
+                return <a href={fileUrl} target="_blank" rel="noopener noreferrer">View File</a>;
+            }
+        }
+        return 'No file available';
     };
 
     return (
@@ -128,7 +160,7 @@ const HistoryTable = ({ searchQuery }) => {
 
                 {/* Defiance table */}
                 <Table bordered hover style={{ borderRadius: '20px', marginLeft: '110px' }}>
-                    <thead style={{ backgroundColor: '#f8f9fa' }}> {/* Setting header background color */}
+                    <thead style={{ backgroundColor: '#f8f9fa' }}>
                         <tr>
                             <th style={{ width: '5%' }}>ID</th>
                             <th style={{ width: '10%' }}>ID Number</th>
@@ -164,7 +196,7 @@ const HistoryTable = ({ searchQuery }) => {
                                             href="#"
                                             onClick={(e) => {
                                                 e.preventDefault();
-                                                handleShowModal(defiance.photo_video_filename);
+                                                handleShowModal(defiance.slip_id); // Pass slip_id to fetch file
                                             }}
                                             style={{ textAlign: 'center', textDecoration: 'underline' }}
                                         >
@@ -185,15 +217,7 @@ const HistoryTable = ({ searchQuery }) => {
                     <Modal.Title>File Preview</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                    {selectedFile ? (
-                        <div>
-                            {selectedFile.endsWith('.jpg') || selectedFile.endsWith('.jpeg') || selectedFile.endsWith('.png') ? (
-                                <img src={selectedFile} alt="Preview" style={{ width: '100%', height: 'auto' }} />
-                            ) : (
-                                <a href={selectedFile} target="_blank" rel="noopener noreferrer">View File</a>
-                            )}
-                        </div>
-                    ) : 'No file available'}
+                    {renderFilePreview()}
                 </Modal.Body>
                 <Modal.Footer>
                     <Button variant="secondary" onClick={handleCloseModal}>
