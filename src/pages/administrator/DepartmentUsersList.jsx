@@ -42,9 +42,12 @@ const DepartmentUsersList = () => {
         try {
             const response = await axios.get('http://localhost:9000/departments', { headers });
             setDepartments(response.data);
-            
-            // Find the department name based on the department_code
-            const department = response.data.find(d => d.department_code === department_code);
+    
+            // Normalize department_code to uppercase
+            const normalizedDepartmentCode = department_code.toUpperCase();
+    
+            // Find the department name based on the normalized department_code
+            const department = response.data.find(d => d.department_code.toUpperCase() === normalizedDepartmentCode);
             if (department) {
                 setDepartmentName(department.department_name);
             } else {
@@ -54,6 +57,7 @@ const DepartmentUsersList = () => {
             console.error('Error fetching departments:', error);
         }
     }, [headers, department_code]);
+    
        
     
     const fetchPrograms = useCallback(async () => {  
