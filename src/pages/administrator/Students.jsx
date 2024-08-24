@@ -133,7 +133,7 @@ const StudentTable = () => {
                             <th>Department</th>
                             <th>Program</th>
                             <th style={{ width: '12%' }}>Status</th>
-                            <th style={{ width: '13%' }}>Action</th>
+                            <th style={{ width: '13%' }}>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
