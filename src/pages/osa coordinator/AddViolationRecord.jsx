@@ -146,7 +146,7 @@ export default function AddViolationRecordForm({ handleCloseModal }) {
                                 <option value=''>Select Academic Year</option>
                                     {academic_years.map((academic_year) => (
                                         <option key={academic_year.acadyear_id} value={academic_year.acadyear_id}>
-                                            {academic_year.acadyear_name}
+                                            {academic_year.start_year} - {academic_year.end_year}
                                         </option>
                                     ))}
                                 </Form.Select> 
