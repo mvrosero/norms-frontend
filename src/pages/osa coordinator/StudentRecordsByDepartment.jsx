@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import axios from 'axios';
 import { Modal, Button, Table } from 'react-bootstrap';
-import { useParams } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import DeleteIcon from '@mui/icons-material/Delete';
 import PersonIcon from '@mui/icons-material/Person';
@@ -121,12 +121,12 @@ const StudentRecordsByDepartment = () => {
     const handleCloseModal = () => {
         setShowViolationModal(false); // Hide the modal
     };
-    
-    
+
     return (
         <>
             <CoordinatorNavigation />
             <CoordinatorInfo />
+
             <h6 className="page-title">{departmentName || department_code || 'STUDENT RECORDS'}</h6>
             <div style={{ display: 'flex', marginTop: '20px', alignItems: 'center' }}>
                 <div style={{ width: '900px', marginLeft: '20px' }}>
@@ -152,6 +152,19 @@ const StudentRecordsByDepartment = () => {
                     <FaPlus style={{ marginLeft: '10px' }} />
                 </button>
             </div>
+
+            {/* Breadcrumbs */}
+            <nav style={{ marginTop: '20px', marginBottom: '5px', marginLeft: '120px' }}>
+                <ol style={{ backgroundColor: 'transparent', padding: '0', margin: '0', listStyle: 'none', display: 'flex' }}>
+                    <li style={{ marginRight: '5px' }}>
+                        <Link to="http://localhost:3000/coordinator-studentrecords" style={{ textDecoration: 'none', color: '#0D4809' }}>
+                            Students
+                        </Link>
+                    </li>
+                    <li style={{ margin: '0 5px', color: '#6c757d' }}>{'>'}</li>
+                    <li style={{ marginLeft: '5px', color: '#000' }}>{departmentName}</li>
+                </ol>
+            </nav>
 
             <div className="container">
                 <br />
