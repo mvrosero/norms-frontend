@@ -4,6 +4,7 @@ import { Modal, Button, Table } from 'react-bootstrap';
 import { useNavigate, useLocation } from 'react-router-dom';
 import Fuse from 'fuse.js';
 import { FaPlus } from 'react-icons/fa';
+import defaultProfile from '../../assets/images/default_profile.jpg'; // Adjust path as necessary
 
 import CoordinatorNavigation from './CoordinatorNavigation';
 import CoordinatorInfo from './CoordinatorInfo';
@@ -17,7 +18,6 @@ const IndividualUniformDefiance = () => {
     const [fileType, setFileType] = useState('');
     const [showModal, setShowModal] = useState(false);
     const [showAddViolationModal, setShowAddViolationModal] = useState(false);
-    const [selectedFile, setSelectedFile] = useState('');
     const [searchQuery, setSearchQuery] = useState('');
     const location = useLocation();
     const navigate = useNavigate();
@@ -30,7 +30,20 @@ const IndividualUniformDefiance = () => {
     const fetchStudentInfo = useCallback(async (student_idnumber) => {
         try {
             const response = await axios.get(`http://localhost:9000/student/${student_idnumber}`, { headers });
-            setStudentInfo(response.data[0]);
+            const studentData = response.data[0];
+            if (studentData) {
+                const fullName = `${studentData.first_name} ${studentData.last_name}`.trim();
+                const photoFilename = studentData.profile_photo_filename;
+                const photoUrl = photoFilename
+                    ? `http://localhost:9000/uploads/profile_photo/${photoFilename}`
+                    : defaultProfile;
+
+                setStudentInfo({
+                    ...studentData,
+                    fullName,
+                    profilePhoto: photoUrl
+                });
+            }
         } catch (error) {
             console.error('Error fetching student info:', error);
         }
@@ -86,7 +99,6 @@ const IndividualUniformDefiance = () => {
         setFileType('');
         setShowModal(false);
     };
-    
 
     const handleShowAddViolationModal = () => {
         setShowAddViolationModal(true);
@@ -95,10 +107,6 @@ const IndividualUniformDefiance = () => {
     const handleCloseAddViolationModal = async () => {
         setShowAddViolationModal(false);
         await fetchDefiances();
-    };
-
-    const handleStudentRedirect = (student_idnumber) => {
-        navigate(`/individualstudentrecord/${student_idnumber}`);
     };
 
     const renderFilePreview = () => {
@@ -128,10 +136,18 @@ const IndividualUniformDefiance = () => {
                 <div style={{ backgroundColor: 'white', marginTop: '80px', marginBottom: '20px', marginLeft: '100px', marginRight: '50px', borderRadius: '10px', boxShadow: '0 0 10px rgba(0, 0, 0, 0.1)', width: '100%', maxWidth: '1080px', boxSizing: 'border-box' }}>
                     {studentInfo && (
                         <div style={{ display: 'flex', alignItems: 'center' }}>
-                            <div style={{ width: '150px', height: '150px', backgroundColor: 'lightgray', borderRadius: '5px', margin: '20px' }}></div>
+                            <img
+                                src={studentInfo.profilePhoto}
+                                alt="Profile"
+                                style={{ width: '150px', height: '150px', borderRadius: '5px', margin: '20px', objectFit: 'cover' }}
+                                onError={(e) => {
+                                    console.error('Error loading image:', e.target.src);
+                                    e.target.src = defaultProfile; // Fallback to default image on error
+                                }}
+                            />
                             <div style={{ marginLeft: '20px', fontSize: '16px' }}>
                                 <p><strong>Student ID Number:</strong> {studentInfo.student_idnumber}</p>
-                                <p><strong>Name:</strong> {`${studentInfo.first_name} ${studentInfo.middle_name} ${studentInfo.last_name} ${studentInfo.suffix}`.trim()}</p>
+                                <p><strong>Name:</strong> {studentInfo.fullName}</p>
                                 <p><strong>Email:</strong> {studentInfo.email}</p>
                                 <p><strong>Department:</strong> {studentInfo.department_name}</p>
                                 <p><strong>Program:</strong> {studentInfo.program_name}</p>
@@ -194,7 +210,7 @@ const IndividualUniformDefiance = () => {
                 </Table>
             </div>
 
-            <Modal show={showModal} onHide={handleCloseModal}>
+            <Modal show={showModal} onHide={handleCloseModal} size="lg">
                 <Modal.Header closeButton>
                     <Modal.Title>File Preview</Modal.Title>
                 </Modal.Header>
@@ -218,6 +234,6 @@ const IndividualUniformDefiance = () => {
             </Modal>
         </>
     );
-}
+};
 
 export default IndividualUniformDefiance;

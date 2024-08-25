@@ -10,9 +10,11 @@ import CoordinatorNavigation from './CoordinatorNavigation';
 import CoordinatorInfo from './CoordinatorInfo';
 import IndividualViolationRecordsTable from './IndividualViolationRecordsTable';
 import AddViolationRecordForm from './AddViolationRecord';
+import defaultProfile from '../../assets/images/default_profile.jpg'; // Import default profile image
 
 export default function IndividualStudentRecord() {
     const [studentInfo, setStudentInfo] = useState(null);
+    const [profilePhoto, setProfilePhoto] = useState(defaultProfile); // State to manage the profile photo
     const [violationRecords, setViolationRecords] = useState([]);
     const [showAddViolationModal, setShowAddViolationModal] = useState(false); // State for managing the Add Violation modal
     const location = useLocation();
@@ -22,8 +24,16 @@ export default function IndividualStudentRecord() {
     const fetchStudentInfo = async (student_idnumber) => {
         try {
             const studentResponse = await axios.get(`http://localhost:9000/student/${student_idnumber}`);
-            setStudentInfo(studentResponse.data[0]);
-      
+            const studentData = studentResponse.data[0];
+            setStudentInfo(studentData);
+
+            // Set profile photo if available
+            const photoFilename = studentData?.profile_photo_filename;
+            if (photoFilename) {
+                const photoUrl = `http://localhost:9000/uploads/profile_photo/${photoFilename}`;
+                setProfilePhoto(photoUrl);
+            }
+
             // Fetch violation records specific to the student
             const violationResponse = await axios.get(`http://localhost:9000/violation_record/${student_idnumber}`);
             setViolationRecords(violationResponse.data);
@@ -61,28 +71,25 @@ export default function IndividualStudentRecord() {
     const handleCancel = () => {
         handleCloseModal();
     };
-    
 
     return (
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
             <div style={{ backgroundColor: 'white', marginTop: '80px', marginBottom: '20px', marginLeft: '100px', marginRight: '50px', borderRadius: '10px', boxShadow: '0 0 10px rgba(0, 0, 0, 0.1)', width: '100%', maxWidth: '1080px', boxSizing: 'border-box' }}>
                 {studentInfo && (
-                    <div style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                    }}>
-                        <div style={{
-                            width: '150px',
-                            height: '150px',
-                            backgroundColor: 'lightgray',
-                            borderRadius: '5px',
-                            margin: '20px'
-                        }}>
+                    <div style={{ display: 'flex', alignItems: 'center' }}>
+                        <div style={{ width: '150px', height: '150px', borderRadius: '5px', margin: '20px' }}>
+                            {/* Profile photo with fallback logic */}
+                            <img
+                                src={profilePhoto}
+                                alt="Profile"
+                                style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '5px' }}
+                                onError={(e) => {
+                                    console.error('Error loading image:', e.target.src);
+                                    e.target.src = defaultProfile; // Fallback to default image on error
+                                }}
+                            />
                         </div>
-                        <div style={{
-                            marginLeft: '20px',
-                            fontSize: '16px'
-                        }}>
+                        <div style={{ marginLeft: '20px', fontSize: '16px' }}>
                             {/* Display student information */}
                             <p><strong>Student ID Number:</strong> {studentInfo.student_idnumber}</p>
                             <p><strong>Name:</strong> {`${studentInfo.first_name} ${studentInfo.middle_name} ${studentInfo.last_name} ${studentInfo.suffix}`.trim()}</p>
@@ -126,7 +133,7 @@ export default function IndividualStudentRecord() {
             {/* AddViolationRecordForm modal */}
             <Modal show={showAddViolationModal} onHide={handleCloseModal}>
                 <Modal.Header closeButton>
-                    <Modal.Title style = {{marginLeft: '60px'}}>ADD VIOLATION RECORD</Modal.Title>
+                    <Modal.Title style={{ marginLeft: '60px' }}>ADD VIOLATION RECORD</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                     {/* Pass handleCloseModal function as onClose prop */}
