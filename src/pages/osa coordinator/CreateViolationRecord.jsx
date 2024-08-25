@@ -149,15 +149,15 @@ export default function CreateViolationRecordForm({ handleCloseModal}) {
                                 name='acadyear_id' 
                                 value={formData.acadyear_id} 
                                 onChange={handleChange} 
-                                style={inputStyle}>
-                            
+                                style={inputStyle}
+                            >
                                 <option value=''>Select Academic Year</option>
-                                    {academic_years.map((academic_year) => (
-                                        <option key={academic_year.acadyear_id} value={academic_year.acadyear_id}>
-                                            {academic_year.acadyear_name}
-                                        </option>
-                                    ))}
-                                </Form.Select> 
+                                {academic_years.map((academic_year) => (
+                                    <option key={academic_year.acadyear_id} value={academic_year.acadyear_id}>
+                                        {academic_year.start_year} - {academic_year.end_year}
+                                    </option>
+                                ))}
+                            </Form.Select>
                         </Form.Group>
                         <Form.Group controlId='semester_id'>
                             <Form.Label className="fw-bold">Semester</Form.Label>
