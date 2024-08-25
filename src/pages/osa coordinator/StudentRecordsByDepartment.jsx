@@ -118,11 +118,11 @@ const StudentRecordsByDepartment = () => {
         setShowViolationModal(true); // Show the modal for creating a violation record
     };
 
-    const handleCloseViolationModal = () => {
+    const handleCloseModal = () => {
         setShowViolationModal(false); // Hide the modal
     };
     
-
+    
     return (
         <>
             <CoordinatorNavigation />
@@ -245,18 +245,13 @@ const StudentRecordsByDepartment = () => {
             </Modal>
 
             {/* Violation Modal */}
-            <Modal show={showViolationModal} onHide={handleCloseViolationModal}>
+            <Modal show={showViolationModal} onHide={handleCloseModal}>
                 <Modal.Header closeButton>
                     <Modal.Title>Create Violation Record</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                    <CreateViolationRecordForm onClose={handleCloseViolationModal} />
+                    <CreateViolationRecordForm onClose={handleCloseModal} />
                 </Modal.Body>
-                <Modal.Footer>
-                    <Button variant="secondary" onClick={handleCloseViolationModal}>
-                        Close
-                    </Button>
-                </Modal.Footer>
             </Modal>
         </>
     );
