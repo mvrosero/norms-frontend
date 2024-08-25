@@ -24,7 +24,6 @@ import offensesImage from "../../components/images/offenses.png";
 import sanctionsImage from "../../components/images/sanctions.png";
 import academicYearImage from "../../components/images/academic_year.png";
 
-
 const OffensesButton = styled(Button)`
   background-image: url(${offensesImage})!important;
   background-size: cover;
@@ -216,6 +215,8 @@ const CoordinatorDashboard = () => {
 };
 
 const DepartmentCard = ({ department, userCount }) => {
+  const navigate = useNavigate();
+
   let backgroundImage;
   switch (department.name) {
     case 'CAS':
@@ -246,8 +247,13 @@ const DepartmentCard = ({ department, userCount }) => {
       backgroundImage = yellowBackgroundImage; // Fallback image
   }
 
+  const handleCardClick = () => {
+    navigate(`/coordinator-studentrecords/${department.name}`);
+  };
+
   return (
     <Card
+      onClick={handleCardClick}
       style={{
         backgroundImage: `url(${backgroundImage})`,
         backgroundSize: 'cover',
@@ -258,7 +264,8 @@ const DepartmentCard = ({ department, userCount }) => {
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'center',
-        alignItems: 'center'
+        alignItems: 'center',
+        cursor: 'pointer' // Make it clear that the card is clickable
       }}
     >
       <Card.Body style={{ position: 'absolute', bottom: 0, left: 0, color: 'black', fontSize: '12px', zIndex: 1 }}>
@@ -279,6 +286,5 @@ const DepartmentCard = ({ department, userCount }) => {
     </Card>
   );
 };
-
 
 export default CoordinatorDashboard;
