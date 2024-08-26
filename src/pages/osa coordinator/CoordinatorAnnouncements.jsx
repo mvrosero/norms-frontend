@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react'; // Import useRef
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Swal from 'sweetalert2';
@@ -13,6 +13,7 @@ import SearchAndFilter from '../general/SearchAndFilter';
 
 export default function CoordinatorAnnouncements() {
     const navigate = useNavigate();
+    const fileInputRef = useRef(null); // Create a reference for the file input
     const [announcements, setAnnouncements] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -20,11 +21,12 @@ export default function CoordinatorAnnouncements() {
     const [announcementFormData, setAnnouncementFormData] = useState({
         title: '',
         content: '',
-        status: 'Draft',
-        photo_video_filename: ''
+        status: 'Draft'
     });
-    const [file, setFile] = useState(null); // Track the selected file separately
+    const [files, setFiles] = useState([]); // Track selected files
     const [editing, setEditing] = useState(null);
+    const [showViewModal, setShowViewModal] = useState(false);
+    const [selectedAnnouncement, setSelectedAnnouncement] = useState(null);
 
     useEffect(() => {
         fetchAnnouncements();
@@ -48,10 +50,9 @@ export default function CoordinatorAnnouncements() {
         setAnnouncementFormData({
             title: '',
             content: '',
-            status: 'Draft',
-            photo_video_filename: ''
+            status: 'Draft'
         });
-        setFile(null);
+        setFiles([]);
         setShowAnnouncementModal(true);
     };
 
@@ -68,7 +69,7 @@ export default function CoordinatorAnnouncements() {
     };
 
     const handleFileChange = (e) => {
-        setFile(e.target.files[0]);
+        setFiles(prevFiles => [...prevFiles, ...Array.from(e.target.files)]);
     };
 
     const handleAnnouncementSubmit = async (e) => {
@@ -81,9 +82,9 @@ export default function CoordinatorAnnouncements() {
         formData.append('content', announcementFormData.content);
         formData.append('status', announcementFormData.status);
 
-        if (file) {
-            formData.append('photo_video_filename', file);
-        }
+        files.forEach(file => {
+            formData.append('files', file);
+        });
 
         try {
             await axios({
@@ -105,10 +106,9 @@ export default function CoordinatorAnnouncements() {
             setAnnouncementFormData({
                 title: '',
                 content: '',
-                status: 'Draft',
-                photo_video_filename: ''
+                status: 'Draft'
             });
-            setFile(null);
+            setFiles([]);
             setEditing(null);
             fetchAnnouncements();
         } catch (error) {
@@ -126,10 +126,9 @@ export default function CoordinatorAnnouncements() {
             setAnnouncementFormData({
                 title: announcement.title,
                 content: announcement.content,
-                status: announcement.status,
-                photo_video_filename: announcement.photo_video_filename || ''
+                status: announcement.status
             });
-            setFile(null);
+            setFiles([]); // Clear files
             setEditing(id);
             setShowAnnouncementModal(true);
         }
@@ -183,7 +182,22 @@ export default function CoordinatorAnnouncements() {
         return `Posted on: ${formatDateTime(createdAt)}`;
     };
 
+    const truncateText = (text, maxLength) => {
+        if (text.length > maxLength) {
+            return text.substring(0, maxLength) + '...';
+        }
+        return text;
+    };
 
+    const handleViewAnnouncement = (announcement) => {
+        setSelectedAnnouncement(announcement);
+        setShowViewModal(true);
+    };
+
+    const handleCloseViewModal = () => {
+        setShowViewModal(false);
+        setSelectedAnnouncement(null);
+    };
 
     return (
         <div>
@@ -219,11 +233,21 @@ export default function CoordinatorAnnouncements() {
                             <Card.Body>
                                 <Card.Title>{a.title}</Card.Title>
                                 <Card.Subtitle className="mb-2 text-muted">{a.status}</Card.Subtitle>
-                                <Card.Text>{a.content}</Card.Text>
-                                {a.photo_video_filename && (
+                                <Card.Text>
+                                    {truncateText(a.content, 100)}{' '}
+                                    {a.content.length > 100 && (
+                                        <span
+                                            onClick={() => handleViewAnnouncement(a)}
+                                            style={{ color: '#007bff', cursor: 'pointer', textDecoration: 'underline' }}
+                                        >
+                                            See more...
+                                        </span>
+                                    )}
+                                </Card.Text>
+                                {a.filenames && (
                                     <Card.Img
                                         variant="top"
-                                        src={`http://localhost:9000/uploads/${a.photo_video_filename}`}
+                                        src={`http://localhost:9000/uploads/${a.filenames.split(',')[0]}`}
                                         alt="Announcement Image"
                                     />
                                 )}
@@ -243,71 +267,142 @@ export default function CoordinatorAnnouncements() {
             {/* Announcement Modal */}
             <Modal show={showAnnouncementModal} onHide={handleCloseAnnouncementModal}>
                 <Modal.Header closeButton>
-                    <Modal.Title>{editing ? 'Edit Announcement' : 'Create Announcement'}</Modal.Title>
+                    <Modal.Title>{editing ? 'Edit Announcement' : 'Add Announcement'}</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                     <Form onSubmit={handleAnnouncementSubmit}>
-                        <Form.Group className="mb-3">
+                        <Form.Group controlId="formAnnouncementTitle">
                             <Form.Label>Title</Form.Label>
                             <Form.Control
                                 type="text"
+                                placeholder="Enter title"
                                 name="title"
                                 value={announcementFormData.title}
                                 onChange={handleChange}
                                 required
                             />
                         </Form.Group>
-                        <Form.Group className="mb-3">
+                        <Form.Group controlId="formAnnouncementContent" style={{ marginTop: '10px' }}>
                             <Form.Label>Content</Form.Label>
                             <Form.Control
                                 as="textarea"
                                 rows={3}
+                                placeholder="Enter content"
                                 name="content"
                                 value={announcementFormData.content}
                                 onChange={handleChange}
                                 required
                             />
                         </Form.Group>
-                        <Form.Group className="mb-3">
+                        <Form.Group controlId="formAnnouncementStatus" style={{ marginTop: '10px' }}>
                             <Form.Label>Status</Form.Label>
-                            <Form.Select
+                            <Form.Control
+                                as="select"
                                 name="status"
                                 value={announcementFormData.status}
                                 onChange={handleChange}
+                                required
                             >
                                 <option value="Draft">Draft</option>
                                 <option value="Published">Published</option>
                                 <option value="Unpublished">Unpublished</option>
-                            </Form.Select>
+                            </Form.Control>
                         </Form.Group>
-                        <Form.Group className="mb-3">
-                            <Form.Label>Attach Image/Video</Form.Label>
-                            <Form.Control
+                        <Form.Group controlId="formAnnouncementFiles" style={{ marginTop: '10px' }}>
+                            <Form.Label>Attachments</Form.Label>
+                            <input
                                 type="file"
+                                multiple
                                 onChange={handleFileChange}
+                                style={{ display: 'none' }}
+                                ref={fileInputRef} // Attach reference to the file input
                             />
-                            {announcementFormData.photo_video_filename && (
-                                <div>
-                                    <img
-                                        src={`http://localhost:9000/uploads/${announcementFormData.photo_video_filename}`}
-                                        alt="Announcement Image"
-                                        style={{ maxWidth: '100%', marginTop: '10px' }}
-                                    />
-                                    <Button
-                                        variant="link"
-                                        onClick={() => setAnnouncementFormData(prev => ({ ...prev, photo_video_filename: '' }))}
+                            <div
+                                style={{
+                                    display: 'flex',
+                                    flexWrap: 'wrap',
+                                    gap: '10px',
+                                    marginTop: '10px',
+                                }}
+                            >
+                                {files.map((file, index) => (
+                                    <div
+                                        key={index}
+                                        style={{
+                                            width: '100px',
+                                            height: '100px',
+                                            backgroundColor: '#f8f9fa',
+                                            borderRadius: '5px',
+                                            overflow: 'hidden',
+                                            position: 'relative',
+                                            boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
+                                        }}
                                     >
-                                        Remove Image/Video
-                                    </Button>
+                                        <img
+                                            src={URL.createObjectURL(file)}
+                                            alt="Attachment"
+                                            style={{
+                                                width: '100%',
+                                                height: '100%',
+                                                objectFit: 'cover',
+                                            }}
+                                        />
+                                    </div>
+                                ))}
+                                <div
+                                    onClick={() => fileInputRef.current.click()}
+                                    style={{
+                                        width: '100px',
+                                        height: '100px',
+                                        backgroundColor: '#e9ecef',
+                                        borderRadius: '5px',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        cursor: 'pointer',
+                                        boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
+                                    }}
+                                >
+                                    <FaPlus size={24} color="#007bff" />
                                 </div>
-                            )}
+                            </div>
                         </Form.Group>
-                        <Button variant="primary" type="submit">
-                            {editing ? 'Update Announcement' : 'Create Announcement'}
+                        <Button variant="primary" type="submit" style={{ marginTop: '10px' }}>
+                            {editing ? 'Update' : 'Create'}
                         </Button>
                     </Form>
                 </Modal.Body>
             </Modal>
+
+            {/* Announcement View Modal */}
+            {selectedAnnouncement && (
+                <Modal show={showViewModal} onHide={handleCloseViewModal}>
+                    <Modal.Header closeButton>
+                        <Modal.Title>{selectedAnnouncement.title}</Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>
+                        <p>{selectedAnnouncement.content}</p>
+                        <p className="text-muted">{renderDateTime(selectedAnnouncement.created_at, selectedAnnouncement.updated_at)}</p>
+                        {selectedAnnouncement.filenames && selectedAnnouncement.filenames.split(',').map((filename, index) => (
+                            <img
+                                key={index}
+                                src={`http://localhost:9000/uploads/${filename}`}
+                                alt="Attachment"
+                                style={{
+                                    width: '100%',
+                                    height: 'auto',
+                                    marginBottom: '10px',
+                                }}
+                            />
+                        ))}
+                    </Modal.Body>
+                    <Modal.Footer>
+                        <Button variant="secondary" onClick={handleCloseViewModal}>
+                            Close
+                        </Button>
+                    </Modal.Footer>
+                </Modal>
+            )}
         </div>
     );
 }
