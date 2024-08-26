@@ -414,21 +414,39 @@ export default function CoordinatorAnnouncements() {
 
 
 
-            {/* View Announcement Modal */}
+            {/* View Modal */}
             <Modal show={showViewModal} onHide={handleCloseViewModal} size="lg">
                 <Modal.Header closeButton>
-                    <Modal.Title>{selectedAnnouncement?.title}</Modal.Title>
+                    <Modal.Title>Announcement Details</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                    <p>{selectedAnnouncement?.content}</p>
-                    {selectedAnnouncement?.filenames && (
-                        <Card.Img
-                            variant="top"
-                            src={`http://localhost:9000/uploads/${selectedAnnouncement.filenames.split(',')[0]}`}
-                            alt="Announcement Image"
-                        />
+                    {selectedAnnouncement && (
+                        <>
+                            <h5>{selectedAnnouncement.title}</h5>
+                            <p>{selectedAnnouncement.content}</p>
+                            <p>Status: {selectedAnnouncement.status}</p>
+                            <h6>Attachments:</h6>
+                            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px' }}>
+                                {selectedAnnouncement.filenames.split(',').map((filename, index) => (
+                                    <div key={index} style={{ position: 'relative', display: 'inline-block' }}>
+                                        <Card style={{ width: '100px', height: '100px' }}>
+                                            <Card.Body style={{ padding: '5px' }}>
+                                                {filename.match(/\.(jpg|jpeg|png|gif)$/) ? (
+                                                    <img src={`http://localhost:9000/uploads/${filename}`} alt="attachment" style={{ width: '100%', height: 'auto' }} />
+                                                ) : (
+                                                    <FileIcon style={{ fontSize: '50px', color: '#007bff' }} />
+                                                )}
+                                            </Card.Body>
+                                        </Card>
+                                    </div>
+                                ))}
+                            </div>
+                        </>
                     )}
                 </Modal.Body>
+                <Modal.Footer>
+                    <Button variant="secondary" onClick={handleCloseViewModal}>Close</Button>
+                </Modal.Footer>
             </Modal>
         </div>
     );
