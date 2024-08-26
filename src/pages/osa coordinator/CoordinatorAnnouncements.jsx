@@ -365,7 +365,7 @@ export default function CoordinatorAnnouncements() {
                                 {files.map((file, index) => (
                                     <Card key={`new-${index}`} style={{ width: '100px', height: '100px', margin: '5px', position: 'relative' }}>
                                         <Card.Body style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                                            {getFileIcon(file.name) || (
+                                        {getFileIcon(file.name) || (
                                                 <img
                                                     src={URL.createObjectURL(file)}
                                                     alt={file.name}
@@ -373,13 +373,13 @@ export default function CoordinatorAnnouncements() {
                                                 />
                                             )}
                                             <MdClose
-                                                onClick={() => handleRemoveFile(index)}
+                                                onClick={() => handleRemoveFile(index, false)}
                                                 style={{ position: 'absolute', top: '5px', right: '5px', cursor: 'pointer', color: 'red' }}
                                             />
                                         </Card.Body>
                                     </Card>
                                 ))}
-                                {/* Add File Button */}
+                                {/* Add New File Button */}
                                 <Card
                                     style={{
                                         width: '100px',
@@ -392,20 +392,18 @@ export default function CoordinatorAnnouncements() {
                                     }}
                                     onClick={() => fileInputRef.current.click()}
                                 >
-                                    <Card.Body style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                                        <FaPlus style={{ fontSize: '30px', color: '#007bff' }} />
-                                    </Card.Body>
+                                    <FaPlus style={{ fontSize: '24px', color: '#007bff' }} />
                                 </Card>
                                 <input
-                                    ref={fileInputRef}
                                     type="file"
                                     multiple
+                                    ref={fileInputRef}
                                     style={{ display: 'none' }}
                                     onChange={handleFileChange}
                                 />
                             </div>
                         </Form.Group>
-                        <Button variant="primary" type="submit">
+                        <Button type="submit" variant="primary" style={{ marginTop: '20px' }}>
                             {editing ? 'Update Announcement' : 'Create Announcement'}
                         </Button>
                     </Form>
