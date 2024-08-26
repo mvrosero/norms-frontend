@@ -35,7 +35,6 @@ export default function CoordinatorAnnouncements() {
         fetchAnnouncements();
     }, []);
 
-
     const fetchAnnouncements = async () => {
         try {
             const response = await axios.get('http://localhost:9000/announcements', {
@@ -57,6 +56,7 @@ export default function CoordinatorAnnouncements() {
             status: 'Draft'
         });
         setFiles([]);
+        setOriginalFiles([]);
         setShowAnnouncementModal(true);
     };
 
@@ -204,8 +204,14 @@ export default function CoordinatorAnnouncements() {
         setSelectedAnnouncement(null);
     };
 
-    const handleRemoveFile = (index) => {
-        setFiles(prevFiles => prevFiles.filter((_, i) => i !== index));
+    const handleRemoveFile = (index, isOriginal = false) => {
+        if (isOriginal) {
+            // If original file, remove from originalFiles
+            setOriginalFiles(prevFiles => prevFiles.filter((_, i) => i !== index));
+        } else {
+            // If new file, remove from files
+            setFiles(prevFiles => prevFiles.filter((_, i) => i !== index));
+        }
     };
 
     const getFileIcon = (fileName) => {
@@ -292,8 +298,8 @@ export default function CoordinatorAnnouncements() {
                 ))}
             </Row>
 
-            {/* Edit/Create Announcement Modal */}
-            <Modal show={showAnnouncementModal} onHide={handleCloseAnnouncementModal} size="lg">
+           {/* Announcement Modal */}
+           <Modal show={showAnnouncementModal} onHide={handleCloseAnnouncementModal} size="lg">
                 <Modal.Header closeButton>
                     <Modal.Title>{editing ? 'Edit Announcement' : 'Add Announcement'}</Modal.Title>
                 </Modal.Header>
@@ -313,7 +319,7 @@ export default function CoordinatorAnnouncements() {
                             <Form.Label>Content</Form.Label>
                             <Form.Control
                                 as="textarea"
-                                rows={3}
+                                rows={5}
                                 name="content"
                                 value={announcementFormData.content}
                                 onChange={handleChange}
@@ -329,16 +335,17 @@ export default function CoordinatorAnnouncements() {
                                 onChange={handleChange}
                                 required
                             >
-                                <option value="Draft">Draft</option>
-                                <option value="Published">Published</option>
-                                <option value="Unpublished">Unpublished</option>
+                                <option>Draft</option>
+                                <option>Published</option>
+                                <option>Unpublished</option>
                             </Form.Control>
                         </Form.Group>
                         <Form.Group controlId="formFiles">
                             <Form.Label>Files</Form.Label>
                             <div style={{ display: 'flex', flexWrap: 'wrap' }}>
+                                {/* Display Original Files */}
                                 {originalFiles.map((file, index) => (
-                                    <Card key={index} style={{ width: '100px', height: '100px', margin: '5px' }}>
+                                    <Card key={`original-${index}`} style={{ width: '100px', height: '100px', margin: '5px', position: 'relative' }}>
                                         <Card.Body style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                                             {getFileIcon(file.name) || (
                                                 <img
@@ -348,14 +355,15 @@ export default function CoordinatorAnnouncements() {
                                                 />
                                             )}
                                             <MdClose
-                                                onClick={() => handleRemoveFile(index)}
+                                                onClick={() => handleRemoveFile(index, true)}
                                                 style={{ position: 'absolute', top: '5px', right: '5px', cursor: 'pointer', color: 'red' }}
                                             />
                                         </Card.Body>
                                     </Card>
                                 ))}
+                                {/* Display New Files */}
                                 {files.map((file, index) => (
-                                    <Card key={index} style={{ width: '100px', height: '100px', margin: '5px' }}>
+                                    <Card key={`new-${index}`} style={{ width: '100px', height: '100px', margin: '5px', position: 'relative' }}>
                                         <Card.Body style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                                             {getFileIcon(file.name) || (
                                                 <img
@@ -371,7 +379,19 @@ export default function CoordinatorAnnouncements() {
                                         </Card.Body>
                                     </Card>
                                 ))}
-                                <Card style={{ width: '100px', height: '100px', margin: '5px', display: 'flex', justifyContent: 'center', alignItems: 'center', cursor: 'pointer' }} onClick={() => fileInputRef.current.click()}>
+                                {/* Add File Button */}
+                                <Card
+                                    style={{
+                                        width: '100px',
+                                        height: '100px',
+                                        margin: '5px',
+                                        display: 'flex',
+                                        justifyContent: 'center',
+                                        alignItems: 'center',
+                                        cursor: 'pointer',
+                                    }}
+                                    onClick={() => fileInputRef.current.click()}
+                                >
                                     <Card.Body style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                                         <FaPlus style={{ fontSize: '30px', color: '#007bff' }} />
                                     </Card.Body>
@@ -386,11 +406,13 @@ export default function CoordinatorAnnouncements() {
                             </div>
                         </Form.Group>
                         <Button variant="primary" type="submit">
-                            {editing ? 'Update Announcement' : 'Add Announcement'}
+                            {editing ? 'Update Announcement' : 'Create Announcement'}
                         </Button>
                     </Form>
                 </Modal.Body>
             </Modal>
+
+
 
             {/* View Announcement Modal */}
             <Modal show={showViewModal} onHide={handleCloseViewModal} size="lg">
