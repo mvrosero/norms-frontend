@@ -23,6 +23,7 @@ export default function CoordinatorAnnouncements() {
         status: 'Draft',
         photo_video_filename: ''
     });
+    const [file, setFile] = useState(null); // Track the selected file separately
     const [editing, setEditing] = useState(null);
 
     useEffect(() => {
@@ -50,6 +51,7 @@ export default function CoordinatorAnnouncements() {
             status: 'Draft',
             photo_video_filename: ''
         });
+        setFile(null);
         setShowAnnouncementModal(true);
     };
 
@@ -66,19 +68,34 @@ export default function CoordinatorAnnouncements() {
     };
 
     const handleFileChange = (e) => {
-        setAnnouncementFormData(prevState => ({
-            ...prevState,
-            photo_video_filename: e.target.files[0] ? e.target.files[0].name : ''
-        }));
+        setFile(e.target.files[0]);
     };
 
     const handleAnnouncementSubmit = async (e) => {
         e.preventDefault();
         const url = editing ? `http://localhost:9000/announcement/${editing}` : 'http://localhost:9000/create-announcement';
         const method = editing ? 'put' : 'post';
-        
+
+        const formData = new FormData();
+        formData.append('title', announcementFormData.title);
+        formData.append('content', announcementFormData.content);
+        formData.append('status', announcementFormData.status);
+
+        if (file) {
+            formData.append('photo_video_filename', file);
+        }
+
         try {
-            await axios({ method, url, data: announcementFormData, headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` } });
+            await axios({
+                method,
+                url,
+                data: formData,
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                    'Content-Type': 'multipart/form-data'
+                }
+            });
+
             Swal.fire({
                 icon: 'success',
                 title: editing ? 'Announcement Updated!' : 'Announcement Created!',
@@ -91,6 +108,7 @@ export default function CoordinatorAnnouncements() {
                 status: 'Draft',
                 photo_video_filename: ''
             });
+            setFile(null);
             setEditing(null);
             fetchAnnouncements();
         } catch (error) {
@@ -111,6 +129,7 @@ export default function CoordinatorAnnouncements() {
                 status: announcement.status,
                 photo_video_filename: announcement.photo_video_filename || ''
             });
+            setFile(null);
             setEditing(id);
             setShowAnnouncementModal(true);
         }
@@ -154,8 +173,8 @@ export default function CoordinatorAnnouncements() {
             <h6 className="page-title">Manage Announcements</h6>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', marginTop: '30px' }}>
                 <SearchAndFilter />
-                <button 
-                    onClick={handleCreateNewAnnouncement} 
+                <button
+                    onClick={handleCreateNewAnnouncement}
                     style={{
                         backgroundColor: '#FAD32E',
                         color: 'white',
@@ -182,7 +201,13 @@ export default function CoordinatorAnnouncements() {
                                 <Card.Title>{a.title}</Card.Title>
                                 <Card.Subtitle className="mb-2 text-muted">{a.status}</Card.Subtitle>
                                 <Card.Text>{a.content}</Card.Text>
-                                {a.photo_video_filename && <Card.Img variant="top" src={`http://localhost:9000/uploads/${a.photo_video_filename}`} />}
+                                {a.photo_video_filename && (
+                                    <Card.Img
+                                        variant="top"
+                                        src={`http://localhost:9000/uploads/${a.photo_video_filename}`}
+                                        alt="Announcement Image"
+                                    />
+                                )}
                                 <div style={{ marginTop: '10px' }}>
                                     <EditIcon onClick={() => handleEditAnnouncement(a.announcement_id)} style={{ cursor: 'pointer', color: '#007bff', marginRight: '10px' }} />
                                     <DeleteIcon onClick={() => handleDeleteAnnouncement(a.announcement_id)} style={{ cursor: 'pointer', color: '#dc3545' }} />
