@@ -365,7 +365,7 @@ export default function CoordinatorAnnouncements() {
                                 {files.map((file, index) => (
                                     <Card key={`new-${index}`} style={{ width: '100px', height: '100px', margin: '5px', position: 'relative' }}>
                                         <Card.Body style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                                        {getFileIcon(file.name) || (
+                                            {getFileIcon(file.name) || (
                                                 <img
                                                     src={URL.createObjectURL(file)}
                                                     alt={file.name}
