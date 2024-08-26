@@ -232,6 +232,7 @@ export default function CoordinatorAnnouncements() {
                             >
                                 <option>Draft</option>
                                 <option>Published</option>
+                                <option>Unpublished</option>
                             </Form.Control>
                         </Form.Group>
                         <Form.Group className="mb-3">
