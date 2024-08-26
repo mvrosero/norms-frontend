@@ -7,6 +7,7 @@ import { FaPlus } from 'react-icons/fa';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import FileIcon from '@mui/icons-material/InsertDriveFile'; // Add a file icon
+import { MdClose } from 'react-icons/md'; // Import close icon
 
 import CoordinatorNavigation from './CoordinatorNavigation';
 import CoordinatorInfo from './CoordinatorInfo';
@@ -200,6 +201,10 @@ export default function CoordinatorAnnouncements() {
         setSelectedAnnouncement(null);
     };
 
+    const handleRemoveFile = (index) => {
+        setFiles(prevFiles => prevFiles.filter((_, i) => i !== index));
+    };
+
     const getFileIcon = (fileName) => {
         const extension = fileName.split('.').pop().toLowerCase();
         if (['jpg', 'jpeg', 'png', 'gif'].includes(extension)) {
@@ -264,25 +269,28 @@ export default function CoordinatorAnnouncements() {
                                 <Card.Text className="text-muted" style={{ marginTop: '10px' }}>
                                     {renderDateTime(a.created_at, a.updated_at)}
                                 </Card.Text>
-                                <Button
-                                    variant="link"
-                                    onClick={() => handleEditAnnouncement(a.announcement_id)}
-                                >
-                                    <EditIcon style={{ color: '#28a745' }} />
-                                </Button>
-                                <Button
-                                    variant="link"
-                                    onClick={() => handleDeleteAnnouncement(a.announcement_id)}
-                                >
-                                    <DeleteIcon style={{ color: '#dc3545' }} />
-                                </Button>
+                                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                                    <Button
+                                        variant="outline-primary"
+                                        onClick={() => handleEditAnnouncement(a.announcement_id)}
+                                    >
+                                        <EditIcon /> Edit
+                                    </Button>
+                                    <Button
+                                        variant="outline-danger"
+                                        onClick={() => handleDeleteAnnouncement(a.announcement_id)}
+                                    >
+                                        <DeleteIcon /> Delete
+                                    </Button>
+                                </div>
                             </Card.Body>
                         </Card>
                     </Col>
                 ))}
             </Row>
 
-            <Modal show={showAnnouncementModal} onHide={handleCloseAnnouncementModal} size="lg">
+            {/* Announcement Modal */}
+            <Modal show={showAnnouncementModal} onHide={handleCloseAnnouncementModal}>
                 <Modal.Header closeButton>
                     <Modal.Title>{editing ? 'Edit Announcement' : 'Add Announcement'}</Modal.Title>
                 </Modal.Header>
@@ -295,7 +303,6 @@ export default function CoordinatorAnnouncements() {
                                 name="title"
                                 value={announcementFormData.title}
                                 onChange={handleChange}
-                                placeholder="Enter announcement title"
                                 required
                             />
                         </Form.Group>
@@ -306,8 +313,7 @@ export default function CoordinatorAnnouncements() {
                                 name="content"
                                 value={announcementFormData.content}
                                 onChange={handleChange}
-                                placeholder="Enter announcement content"
-                                rows={4}
+                                rows={3}
                                 required
                             />
                         </Form.Group>
@@ -318,10 +324,11 @@ export default function CoordinatorAnnouncements() {
                                 name="status"
                                 value={announcementFormData.status}
                                 onChange={handleChange}
+                                required
                             >
-                                <option>Draft</option>
-                                <option>Published</option>
-                                <option>Unpublished</option>
+                                <option value="Draft">Draft</option>
+                                <option value="Published">Published</option>
+                                <option value="Unpublished">Unpublished</option>
                             </Form.Control>
                         </Form.Group>
                         <Form.Group controlId="formFiles">
@@ -349,6 +356,7 @@ export default function CoordinatorAnnouncements() {
                                                     alignItems: 'center',
                                                     justifyContent: 'center',
                                                     height: '100px',
+                                                    position: 'relative',
                                                     cursor: 'pointer'
                                                 }}
                                             >
@@ -369,6 +377,26 @@ export default function CoordinatorAnnouncements() {
                                                         <Card.Text>{file.name}</Card.Text>
                                                     </Card.Body>
                                                 )}
+                                                <button
+                                                    onClick={() => handleRemoveFile(index)}
+                                                    style={{
+                                                        position: 'absolute',
+                                                        top: '5px',
+                                                        right: '5px',
+                                                        backgroundColor: 'rgba(0, 0, 0, 0.3)',
+                                                        color: 'white',
+                                                        border: 'none',
+                                                        borderRadius: '50%',
+                                                        width: '20px',
+                                                        height: '20px',
+                                                        display: 'flex',
+                                                        alignItems: 'center',
+                                                        justifyContent: 'center',
+                                                        cursor: 'pointer'
+                                                    }}
+                                                >
+                                                    <MdClose style={{ fontSize: '14px', fontWeight: 'bold' }} />
+                                                </button>
                                             </Card>
                                         </Col>
                                     ))}
@@ -394,13 +422,14 @@ export default function CoordinatorAnnouncements() {
                                 </Row>
                             </div>
                         </Form.Group>
-                        <Button variant="primary" type="submit" style={{ marginTop: '20px' }}>
-                            {editing ? 'Update Announcement' : 'Add Announcement'}
+                        <Button variant="primary" type="submit" style={{ marginTop: '10px' }}>
+                            {editing ? 'Update' : 'Submit'}
                         </Button>
                     </Form>
                 </Modal.Body>
             </Modal>
 
+            {/* View Announcement Modal */}
             <Modal show={showViewModal} onHide={handleCloseViewModal} size="lg">
                 <Modal.Header closeButton>
                     <Modal.Title>{selectedAnnouncement?.title}</Modal.Title>
@@ -408,27 +437,11 @@ export default function CoordinatorAnnouncements() {
                 <Modal.Body>
                     <p>{selectedAnnouncement?.content}</p>
                     {selectedAnnouncement?.filenames && (
-                        <Row xs={1} sm={2} md={3} lg={4} className="g-2">
-                            {selectedAnnouncement.filenames.split(',').map((filename, index) => (
-                                <Col key={index}>
-                                    <Card>
-                                        <Card.Img
-                                            variant="top"
-                                            src={`http://localhost:9000/uploads/${filename}`}
-                                            alt="Announcement Attachment"
-                                            style={{
-                                                width: '100px',
-                                                height: '100px',
-                                                objectFit: 'cover'
-                                            }}
-                                        />
-                                        <Card.Body>
-                                            <Card.Text>{filename}</Card.Text>
-                                        </Card.Body>
-                                    </Card>
-                                </Col>
-                            ))}
-                        </Row>
+                        <Card.Img
+                            variant="top"
+                            src={`http://localhost:9000/uploads/${selectedAnnouncement.filenames.split(',')[0]}`}
+                            alt="Announcement Image"
+                        />
                     )}
                 </Modal.Body>
             </Modal>
