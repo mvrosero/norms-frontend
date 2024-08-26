@@ -163,13 +163,27 @@ export default function CoordinatorAnnouncements() {
         });
     };
 
-    const formatDate = (dateString) => {
-        const options = { year: 'numeric', month: 'long', day: 'numeric' };
-        return new Date(dateString).toLocaleDateString(undefined, options);
+    const formatDateTime = (dateTimeString) => {
+        const date = new Date(dateTimeString);
+        const options = {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit',
+        };
+        return date.toLocaleString(undefined, options);
     };
 
-    if (loading) return <p>Loading...</p>;
-    if (error) return <p>{error}</p>;
+    const renderDateTime = (createdAt, updatedAt) => {
+        if (updatedAt) {
+            return `Updated on: ${formatDateTime(updatedAt)}`;
+        }
+        return `Posted on: ${formatDateTime(createdAt)}`;
+    };
+
+
 
     return (
         <div>
@@ -214,7 +228,7 @@ export default function CoordinatorAnnouncements() {
                                     />
                                 )}
                                 <Card.Text className="text-muted" style={{ marginTop: '10px' }}>
-                                    Posted on: {formatDate(a.created_at)}
+                                    {renderDateTime(a.created_at, a.updated_at)}
                                 </Card.Text>
                                 <div style={{ marginTop: '10px' }}>
                                     <EditIcon onClick={() => handleEditAnnouncement(a.announcement_id)} style={{ cursor: 'pointer', color: '#007bff', marginRight: '10px' }} />
@@ -256,29 +270,35 @@ export default function CoordinatorAnnouncements() {
                         </Form.Group>
                         <Form.Group className="mb-3">
                             <Form.Label>Status</Form.Label>
-                            <Form.Control
-                                as="select"
+                            <Form.Select
                                 name="status"
                                 value={announcementFormData.status}
                                 onChange={handleChange}
-                                required
                             >
-                                <option>Draft</option>
-                                <option>Published</option>
-                                <option>Unpublished</option>
-                            </Form.Control>
+                                <option value="Draft">Draft</option>
+                                <option value="Published">Published</option>
+                                <option value="Unpublished">Unpublished</option>
+                            </Form.Select>
                         </Form.Group>
                         <Form.Group className="mb-3">
-                            <Form.Label>Upload File</Form.Label>
+                            <Form.Label>Attach Image/Video</Form.Label>
                             <Form.Control
                                 type="file"
                                 onChange={handleFileChange}
-                                // Only show file selection if creating a new announcement
-                                disabled={editing && !announcementFormData.photo_video_filename}
                             />
-                            {editing && announcementFormData.photo_video_filename && (
-                                <div style={{ marginTop: '10px' }}>
-                                    <small>Current File: {announcementFormData.photo_video_filename}</small>
+                            {announcementFormData.photo_video_filename && (
+                                <div>
+                                    <img
+                                        src={`http://localhost:9000/uploads/${announcementFormData.photo_video_filename}`}
+                                        alt="Announcement Image"
+                                        style={{ maxWidth: '100%', marginTop: '10px' }}
+                                    />
+                                    <Button
+                                        variant="link"
+                                        onClick={() => setAnnouncementFormData(prev => ({ ...prev, photo_video_filename: '' }))}
+                                    >
+                                        Remove Image/Video
+                                    </Button>
                                 </div>
                             )}
                         </Form.Group>
