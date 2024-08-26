@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react'; // Import useRef
+import React, { useEffect, useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Swal from 'sweetalert2';
@@ -6,8 +6,8 @@ import { Modal, Form, Button, Card, Row, Col } from 'react-bootstrap';
 import { FaPlus } from 'react-icons/fa';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
-import FileIcon from '@mui/icons-material/InsertDriveFile'; // Add a file icon
-import { MdClose } from 'react-icons/md'; // Import close icon
+import FileIcon from '@mui/icons-material/InsertDriveFile';
+import { MdClose } from 'react-icons/md';
 
 import CoordinatorNavigation from './CoordinatorNavigation';
 import CoordinatorInfo from './CoordinatorInfo';
@@ -15,7 +15,7 @@ import SearchAndFilter from '../general/SearchAndFilter';
 
 export default function CoordinatorAnnouncements() {
     const navigate = useNavigate();
-    const fileInputRef = useRef(null); // Create a reference for the file input
+    const fileInputRef = useRef(null);
     const [announcements, setAnnouncements] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -25,7 +25,8 @@ export default function CoordinatorAnnouncements() {
         content: '',
         status: 'Draft'
     });
-    const [files, setFiles] = useState([]); // Track selected files
+    const [files, setFiles] = useState([]);
+    const [originalFiles, setOriginalFiles] = useState([]); // Track original files
     const [editing, setEditing] = useState(null);
     const [showViewModal, setShowViewModal] = useState(false);
     const [selectedAnnouncement, setSelectedAnnouncement] = useState(null);
@@ -33,6 +34,7 @@ export default function CoordinatorAnnouncements() {
     useEffect(() => {
         fetchAnnouncements();
     }, []);
+
 
     const fetchAnnouncements = async () => {
         try {
@@ -130,7 +132,8 @@ export default function CoordinatorAnnouncements() {
                 content: announcement.content,
                 status: announcement.status
             });
-            setFiles([]); // Clear files
+            setOriginalFiles(announcement.filenames.split(',').map(filename => ({ name: filename }))); // Set original files
+            setFiles([]);
             setEditing(id);
             setShowAnnouncementModal(true);
         }
@@ -289,8 +292,8 @@ export default function CoordinatorAnnouncements() {
                 ))}
             </Row>
 
-            {/* Announcement Modal */}
-            <Modal show={showAnnouncementModal} onHide={handleCloseAnnouncementModal}>
+            {/* Edit/Create Announcement Modal */}
+            <Modal show={showAnnouncementModal} onHide={handleCloseAnnouncementModal} size="lg">
                 <Modal.Header closeButton>
                     <Modal.Title>{editing ? 'Edit Announcement' : 'Add Announcement'}</Modal.Title>
                 </Modal.Header>
@@ -310,10 +313,10 @@ export default function CoordinatorAnnouncements() {
                             <Form.Label>Content</Form.Label>
                             <Form.Control
                                 as="textarea"
+                                rows={3}
                                 name="content"
                                 value={announcementFormData.content}
                                 onChange={handleChange}
-                                rows={3}
                                 required
                             />
                         </Form.Group>
@@ -332,98 +335,58 @@ export default function CoordinatorAnnouncements() {
                             </Form.Control>
                         </Form.Group>
                         <Form.Group controlId="formFiles">
-                            <Form.Label>Attachments</Form.Label>
-                            <input
-                                type="file"
-                                multiple
-                                onChange={handleFileChange}
-                                ref={fileInputRef}
-                                style={{ display: 'none' }}
-                            />
-                            <Button
-                                variant="secondary"
-                                onClick={() => fileInputRef.current.click()}
-                            >
-                                Choose files
-                            </Button>
-                            <div style={{ marginTop: '10px' }}>
-                                <Row xs={1} sm={2} md={3} lg={4} className="g-2">
-                                    {files.map((file, index) => (
-                                        <Col key={index}>
-                                            <Card
-                                                style={{
-                                                    display: 'flex',
-                                                    alignItems: 'center',
-                                                    justifyContent: 'center',
-                                                    height: '100px',
-                                                    position: 'relative',
-                                                    cursor: 'pointer'
-                                                }}
-                                            >
-                                                {file.type.startsWith('image/') ? (
-                                                    <Card.Img
-                                                        variant="top"
-                                                        src={URL.createObjectURL(file)}
-                                                        alt="Attachment"
-                                                        style={{
-                                                            width: '100px',
-                                                            height: '100px',
-                                                            objectFit: 'cover'
-                                                        }}
-                                                    />
-                                                ) : (
-                                                    <Card.Body style={{ textAlign: 'center' }}>
-                                                        {getFileIcon(file.name)}
-                                                        <Card.Text>{file.name}</Card.Text>
-                                                    </Card.Body>
-                                                )}
-                                                <button
-                                                    onClick={() => handleRemoveFile(index)}
-                                                    style={{
-                                                        position: 'absolute',
-                                                        top: '5px',
-                                                        right: '5px',
-                                                        backgroundColor: 'rgba(0, 0, 0, 0.3)',
-                                                        color: 'white',
-                                                        border: 'none',
-                                                        borderRadius: '50%',
-                                                        width: '20px',
-                                                        height: '20px',
-                                                        display: 'flex',
-                                                        alignItems: 'center',
-                                                        justifyContent: 'center',
-                                                        cursor: 'pointer'
-                                                    }}
-                                                >
-                                                    <MdClose style={{ fontSize: '14px', fontWeight: 'bold' }} />
-                                                </button>
-                                            </Card>
-                                        </Col>
-                                    ))}
-                                    <Col>
-                                        <Card
-                                            onClick={() => fileInputRef.current.click()}
-                                            style={{
-                                                display: 'flex',
-                                                alignItems: 'center',
-                                                justifyContent: 'center',
-                                                height: '100px',
-                                                cursor: 'pointer',
-                                                borderStyle: 'dashed',
-                                                borderWidth: '2px',
-                                                borderColor: '#007bff'
-                                            }}
-                                        >
-                                            <Card.Body>
-                                                <FaPlus style={{ fontSize: '24px', color: '#007bff' }} />
-                                            </Card.Body>
-                                        </Card>
-                                    </Col>
-                                </Row>
+                            <Form.Label>Files</Form.Label>
+                            <div style={{ display: 'flex', flexWrap: 'wrap' }}>
+                                {originalFiles.map((file, index) => (
+                                    <Card key={index} style={{ width: '100px', height: '100px', margin: '5px' }}>
+                                        <Card.Body style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                                            {getFileIcon(file.name) || (
+                                                <img
+                                                    src={`http://localhost:9000/uploads/${file.name}`}
+                                                    alt={file.name}
+                                                    style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                                                />
+                                            )}
+                                            <MdClose
+                                                onClick={() => handleRemoveFile(index)}
+                                                style={{ position: 'absolute', top: '5px', right: '5px', cursor: 'pointer', color: 'red' }}
+                                            />
+                                        </Card.Body>
+                                    </Card>
+                                ))}
+                                {files.map((file, index) => (
+                                    <Card key={index} style={{ width: '100px', height: '100px', margin: '5px' }}>
+                                        <Card.Body style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                                            {getFileIcon(file.name) || (
+                                                <img
+                                                    src={URL.createObjectURL(file)}
+                                                    alt={file.name}
+                                                    style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                                                />
+                                            )}
+                                            <MdClose
+                                                onClick={() => handleRemoveFile(index)}
+                                                style={{ position: 'absolute', top: '5px', right: '5px', cursor: 'pointer', color: 'red' }}
+                                            />
+                                        </Card.Body>
+                                    </Card>
+                                ))}
+                                <Card style={{ width: '100px', height: '100px', margin: '5px', display: 'flex', justifyContent: 'center', alignItems: 'center', cursor: 'pointer' }} onClick={() => fileInputRef.current.click()}>
+                                    <Card.Body style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                                        <FaPlus style={{ fontSize: '30px', color: '#007bff' }} />
+                                    </Card.Body>
+                                </Card>
+                                <input
+                                    ref={fileInputRef}
+                                    type="file"
+                                    multiple
+                                    style={{ display: 'none' }}
+                                    onChange={handleFileChange}
+                                />
                             </div>
                         </Form.Group>
-                        <Button variant="primary" type="submit" style={{ marginTop: '10px' }}>
-                            {editing ? 'Update' : 'Submit'}
+                        <Button variant="primary" type="submit">
+                            {editing ? 'Update Announcement' : 'Add Announcement'}
                         </Button>
                     </Form>
                 </Modal.Body>
