@@ -26,7 +26,7 @@ export default function CoordinatorAnnouncements() {
         status: 'Draft'
     });
     const [files, setFiles] = useState([]);
-    const [originalFiles, setOriginalFiles] = useState([]);
+    const [originalFiles, setOriginalFiles] = useState([]); // Track original files
     const [editing, setEditing] = useState(null);
     const [showViewModal, setShowViewModal] = useState(false);
     const [selectedAnnouncement, setSelectedAnnouncement] = useState(null);
@@ -132,7 +132,7 @@ export default function CoordinatorAnnouncements() {
                 content: announcement.content,
                 status: announcement.status
             });
-            setOriginalFiles(announcement.filenames ? announcement.filenames.split(',').map(filename => ({ name: filename })) : []);
+            setOriginalFiles(announcement.filenames.split(',').map(filename => ({ name: filename }))); // Set original files
             setFiles([]);
             setEditing(id);
             setShowAnnouncementModal(true);
@@ -256,18 +256,41 @@ export default function CoordinatorAnnouncements() {
                         <Card>
                             <Card.Body>
                                 <Card.Title>{a.title}</Card.Title>
-                                <Card.Text>{truncateText(a.content, 100)}</Card.Text>
-                                <Card.Text>{renderDateTime(a.created_at, a.updated_at)}</Card.Text>
+                                <Card.Subtitle className="mb-2 text-muted">{a.status}</Card.Subtitle>
+                                <Card.Text>
+                                    {truncateText(a.content, 100)}{' '}
+                                    {a.content.length > 100 && (
+                                        <span
+                                            onClick={() => handleViewAnnouncement(a)}
+                                            style={{ color: '#007bff', cursor: 'pointer', textDecoration: 'underline' }}
+                                        >
+                                            See more...
+                                        </span>
+                                    )}
+                                </Card.Text>
+                                {a.filenames && (
+                                    <Card.Img
+                                        variant="top"
+                                        src={`http://localhost:9000/uploads/${a.filenames.split(',')[0]}`}
+                                        alt="Announcement Image"
+                                    />
+                                )}
+                                <Card.Text className="text-muted" style={{ marginTop: '10px' }}>
+                                    {renderDateTime(a.created_at, a.updated_at)}
+                                </Card.Text>
                                 <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                                    <Button variant="primary" onClick={() => handleViewAnnouncement(a)}>View</Button>
-                                    <div>
-                                        <Button variant="info" onClick={() => handleEditAnnouncement(a.announcement_id)} style={{ marginRight: '10px' }}>
-                                            <EditIcon />
-                                        </Button>
-                                        <Button variant="danger" onClick={() => handleDeleteAnnouncement(a.announcement_id)}>
-                                            <DeleteIcon />
-                                        </Button>
-                                    </div>
+                                    <Button
+                                        variant="outline-primary"
+                                        onClick={() => handleEditAnnouncement(a.announcement_id)}
+                                    >
+                                        <EditIcon /> Edit
+                                    </Button>
+                                    <Button
+                                        variant="outline-danger"
+                                        onClick={() => handleDeleteAnnouncement(a.announcement_id)}
+                                    >
+                                        <DeleteIcon /> Delete
+                                    </Button>
                                 </div>
                             </Card.Body>
                         </Card>
@@ -275,13 +298,13 @@ export default function CoordinatorAnnouncements() {
                 ))}
             </Row>
 
-            {/* Announcement Modal */}
-            <Modal show={showAnnouncementModal} onHide={handleCloseAnnouncementModal} size="lg">
+           {/* Announcement Modal */}
+           <Modal show={showAnnouncementModal} onHide={handleCloseAnnouncementModal} size="lg">
                 <Modal.Header closeButton>
                     <Modal.Title>{editing ? 'Edit Announcement' : 'Add Announcement'}</Modal.Title>
                 </Modal.Header>
-                <Form onSubmit={handleAnnouncementSubmit}>
-                    <Modal.Body>
+                <Modal.Body>
+                    <Form onSubmit={handleAnnouncementSubmit}>
                         <Form.Group controlId="formTitle">
                             <Form.Label>Title</Form.Label>
                             <Form.Control
@@ -296,7 +319,7 @@ export default function CoordinatorAnnouncements() {
                             <Form.Label>Content</Form.Label>
                             <Form.Control
                                 as="textarea"
-                                rows={3}
+                                rows={5}
                                 name="content"
                                 value={announcementFormData.content}
                                 onChange={handleChange}
@@ -312,95 +335,100 @@ export default function CoordinatorAnnouncements() {
                                 onChange={handleChange}
                                 required
                             >
-                                <option value="Draft">Draft</option>
-                                <option value="Published">Published</option>
-                                <option value="Unpublished">Unpublished</option>
+                                <option>Draft</option>
+                                <option>Published</option>
+                                <option>Unpublished</option>
                             </Form.Control>
                         </Form.Group>
                         <Form.Group controlId="formFiles">
-                            <Form.Label>Attachments</Form.Label>
+                            <Form.Label>Files</Form.Label>
                             <div style={{ display: 'flex', flexWrap: 'wrap' }}>
+                                {/* Display Original Files */}
                                 {originalFiles.map((file, index) => (
-                                    <Card key={index} style={{ width: '100px', height: '100px', marginRight: '10px', marginBottom: '10px' }}>
-                                        <Card.Body style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                                            <img src={`http://localhost:9000/uploads/${file.name}`} alt={file.name} style={{ maxWidth: '100%', maxHeight: '100%' }} />
-                                            <Button variant="link" onClick={() => handleRemoveFile(index, true)}>
-                                                <MdClose />
-                                            </Button>
+                                    <Card key={`original-${index}`} style={{ width: '100px', height: '100px', margin: '5px', position: 'relative' }}>
+                                        <Card.Body style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                                            {getFileIcon(file.name) || (
+                                                <img
+                                                    src={`http://localhost:9000/uploads/${file.name}`}
+                                                    alt={file.name}
+                                                    style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                                                />
+                                            )}
+                                            <MdClose
+                                                onClick={() => handleRemoveFile(index, true)}
+                                                style={{ position: 'absolute', top: '5px', right: '5px', cursor: 'pointer', color: 'red' }}
+                                            />
                                         </Card.Body>
                                     </Card>
                                 ))}
+                                {/* Display New Files */}
                                 {files.map((file, index) => (
-                                    <Card key={index} style={{ width: '100px', height: '100px', marginRight: '10px', marginBottom: '10px' }}>
-                                        <Card.Body style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                                            {getFileIcon(file.name) || <img src={URL.createObjectURL(file)} alt={file.name} style={{ maxWidth: '100%', maxHeight: '100%' }} />}
-                                            <Button variant="link" onClick={() => handleRemoveFile(index)}>
-                                                <MdClose />
-                                            </Button>
+                                    <Card key={`new-${index}`} style={{ width: '100px', height: '100px', margin: '5px', position: 'relative' }}>
+                                        <Card.Body style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                                            {getFileIcon(file.name) || (
+                                                <img
+                                                    src={URL.createObjectURL(file)}
+                                                    alt={file.name}
+                                                    style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                                                />
+                                            )}
+                                            <MdClose
+                                                onClick={() => handleRemoveFile(index)}
+                                                style={{ position: 'absolute', top: '5px', right: '5px', cursor: 'pointer', color: 'red' }}
+                                            />
                                         </Card.Body>
                                     </Card>
                                 ))}
-                                <div
-                                    onClick={() => fileInputRef.current.click()}
+                                {/* Add File Button */}
+                                <Card
                                     style={{
                                         width: '100px',
                                         height: '100px',
+                                        margin: '5px',
                                         display: 'flex',
-                                        alignItems: 'center',
                                         justifyContent: 'center',
-                                        border: '2px dashed #007bff',
-                                        borderRadius: '10px',
+                                        alignItems: 'center',
                                         cursor: 'pointer',
-                                        backgroundColor: '#f8f9fa'
                                     }}
+                                    onClick={() => fileInputRef.current.click()}
                                 >
-                                    <FaPlus style={{ fontSize: '24px', color: '#007bff' }} />
-                                </div>
+                                    <Card.Body style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                                        <FaPlus style={{ fontSize: '30px', color: '#007bff' }} />
+                                    </Card.Body>
+                                </Card>
                                 <input
-                                    type="file"
                                     ref={fileInputRef}
-                                    onChange={handleFileChange}
-                                    style={{ display: 'none' }}
+                                    type="file"
                                     multiple
+                                    style={{ display: 'none' }}
+                                    onChange={handleFileChange}
                                 />
                             </div>
                         </Form.Group>
-                    </Modal.Body>
-                    <Modal.Footer>
-                        <Button variant="secondary" onClick={handleCloseAnnouncementModal}>Close</Button>
                         <Button variant="primary" type="submit">
                             {editing ? 'Update Announcement' : 'Create Announcement'}
                         </Button>
-                    </Modal.Footer>
-                </Form>
+                    </Form>
+                </Modal.Body>
             </Modal>
+
+
 
             {/* View Announcement Modal */}
             <Modal show={showViewModal} onHide={handleCloseViewModal} size="lg">
                 <Modal.Header closeButton>
-                    <Modal.Title>View Announcement</Modal.Title>
+                    <Modal.Title>{selectedAnnouncement?.title}</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                    {selectedAnnouncement && (
-                        <>
-                            <h5>{selectedAnnouncement.title}</h5>
-                            <p>{selectedAnnouncement.content}</p>
-                            <p>{renderDateTime(selectedAnnouncement.created_at, selectedAnnouncement.updated_at)}</p>
-                            <div style={{ display: 'flex', flexWrap: 'wrap' }}>
-                                {selectedAnnouncement.filenames && selectedAnnouncement.filenames.split(',').map((filename, index) => (
-                                    <Card key={index} style={{ width: '100px', height: '100px', marginRight: '10px', marginBottom: '10px' }}>
-                                        <Card.Body style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                                            <img src={`http://localhost:9000/uploads/${filename}`} alt={filename} style={{ maxWidth: '100%', maxHeight: '100%' }} />
-                                        </Card.Body>
-                                    </Card>
-                                ))}
-                            </div>
-                        </>
+                    <p>{selectedAnnouncement?.content}</p>
+                    {selectedAnnouncement?.filenames && (
+                        <Card.Img
+                            variant="top"
+                            src={`http://localhost:9000/uploads/${selectedAnnouncement.filenames.split(',')[0]}`}
+                            alt="Announcement Image"
+                        />
                     )}
                 </Modal.Body>
-                <Modal.Footer>
-                    <Button variant="secondary" onClick={handleCloseViewModal}>Close</Button>
-                </Modal.Footer>
             </Modal>
         </div>
     );
