@@ -358,7 +358,6 @@ export default function CoordinatorAnnouncements() {
                         </Form.Group>
 
 
-
                         <Form.Group className="mb-3">
                             <Form.Label>Attachments</Form.Label>
                             <input
@@ -369,9 +368,26 @@ export default function CoordinatorAnnouncements() {
                                 style={{ display: 'none' }}
                             />
                             <div style={{ marginTop: '10px' }}>
+                                {files.map((file, index) => (
+                                    <Card
+                                        key={index}
+                                        style={{ display: 'inline-block', marginRight: '10px', marginBottom: '10px' }}
+                                    >
+                                        <Card.Body>
+                                            <div>
+                                                {getFileIcon(file.name)}
+                                                <span style={{ marginLeft: '10px' }}>{file.name}</span>
+                                                <MdClose
+                                                    onClick={() => setFiles(files.filter((_, i) => i !== index))}
+                                                    style={{ marginLeft: '10px', cursor: 'pointer', color: 'red' }}
+                                                />
+                                            </div>
+                                        </Card.Body>
+                                    </Card>
+                                ))}
                                 {originalFiles.map((file, index) => (
                                     <Card
-                                        key={`original-${index}`}
+                                        key={index}
                                         style={{ display: 'inline-block', marginRight: '10px', marginBottom: '10px' }}
                                     >
                                         <Card.Body>
@@ -384,30 +400,7 @@ export default function CoordinatorAnnouncements() {
                                                 />
                                                 <span style={{ marginLeft: '10px' }}>{file.name}</span>
                                                 <MdClose
-                                                    onClick={() => handleRemoveFile(index, true)}
-
-                                                    style={{ marginLeft: '10px', cursor: 'pointer', color: 'red' }}
-                                                />
-                                            </div>
-                                        </Card.Body>
-                                    </Card>
-                                ))}
-                                {files.map((file, index) => (
-                                    <Card
-                                        key={`new-${index}`}
-                                        style={{ display: 'inline-block', marginRight: '10px', marginBottom: '10px' }}
-                                    >
-                                        <Card.Body>
-                                            <div>
-                                                {getFileIcon(file.name)}
-                                                <img
-                                                    src={URL.createObjectURL(file)}
-                                                    alt={file.name}
-                                                    style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                                                />
-                                                <span style={{ marginLeft: '10px' }}>{file.name}</span>
-                                                <MdClose
-                                                    onClick={() => handleRemoveFile(index)}
+                                                    onClick={() => handleRemoveFile(file.name, true)}
                                                     style={{ marginLeft: '10px', cursor: 'pointer', color: 'red' }}
                                                 />
                                             </div>
