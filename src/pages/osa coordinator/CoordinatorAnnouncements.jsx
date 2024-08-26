@@ -6,6 +6,7 @@ import { Modal, Form, Button, Card, Row, Col } from 'react-bootstrap';
 import { FaPlus } from 'react-icons/fa';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
+import FileIcon from '@mui/icons-material/InsertDriveFile'; // Add a file icon
 
 import CoordinatorNavigation from './CoordinatorNavigation';
 import CoordinatorInfo from './CoordinatorInfo';
@@ -199,6 +200,15 @@ export default function CoordinatorAnnouncements() {
         setSelectedAnnouncement(null);
     };
 
+    const getFileIcon = (fileName) => {
+        const extension = fileName.split('.').pop().toLowerCase();
+        if (['jpg', 'jpeg', 'png', 'gif'].includes(extension)) {
+            return null; // Return null for image files as they're handled separately
+        }
+        // Return a generic file icon for non-image files
+        return <FileIcon style={{ fontSize: '50px', color: '#007bff' }} />;
+    };
+
     return (
         <div>
             <CoordinatorNavigation />
@@ -254,155 +264,174 @@ export default function CoordinatorAnnouncements() {
                                 <Card.Text className="text-muted" style={{ marginTop: '10px' }}>
                                     {renderDateTime(a.created_at, a.updated_at)}
                                 </Card.Text>
-                                <div style={{ marginTop: '10px' }}>
-                                    <EditIcon onClick={() => handleEditAnnouncement(a.announcement_id)} style={{ cursor: 'pointer', color: '#007bff', marginRight: '10px' }} />
-                                    <DeleteIcon onClick={() => handleDeleteAnnouncement(a.announcement_id)} style={{ cursor: 'pointer', color: '#dc3545' }} />
-                                </div>
+                                <Button
+                                    variant="link"
+                                    onClick={() => handleEditAnnouncement(a.announcement_id)}
+                                >
+                                    <EditIcon style={{ color: '#28a745' }} />
+                                </Button>
+                                <Button
+                                    variant="link"
+                                    onClick={() => handleDeleteAnnouncement(a.announcement_id)}
+                                >
+                                    <DeleteIcon style={{ color: '#dc3545' }} />
+                                </Button>
                             </Card.Body>
                         </Card>
                     </Col>
                 ))}
             </Row>
 
-            {/* Announcement Modal */}
-            <Modal show={showAnnouncementModal} onHide={handleCloseAnnouncementModal}>
+            <Modal show={showAnnouncementModal} onHide={handleCloseAnnouncementModal} size="lg">
                 <Modal.Header closeButton>
                     <Modal.Title>{editing ? 'Edit Announcement' : 'Add Announcement'}</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                     <Form onSubmit={handleAnnouncementSubmit}>
-                        <Form.Group controlId="formAnnouncementTitle">
+                        <Form.Group controlId="formTitle">
                             <Form.Label>Title</Form.Label>
                             <Form.Control
                                 type="text"
-                                placeholder="Enter title"
                                 name="title"
                                 value={announcementFormData.title}
                                 onChange={handleChange}
+                                placeholder="Enter announcement title"
                                 required
                             />
                         </Form.Group>
-                        <Form.Group controlId="formAnnouncementContent" style={{ marginTop: '10px' }}>
+                        <Form.Group controlId="formContent">
                             <Form.Label>Content</Form.Label>
                             <Form.Control
                                 as="textarea"
-                                rows={3}
-                                placeholder="Enter content"
                                 name="content"
                                 value={announcementFormData.content}
                                 onChange={handleChange}
+                                placeholder="Enter announcement content"
+                                rows={4}
                                 required
                             />
                         </Form.Group>
-                        <Form.Group controlId="formAnnouncementStatus" style={{ marginTop: '10px' }}>
+                        <Form.Group controlId="formStatus">
                             <Form.Label>Status</Form.Label>
                             <Form.Control
                                 as="select"
                                 name="status"
                                 value={announcementFormData.status}
                                 onChange={handleChange}
-                                required
                             >
-                                <option value="Draft">Draft</option>
-                                <option value="Published">Published</option>
-                                <option value="Unpublished">Unpublished</option>
+                                <option>Draft</option>
+                                <option>Published</option>
+                                <option>Unpublished</option>
                             </Form.Control>
                         </Form.Group>
-                        <Form.Group controlId="formAnnouncementFiles" style={{ marginTop: '10px' }}>
+                        <Form.Group controlId="formFiles">
                             <Form.Label>Attachments</Form.Label>
                             <input
                                 type="file"
                                 multiple
                                 onChange={handleFileChange}
+                                ref={fileInputRef}
                                 style={{ display: 'none' }}
-                                ref={fileInputRef} // Attach reference to the file input
                             />
-                            <div
-                                style={{
-                                    display: 'flex',
-                                    flexWrap: 'wrap',
-                                    gap: '10px',
-                                    marginTop: '10px',
-                                }}
+                            <Button
+                                variant="secondary"
+                                onClick={() => fileInputRef.current.click()}
                             >
-                                {files.map((file, index) => (
-                                    <div
-                                        key={index}
-                                        style={{
-                                            width: '100px',
-                                            height: '100px',
-                                            backgroundColor: '#f8f9fa',
-                                            borderRadius: '5px',
-                                            overflow: 'hidden',
-                                            position: 'relative',
-                                            boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
-                                        }}
-                                    >
-                                        <img
-                                            src={URL.createObjectURL(file)}
-                                            alt="Attachment"
+                                Choose files
+                            </Button>
+                            <div style={{ marginTop: '10px' }}>
+                                <Row xs={1} sm={2} md={3} lg={4} className="g-2">
+                                    {files.map((file, index) => (
+                                        <Col key={index}>
+                                            <Card
+                                                style={{
+                                                    display: 'flex',
+                                                    alignItems: 'center',
+                                                    justifyContent: 'center',
+                                                    height: '100px',
+                                                    cursor: 'pointer'
+                                                }}
+                                            >
+                                                {file.type.startsWith('image/') ? (
+                                                    <Card.Img
+                                                        variant="top"
+                                                        src={URL.createObjectURL(file)}
+                                                        alt="Attachment"
+                                                        style={{
+                                                            width: '100px',
+                                                            height: '100px',
+                                                            objectFit: 'cover'
+                                                        }}
+                                                    />
+                                                ) : (
+                                                    <Card.Body style={{ textAlign: 'center' }}>
+                                                        {getFileIcon(file.name)}
+                                                        <Card.Text>{file.name}</Card.Text>
+                                                    </Card.Body>
+                                                )}
+                                            </Card>
+                                        </Col>
+                                    ))}
+                                    <Col>
+                                        <Card
+                                            onClick={() => fileInputRef.current.click()}
                                             style={{
-                                                width: '100%',
-                                                height: '100%',
-                                                objectFit: 'cover',
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                justifyContent: 'center',
+                                                height: '100px',
+                                                cursor: 'pointer',
+                                                borderStyle: 'dashed',
+                                                borderWidth: '2px',
+                                                borderColor: '#007bff'
                                             }}
-                                        />
-                                    </div>
-                                ))}
-                                <div
-                                    onClick={() => fileInputRef.current.click()}
-                                    style={{
-                                        width: '100px',
-                                        height: '100px',
-                                        backgroundColor: '#e9ecef',
-                                        borderRadius: '5px',
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        justifyContent: 'center',
-                                        cursor: 'pointer',
-                                        boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
-                                    }}
-                                >
-                                    <FaPlus size={24} color="#007bff" />
-                                </div>
+                                        >
+                                            <Card.Body>
+                                                <FaPlus style={{ fontSize: '24px', color: '#007bff' }} />
+                                            </Card.Body>
+                                        </Card>
+                                    </Col>
+                                </Row>
                             </div>
                         </Form.Group>
-                        <Button variant="primary" type="submit" style={{ marginTop: '10px' }}>
-                            {editing ? 'Update' : 'Create'}
+                        <Button variant="primary" type="submit" style={{ marginTop: '20px' }}>
+                            {editing ? 'Update Announcement' : 'Add Announcement'}
                         </Button>
                     </Form>
                 </Modal.Body>
             </Modal>
 
-            {/* Announcement View Modal */}
-            {selectedAnnouncement && (
-                <Modal show={showViewModal} onHide={handleCloseViewModal}>
-                    <Modal.Header closeButton>
-                        <Modal.Title>{selectedAnnouncement.title}</Modal.Title>
-                    </Modal.Header>
-                    <Modal.Body>
-                        <p>{selectedAnnouncement.content}</p>
-                        <p className="text-muted">{renderDateTime(selectedAnnouncement.created_at, selectedAnnouncement.updated_at)}</p>
-                        {selectedAnnouncement.filenames && selectedAnnouncement.filenames.split(',').map((filename, index) => (
-                            <img
-                                key={index}
-                                src={`http://localhost:9000/uploads/${filename}`}
-                                alt="Attachment"
-                                style={{
-                                    width: '100%',
-                                    height: 'auto',
-                                    marginBottom: '10px',
-                                }}
-                            />
-                        ))}
-                    </Modal.Body>
-                    <Modal.Footer>
-                        <Button variant="secondary" onClick={handleCloseViewModal}>
-                            Close
-                        </Button>
-                    </Modal.Footer>
-                </Modal>
-            )}
+            <Modal show={showViewModal} onHide={handleCloseViewModal} size="lg">
+                <Modal.Header closeButton>
+                    <Modal.Title>{selectedAnnouncement?.title}</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <p>{selectedAnnouncement?.content}</p>
+                    {selectedAnnouncement?.filenames && (
+                        <Row xs={1} sm={2} md={3} lg={4} className="g-2">
+                            {selectedAnnouncement.filenames.split(',').map((filename, index) => (
+                                <Col key={index}>
+                                    <Card>
+                                        <Card.Img
+                                            variant="top"
+                                            src={`http://localhost:9000/uploads/${filename}`}
+                                            alt="Announcement Attachment"
+                                            style={{
+                                                width: '100px',
+                                                height: '100px',
+                                                objectFit: 'cover'
+                                            }}
+                                        />
+                                        <Card.Body>
+                                            <Card.Text>{filename}</Card.Text>
+                                        </Card.Body>
+                                    </Card>
+                                </Col>
+                            ))}
+                        </Row>
+                    )}
+                </Modal.Body>
+            </Modal>
         </div>
     );
 }
