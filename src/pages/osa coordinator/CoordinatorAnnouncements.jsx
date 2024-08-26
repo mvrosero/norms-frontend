@@ -163,6 +163,11 @@ export default function CoordinatorAnnouncements() {
         });
     };
 
+    const formatDate = (dateString) => {
+        const options = { year: 'numeric', month: 'long', day: 'numeric' };
+        return new Date(dateString).toLocaleDateString(undefined, options);
+    };
+
     if (loading) return <p>Loading...</p>;
     if (error) return <p>{error}</p>;
 
@@ -208,6 +213,9 @@ export default function CoordinatorAnnouncements() {
                                         alt="Announcement Image"
                                     />
                                 )}
+                                <Card.Text className="text-muted" style={{ marginTop: '10px' }}>
+                                    Posted on: {formatDate(a.created_at)}
+                                </Card.Text>
                                 <div style={{ marginTop: '10px' }}>
                                     <EditIcon onClick={() => handleEditAnnouncement(a.announcement_id)} style={{ cursor: 'pointer', color: '#007bff', marginRight: '10px' }} />
                                     <DeleteIcon onClick={() => handleDeleteAnnouncement(a.announcement_id)} style={{ cursor: 'pointer', color: '#dc3545' }} />
@@ -265,7 +273,14 @@ export default function CoordinatorAnnouncements() {
                             <Form.Control
                                 type="file"
                                 onChange={handleFileChange}
+                                // Only show file selection if creating a new announcement
+                                disabled={editing && !announcementFormData.photo_video_filename}
                             />
+                            {editing && announcementFormData.photo_video_filename && (
+                                <div style={{ marginTop: '10px' }}>
+                                    <small>Current File: {announcementFormData.photo_video_filename}</small>
+                                </div>
+                            )}
                         </Form.Group>
                         <Button variant="primary" type="submit">
                             {editing ? 'Update Announcement' : 'Create Announcement'}
