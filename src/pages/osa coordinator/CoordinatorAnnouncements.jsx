@@ -239,15 +239,19 @@ export default function CoordinatorAnnouncements() {
                 }}
             >
                 <Card.Body style={{ padding: 0 }}>
-                    <img
-                        src={isOriginal ? `http://localhost:9000/uploads/${file.name}` : URL.createObjectURL(file)}
-                        alt={file.name}
-                        style={{
-                            width: '100%',
-                            height: '100%',
-                            objectFit: 'cover',
-                        }}
-                    />
+                    {file.name.match(/\.(jpg|jpeg|png|gif)$/) ? (
+                        <img
+                            src={isOriginal ? `http://localhost:9000/uploads/${file.name}` : URL.createObjectURL(file)}
+                            alt={file.name}
+                            style={{
+                                width: '100%',
+                                height: '100%',
+                                objectFit: 'cover',
+                            }}
+                        />
+                    ) : (
+                        <FileIcon style={{ fontSize: '100px', color: '#007bff', display: 'block', margin: 'auto' }} />
+                    )}
                     <MdClose
                         onClick={() => handleRemoveFile(file, isOriginal)}
                         style={{
@@ -262,15 +266,6 @@ export default function CoordinatorAnnouncements() {
             </Card>
         ))
     );
-
-    const getFileIcon = (fileName) => {
-        const extension = fileName.split('.').pop().toLowerCase();
-        if (['jpg', 'jpeg', 'png', 'gif'].includes(extension)) {
-            return null; // Return null for image files as they're handled separately
-        }
-        // Return a generic file icon for non-image files
-        return <FileIcon style={{ fontSize: '50px', color: '#007bff' }} />;
-    };
 
     return (
         <div>
