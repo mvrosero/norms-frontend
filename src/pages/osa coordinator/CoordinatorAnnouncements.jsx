@@ -252,6 +252,9 @@ export default function CoordinatorAnnouncements() {
                     ) : (
                         <FileIcon style={{ fontSize: '100px', color: '#007bff', display: 'block', margin: 'auto' }} />
                     )}
+                        <p style={{ fontSize: '12px', color: '#6c757d', marginTop: '5px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                            {file.name}
+                        </p>
                     <MdClose
                         onClick={() => handleRemoveFile(file, isOriginal)}
                         style={{
