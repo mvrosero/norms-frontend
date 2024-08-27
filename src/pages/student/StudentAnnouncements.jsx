@@ -41,7 +41,6 @@ export default function StudentAnnouncements() {
         }
     }, [navigate]);
 
-
     // Handle view announcement
     const handleViewAnnouncement = (announcement) => {
         setSelectedAnnouncement(announcement);
@@ -56,36 +55,68 @@ export default function StudentAnnouncements() {
     // Render file tiles with conditional size based on the parameter
     const renderFileTiles = (files, isModal = false) => (
         files.map((file, index) => (
-            <Card
-                key={index}
-                style={{
-                    width: isModal ? '75px' : '300px', // Increased size for announcement container
-                    height: isModal ? '75px' : '300px', // Increased size for announcement container
-                    position: 'relative',
-                    margin: '10px',
-                    display: 'inline-block',
-                    cursor: isModal ? 'pointer' : 'default', // Only clickable in modal view
-                }}
-                onClick={() => isModal && window.open(`http://localhost:9000/uploads/${file}`, '_blank')}
-            >
-                <Card.Body style={{ padding: 0 }}>
-                    {file.match(/\.(jpg|jpeg|png|gif)$/) ? (
-                        <img
-                            src={`http://localhost:9000/uploads/${file}`}
-                            alt={file}
-                            style={{
-                                width: '100%',
-                                height: '100%',
-                                objectFit: 'cover',
-                            }}
-                        />
-                    ) : (
-                        <FileIcon style={{ fontSize: isModal ? '40px' : '60px', color: '#007bff', display: 'block', margin: 'auto' }} />
-                    )}
-                </Card.Body>
-            </Card>
+            <div key={index} style={{ position: 'relative', margin: '10px' }}>
+                <Card
+                    style={{
+                        width: isModal ? '75px' : '300px', // Size for modal and container
+                        height: isModal ? '75px' : '300px', // Size for modal and container
+                        cursor: isModal ? 'pointer' : 'default', // Clickable in modal view
+                    }}
+                    onClick={() => isModal && window.open(`http://localhost:9000/uploads/${file}`, '_blank')}
+                >
+                    <Card.Body style={{ padding: 0 }}>
+                        {file.match(/\.(jpg|jpeg|png|gif)$/) ? (
+                            <img
+                                src={`http://localhost:9000/uploads/${file}`}
+                                alt={file}
+                                style={{
+                                    width: '100%',
+                                    height: '100%',
+                                    objectFit: 'cover',
+                                }}
+                            />
+                        ) : (
+                            <FileIcon style={{ fontSize: isModal ? '40px' : '60px', color: '#007bff', display: 'block', margin: 'auto' }} />
+                        )}
+                    </Card.Body>
+                </Card>
+                {isModal && (
+                    <div
+                        style={{
+                            position: 'absolute',
+                            bottom: 0,
+                            left: 0,
+                            right: 0,
+                            background: 'rgba(0, 0, 0, 0.6)',
+                            color: 'white',
+                            textAlign: 'center',
+                            padding: '2px',
+                            fontSize: '12px',
+                            display: 'none',
+                        }}
+                        className="file-tooltip"
+                    >
+                        {file}
+                    </div>
+                )}
+            </div>
         ))
     );
+
+    // Show tooltip on hover
+    const handleMouseEnter = (e) => {
+        const tooltip = e.currentTarget.querySelector('.file-tooltip');
+        if (tooltip) {
+            tooltip.style.display = 'block';
+        }
+    };
+
+    const handleMouseLeave = (e) => {
+        const tooltip = e.currentTarget.querySelector('.file-tooltip');
+        if (tooltip) {
+            tooltip.style.display = 'none';
+        }
+    };
 
     // Render the component with announcements if valid
     return (
@@ -132,7 +163,12 @@ export default function StudentAnnouncements() {
                         <p>{selectedAnnouncement.content}</p>
                         <h6>Attachments:</h6>
                         <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px' }}>
-                            {renderFileTiles(selectedAnnouncement.filenames.split(','), true)}
+                            {renderFileTiles(selectedAnnouncement.filenames.split(','), true).map((tile) =>
+                                React.cloneElement(tile, {
+                                    onMouseEnter: handleMouseEnter,
+                                    onMouseLeave: handleMouseLeave
+                                })
+                            )}
                         </div>
                     </Modal.Body>
                 </Modal>
