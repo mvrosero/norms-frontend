@@ -204,31 +204,64 @@ export default function CoordinatorAnnouncements() {
         setSelectedAnnouncement(null);
     };
 
-    const handleRemoveFile = async (filename, isOriginal = false) => {
-        const announcement_id = editing;
-        if (!announcement_id) return;
+
+    const handleRemoveFile = (file, isOriginal = false) => {
+        const filename = isOriginal ? file.name : file.name;
     
-        try {
-            await axios.delete(`http://localhost:9000/announcement/${announcement_id}/file/${filename}`, {
+        // For original files, remove from the backend and update the state
+        if (isOriginal) {
+            axios.delete(`http://localhost:9000/announcement/${editing}/file/${filename}`, {
                 headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+            })
+            .then(() => {
+                setOriginalFiles(prevFiles => prevFiles.filter(f => f.name !== filename));
+                fetchAnnouncements(); // Optionally refetch to update the list
+            })
+            .catch(error => {
+                console.error('Error removing file:', error.response?.data?.error || 'An error occurred');
             });
-    
-            // Update state without Swal alert
-            if (isOriginal) {
-                setOriginalFiles(prevFiles => prevFiles.filter(file => file.name !== filename));
-            } else {
-                setFiles(prevFiles => prevFiles.filter(file => file.name !== filename));
-            }
-    
-            // Optionally, you might want to refetch the announcement or update the state
-            fetchAnnouncements(); 
-    
-        } catch (error) {
-            // Handle errors here, if necessary
-            console.error('Error removing file:', error.response?.data?.error || 'An error occurred');
+        } else {
+            // For new files, just update the state
+            setFiles(prevFiles => prevFiles.filter(f => f.name !== filename));
         }
     };
     
+    const renderFileTiles = (filesList, isOriginal = false) => (
+        filesList.map((file, index) => (
+            <Card
+                key={isOriginal ? `original-${index}` : index}
+                style={{
+                    width: '100px',
+                    height: '100px',
+                    position: 'relative',
+                    margin: '10px',
+                    display: 'inline-block',
+                }}
+            >
+                <Card.Body style={{ padding: 0 }}>
+                    <img
+                        src={isOriginal ? `http://localhost:9000/uploads/${file.name}` : URL.createObjectURL(file)}
+                        alt={file.name}
+                        style={{
+                            width: '100%',
+                            height: '100%',
+                            objectFit: 'cover',
+                        }}
+                    />
+                    <MdClose
+                        onClick={() => handleRemoveFile(file, isOriginal)}
+                        style={{
+                            position: 'absolute',
+                            top: '5px',
+                            right: '5px',
+                            cursor: 'pointer',
+                            color: 'red',
+                        }}
+                    />
+                </Card.Body>
+            </Card>
+        ))
+    );
 
     const getFileIcon = (fileName) => {
         const extension = fileName.split('.').pop().toLowerCase();
@@ -357,104 +390,40 @@ export default function CoordinatorAnnouncements() {
                             </Form.Control>
                         </Form.Group>
                         <Form.Group className="mb-3">
-                        <Form.Label>Attachments</Form.Label>
-                        <input
-                            type="file"
-                            multiple
-                            onChange={handleFileChange}
-                            ref={fileInputRef}
-                            style={{ display: 'none' }}
-                        />
-                        <div style={{ marginTop: '10px', display: 'flex', flexWrap: 'wrap' }}>
-                            {/* Render New Files (Added in this session) */}
-                            {files.map((file, index) => (
+                            <Form.Label>Attachments</Form.Label>
+                            <input
+                                type="file"
+                                multiple
+                                onChange={handleFileChange}
+                                ref={fileInputRef}
+                                style={{ display: 'none' }}
+                            />
+                            <div style={{ marginTop: '10px', display: 'flex', flexWrap: 'wrap' }}>
+                                {/* Render New Files (Added in this session) */}
+                                {renderFileTiles(files)}
+
+                                {/* Render Original Files (Already uploaded files) */}
+                                {renderFileTiles(originalFiles, true)}
+
+                                {/* Add New File Button */}
                                 <Card
-                                    key={index}
                                     style={{
                                         width: '100px',
                                         height: '100px',
-                                        position: 'relative',
                                         margin: '10px',
-                                        display: 'inline-block',
+                                        border: '2px dashed #007bff',
+                                        backgroundColor: '#f9f9f9',
+                                        cursor: 'pointer',
+                                        display: 'flex',
+                                        justifyContent: 'center',
+                                        alignItems: 'center',
                                     }}
+                                    onClick={() => fileInputRef.current.click()}
                                 >
-                                    <Card.Body style={{ padding: 0 }}>
-                                        <img
-                                            src={URL.createObjectURL(file)}
-                                            alt={file.name}
-                                            style={{
-                                                width: '100%',
-                                                height: '100%',
-                                                objectFit: 'cover',
-                                            }}
-                                        />
-                                        <MdClose
-                                            onClick={() => handleRemoveFile(file)}
-                                            style={{
-                                                position: 'absolute',
-                                                top: '5px',
-                                                right: '5px',
-                                                cursor: 'pointer',
-                                                color: 'red',
-                                            }}
-                                        />
-                                    </Card.Body>
+                                    <FaPlus style={{ fontSize: '30px', color: '#007bff' }} />
                                 </Card>
-                            ))}
-                            {/* Render Original Files (Already uploaded files) */}
-                            {originalFiles.map((file, index) => (
-                                <Card
-                                    key={`original-${index}`}
-                                    style={{
-                                        width: '100px',
-                                        height: '100px',
-                                        position: 'relative',
-                                        margin: '10px',
-                                        display: 'inline-block',
-                                    }}
-                                >
-                                    <Card.Body style={{ padding: 0 }}>
-                                        <img
-                                            src={`http://localhost:9000/uploads/${file.name}`}
-                                            alt={file.name}
-                                            style={{
-                                                width: '100%',
-                                                height: '100%',
-                                                objectFit: 'cover',
-                                            }}
-                                        />
-                                        <MdClose
-                                            onClick={() => handleRemoveFile(file.name, true)}
-                                            style={{
-                                                position: 'absolute',
-                                                top: '5px',
-                                                right: '5px',
-                                                cursor: 'pointer',
-                                                color: 'red',
-                                            }}
-                                        />
-                                    </Card.Body>
-                                </Card>
-                            ))}
-                            {/* Add New File Button */}
-                            <Card
-                                style={{
-                                    width: '100px',
-                                    height: '100px',
-                                    margin: '10px',
-                                    border: '2px dashed #007bff',
-                                    backgroundColor: '#f9f9f9',
-                                    cursor: 'pointer',
-                                    display: 'flex',
-                                    justifyContent: 'center',
-                                    alignItems: 'center',
-                                }}
-                                onClick={() => fileInputRef.current.click()}
-                            >
-                                <FaPlus style={{ fontSize: '30px', color: '#007bff' }} />
-                            </Card>
-                        </div>
-                    </Form.Group>
+                            </div>
+                        </Form.Group>
                     <Button variant="primary" type="submit">
                         {editing ? 'Update' : 'Create'}
                     </Button>
