@@ -1,10 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios'; // Make sure to install axios or use fetch API
-import { Card, Button, Row, Col, Modal } from 'react-bootstrap';
-import { FaPlus } from 'react-icons/fa';
+import { Card, Row, Col, Modal } from 'react-bootstrap';
 import FileIcon from '@mui/icons-material/InsertDriveFile';
-import { MdClose } from 'react-icons/md';
 import StudentInfo from './StudentInfo';
 import StudentNavigation from './StudentNavigation';
 
@@ -43,10 +41,6 @@ export default function StudentAnnouncements() {
         }
     }, [navigate]);
 
-    // Render a loading indicator while fetching data
-    if (loading) {
-        return <div>Loading...</div>;
-    }
 
     // Handle view announcement
     const handleViewAnnouncement = (announcement) => {
@@ -59,19 +53,18 @@ export default function StudentAnnouncements() {
         setSelectedAnnouncement(null);
     };
 
-    const renderFileTiles = (files, isModal = false) => {
-        if (!files.length) return null;
-    
-        const fileElements = files.map((file, index) => (
+    // Render file tiles with conditional size based on the parameter
+    const renderFileTiles = (files, isModal = false) => (
+        files.map((file, index) => (
             <Card
                 key={index}
                 style={{
-                    width: '100px',
-                    height: '100px',
+                    width: isModal ? '75px' : '300px', // Increased size for announcement container
+                    height: isModal ? '75px' : '300px', // Increased size for announcement container
                     position: 'relative',
                     margin: '10px',
                     display: 'inline-block',
-                    cursor: isModal ? 'pointer' : 'default',
+                    cursor: isModal ? 'pointer' : 'default', // Only clickable in modal view
                 }}
                 onClick={() => isModal && window.open(`http://localhost:9000/uploads/${file}`, '_blank')}
             >
@@ -87,15 +80,12 @@ export default function StudentAnnouncements() {
                             }}
                         />
                     ) : (
-                        <FileIcon style={{ fontSize: '100px', color: '#007bff', display: 'block', margin: 'auto' }} />
+                        <FileIcon style={{ fontSize: isModal ? '40px' : '60px', color: '#007bff', display: 'block', margin: 'auto' }} />
                     )}
                 </Card.Body>
             </Card>
-        ));
-    
-        return isModal ? fileElements : fileElements[0]; // Only return the first file if not in modal
-    };
-    
+        ))
+    );
 
     // Render the component with announcements if valid
     return (
@@ -107,24 +97,25 @@ export default function StudentAnnouncements() {
                 {announcements.map(a => (
                     <Col key={a.id}>
                         <Card>
-                        <Card.Body>
-                            <Card.Title>{a.title}</Card.Title>
-                            <Card.Text>
-                                {a.content.length > 100 ? `${a.content.substring(0, 100)}...` : a.content}
-                                {a.content.length > 100 && (
-                                    <span
-                                        onClick={() => handleViewAnnouncement(a)}
-                                        style={{ color: '#007bff', cursor: 'pointer', textDecoration: 'underline' }}
-                                    >
-                                        See more...
-                                    </span>
-                                )}
-                            </Card.Text>
-                            {a.filenames && renderFileTiles(a.filenames.split(','))}
-                            <Card.Text className="text-muted" style={{ marginTop: '10px' }}>
-                                {a.updated_at ? `Updated on: ${new Date(a.updated_at).toLocaleString()}` : `Posted on: ${new Date(a.created_at).toLocaleString()}`}
-                            </Card.Text>
-                        </Card.Body>
+                            <Card.Body>
+                                <Card.Title>{a.title}</Card.Title>
+                                <Card.Text>
+                                    {a.content.length > 100 ? `${a.content.substring(0, 100)}...` : a.content}
+                                    {a.content.length > 100 && (
+                                        <span
+                                            onClick={() => handleViewAnnouncement(a)}
+                                            style={{ color: '#007bff', cursor: 'pointer', textDecoration: 'underline' }}
+                                        >
+                                            See more...
+                                        </span>
+                                    )}
+                                </Card.Text>
+                                {/* Display only the first file in the announcement container */}
+                                {a.filenames && a.filenames.split(',').length > 0 && renderFileTiles([a.filenames.split(',')[0]])}
+                                <Card.Text className="text-muted" style={{ marginTop: '10px' }}>
+                                    {a.updated_at ? `${new Date(a.updated_at).toLocaleString()}` : `${new Date(a.created_at).toLocaleString()}`}
+                                </Card.Text>
+                            </Card.Body>
                         </Card>
                     </Col>
                 ))}
@@ -139,7 +130,6 @@ export default function StudentAnnouncements() {
                     <Modal.Body>
                         <h5>{selectedAnnouncement.title}</h5>
                         <p>{selectedAnnouncement.content}</p>
-                        <p>Status: {selectedAnnouncement.status}</p>
                         <h6>Attachments:</h6>
                         <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px' }}>
                             {renderFileTiles(selectedAnnouncement.filenames.split(','), true)}
