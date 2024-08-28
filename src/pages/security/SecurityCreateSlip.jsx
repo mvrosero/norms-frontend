@@ -19,6 +19,14 @@ const SecurityCreateSlip = () => {
     const [students, setStudents] = useState([]);
     const [message, setMessage] = useState('');
 
+    const violationOptions = [
+        { value: 'Improper Uniform', label: 'Improper Uniform' },
+        { value: 'No ID', label: 'No ID' },
+        { value: 'Unauthorized Accessories', label: 'Unauthorized Accessories' },
+        { value: 'Violation of Grooming Standards', label: 'Violation of Grooming Standards' },
+        { value: 'Other', label: 'Other' }
+    ];
+
     // Fetch students on component mount
     useEffect(() => {
         const fetchStudents = async () => {
@@ -48,8 +56,8 @@ const SecurityCreateSlip = () => {
         }
     };
 
-    const handleSelectChange = (selectedOption) => {
-        setFormData({ ...formData, student_idnumber: selectedOption.value });
+    const handleSelectChange = (selectedOption, actionMeta) => {
+        setFormData({ ...formData, [actionMeta.name]: selectedOption.value });
     };
 
     const handleSubmit = async (e) => {
@@ -102,7 +110,7 @@ const SecurityCreateSlip = () => {
                             <Form.Label>Student ID Number:</Form.Label>
                             <Select 
                                 options={students} 
-                                onChange={handleSelectChange} 
+                                onChange={(option) => handleSelectChange(option, { name: 'student_idnumber' })} 
                                 placeholder="Select Student" 
                                 isSearchable 
                                 value={students.find(option => option.value === formData.student_idnumber)}
@@ -111,8 +119,15 @@ const SecurityCreateSlip = () => {
                         </Form.Group>
 
                         <Form.Group controlId="violationNature">
-                            <Form.Label>Violation Nature:</Form.Label>
-                            <Form.Control type="text" name="violation_nature" value={formData.violation_nature} onChange={handleInputChange} required />
+                            <Form.Label>Nature of Violation:</Form.Label>
+                            <Select 
+                                options={violationOptions} 
+                                onChange={(option) => handleSelectChange(option, { name: 'violation_nature' })} 
+                                placeholder="Select Nature of Violation" 
+                                isSearchable 
+                                value={violationOptions.find(option => option.value === formData.violation_nature)}
+                                required
+                            />
                         </Form.Group>
 
                         <Form.Group controlId="photoVideoFile">
