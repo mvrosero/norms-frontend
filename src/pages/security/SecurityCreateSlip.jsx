@@ -7,6 +7,7 @@ import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Select from 'react-select';
+import { FaPlus } from 'react-icons/fa';
 
 const SecurityCreateSlip = () => {
     const navigate = useNavigate();
@@ -18,6 +19,7 @@ const SecurityCreateSlip = () => {
     });
     const [students, setStudents] = useState([]);
     const [message, setMessage] = useState('');
+    const [filePreviews, setFilePreviews] = useState([]);
 
     const violationOptions = [
         { value: 'Improper Uniform', label: 'Improper Uniform' },
@@ -50,7 +52,9 @@ const SecurityCreateSlip = () => {
 
     const handleInputChange = (e) => {
         if (e.target.name === 'photo_video_files') {
-            setFormData({ ...formData, [e.target.name]: Array.from(e.target.files) });  // Handle multiple files
+            const files = Array.from(e.target.files);
+            setFormData({ ...formData, [e.target.name]: files });
+            setFilePreviews(files.map(file => URL.createObjectURL(file)));  // Generate file previews
         } else {
             setFormData({ ...formData, [e.target.name]: e.target.value });
         }
@@ -94,6 +98,7 @@ const SecurityCreateSlip = () => {
                 violation_nature: '',
                 photo_video_files: []  // Reset file inputs
             });
+            setFilePreviews([]);  // Reset file previews
         } catch (error) {
             console.error('Error submitting form:', error);
             setMessage('An error occurred. Please try again later.');
@@ -102,6 +107,36 @@ const SecurityCreateSlip = () => {
 
     const handleCancel = () => {
         navigate('/defiance-selection');
+    };
+
+    const fileTileStyle = {
+        position: 'relative',
+        width: '100px',
+        height: '100px',
+        margin: '5px',
+        overflow: 'hidden',
+        border: '2px solid #ddd',
+        borderRadius: '4px',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        boxSizing: 'border-box'
+    };
+
+    const filePreviewStyle = {
+        width: '100%',
+        height: '100%',
+        objectFit: 'cover'
+    };
+
+    const addFileTileStyle = {
+        ...fileTileStyle,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        cursor: 'pointer',
+        borderStyle: 'dashed',
+        backgroundColor: '#f8f9fa'
     };
 
     return (
@@ -136,17 +171,29 @@ const SecurityCreateSlip = () => {
 
                         <Form.Group controlId="photoVideoFiles">
                             <Form.Label>Upload Photos/Videos:</Form.Label>
-                            <Form.Control 
-                                type="file" 
-                                name="photo_video_files" 
-                                onChange={handleInputChange} 
-                                accept="image/*, video/*" 
-                                multiple  // Allow multiple files
-                                required 
-                            />
+                            <div style={{ display: 'flex', flexWrap: 'wrap' }}>
+                                {filePreviews.map((preview, index) => (
+                                    <div key={index} style={fileTileStyle}>
+                                        <img src={preview} alt={`preview ${index}`} style={filePreviewStyle} />
+                                    </div>
+                                ))}
+                                <label htmlFor="fileInput" style={addFileTileStyle}>
+                                    <FaPlus size={24} />
+                                </label>
+                                <Form.Control 
+                                    id="fileInput"
+                                    type="file" 
+                                    name="photo_video_files" 
+                                    onChange={handleInputChange} 
+                                    accept="image/*, video/*" 
+                                    multiple  // Allow multiple files
+                                    style={{ display: 'none' }}  // Hide the default file input
+                                    required 
+                                />
+                            </div>
                         </Form.Group>
 
-                        <div className="d-flex justify-content-between mt-3">
+                        <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '15px' }}>
                             <Button variant="secondary" onClick={handleCancel}>
                                 Cancel
                             </Button>
@@ -156,7 +203,7 @@ const SecurityCreateSlip = () => {
                         </div>
                     </Form>
 
-                    {message && <p className="text-center mt-3">{message}</p>}
+                    {message && <p style={{ textAlign: 'center', marginTop: '15px' }}>{message}</p>}
                 </Col>
             </Row>
         </Container>
