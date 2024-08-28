@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import Form from 'react-bootstrap/Form';
@@ -6,6 +6,7 @@ import Button from 'react-bootstrap/Button';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
+import Select from 'react-select';
 
 const SecurityCreateSlip = () => {
     const navigate = useNavigate();
@@ -15,7 +16,29 @@ const SecurityCreateSlip = () => {
         violation_nature: '',
         photo_video_file: null
     });
+    const [students, setStudents] = useState([]);
     const [message, setMessage] = useState('');
+
+    // Fetch students on component mount
+    useEffect(() => {
+        const fetchStudents = async () => {
+            try {
+                const response = await axios.get('http://localhost:9000/students');
+                // Filter students with active status
+                const activeStudents = response.data.filter(student => student.status === 'active');
+                // Map students to match the format expected by react-select
+                const studentOptions = activeStudents.map(student => ({
+                    value: student.student_idnumber,
+                    label: `${student.student_idnumber} - ${student.first_name} ${student.middle_name} ${student.last_name} ${student.suffix}`
+                }));
+                setStudents(studentOptions);
+            } catch (error) {
+                console.error('Error fetching students:', error);
+            }
+        };
+
+        fetchStudents();
+    }, []);
 
     const handleInputChange = (e) => {
         if (e.target.name === 'photo_video_file') {
@@ -23,6 +46,10 @@ const SecurityCreateSlip = () => {
         } else {
             setFormData({ ...formData, [e.target.name]: e.target.value });
         }
+    };
+
+    const handleSelectChange = (selectedOption) => {
+        setFormData({ ...formData, student_idnumber: selectedOption.value });
     };
 
     const handleSubmit = async (e) => {
@@ -73,7 +100,14 @@ const SecurityCreateSlip = () => {
                     <Form onSubmit={handleSubmit}>
                         <Form.Group controlId="studentId">
                             <Form.Label>Student ID Number:</Form.Label>
-                            <Form.Control type="text" name="student_idnumber" value={formData.student_idnumber} onChange={handleInputChange} required />
+                            <Select 
+                                options={students} 
+                                onChange={handleSelectChange} 
+                                placeholder="Select Student" 
+                                isSearchable 
+                                value={students.find(option => option.value === formData.student_idnumber)}
+                                required
+                            />
                         </Form.Group>
 
                         <Form.Group controlId="violationNature">
