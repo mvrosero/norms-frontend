@@ -8,6 +8,7 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Select from 'react-select';
 import { FaPlus } from 'react-icons/fa';
+import Swal from 'sweetalert2';
 
 const SecurityCreateSlip = () => {
     const navigate = useNavigate();
@@ -94,6 +95,19 @@ const SecurityCreateSlip = () => {
 
             console.log('Response:', response);
             setMessage(response.data.message);
+
+            // Show SweetAlert2 notification
+            Swal.fire({
+                icon: 'success',
+                title: 'Slip Submitted',
+                text: 'The uniform defiance slip has been submitted successfully.',
+                confirmButtonText: 'OK'
+            }).then(() => {
+                // Redirect to another page after confirmation
+                navigate('/defiance-selection');
+            });
+
+            // Reset form data
             setFormData({
                 student_idnumber: '',
                 violation_nature: '',

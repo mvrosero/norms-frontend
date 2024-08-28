@@ -23,7 +23,7 @@ const UniformDefianceTable = () => {
         fetchData();
     }, []);
 
-    const handleViewDetails = async (record) => {
+    const handleViewDetails = (record) => {
         setSelectedRecord(record);
         setShowDetailsModal(true);
     };
@@ -44,26 +44,37 @@ const UniformDefianceTable = () => {
             background: linear-gradient(45deg, #4AA616, #006637, #015901);
         }
     `;
+    
     const renderFile = () => {
         if (selectedRecord) {
-            const { photo_video_filename } = selectedRecord;
-            const fileExtension = photo_video_filename.split('.').pop().toLowerCase();
-    
-            if (fileExtension === 'mp4' || fileExtension === 'avi' || fileExtension === 'mov') {
-                return (
-                    <video controls src={`http://localhost:9000/uniform_defiance/${selectedRecord.slip_id}`} style={{ maxWidth: '100%' }} />
-                );
-            } else if (fileExtension === 'jpg' || fileExtension === 'jpeg' || fileExtension === 'png' || fileExtension === 'gif') {
-                return (
-                    <img src={`http://localhost:9000/uniform_defiance/${selectedRecord.slip_id}`} alt="File Preview" style={{ maxWidth: '100%' }} />
-                );
-            } else {
-                return <p>Unsupported file format</p>; // Handle unsupported formats
-            }
+            const { photo_video_filenames } = selectedRecord;
+            const filenames = photo_video_filenames.split(',');
+
+            return (
+                <div>
+                    {filenames.map((filename, index) => {
+                        const fileExtension = filename.split('.').pop().toLowerCase();
+                        const fileUrl = `http://localhost:9000/uniform_defiance/${filename}`;
+                        
+                        console.log(`Rendering file: ${fileUrl}`); // Debugging line
+
+                        if (fileExtension === 'mp4' || fileExtension === 'avi' || fileExtension === 'mov') {
+                            return (
+                                <video key={index} controls src={fileUrl} style={{ maxWidth: '100%', display: 'block', marginBottom: '10px' }} />
+                            );
+                        } else if (fileExtension === 'jpg' || fileExtension === 'jpeg' || fileExtension === 'png' || fileExtension === 'gif') {
+                            return (
+                                <img key={index} src={fileUrl} alt={`File Preview ${index}`} style={{ maxWidth: '100%', display: 'block', marginBottom: '10px' }} />
+                            );
+                        } else {
+                            return <p key={index}>Unsupported file format</p>;
+                        }
+                    })}
+                </div>
+            );
         }
         return null;
     };
-    
 
     return (
         <>
@@ -95,7 +106,6 @@ const UniformDefianceTable = () => {
                     ))}
                 </tbody>
             </Table>
-            {/* Modal to display record details */}
             <Modal show={showDetailsModal} onHide={handleCloseDetailsModal}>
                 <Modal.Header closeButton>
                     <Modal.Title style={{ marginLeft: '60px' }}>UNIFORM DEFIANCE SLIP</Modal.Title>
