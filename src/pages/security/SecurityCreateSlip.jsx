@@ -52,9 +52,10 @@ const SecurityCreateSlip = () => {
 
     const handleInputChange = (e) => {
         if (e.target.name === 'photo_video_files') {
-            const files = Array.from(e.target.files);
-            setFormData({ ...formData, [e.target.name]: files });
-            setFilePreviews(files.map(file => URL.createObjectURL(file)));  // Generate file previews
+            const newFiles = Array.from(e.target.files);
+            const updatedFiles = [...formData.photo_video_files, ...newFiles];
+            setFormData({ ...formData, photo_video_files: updatedFiles });
+            setFilePreviews(updatedFiles.map(file => URL.createObjectURL(file)));  // Update file previews
         } else {
             setFormData({ ...formData, [e.target.name]: e.target.value });
         }
