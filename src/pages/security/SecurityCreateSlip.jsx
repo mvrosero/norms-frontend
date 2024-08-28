@@ -14,7 +14,7 @@ const SecurityCreateSlip = () => {
     const [formData, setFormData] = useState({
         student_idnumber: '',
         violation_nature: '',
-        photo_video_file: null
+        photo_video_files: []  // Changed to an array
     });
     const [students, setStudents] = useState([]);
     const [message, setMessage] = useState('');
@@ -49,8 +49,8 @@ const SecurityCreateSlip = () => {
     }, []);
 
     const handleInputChange = (e) => {
-        if (e.target.name === 'photo_video_file') {
-            setFormData({ ...formData, [e.target.name]: e.target.files[0] });
+        if (e.target.name === 'photo_video_files') {
+            setFormData({ ...formData, [e.target.name]: Array.from(e.target.files) });  // Handle multiple files
         } else {
             setFormData({ ...formData, [e.target.name]: e.target.value });
         }
@@ -67,7 +67,11 @@ const SecurityCreateSlip = () => {
             const formDataToSend = new FormData();
             formDataToSend.append('student_idnumber', formData.student_idnumber);
             formDataToSend.append('violation_nature', formData.violation_nature);
-            formDataToSend.append('photo_video_file', formData.photo_video_file);
+
+            // Append each file to formData
+            formData.photo_video_files.forEach(file => {
+                formDataToSend.append('photo_video_files', file);
+            });
 
             // Retrieve employee_idnumber from localStorage
             const employee_idnumber = localStorage.getItem('employee_idnumber');
@@ -88,7 +92,7 @@ const SecurityCreateSlip = () => {
             setFormData({
                 student_idnumber: '',
                 violation_nature: '',
-                photo_video_file: null
+                photo_video_files: []  // Reset file inputs
             });
         } catch (error) {
             console.error('Error submitting form:', error);
@@ -130,9 +134,16 @@ const SecurityCreateSlip = () => {
                             />
                         </Form.Group>
 
-                        <Form.Group controlId="photoVideoFile">
-                            <Form.Label>Upload Photo/Video:</Form.Label>
-                            <Form.Control type="file" name="photo_video_file" onChange={handleInputChange} accept="image/*, video/*" required />
+                        <Form.Group controlId="photoVideoFiles">
+                            <Form.Label>Upload Photos/Videos:</Form.Label>
+                            <Form.Control 
+                                type="file" 
+                                name="photo_video_files" 
+                                onChange={handleInputChange} 
+                                accept="image/*, video/*" 
+                                multiple  // Allow multiple files
+                                required 
+                            />
                         </Form.Group>
 
                         <div className="d-flex justify-content-between mt-3">
