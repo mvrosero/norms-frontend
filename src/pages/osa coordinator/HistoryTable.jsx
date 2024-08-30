@@ -2,17 +2,15 @@ import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import axios from 'axios';
 import { Modal, Button, Table } from 'react-bootstrap';
 import Swal from 'sweetalert2';
-import DeleteIcon from '@mui/icons-material/Delete';
-import PersonIcon from '@mui/icons-material/Person';
-import { useNavigate } from 'react-router';
-import Fuse from 'fuse.js'; // Import fuse.js
+import { useNavigate, Link } from 'react-router-dom';
+import Fuse from 'fuse.js';
 
 const HistoryTable = ({ searchQuery }) => {
     const [defiances, setDefiances] = useState([]);
-    const [deletionStatus, setDeletionStatus] = useState(false); // State to track deletion status
-    const [showModal, setShowModal] = useState(false); // State to manage modal visibility
-    const [fileUrl, setFileUrl] = useState(''); // State to manage file URL
-    const [fileType, setFileType] = useState(''); // State to manage file type
+    const [deletionStatus, setDeletionStatus] = useState(false); 
+    const [showModal, setShowModal] = useState(false); 
+    const [selectedRecord, setSelectedRecord] = useState(null); 
+    const [employeeNames, setEmployeeNames] = useState({}); // New state for employee names
     const navigate = useNavigate();
 
     const headers = useMemo(() => {
@@ -20,38 +18,60 @@ const HistoryTable = ({ searchQuery }) => {
         return token ? { Authorization: `Bearer ${token}` } : {};
     }, []);
 
+    const fetchEmployeeName = useCallback(async (employee_idnumber) => {
+        try {
+            const response = await axios.get(`http://localhost:9000/employees/${employee_idnumber}`, { headers });
+            const name = response.data.name;
+            setEmployeeNames(prevNames => ({ ...prevNames, [employee_idnumber]: name }));
+        } catch (error) {
+            console.error('Error fetching employee name:', error);
+        }
+    }, [headers]);
+
     const fetchDefiances = useCallback(async () => {
         try {
             let response;
             if (searchQuery) {
                 response = await axios.get('http://localhost:9000/uniform_defiances', { headers });
 
-                // Create a new instance of Fuse with the defiances data and search options
                 const fuse = new Fuse(response.data, {
                     keys: ['slip_id', 'student_idnumber', 'violation_nature', 'photo_video_filename', 'status', 'submitted_by'],
                     includeScore: true,
-                    threshold: 0.4, // Adjust threshold as needed
+                    threshold: 0.4,
                 });
 
-                // Perform fuzzy search
                 const searchResults = fuse.search(searchQuery);
 
-                // Extract the item from search results and filter out those with "Pending" status
                 const filteredDefiances = searchResults
                     .map(result => result.item)
                     .filter(defiance => defiance.status !== 'Pending');
 
                 setDefiances(filteredDefiances);
+
+                // Fetch employee names for the filtered defiances
+                const employeeIds = new Set(filteredDefiances.map(defiance => defiance.submitted_by));
+                employeeIds.forEach(id => {
+                    if (!employeeNames[id]) {
+                        fetchEmployeeName(id);
+                    }
+                });
             } else {
                 response = await axios.get('http://localhost:9000/uniform_defiances', { headers });
-                // Filter out those with "Pending" status
                 const nonPendingDefiances = response.data.filter(defiance => defiance.status !== 'Pending');
                 setDefiances(nonPendingDefiances);
+
+                // Fetch employee names for all defiances
+                const employeeIds = new Set(nonPendingDefiances.map(defiance => defiance.submitted_by));
+                employeeIds.forEach(id => {
+                    if (!employeeNames[id]) {
+                        fetchEmployeeName(id);
+                    }
+                });
             }
         } catch (error) {
             console.error('Error fetching defiances:', error);
         }
-    }, [headers, searchQuery]);
+    }, [headers, searchQuery, fetchEmployeeName, employeeNames]);
 
     useEffect(() => {
         fetchDefiances();
@@ -61,7 +81,7 @@ const HistoryTable = ({ searchQuery }) => {
         try {
             const response = await axios.get(`http://localhost:9000/uniform_defiance/${slip_id}`);
             const defiance = response.data;
-            localStorage.setItem('selectedDefiance', JSON.stringify(defiance)); // Store selected defiance data in localStorage
+            localStorage.setItem('selectedDefiance', JSON.stringify(defiance)); 
             navigate(`/individualdefiancerecord/${slip_id}`);
         } catch (error) {
             console.error('Error fetching defiance:', error);
@@ -92,10 +112,8 @@ const HistoryTable = ({ searchQuery }) => {
             await axios.delete(`http://localhost:9000/uniform_defiance/${slipId}`, { headers });
             Swal.fire({
                 icon: 'success',
-                text: "Successfully Deleted"
+                text: 'Defiance has been deleted.',
             });
-            setDeletionStatus(prevStatus => !prevStatus); // Toggle deletionStatus to trigger re-fetch
-            // Update the defiances state by removing the deleted defiance
             setDefiances(prevDefiances => prevDefiances.filter(defiance => defiance.slip_id !== slipId));
         } catch (error) {
             console.error('Error deleting defiance:', error);
@@ -106,103 +124,84 @@ const HistoryTable = ({ searchQuery }) => {
         }
     };
 
-    const handleShowModal = async (slip_id) => {
-        try {
-            const response = await axios.get(`http://localhost:9000/uniform_defiance/${slip_id}`, { responseType: 'blob' });
-            const contentType = response.headers['content-type'];
-            setFileType(contentType);
-            const fileUrl = URL.createObjectURL(response.data);
-            setFileUrl(fileUrl);
-            setShowModal(true);
-        } catch (error) {
-            console.error('Error fetching file:', error);
-            Swal.fire({
-                icon: 'error',
-                text: 'An error occurred while fetching the file. Please try again later.',
-            });
-        }
+    const handleShowDetailsModal = (record) => {
+        setSelectedRecord(record);
+        setShowModal(true);
     };
 
-    const handleCloseModal = () => {
-        setFileUrl('');
-        setFileType('');
+    const handleCloseDetailsModal = () => {
+        setSelectedRecord(null);
         setShowModal(false);
     };
 
-    const handleStudentRedirect = (student_idnumber) => {
-        navigate(`/individualuniformdefiance/${student_idnumber}`);
-    };
-
-    const renderFilePreview = () => {
-        if (fileType) {
-            if (fileType.startsWith('image/')) {
-                return <img src={fileUrl} alt="Preview" style={{ width: '100%', height: 'auto' }} />;
-            } else if (fileType.startsWith('video/')) {
-                return (
-                    <video controls style={{ width: '100%' }}>
-                        <source src={fileUrl} type={fileType} />
-                        Your browser does not support the video tag.
-                    </video>
-                );
-            } else {
-                return <a href={fileUrl} target="_blank" rel="noopener noreferrer">View File</a>;
-            }
+    const renderFile = () => {
+        if (selectedRecord) {
+            const { photo_video_filenames } = selectedRecord;
+            const filenames = photo_video_filenames.split(',');
+    
+            return filenames.map((filename, index) => {
+                const fileExtension = filename.split('.').pop().toLowerCase();
+                const fileUrl = `http://localhost:9000/uploads/${filename}`;
+        
+                if (fileExtension === 'mp4' || fileExtension === 'avi' || fileExtension === 'mov') {
+                    return (
+                        <div key={index} style={{ marginBottom: '10px' }}>
+                            <a href={fileUrl} target="_blank" rel="noopener noreferrer">
+                                <video controls src={fileUrl} style={{ maxWidth: '100%' }} />
+                            </a>
+                        </div>
+                    );
+                } else if (fileExtension === 'jpg' || fileExtension === 'jpeg' || fileExtension === 'png' || fileExtension === 'gif') {
+                    return (
+                        <div key={index} style={{ marginBottom: '10px' }}>
+                            <a href={fileUrl} target="_blank" rel="noopener noreferrer">
+                                <img src={fileUrl} alt="File Preview" style={{ maxWidth: '100%' }} />
+                            </a>
+                        </div>
+                    );
+                } else {
+                    return <p key={index}>Unsupported file format</p>; 
+                }
+            });
         }
-        return 'No file available';
+        return null;
     };
 
     return (
         <>
             <div className='container'>
-                <br />
-                <div className='col-12'>
-                </div>
-
-                {/* Defiance table */}
-                <Table bordered hover style={{ borderRadius: '20px', marginLeft: '110px' }}>
-                    <thead style={{ backgroundColor: '#f8f9fa' }}>
+                <Table bordered hover>
+                    <thead>
                         <tr>
-                            <th style={{ width: '5%' }}>ID</th>
-                            <th style={{ width: '10%' }}>ID Number</th>
-                            <th>Nature of Violation</th>
-                            <th>Created At</th>
+                            <th>ID</th>
+                            <th>ID Number</th>
+                            <th>Violation Nature</th>
                             <th>Submitted By</th>
-                            <th>File Attached</th>
+                            <th>Details</th>
                             <th>Status</th>
                         </tr>
                     </thead>
                     <tbody>
                         {defiances.map((defiance, index) => (
                             <tr key={index}>
-                                <td style={{ textAlign: 'center' }}>{defiance.slip_id}</td>
+                                <td>{defiance.slip_id}</td>
                                 <td>
-                                    <a
-                                        href="#"
-                                        onClick={(e) => {
-                                            e.preventDefault();
-                                            handleStudentRedirect(defiance.student_idnumber);
-                                        }}
-                                        style={{ textAlign: 'center', textDecoration: 'underline' }}
+                                    <Link 
+                                        to={`/individualuniformdefiance/${defiance.student_idnumber}`}
+                                        style={{ textDecoration: 'underline', color: 'black' }}
                                     >
                                         {defiance.student_idnumber}
-                                    </a>
+                                    </Link>
                                 </td>
                                 <td>{defiance.violation_nature}</td>
-                                <td>{defiance.created_at}</td>
-                                <td>{defiance.submitted_by}</td>
+                                <td>{employeeNames[defiance.submitted_by] || defiance.submitted_by}</td>
                                 <td>
-                                    {defiance.photo_video_filename ? (
-                                        <a
-                                            href="#"
-                                            onClick={(e) => {
-                                                e.preventDefault();
-                                                handleShowModal(defiance.slip_id); // Pass slip_id to fetch file
-                                            }}
-                                            style={{ textAlign: 'center', textDecoration: 'underline' }}
-                                        >
-                                            View
-                                        </a>
-                                    ) : 'No file available'}
+                                    <span 
+                                        onClick={() => handleShowDetailsModal(defiance)} 
+                                        style={{ cursor: 'pointer', fontWeight: 'bold', textDecoration: 'underline' }}
+                                    >
+                                        View
+                                    </span>
                                 </td>
                                 <td>{defiance.status}</td>
                             </tr>
@@ -211,22 +210,32 @@ const HistoryTable = ({ searchQuery }) => {
                 </Table>
             </div>
 
-            {/* Modal to display file */}
-            <Modal show={showModal} onHide={handleCloseModal}>
+            {/* Modal for displaying record details */}
+            <Modal show={showModal} onHide={handleCloseDetailsModal}>
                 <Modal.Header closeButton>
-                    <Modal.Title>File Preview</Modal.Title>
+                    <Modal.Title>Uniform Defiance Slip Details</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                    {renderFilePreview()}
+                    {selectedRecord && (
+                        <div>
+                            <p><strong>Slip ID:</strong> {selectedRecord.slip_id}</p>
+                            <p><strong>Student ID:</strong> {selectedRecord.student_idnumber}</p>
+                            <p><strong>Violation Nature:</strong> {selectedRecord.violation_nature}</p>
+                            <p><strong>File Preview:</strong></p>
+                            {renderFile()}
+                            <p><strong>Status:</strong> {selectedRecord.status}</p>
+                            <p><strong>Submitted By:</strong> {employeeNames[selectedRecord.submitted_by] || selectedRecord.submitted_by}</p>
+                        </div>
+                    )}
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button variant="secondary" onClick={handleCloseModal}>
+                    <Button variant="secondary" onClick={handleCloseDetailsModal}>
                         Close
                     </Button>
                 </Modal.Footer>
             </Modal>
         </>
     );
-}
+};
 
 export default HistoryTable;
