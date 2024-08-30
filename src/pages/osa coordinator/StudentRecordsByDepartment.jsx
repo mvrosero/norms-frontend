@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import axios from 'axios';
 import { Modal, Button, Table } from 'react-bootstrap';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import DeleteIcon from '@mui/icons-material/Delete';
 import PersonIcon from '@mui/icons-material/Person';
@@ -14,6 +14,7 @@ import CreateViolationRecordForm from './CreateViolationRecord';
 
 const StudentRecordsByDepartment = () => {
     const { department_code } = useParams(); // Get department_code from URL
+    const navigate = useNavigate(); // Add useNavigate hook
     const [users, setUsers] = useState([]);
     const [departments, setDepartments] = useState([]);
     const [programs, setPrograms] = useState([]);
@@ -75,9 +76,23 @@ const StudentRecordsByDepartment = () => {
         return program ? program.program_name : '';
     };
 
+    const handleRedirect = async (student_idnumber) => {
+        try {
+            const response = await axios.get(`http://localhost:9000/student/${student_idnumber}`);
+            const student = response.data;
+            localStorage.setItem('selectedStudent', JSON.stringify(student)); // Store selected student data in localStorage
+            navigate(`/individualstudentrecord/${student_idnumber}`);
+        } catch (error) {
+            console.error('Error fetching student:', error);
+            Swal.fire({
+                icon: 'error',
+                text: 'An error occurred while fetching student data. Please try again later.',
+            });
+        }
+    };
+
     const handleReadModalShow = (user) => {
-        setSelectedUser(user);
-        setShowReadModal(true);
+        handleRedirect(user.student_idnumber); // Use handleRedirect instead
     };
 
     const handleReadModalClose = () => {
@@ -225,37 +240,7 @@ const StudentRecordsByDepartment = () => {
                 </Table>
             </div>
 
-            {/* Read Modal */}
-            <Modal show={showReadModal} onHide={handleReadModalClose}>
-                <Modal.Header closeButton>
-                    <Modal.Title>VIEW STUDENT RECORD</Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-                    {selectedUser && (
-                        <div className="row">
-                            <div className="col-md-4">
-                                <p><strong>ID Number:</strong></p>
-                                <p><strong>Name:</strong></p>
-                                <p><strong>Email:</strong></p>
-                                <p><strong>Year Level:</strong></p>
-                                <p><strong>Program:</strong></p>
-                            </div>
-                            <div className="col-md-8">
-                                <p>{selectedUser.student_idnumber}</p>
-                                <p>{`${selectedUser.first_name} ${selectedUser.middle_name} ${selectedUser.last_name} ${selectedUser.suffix}`}</p>
-                                <p>{selectedUser.email}</p>
-                                <p>{selectedUser.year_level}</p>
-                                <p>{getProgramName(selectedUser.program_id)}</p>
-                            </div>
-                        </div>
-                    )}
-                </Modal.Body>
-                <Modal.Footer>
-                    <Button variant="secondary" onClick={handleReadModalClose}>
-                        Close
-                    </Button>
-                </Modal.Footer>
-            </Modal>
+  
 
             {/* Violation Modal */}
             <Modal show={showViolationModal} onHide={handleCloseModal}>
