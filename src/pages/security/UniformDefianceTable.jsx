@@ -8,6 +8,7 @@ import styled from '@emotion/styled';
 const UniformDefianceTable = () => {
     const [records, setRecords] = useState([]);
     const [selectedRecord, setSelectedRecord] = useState(null);
+    const [employeeName, setEmployeeName] = useState('');
     const [showDetailsModal, setShowDetailsModal] = useState(false);
 
     useEffect(() => {
@@ -23,8 +24,22 @@ const UniformDefianceTable = () => {
         fetchData();
     }, []);
 
-    const handleViewDetails = (record) => {
+    const fetchEmployeeName = async (employeeIdNumber) => {
+        try {
+            const response = await axios.get(`http://localhost:9000/employees/${employeeIdNumber}`);
+            console.log('Employee API Response:', response.data); // Log response to verify structure
+            return response.data.name;  // Adjust if the response structure differs
+        } catch (error) {
+            console.error('Error fetching employee data:', error);
+            return 'Unknown Employee'; // Fallback name if the request fails
+        }
+    };
+
+    const handleViewDetails = async (record) => {
         setSelectedRecord(record);
+        const name = await fetchEmployeeName(record.submitted_by);
+        console.log('Fetched Employee Name:', name); // Log fetched name
+        setEmployeeName(name);
         setShowDetailsModal(true);
     };
 
@@ -53,13 +68,13 @@ const UniformDefianceTable = () => {
         if (selectedRecord) {
             const { photo_video_filenames } = selectedRecord;
             const filenames = photo_video_filenames.split(',');
-    
+
             return (
                 <div>
                     {filenames.map((filename, index) => {
                         const fileExtension = filename.split('.').pop().toLowerCase();
                         const fileUrl = `http://localhost:9000/uploads/${filename}`;
-                        
+
                         if (fileExtension === 'mp4' || fileExtension === 'avi' || fileExtension === 'mov') {
                             return (
                                 <a href={fileUrl} target="_blank" rel="noopener noreferrer" key={index}>
@@ -69,11 +84,11 @@ const UniformDefianceTable = () => {
                         } else if (fileExtension === 'jpg' || fileExtension === 'jpeg' || fileExtension === 'png' || fileExtension === 'gif') {
                             return (
                                 <a href={fileUrl} target="_blank" rel="noopener noreferrer" key={index}>
-                                    <img 
-                                        src={fileUrl} 
-                                        alt={`File Preview ${index}`} 
-                                        onError={handleImageError} 
-                                        style={{ maxWidth: '100%', display: 'block', marginBottom: '10px' }} 
+                                    <img
+                                        src={fileUrl}
+                                        alt={`File Preview ${index}`}
+                                        onError={handleImageError}
+                                        style={{ maxWidth: '100%', display: 'block', marginBottom: '10px' }}
                                     />
                                 </a>
                             );
@@ -86,7 +101,6 @@ const UniformDefianceTable = () => {
         }
         return null;
     };
-    
 
     return (
         <>
@@ -132,7 +146,7 @@ const UniformDefianceTable = () => {
                             {renderFile()}
                             <p><strong>Status:</strong> {selectedRecord.status}</p>
                             <p><strong>Created At:</strong> {new Date(selectedRecord.created_at).toLocaleString()}</p>
-                            <p><strong>Submitted By:</strong> {selectedRecord.submitted_by}</p>
+                            <p><strong>Submitted By:</strong> {employeeName}</p> {/* Display employee name */}
                         </div>
                     )}
                 </Modal.Body>
