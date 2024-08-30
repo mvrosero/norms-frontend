@@ -266,14 +266,14 @@ const IndividualUniformDefiance = () => {
                 </Modal>
 
                 {/* Add Violation Record Modal */}
-                <Modal show={showAddViolationModal} onHide={handleCloseAddViolationModal} size="lg">
-                    <Modal.Header closeButton>
-                        <Modal.Title>Add Violation Record</Modal.Title>
-                    </Modal.Header>
-                    <Modal.Body>
-                        <AddViolationRecordForm onClose={handleCloseAddViolationModal} />
-                    </Modal.Body>
-                </Modal>
+                <Modal show={showAddViolationModal} onHide={handleCloseAddViolationModal}>
+                <Modal.Header closeButton>
+                    <Modal.Title>Add Violation Record</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <AddViolationRecordForm handleCloseModal={handleCloseAddViolationModal} />
+                </Modal.Body>
+            </Modal>
             </div>
         </>
     );
