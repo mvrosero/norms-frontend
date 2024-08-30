@@ -32,6 +32,10 @@ const UniformDefianceTable = () => {
         setShowDetailsModal(false);
     };
 
+    const handleImageError = (e) => {
+        e.target.src = '/path/to/default-image.jpg'; // Replace with the path to your fallback image
+    };
+
     const ViewButton = styled.button`
         border-radius: 20px;
         background: linear-gradient(45deg, #015901, #006637, #4AA616);
@@ -44,27 +48,34 @@ const UniformDefianceTable = () => {
             background: linear-gradient(45deg, #4AA616, #006637, #015901);
         }
     `;
-    
+
     const renderFile = () => {
         if (selectedRecord) {
             const { photo_video_filenames } = selectedRecord;
             const filenames = photo_video_filenames.split(',');
-
+    
             return (
                 <div>
                     {filenames.map((filename, index) => {
                         const fileExtension = filename.split('.').pop().toLowerCase();
-                        const fileUrl = `http://localhost:9000/uniform_defiance/${filename}`;
+                        const fileUrl = `http://localhost:9000/uploads/${filename}`;
                         
-                        console.log(`Rendering file: ${fileUrl}`); // Debugging line
-
                         if (fileExtension === 'mp4' || fileExtension === 'avi' || fileExtension === 'mov') {
                             return (
-                                <video key={index} controls src={fileUrl} style={{ maxWidth: '100%', display: 'block', marginBottom: '10px' }} />
+                                <a href={fileUrl} target="_blank" rel="noopener noreferrer" key={index}>
+                                    <video controls src={fileUrl} style={{ maxWidth: '100%', display: 'block', marginBottom: '10px' }} />
+                                </a>
                             );
                         } else if (fileExtension === 'jpg' || fileExtension === 'jpeg' || fileExtension === 'png' || fileExtension === 'gif') {
                             return (
-                                <img key={index} src={fileUrl} alt={`File Preview ${index}`} style={{ maxWidth: '100%', display: 'block', marginBottom: '10px' }} />
+                                <a href={fileUrl} target="_blank" rel="noopener noreferrer" key={index}>
+                                    <img 
+                                        src={fileUrl} 
+                                        alt={`File Preview ${index}`} 
+                                        onError={handleImageError} 
+                                        style={{ maxWidth: '100%', display: 'block', marginBottom: '10px' }} 
+                                    />
+                                </a>
                             );
                         } else {
                             return <p key={index}>Unsupported file format</p>;
@@ -75,6 +86,7 @@ const UniformDefianceTable = () => {
         }
         return null;
     };
+    
 
     return (
         <>
