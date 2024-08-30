@@ -10,7 +10,7 @@ const HistoryTable = ({ searchQuery }) => {
     const [deletionStatus, setDeletionStatus] = useState(false); 
     const [showModal, setShowModal] = useState(false); 
     const [selectedRecord, setSelectedRecord] = useState(null); 
-    const [employeeNames, setEmployeeNames] = useState({}); // New state for employee names
+    const [employeeNames, setEmployeeNames] = useState({});
     const navigate = useNavigate();
 
     const headers = useMemo(() => {
@@ -48,7 +48,6 @@ const HistoryTable = ({ searchQuery }) => {
 
                 setDefiances(filteredDefiances);
 
-                // Fetch employee names for the filtered defiances
                 const employeeIds = new Set(filteredDefiances.map(defiance => defiance.submitted_by));
                 employeeIds.forEach(id => {
                     if (!employeeNames[id]) {
@@ -60,7 +59,6 @@ const HistoryTable = ({ searchQuery }) => {
                 const nonPendingDefiances = response.data.filter(defiance => defiance.status !== 'Pending');
                 setDefiances(nonPendingDefiances);
 
-                // Fetch employee names for all defiances
                 const employeeIds = new Set(nonPendingDefiances.map(defiance => defiance.submitted_by));
                 employeeIds.forEach(id => {
                     if (!employeeNames[id]) {
@@ -167,6 +165,13 @@ const HistoryTable = ({ searchQuery }) => {
         return null;
     };
 
+    // Function to format date
+    const formatDate = (dateString) => {
+        const options = { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' };
+        const date = new Date(dateString);
+        return date.toLocaleDateString(undefined, options);
+    };
+
     return (
         <>
             <div className='container'>
@@ -175,7 +180,7 @@ const HistoryTable = ({ searchQuery }) => {
                         <tr>
                             <th>ID</th>
                             <th>ID Number</th>
-                            <th>Violation Nature</th>
+                            <th>Nature of Violation</th>
                             <th>Submitted By</th>
                             <th>Details</th>
                             <th>Status</th>
@@ -224,13 +229,16 @@ const HistoryTable = ({ searchQuery }) => {
                             <p><strong>File Preview:</strong></p>
                             {renderFile()}
                             <p><strong>Status:</strong> {selectedRecord.status}</p>
-                            <p><strong>Submitted By:</strong> {employeeNames[selectedRecord.submitted_by] || selectedRecord.submitted_by}</p>
+                            <p><strong>Updated At:</strong> {formatDate(selectedRecord.updated_at)}</p>
                         </div>
                     )}
                 </Modal.Body>
                 <Modal.Footer>
                     <Button variant="secondary" onClick={handleCloseDetailsModal}>
                         Close
+                    </Button>
+                    <Button variant="danger" onClick={() => deleteDefiance(selectedRecord.slip_id)}>
+                        Delete
                     </Button>
                 </Modal.Footer>
             </Modal>

@@ -202,8 +202,8 @@ const UniformDefianceTable = ({ searchQuery }) => {
                         <div>
                             <p><strong>Slip ID:</strong> {selectedRecord.slip_id}</p>
                             <p><strong>Student ID:</strong> {selectedRecord.student_idnumber}</p>
-                            <p><strong>Violation Nature:</strong> {selectedRecord.violation_nature}</p>
-                            <p><strong>File Preview:</strong></p>
+                            <p><strong>Nature of Violation:</strong> {selectedRecord.violation_nature}</p>
+                            <p><strong>Files Attached:</strong></p>
                             {renderFile()}
                             <p><strong>Status:</strong> {selectedRecord.status}</p>
                             <p><strong>Created At:</strong> {new Date(selectedRecord.created_at).toLocaleString()}</p>

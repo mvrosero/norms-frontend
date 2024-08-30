@@ -5,6 +5,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import Fuse from 'fuse.js';
 import { FaPlus } from 'react-icons/fa';
 import defaultProfile from '../../assets/images/default_profile.jpg'; // Adjust path as necessary
+import { format } from 'date-fns';
 
 import CoordinatorNavigation from './CoordinatorNavigation';
 import CoordinatorInfo from './CoordinatorInfo';
@@ -14,11 +15,11 @@ import AddViolationRecordForm from './AddViolationRecord';
 const IndividualUniformDefiance = () => {
     const [studentInfo, setStudentInfo] = useState(null);
     const [defiances, setDefiances] = useState([]);
-    const [fileUrl, setFileUrl] = useState('');
-    const [fileType, setFileType] = useState('');
-    const [showModal, setShowModal] = useState(false);
+    const [selectedRecord, setSelectedRecord] = useState(null);
+    const [showDetailsModal, setShowDetailsModal] = useState(false);
     const [showAddViolationModal, setShowAddViolationModal] = useState(false);
     const [searchQuery, setSearchQuery] = useState('');
+    const [employees, setEmployees] = useState({});
     const location = useLocation();
     const navigate = useNavigate();
 
@@ -49,6 +50,18 @@ const IndividualUniformDefiance = () => {
         }
     }, [headers]);
 
+    const fetchEmployeeName = useCallback(async (employee_idnumber) => {
+        try {
+            const response = await axios.get(`http://localhost:9000/employees/${employee_idnumber}`, { headers });
+            if (response.data && response.data.name) {
+                return response.data.name;
+            }
+        } catch (error) {
+            console.error('Error fetching employee name:', error);
+        }
+        return employee_idnumber; // Fallback to employee_idnumber if name not found
+    }, [headers]);
+
     const fetchDefiances = useCallback(async () => {
         try {
             const student_idnumber = location.pathname.split('/').pop();
@@ -72,32 +85,32 @@ const IndividualUniformDefiance = () => {
                 const nonPendingDefiances = response.data.filter(defiance => defiance.status !== 'Pending');
                 setDefiances(nonPendingDefiances);
             }
+
+            // Fetch employee names
+            const employeeIds = new Set(response.data.map(defiance => defiance.submitted_by));
+            const employeeNames = {};
+            for (const id of employeeIds) {
+                const name = await fetchEmployeeName(id);
+                employeeNames[id] = name;
+            }
+            setEmployees(employeeNames);
         } catch (error) {
             console.error('Error fetching defiances:', error);
         }
-    }, [headers, searchQuery, location.pathname, fetchStudentInfo]);
+    }, [headers, searchQuery, location.pathname, fetchStudentInfo, fetchEmployeeName]);
 
     useEffect(() => {
         fetchDefiances();
     }, [fetchDefiances]);
 
-    const handleShowModal = async (slip_id) => {
-        try {
-            const response = await axios.get(`http://localhost:9000/uniform_defiance/${slip_id}`, { responseType: 'blob' });
-            const contentType = response.headers['content-type'];
-            setFileType(contentType);
-            const fileUrl = URL.createObjectURL(response.data);
-            setFileUrl(fileUrl);
-            setShowModal(true);
-        } catch (error) {
-            console.error('Error fetching file:', error);
-        }
+    const handleShowDetailsModal = async (record) => {
+        setSelectedRecord(record);
+        setShowDetailsModal(true);
     };
 
-    const handleCloseModal = () => {
-        setFileUrl('');
-        setFileType('');
-        setShowModal(false);
+    const handleCloseDetailsModal = () => {
+        setSelectedRecord(null);
+        setShowDetailsModal(false);
     };
 
     const handleShowAddViolationModal = () => {
@@ -109,23 +122,45 @@ const IndividualUniformDefiance = () => {
         await fetchDefiances();
     };
 
-    const renderFilePreview = () => {
-        if (fileType) {
-            if (fileType.startsWith('image/')) {
-                return <img src={fileUrl} alt="Preview" style={{ width: '100%', height: 'auto' }} />;
-            } else if (fileType.startsWith('video/')) {
-                return (
-                    <video controls style={{ width: '100%' }}>
-                        <source src={fileUrl} type={fileType} />
-                        Your browser does not support the video tag.
-                    </video>
-                );
-            } else {
-                return <a href={fileUrl} target="_blank" rel="noopener noreferrer">View File</a>;
-            }
+    const renderFile = () => {
+        if (selectedRecord) {
+            const { photo_video_filenames } = selectedRecord;
+            const filenames = photo_video_filenames.split(',');
+
+            return filenames.map((filename, index) => {
+                const fileExtension = filename.split('.').pop().toLowerCase();
+                const fileUrl = `http://localhost:9000/uploads/${filename}`;
+        
+                if (fileExtension === 'mp4' || fileExtension === 'avi' || fileExtension === 'mov') {
+                    return (
+                        <div key={index} style={{ marginBottom: '10px' }}>
+                            <a href={fileUrl} target="_blank" rel="noopener noreferrer">
+                                <video controls src={fileUrl} style={{ maxWidth: '100%' }} />
+                            </a>
+                        </div>
+                    );
+                } else if (fileExtension === 'jpg' || fileExtension === 'jpeg' || fileExtension === 'png' || fileExtension === 'gif') {
+                    return (
+                        <div key={index} style={{ marginBottom: '10px' }}>
+                            <a href={fileUrl} target="_blank" rel="noopener noreferrer">
+                                <img src={fileUrl} alt="File Preview" style={{ maxWidth: '100%' }} />
+                            </a>
+                        </div>
+                    );
+                } else {
+                    return <p key={index}>Unsupported file format</p>; // Handle unsupported formats
+                }
+            });
         }
-        return 'No file available';
+        return null;
     };
+
+    const formatDate = (dateString) => {
+        if (!dateString) return '';
+        const date = new Date(dateString);
+        return format(date, 'MM-dd-yyyy, HH:mm:ss');
+    };
+
 
     return (
         <>
@@ -187,51 +222,59 @@ const IndividualUniformDefiance = () => {
                                 <td style={{ textAlign: 'center' }}>{defiance.slip_id}</td>
                                 <td>{defiance.student_idnumber}</td>
                                 <td>{defiance.violation_nature}</td>
-                                <td>{defiance.created_at}</td>
-                                <td>{defiance.submitted_by}</td>
+                                <td>{formatDate(defiance.created_at)}</td>
+                                <td>{employees[defiance.submitted_by] || defiance.submitted_by}</td>
                                 <td>
-                                    {defiance.photo_video_filename ? (
-                                        <a
-                                            href="#"
-                                            onClick={(e) => {
-                                                e.preventDefault();
-                                                handleShowModal(defiance.slip_id); // Pass slip_id to fetch file
-                                            }}
-                                            style={{ textAlign: 'center', textDecoration: 'underline' }}
+                                    <div 
+                                            className="d-flex align-items-center" 
+                                            style={{ cursor: 'pointer', color: '#000000', textDecoration: 'underline', fontWeight: 'bold' }} 
+                                            onClick={() => handleShowDetailsModal(defiance)}
                                         >
                                             View
-                                        </a>
-                                    ) : 'No file available'}
+                                    </div>
                                 </td>
                                 <td>{defiance.status}</td>
                             </tr>
                         ))}
                     </tbody>
                 </Table>
+
+                {/* Details Modal */}
+                <Modal show={showDetailsModal} onHide={handleCloseDetailsModal} size="lg">
+                    <Modal.Header closeButton>
+                        <Modal.Title>Record Details</Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>
+                        {selectedRecord && (
+                            <div>
+                                <p><strong>Slip ID:</strong> {selectedRecord.slip_id}</p>
+                                <p><strong>Student ID:</strong> {selectedRecord.student_idnumber}</p>
+                                <p><strong>Submitted By:</strong> {employees[selectedRecord.submitted_by] || selectedRecord.submitted_by}</p>
+                                <p><strong>Status:</strong> {selectedRecord.status}</p>
+                                <div>
+                                    <strong>Files Attached:</strong>
+                                    {renderFile()}
+                                </div>
+                            </div>
+                        )}
+                    </Modal.Body>
+                    <Modal.Footer>
+                        <Button variant="secondary" onClick={handleCloseDetailsModal}>
+                            Close
+                        </Button>
+                    </Modal.Footer>
+                </Modal>
+
+                {/* Add Violation Record Modal */}
+                <Modal show={showAddViolationModal} onHide={handleCloseAddViolationModal} size="lg">
+                    <Modal.Header closeButton>
+                        <Modal.Title>Add Violation Record</Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>
+                        <AddViolationRecordForm onClose={handleCloseAddViolationModal} />
+                    </Modal.Body>
+                </Modal>
             </div>
-
-            <Modal show={showModal} onHide={handleCloseModal} size="lg">
-                <Modal.Header closeButton>
-                    <Modal.Title>File Preview</Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-                    {renderFilePreview()}
-                </Modal.Body>
-                <Modal.Footer>
-                    <Button variant="secondary" onClick={handleCloseModal}>
-                        Close
-                    </Button>
-                </Modal.Footer>
-            </Modal>
-
-            <Modal show={showAddViolationModal} onHide={handleCloseAddViolationModal}>
-                <Modal.Header closeButton>
-                    <Modal.Title>Add Violation Record</Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-                    <AddViolationRecordForm handleCloseModal={handleCloseAddViolationModal} />
-                </Modal.Body>
-            </Modal>
         </>
     );
 };
