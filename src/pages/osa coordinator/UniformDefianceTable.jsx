@@ -18,6 +18,16 @@ const UniformDefianceTable = ({ searchQuery }) => {
         return token ? { Authorization: `Bearer ${token}` } : {};
     }, []);
 
+    const fetchEmployeeName = async (employee_idnumber) => {
+        try {
+            const response = await axios.get(`http://localhost:9000/employees/${employee_idnumber}`, { headers });
+            return response.data.name;
+        } catch (error) {
+            console.error('Error fetching employee name:', error);
+            return 'Unknown';
+        }
+    };
+
     const fetchDefiances = useCallback(async () => {
         try {
             let response = await axios.get('http://localhost:9000/uniform_defiances', { headers });
@@ -26,8 +36,14 @@ const UniformDefianceTable = ({ searchQuery }) => {
             // Filter data to include only those with status 'Pending'
             data = data.filter(defiance => defiance.status === 'Pending');
 
+            // Replace submitted_by with full name
+            const updatedData = await Promise.all(data.map(async (defiance) => {
+                const fullName = await fetchEmployeeName(defiance.submitted_by);
+                return { ...defiance, submitted_by: fullName };
+            }));
+
             if (searchQuery) {
-                const fuse = new Fuse(data, {
+                const fuse = new Fuse(updatedData, {
                     keys: ['slip_id', 'student_idnumber', 'violation_nature', 'status', 'submitted_by'],
                     includeScore: true,
                     threshold: 0.4,
@@ -35,6 +51,8 @@ const UniformDefianceTable = ({ searchQuery }) => {
 
                 const searchResults = fuse.search(searchQuery);
                 data = searchResults.map(result => result.item);
+            } else {
+                data = updatedData;
             }
 
             setDefiances(data);
@@ -93,20 +111,33 @@ const UniformDefianceTable = ({ searchQuery }) => {
 
     const renderFile = () => {
         if (selectedRecord) {
-            const { photo_video_filename } = selectedRecord;
-            const fileExtension = photo_video_filename.split('.').pop().toLowerCase();
+            const { photo_video_filenames } = selectedRecord;
+            const filenames = photo_video_filenames.split(',');
     
-            if (fileExtension === 'mp4' || fileExtension === 'avi' || fileExtension === 'mov') {
-                return (
-                    <video controls src={`http://localhost:9000/uniform_defiance/${selectedRecord.slip_id}`} style={{ maxWidth: '100%' }} />
-                );
-            } else if (fileExtension === 'jpg' || fileExtension === 'jpeg' || fileExtension === 'png' || fileExtension === 'gif') {
-                return (
-                    <img src={`http://localhost:9000/uniform_defiance/${selectedRecord.slip_id}`} alt="File Preview" style={{ maxWidth: '100%' }} />
-                );
-            } else {
-                return <p>Unsupported file format</p>; // Handle unsupported formats
-            }
+            return filenames.map((filename, index) => {
+                const fileExtension = filename.split('.').pop().toLowerCase();
+                const fileUrl = `http://localhost:9000/uploads/${filename}`;
+        
+                if (fileExtension === 'mp4' || fileExtension === 'avi' || fileExtension === 'mov') {
+                    return (
+                        <div key={index} style={{ marginBottom: '10px' }}>
+                            <a href={fileUrl} target="_blank" rel="noopener noreferrer">
+                                <video controls src={fileUrl} style={{ maxWidth: '100%' }} />
+                            </a>
+                        </div>
+                    );
+                } else if (fileExtension === 'jpg' || fileExtension === 'jpeg' || fileExtension === 'png' || fileExtension === 'gif') {
+                    return (
+                        <div key={index} style={{ marginBottom: '10px' }}>
+                            <a href={fileUrl} target="_blank" rel="noopener noreferrer">
+                                <img src={fileUrl} alt="File Preview" style={{ maxWidth: '100%' }} />
+                            </a>
+                        </div>
+                    );
+                } else {
+                    return <p key={index}>Unsupported file format</p>; // Handle unsupported formats
+                }
+            });
         }
         return null;
     };

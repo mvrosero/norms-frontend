@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Swal from 'sweetalert2';
 import { Form, Button, Row, Col } from 'react-bootstrap';
+import Select from 'react-select';
 
 export default function CreateViolationRecordForm({ handleCloseModal }) {
     const [formData, setFormData] = useState({
@@ -33,7 +34,7 @@ export default function CreateViolationRecordForm({ handleCloseModal }) {
                     axios.get('http://localhost:9000/semesters')
                 ]);
 
-                setStudents(studentsResponse.data);
+                setStudents(studentsResponse.data.filter(student => student.status === 'active'));
                 setCategories(categoriesResponse.data);
                 setOffenses(offensesResponse.data);
                 setSanctions(sanctionsResponse.data);
@@ -52,6 +53,13 @@ export default function CreateViolationRecordForm({ handleCloseModal }) {
         setFormData(prevState => ({
             ...prevState,
             [name]: value
+        }));
+    };
+
+    const handleSelectChange = (selectedOption) => {
+        setFormData(prevState => ({
+            ...prevState,
+            user_id: selectedOption ? selectedOption.value : ''
         }));
     };
 
@@ -122,6 +130,11 @@ export default function CreateViolationRecordForm({ handleCloseModal }) {
         boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)'
     };
 
+    const studentOptions = students.map(student => ({
+        value: student.user_id,
+        label: student.student_idnumber
+    }));
+
     return (
         <div className="violation-record-form-container">
             <Form onSubmit={handleSubmit}>
@@ -129,28 +142,35 @@ export default function CreateViolationRecordForm({ handleCloseModal }) {
                     <Col md={12}>
                         <Form.Group controlId='user_id'>
                             <Form.Label className="fw-bold">Student ID Number</Form.Label>
-                            <Form.Select
-                                name='user_id'
-                                value={formData.user_id}
-                                onChange={handleChange}
-                                style={inputStyle}
-                            >
-                                <option value=''>Select Student ID Number</option>
-                                {students.map((student) => (
-                                    <option key={student.user_id} value={student.user_id}>
-                                        {student.student_idnumber}
-                                    </option>
-                                ))}
-                            </Form.Select>
+                            <Select
+                                options={studentOptions}
+                                value={studentOptions.find(option => option.value === formData.user_id)}
+                                onChange={handleSelectChange}
+                                placeholder="Select Student ID Number"
+                                styles={{
+                                    container: (provided) => ({
+                                        ...provided,
+                                        width: '100%'
+                                    }),
+                                    control: (provided) => ({
+                                        ...provided,
+                                        backgroundColor: '#f2f2f2',
+                                        border: '1px solid #ced4da',
+                                        borderRadius: '.25rem',
+                                        height: '40px'
+                                    })
+                                }}
+                            />
                         </Form.Group>
                         <Form.Group controlId='description'>
                             <Form.Label className="fw-bold">Description</Form.Label>
                             <Form.Control
-                                type='text'
+                                as='textarea'
                                 name='description'
                                 value={formData.description}
                                 onChange={handleChange}
                                 style={inputStyle}
+                                rows={3} // You can adjust the number of rows as needed
                             />
                         </Form.Group>
                         <Form.Group controlId='acadyear_id'>
