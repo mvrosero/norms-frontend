@@ -16,7 +16,7 @@ import SecurityInfo from '../security/SecurityInfo';
 export default function AccountSettings() {
     const navigate = useNavigate();
     const roleId = localStorage.getItem('role_id');
-    const userId = localStorage.getItem('user_id'); // Assuming user_id is stored in local storage
+    const userId = localStorage.getItem('user_id'); 
 
     const [profileFormData, setProfileFormData] = useState({
         profile_photo_filename: null
