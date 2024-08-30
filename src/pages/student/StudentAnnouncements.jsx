@@ -1,17 +1,20 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios'; // Make sure to install axios or use fetch API
+import axios from 'axios';
 import { Card, Row, Col, Modal } from 'react-bootstrap';
 import FileIcon from '@mui/icons-material/InsertDriveFile';
 import StudentInfo from './StudentInfo';
 import StudentNavigation from './StudentNavigation';
+import SearchAndFilter from '../general/SearchAndFilter'; // Import SearchAndFilter component
 
 export default function StudentAnnouncements() {
     const navigate = useNavigate();
     const [announcements, setAnnouncements] = useState([]);
+    const [filteredAnnouncements, setFilteredAnnouncements] = useState([]);
     const [loading, setLoading] = useState(true);
     const [showViewModal, setShowViewModal] = useState(false);
     const [selectedAnnouncement, setSelectedAnnouncement] = useState(null);
+    const [searchKeyword, setSearchKeyword] = useState('');
 
     useEffect(() => {
         // Check if token and role_id exist in localStorage
@@ -32,6 +35,7 @@ export default function StudentAnnouncements() {
                 // Filter announcements with status "Published"
                 const publishedAnnouncements = response.data.filter(announcement => announcement.status === 'Published');
                 setAnnouncements(publishedAnnouncements);
+                setFilteredAnnouncements(publishedAnnouncements);
                 setLoading(false);
             })
             .catch(error => {
@@ -40,6 +44,21 @@ export default function StudentAnnouncements() {
             });
         }
     }, [navigate]);
+
+    // Handle search input
+    const handleSearch = (keyword) => {
+        setSearchKeyword(keyword);
+        if (keyword.trim() === '') {
+            setFilteredAnnouncements(announcements);
+        } else {
+            const lowerCaseKeyword = keyword.toLowerCase();
+            const filtered = announcements.filter(announcement =>
+                announcement.title.toLowerCase().includes(lowerCaseKeyword) ||
+                announcement.content.toLowerCase().includes(lowerCaseKeyword)
+            );
+            setFilteredAnnouncements(filtered);
+        }
+    };
 
     // Handle view announcement
     const handleViewAnnouncement = (announcement) => {
@@ -124,8 +143,9 @@ export default function StudentAnnouncements() {
             <StudentNavigation />
             <StudentInfo />
             <h6 className="page-title" style={{ margin: '20px 0' }}>Announcements</h6>
+            <SearchAndFilter onSearch={handleSearch} />
             <Row xs={1} md={2} lg={3} className="g-4" style={{ margin: '20px' }}>
-                {announcements.map(a => (
+                {filteredAnnouncements.map(a => (
                     <Col key={a.id}>
                         <Card>
                             <Card.Body>
