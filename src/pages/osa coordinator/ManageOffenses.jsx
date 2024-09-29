@@ -21,8 +21,9 @@ export default function ManageOffenses() {
     const [offenseFormData, setOffenseFormData] = useState({
         offense_code: '',
         offense_name: '',
-        status: '',
-        category_id: ''
+        status: 'active', // Default status
+        category_id: '',
+        subcategory_id: '' // Added subcategory_id
     });
     const [editOffenseId, setEditOffenseId] = useState(null);
 
@@ -63,8 +64,9 @@ export default function ManageOffenses() {
         setOffenseFormData({
             offense_code: '',
             offense_name: '',
-            status: '',
-            category_id: ''
+            status: 'active', // Reset to default
+            category_id: '',
+            subcategory_id: '' // Reset subcategory_id
         });
     };
 
@@ -105,7 +107,8 @@ export default function ManageOffenses() {
                 offense_code: offense.offense_code,
                 offense_name: offense.offense_name,
                 status: offense.status,
-                category_id: offense.category_id
+                category_id: offense.category_id,
+                subcategory_id: offense.subcategory_id // Added subcategory_id
             });
             setEditOffenseId(id);
             setShowEditModal(true);
@@ -223,27 +226,23 @@ export default function ManageOffenses() {
                             <th style={{ textAlign: 'center', border: '1px solid #ddd', padding: '8px', backgroundColor: '#a8a8a8', color: 'white' }}>Offense Name</th>
                             <th style={{ textAlign: 'center', border: '1px solid #ddd', padding: '8px', backgroundColor: '#a8a8a8', color: 'white' }}>Offense Code</th>
                             <th style={{ textAlign: 'center', border: '1px solid #ddd', padding: '8px', backgroundColor: '#a8a8a8', color: 'white' }}>Category ID</th>
+                            <th style={{ textAlign: 'center', border: '1px solid #ddd', padding: '8px', backgroundColor: '#a8a8a8', color: 'white' }}>Subcategory ID</th> {/* New Column */}
                             <th style={{ textAlign: 'center', border: '1px solid #ddd', padding: '8px', backgroundColor: '#a8a8a8', color: 'white' }}>Status</th>
                             <th style={{ textAlign: 'center', border: '1px solid #ddd', padding: '8px', backgroundColor: '#a8a8a8', color: 'white' }}>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {offenses.map((offense, index) => (
-                            <tr key={offense.offense_id} style={{ backgroundColor: index % 2 === 0 ? 'white' : '#f2f2f2' }}>
+                        {offenses.map(offense => (
+                            <tr key={offense.offense_id}>
                                 <td style={{ textAlign: 'center', border: '1px solid #ddd', padding: '8px' }}>{offense.offense_id}</td>
                                 <td style={{ textAlign: 'center', border: '1px solid #ddd', padding: '8px' }}>{offense.offense_name}</td>
                                 <td style={{ textAlign: 'center', border: '1px solid #ddd', padding: '8px' }}>{offense.offense_code}</td>
                                 <td style={{ textAlign: 'center', border: '1px solid #ddd', padding: '8px' }}>{offense.category_id}</td>
+                                <td style={{ textAlign: 'center', border: '1px solid #ddd', padding: '8px' }}>{offense.subcategory_id}</td> {/* New Column */}
                                 <td style={{ textAlign: 'center', border: '1px solid #ddd', padding: '8px' }}>{offense.status}</td>
                                 <td style={{ textAlign: 'center', border: '1px solid #ddd', padding: '8px' }}>
-                                    <EditIcon 
-                                        onClick={() => handleEditOffense(offense.offense_id)} 
-                                        style={{ cursor: 'pointer', color: '#007bff' }}
-                                    />
-                                    <DeleteIcon 
-                                        onClick={() => handleDeleteOffense(offense.offense_id)} 
-                                        style={{ cursor: 'pointer', color: '#dc3545', marginLeft: '10px' }}
-                                    />
+                                    <EditIcon onClick={() => handleEditOffense(offense.offense_id)} style={{ cursor: 'pointer', color: '#28a745' }} />
+                                    <DeleteIcon onClick={() => handleDeleteOffense(offense.offense_id)} style={{ cursor: 'pointer', color: '#d33', marginLeft: '10px' }} />
                                 </td>
                             </tr>
                         ))}
@@ -254,15 +253,15 @@ export default function ManageOffenses() {
             {/* Add Offense Modal */}
             <Modal show={showOffenseModal} onHide={handleCloseOffenseModal}>
                 <Modal.Header closeButton>
-                    <Modal.Title>Add New Offense</Modal.Title>
+                    <Modal.Title>Add Offense</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                     <Form onSubmit={handleOffenseSubmit}>
                         <Form.Group className="mb-3">
                             <Form.Label>Offense Code</Form.Label>
-                            <Form.Control 
-                                type="text" 
-                                name="offense_code" 
+                            <Form.Control
+                                type="text"
+                                name="offense_code"
                                 value={offenseFormData.offense_code}
                                 onChange={handleOffenseChange}
                                 style={inputStyle}
@@ -271,9 +270,9 @@ export default function ManageOffenses() {
                         </Form.Group>
                         <Form.Group className="mb-3">
                             <Form.Label>Offense Name</Form.Label>
-                            <Form.Control 
-                                type="text" 
-                                name="offense_name" 
+                            <Form.Control
+                                type="text"
+                                name="offense_name"
                                 value={offenseFormData.offense_name}
                                 onChange={handleOffenseChange}
                                 style={inputStyle}
@@ -281,30 +280,40 @@ export default function ManageOffenses() {
                             />
                         </Form.Group>
                         <Form.Group className="mb-3">
-                            <Form.Label>Status</Form.Label>
-                            <Form.Control 
-                                type="text" 
-                                name="status" 
-                                value={offenseFormData.status}
-                                onChange={handleOffenseChange}
-                                style={inputStyle}
-                                required
-                            />
-                        </Form.Group>
-                        <Form.Group className="mb-3">
                             <Form.Label>Category ID</Form.Label>
-                            <Form.Control 
-                                type="text" 
-                                name="category_id" 
+                            <Form.Control
+                                type="text"
+                                name="category_id"
                                 value={offenseFormData.category_id}
                                 onChange={handleOffenseChange}
                                 style={inputStyle}
                                 required
                             />
                         </Form.Group>
-                        <Button type="submit" style={buttonStyle}>
-                            Add Offense
-                        </Button>
+                        <Form.Group className="mb-3">
+                            <Form.Label>Subcategory ID</Form.Label>
+                            <Form.Control
+                                type="text"
+                                name="subcategory_id"
+                                value={offenseFormData.subcategory_id}
+                                onChange={handleOffenseChange}
+                                style={inputStyle}
+                                required
+                            />
+                        </Form.Group>
+                        <Form.Group className="mb-3">
+                            <Form.Label>Status</Form.Label>
+                            <Form.Select
+                                name="status"
+                                value={offenseFormData.status}
+                                onChange={handleOffenseChange}
+                                style={inputStyle}
+                            >
+                                <option value="active">Active</option>
+                                <option value="inactive">Inactive</option>
+                            </Form.Select>
+                        </Form.Group>
+                        <Button type="submit" style={buttonStyle}>Add Offense</Button>
                     </Form>
                 </Modal.Body>
             </Modal>
@@ -318,9 +327,9 @@ export default function ManageOffenses() {
                     <Form onSubmit={handleEditSubmit}>
                         <Form.Group className="mb-3">
                             <Form.Label>Offense Code</Form.Label>
-                            <Form.Control 
-                                type="text" 
-                                name="offense_code" 
+                            <Form.Control
+                                type="text"
+                                name="offense_code"
                                 value={offenseFormData.offense_code}
                                 onChange={handleOffenseChange}
                                 style={inputStyle}
@@ -329,9 +338,9 @@ export default function ManageOffenses() {
                         </Form.Group>
                         <Form.Group className="mb-3">
                             <Form.Label>Offense Name</Form.Label>
-                            <Form.Control 
-                                type="text" 
-                                name="offense_name" 
+                            <Form.Control
+                                type="text"
+                                name="offense_name"
                                 value={offenseFormData.offense_name}
                                 onChange={handleOffenseChange}
                                 style={inputStyle}
@@ -339,30 +348,40 @@ export default function ManageOffenses() {
                             />
                         </Form.Group>
                         <Form.Group className="mb-3">
-                            <Form.Label>Status</Form.Label>
-                            <Form.Control 
-                                type="text" 
-                                name="status" 
-                                value={offenseFormData.status}
-                                onChange={handleOffenseChange}
-                                style={inputStyle}
-                                required
-                            />
-                        </Form.Group>
-                        <Form.Group className="mb-3">
                             <Form.Label>Category ID</Form.Label>
-                            <Form.Control 
-                                type="text" 
-                                name="category_id" 
+                            <Form.Control
+                                type="text"
+                                name="category_id"
                                 value={offenseFormData.category_id}
                                 onChange={handleOffenseChange}
                                 style={inputStyle}
                                 required
                             />
                         </Form.Group>
-                        <Button type="submit" style={buttonStyle}>
-                            Save Changes
-                        </Button>
+                        <Form.Group className="mb-3">
+                            <Form.Label>Subcategory ID</Form.Label>
+                            <Form.Control
+                                type="text"
+                                name="subcategory_id"
+                                value={offenseFormData.subcategory_id}
+                                onChange={handleOffenseChange}
+                                style={inputStyle}
+                                required
+                            />
+                        </Form.Group>
+                        <Form.Group className="mb-3">
+                            <Form.Label>Status</Form.Label>
+                            <Form.Select
+                                name="status"
+                                value={offenseFormData.status}
+                                onChange={handleOffenseChange}
+                                style={inputStyle}
+                            >
+                                <option value="active">Active</option>
+                                <option value="inactive">Inactive</option>
+                            </Form.Select>
+                        </Form.Group>
+                        <Button type="submit" style={buttonStyle}>Update Offense</Button>
                     </Form>
                 </Modal.Body>
             </Modal>

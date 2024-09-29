@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import AdminNavigation from './AdminNavigation';
 import AdminInfo from './AdminInfo';
 import SearchAndFilter from '../general/SearchAndFilter';
+import ArchivesTable from '../../elements/administrator/ArchivesTable';
 
 export default function ManageArchives() {
     const [searchTerm, setSearchTerm] = useState('');
@@ -17,6 +18,7 @@ export default function ManageArchives() {
             <AdminInfo />
             <h6 className="page-title">Manage Archives</h6>
             <SearchAndFilter />
+            <ArchivesTable />
         </div>
     );
 }

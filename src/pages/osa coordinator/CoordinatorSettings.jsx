@@ -118,7 +118,7 @@ export default function CoordinatorSettings() {
                             <FontAwesomeIcon icon={faChevronRight} style={arrowStyle} />
                         </div>
                         <div
-                            style={containerStyle}
+                            style={{ ...containerStyle, marginBottom: '50px' }}
                             onClick={() => handleNavigation('/manage-violationnature')}
                             onMouseEnter={(e) => Object.assign(e.currentTarget.style, containerHoverStyle)}
                             onMouseLeave={(e) => Object.assign(e.currentTarget.style, containerStyle)}

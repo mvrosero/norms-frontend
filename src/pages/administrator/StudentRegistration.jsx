@@ -5,8 +5,8 @@ import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import Swal from 'sweetalert2';
 import '@fortawesome/fontawesome-free/css/all.min.css';
-
 import './Registration.css';
+
 export default function StudentRegistration() {
     const navigate = useNavigate(); 
 
@@ -25,7 +25,11 @@ export default function StudentRegistration() {
     const [departments, setDepartments] = useState([]);
     const [profile_photo_filename, setPhoto] = useState(null);
     const [error, setError] = useState('');
-    const [role_id] = useState(3); 
+    const [role_id] = useState(3);
+    const [batch, setBatch] = useState(''); // New batch state
+
+    const currentYear = new Date().getFullYear();
+    const years = Array.from({ length: 5 }, (_, index) => currentYear + index); // Create array of years
 
     useEffect(() => {
         axios.get('http://localhost:9000/programs')
@@ -61,7 +65,8 @@ export default function StudentRegistration() {
                 profile_photo_filename,
                 program_id,
                 department_id,
-                role_id
+                role_id,
+                batch, // Include batch in registration
             });
             console.log(response.data);
             Swal.fire({
@@ -69,7 +74,6 @@ export default function StudentRegistration() {
                 title: 'Registration Successful!',
                 text: 'You successfully registered a new student.',
             });
-            // Navigate back to admin user management page after successful registration
             navigate('/admin-usermanagement');
         } catch (error) {
             console.error('Registration failed', error);
@@ -83,7 +87,6 @@ export default function StudentRegistration() {
     };
 
     const handleCancel = () => {
-        // Navigate back to admin user management page when cancel button is clicked
         navigate('/admin-usermanagement');
     };
 
@@ -92,7 +95,7 @@ export default function StudentRegistration() {
             <div className="container1">
                 <h1>Student Registration</h1>
             </div>
-            <div className="container2" style={{ height: '580px'}} >
+            <div className="container2" style={{ height: '580px' }}>
                 <form className="form" onSubmit={handleRegistration}>
                     <div className="row">
                         <div className="input-group">
@@ -145,6 +148,15 @@ export default function StudentRegistration() {
                             </select>
                         </div>
                         <div className="input-group">
+                            <label htmlFor="batch" className="label">Batch:</label>
+                            <select id="batch" className="short-select" value={batch} onChange={(e) => setBatch(e.target.value)} required>
+                                <option value="">Select Batch</option>
+                                {years.map(year => (
+                                    <option key={year} value={year}>{year}</option>
+                                ))}
+                            </select>
+                        </div>
+                        <div className="input-group">
                             <label htmlFor="department" className="label">Department:</label>
                             <select id="department" className="short-select" value={department_id} onChange={(e) => setDepartment(e.target.value)} required>
                                 <option value="">Select Department</option>
@@ -162,10 +174,10 @@ export default function StudentRegistration() {
                                 ))}
                             </select>
                         </div>
-                    </div>
-                    <div class="btn-container">
+                        <div class="btn-container">
                         <button type="button" className="cancel-btn" onClick={handleCancel}>Cancel</button>
                         <button type="submit" class="save-btn">Save</button>
+                    </div>
                     </div>
                 </form>
             </div>
