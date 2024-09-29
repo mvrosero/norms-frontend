@@ -147,7 +147,7 @@ const DepartmentUsersList = () => {
             <AdminInfo />
             <h6 className="page-title">{departmentName || department_code || 'USER MANAGEMENT'}</h6>
             <div style={{ display: 'flex', marginTop: '20px', alignItems: 'center' }}>
-                <div style={{ width: '900px', marginLeft: '20px' }}>
+                <div style={{ width: '850px', marginLeft: '70px' }}>
                     <SearchAndFilter />
                 </div>
                 <button 
@@ -160,7 +160,7 @@ const DepartmentUsersList = () => {
                         border: 'none',
                         borderRadius: '10px',
                         cursor: 'pointer',
-                        marginLeft: '10px',
+                        marginLeft: '5px',
                         display: 'flex',
                         alignItems: 'center',
                         boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',

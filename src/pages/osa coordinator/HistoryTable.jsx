@@ -237,9 +237,6 @@ const HistoryTable = ({ searchQuery }) => {
                     <Button variant="secondary" onClick={handleCloseDetailsModal}>
                         Close
                     </Button>
-                    <Button variant="danger" onClick={() => deleteDefiance(selectedRecord.slip_id)}>
-                        Delete
-                    </Button>
                 </Modal.Footer>
             </Modal>
         </>

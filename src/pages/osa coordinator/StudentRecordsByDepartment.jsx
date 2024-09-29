@@ -144,7 +144,7 @@ const StudentRecordsByDepartment = () => {
 
             <h6 className="page-title">{departmentName || department_code || 'STUDENT RECORDS'}</h6>
             <div style={{ display: 'flex', marginTop: '20px', alignItems: 'center' }}>
-                <div style={{ width: '900px', marginLeft: '20px' }}>
+                <div style={{ width: '900px', marginLeft: '80px' }}>
                     <SearchAndFilter />
                 </div>
                 <button 

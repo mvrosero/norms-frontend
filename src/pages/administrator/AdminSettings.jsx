@@ -1,7 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faUserCog, faBuilding, faBook, faCalendarAlt, faChevronRight } from '@fortawesome/free-solid-svg-icons';
+import { faUserCog, faBuilding, faBook, faCalendarAlt, faChevronRight, faArchive } from '@fortawesome/free-solid-svg-icons';
 
 import AdminNavigation from "./AdminNavigation";
 import AdminInfo from "./AdminInfo";
@@ -11,7 +11,6 @@ export default function AdminSettings() {
     const user_id = localStorage.getItem('user_id');
 
     const handleNavigation = (path) => {
-        // Only add user_id for the '/account-settings' path
         const fullPath = path === '/account-settings' && user_id ? `${path}/${user_id}` : path;
         navigate(fullPath);
     };
@@ -29,7 +28,7 @@ export default function AdminSettings() {
         maxWidth: '100%',
         display: 'flex',
         alignItems: 'center',
-        position: 'relative', // Added relative positioning
+        position: 'relative',
     };
 
     const containerHoverStyle = {
@@ -47,7 +46,7 @@ export default function AdminSettings() {
         fontSize: '20px',
         fontWeight: '500',
         marginLeft: '10px',
-        flex: 1, // Ensure text takes up space for arrow to be positioned correctly
+        flex: 1,
     };
 
     const arrowStyle = {
@@ -60,7 +59,7 @@ export default function AdminSettings() {
     };
 
     return (
-        <div style={{ marginLeft: '100px' }}> {/* Adjust margin-left to account for the navigation bar */}
+        <div style={{ marginLeft: '100px' }}>
             <AdminNavigation />
             <AdminInfo />
             <h6 className="page-title"> SETTINGS </h6>
@@ -105,6 +104,16 @@ export default function AdminSettings() {
                         >
                             <FontAwesomeIcon icon={faCalendarAlt} style={iconStyle} />
                             <h5 style={textStyle}>Manage Academic Years</h5>
+                            <FontAwesomeIcon icon={faChevronRight} style={arrowStyle} />
+                        </div>
+                        <div
+                            style={{ ...containerStyle, marginBottom: '50px' }} // Added marginBottom here
+                            onClick={() => handleNavigation('/manage-archives')}
+                            onMouseEnter={(e) => Object.assign(e.currentTarget.style, containerHoverStyle)}
+                            onMouseLeave={(e) => Object.assign(e.currentTarget.style, containerStyle)}
+                        >
+                            <FontAwesomeIcon icon={faArchive} style={iconStyle} />
+                            <h5 style={textStyle}>Manage Archives</h5>
                             <FontAwesomeIcon icon={faChevronRight} style={arrowStyle} />
                         </div>
                     </div>

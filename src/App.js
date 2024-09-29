@@ -30,6 +30,7 @@ import AdminSettings from './pages/administrator/AdminSettings';
 import ManageDepartments from './pages/administrator/ManageDepartments';
 import ManagePrograms from './pages/administrator/ManagePrograms';
 import ManageAcademicYears from './pages/administrator/ManageAcademicYears';
+import ManageArchives from './pages/administrator/ManageArchives';
 
 
 /*osa coordinator*/
@@ -46,6 +47,8 @@ import IndividualUniformDefiance from './pages/osa coordinator/IndividualUniform
 import ManageCategories from './pages/osa coordinator/ManageCategories';
 import ManageOffenses from './pages/osa coordinator/ManageOffenses';
 import ManageSanctions from './pages/osa coordinator/ManageSanctions';
+import ManageSubcategories from './pages/osa coordinator/ManageSubcategories'
+import ManageNatureOfViolation from './pages/osa coordinator/ManageViolationNature';
 
 /*security personnel*/
 import SecurityLandingPage from './pages/security/SecurityLandingPage';
@@ -89,6 +92,7 @@ function App() {
                 <Route path='/manage-departments' element={<ManageDepartments />} />
                 <Route path='/manage-programs' element={<ManagePrograms />} />
                 <Route path='/manage-academicyears' element={<ManageAcademicYears />} />
+                <Route path='/manage-archives' element={<ManageArchives />} />
 
                 <Route path='/coordinator-dashboard' element={<CoordinatorDashboard />} />
                 <Route path='/coordinator-studentrecords' element={<CoordinatorStudentRecords />} />
@@ -103,6 +107,8 @@ function App() {
                 <Route path='/manage-offenses' element={<ManageOffenses />} />
                 <Route path='/manage-sanctions' element={<ManageSanctions />} />
                 <Route path='/manage-categories' element={<ManageCategories />} />
+                <Route path='/manage-subcategories' element={<ManageSubcategories />} />
+                <Route path='/manage-violationnature' element={<ManageNatureOfViolation />} />
 
                 <Route path='/defiance-selection' element={<SecurityLandingPage />} />
                 <Route path='/view-slips' element={<SecurityViewSlips />} />

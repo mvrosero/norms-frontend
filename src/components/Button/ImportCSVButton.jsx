@@ -39,6 +39,7 @@ const ImportCSVButton = () => {
                 padding: '12px 15px',
                 border: 'none',
                 borderRadius: '10px',
+                marginLeft: '5px',
                 cursor: 'pointer',
                 display: 'flex',
                 alignItems: 'center',
