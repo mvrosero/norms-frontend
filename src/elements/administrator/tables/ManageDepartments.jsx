@@ -7,9 +7,9 @@ import { FaPlus } from 'react-icons/fa';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 
-import AdminNavigation from './AdminNavigation';
-import AdminInfo from './AdminInfo';
-import SearchAndFilter from '../general/SearchAndFilter';
+import AdminNavigation from '../../../pages/administrator/AdminNavigation';
+import AdminInfo from '../../../pages/administrator/AdminInfo';
+import SearchAndFilter from '../../../pages/general/SearchAndFilter';
 
 export default function ManageDepartments() {
     const navigate = useNavigate();
@@ -45,6 +45,7 @@ export default function ManageDepartments() {
             setDepartments(response.data);
             setLoading(false);
         } catch (error) {
+            console.error(error);
             setError('Failed to fetch departments');
             setLoading(false);
         }
@@ -88,6 +89,7 @@ export default function ManageDepartments() {
             handleCloseDepartmentModal();
             fetchDepartments();
         } catch (error) {
+            console.error(error);
             Swal.fire({
                 icon: 'error',
                 title: 'Oops...',
@@ -123,6 +125,7 @@ export default function ManageDepartments() {
             setShowEditModal(false);
             fetchDepartments();
         } catch (error) {
+            console.error(error);
             Swal.fire({
                 icon: 'error',
                 title: 'Oops...',
@@ -146,13 +149,10 @@ export default function ManageDepartments() {
                     await axios.delete(`http://localhost:9000/department/${id}`, {
                         headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
                     });
-                    Swal.fire(
-                        'Deleted!',
-                        'The department has been deleted.',
-                        'success'
-                    );
+                    Swal.fire('Deleted!', 'The department has been deleted.', 'success');
                     fetchDepartments();
                 } catch (error) {
+                    console.error(error);
                     Swal.fire({
                         icon: 'error',
                         title: 'Oops...',
@@ -213,32 +213,24 @@ export default function ManageDepartments() {
                 </button>
             </div>
             <div style={{ margin: 'auto', marginTop: '20px', marginBottom: '30px', marginLeft: '20px', paddingLeft: '20px' }}>
-                <table style={{ width: '90%', borderCollapse: 'collapse', marginLeft: '90px', paddingLeft: '50px' }}>
+                <table style={{ width: '90%', borderCollapse: 'collapse' }}>
                     <thead>
                         <tr>
-                            <th style={{ textAlign: 'center', border: '1px solid #ddd', padding: '8px', backgroundColor: '#a8a8a8', color: 'white' }}>ID</th>
-                            <th style={{ textAlign: 'center', border: '1px solid #ddd', padding: '8px', backgroundColor: '#a8a8a8', color: 'white' }}>Department Name</th>
-                            <th style={{ textAlign: 'center', border: '1px solid #ddd', padding: '8px', backgroundColor: '#a8a8a8', color: 'white' }}>Department Code</th>
-                            <th style={{ textAlign: 'center', border: '1px solid #ddd', padding: '8px', backgroundColor: '#a8a8a8', color: 'white' }}>Status</th>
-                            <th style={{ textAlign: 'center', border: '1px solid #ddd', padding: '8px', backgroundColor: '#a8a8a8', color: 'white' }}>Actions</th>
+                            <th>Department Code</th>
+                            <th>Department Name</th>
+                            <th>Status</th>
+                            <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {departments.map((department, index) => (
-                            <tr key={department.department_id} style={{ backgroundColor: index % 2 === 0 ? 'white' : '#f2f2f2' }}>
-                                <td style={{ textAlign: 'center', border: '1px solid #ddd', padding: '8px' }}>{department.department_id}</td>
-                                <td style={{ textAlign: 'center', border: '1px solid #ddd', padding: '8px' }}>{department.department_name}</td>
-                                <td style={{ textAlign: 'center', border: '1px solid #ddd', padding: '8px' }}>{department.department_code}</td>
-                                <td style={{ textAlign: 'center', border: '1px solid #ddd', padding: '8px' }}>{department.status}</td>
-                                <td style={{ textAlign: 'center', border: '1px solid #ddd', padding: '8px' }}>
-                                    <EditIcon 
-                                        onClick={() => handleEditDepartment(department.department_id)} 
-                                        style={{ cursor: 'pointer', color: 'blue', marginRight: '10px' }} 
-                                    />
-                                    <DeleteIcon 
-                                        onClick={() => handleDeleteDepartment(department.department_id)} 
-                                        style={{ cursor: 'pointer', color: 'red' }} 
-                                    />
+                        {departments.map((department) => (
+                            <tr key={department.department_id}>
+                                <td>{department.department_code}</td>
+                                <td>{department.department_name}</td>
+                                <td>{department.status}</td>
+                                <td>
+                                    <EditIcon onClick={() => handleEditDepartment(department.department_id)} style={{ cursor: 'pointer' }} />
+                                    <DeleteIcon onClick={() => handleDeleteDepartment(department.department_id)} style={{ cursor: 'pointer', marginLeft: '10px' }} />
                                 </td>
                             </tr>
                         ))}
@@ -249,48 +241,48 @@ export default function ManageDepartments() {
             {/* Add Department Modal */}
             <Modal show={showDepartmentModal} onHide={handleCloseDepartmentModal}>
                 <Modal.Header closeButton>
-                    <Modal.Title>Add New Department</Modal.Title>
+                    <Modal.Title>Add Department</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                     <Form onSubmit={handleDepartmentSubmit}>
                         <Form.Group controlId="formDepartmentCode">
                             <Form.Label>Department Code</Form.Label>
-                            <Form.Control
-                                type="text"
-                                name="department_code"
+                            <Form.Control 
+                                type="text" 
+                                name="department_code" 
                                 value={departmentFormData.department_code}
-                                onChange={handleDepartmentChange}
-                                placeholder="Enter department code"
-                                style={inputStyle}
+                                onChange={handleDepartmentChange} 
+                                style={inputStyle} 
+                                required 
                             />
                         </Form.Group>
                         <Form.Group controlId="formDepartmentName">
                             <Form.Label>Department Name</Form.Label>
-                            <Form.Control
-                                type="text"
-                                name="department_name"
+                            <Form.Control 
+                                type="text" 
+                                name="department_name" 
                                 value={departmentFormData.department_name}
-                                onChange={handleDepartmentChange}
-                                placeholder="Enter department name"
-                                style={inputStyle}
+                                onChange={handleDepartmentChange} 
+                                style={inputStyle} 
+                                required 
                             />
                         </Form.Group>
-                        <Form.Group controlId="formStatus">
+                        <Form.Group controlId="formDepartmentStatus">
                             <Form.Label>Status</Form.Label>
-                            <Form.Control
-                                type="text"
-                                name="status"
+                            <Form.Control 
+                                as="select" 
+                                name="status" 
                                 value={departmentFormData.status}
-                                onChange={handleDepartmentChange}
-                                placeholder="Enter status"
-                                style={inputStyle}
-                            />
+                                onChange={handleDepartmentChange} 
+                                style={inputStyle} 
+                                required
+                            >
+                                <option value="">Select Status</option>
+                                <option value="active">Active</option>
+                                <option value="inactive">Inactive</option>
+                            </Form.Control>
                         </Form.Group>
-                        <Button 
-                            variant="primary" 
-                            type="submit" 
-                            style={buttonStyle}
-                        >
+                        <Button variant="primary" type="submit" style={buttonStyle}>
                             Add Department
                         </Button>
                     </Form>
@@ -304,44 +296,44 @@ export default function ManageDepartments() {
                 </Modal.Header>
                 <Modal.Body>
                     <Form onSubmit={handleEditSubmit}>
-                        <Form.Group controlId="formDepartmentCode">
+                        <Form.Group controlId="editFormDepartmentCode">
                             <Form.Label>Department Code</Form.Label>
-                            <Form.Control
-                                type="text"
-                                name="department_code"
+                            <Form.Control 
+                                type="text" 
+                                name="department_code" 
                                 value={departmentFormData.department_code}
-                                onChange={handleDepartmentChange}
-                                placeholder="Enter department code"
-                                style={inputStyle}
+                                onChange={handleDepartmentChange} 
+                                style={inputStyle} 
+                                required 
                             />
                         </Form.Group>
-                        <Form.Group controlId="formDepartmentName">
+                        <Form.Group controlId="editFormDepartmentName">
                             <Form.Label>Department Name</Form.Label>
-                            <Form.Control
-                                type="text"
-                                name="department_name"
+                            <Form.Control 
+                                type="text" 
+                                name="department_name" 
                                 value={departmentFormData.department_name}
-                                onChange={handleDepartmentChange}
-                                placeholder="Enter department name"
-                                style={inputStyle}
+                                onChange={handleDepartmentChange} 
+                                style={inputStyle} 
+                                required 
                             />
                         </Form.Group>
-                        <Form.Group controlId="formStatus">
+                        <Form.Group controlId="editFormDepartmentStatus">
                             <Form.Label>Status</Form.Label>
-                            <Form.Control
-                                type="text"
-                                name="status"
+                            <Form.Control 
+                                as="select" 
+                                name="status" 
                                 value={departmentFormData.status}
-                                onChange={handleDepartmentChange}
-                                placeholder="Enter status"
-                                style={inputStyle}
-                            />
+                                onChange={handleDepartmentChange} 
+                                style={inputStyle} 
+                                required
+                            >
+                                <option value="">Select Status</option>
+                                <option value="active">Active</option>
+                                <option value="inactive">Inactive</option>
+                            </Form.Control>
                         </Form.Group>
-                        <Button 
-                            variant="primary" 
-                            type="submit" 
-                            style={buttonStyle}
-                        >
+                        <Button variant="primary" type="submit" style={buttonStyle}>
                             Update Department
                         </Button>
                     </Form>

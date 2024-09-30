@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import { Table } from 'react-bootstrap';
 
-const UsersPerDepartmentTable = ({ departmentName }) => {
+const DepartmentalStudentsTable  = ({ departmentName }) => {
     const [usersByDepartment, setUsersByDepartment] = useState([]);
 
     const fetchUsersByDepartment = useCallback(async () => {
@@ -52,4 +52,4 @@ const UsersPerDepartmentTable = ({ departmentName }) => {
     );
 }
 
-export default UsersPerDepartmentTable;
+export default DepartmentalStudentsTable;

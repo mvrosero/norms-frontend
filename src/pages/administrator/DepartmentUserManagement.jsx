@@ -13,10 +13,10 @@ import AdminNavigation from "./AdminNavigation";
 import AdminInfo from "./AdminInfo";
 import SearchAndFilter from '../general/SearchAndFilter';
 import ImportCSVButton from '../../components/Button/ImportCSVButton';
-import StudentUpdate from './StudentUpdate';
-import "./Students.css";
+import StudentUpdate from '../../elements/administrator/modals/EditStudentModal';
+import "../../styles/Students.css";
 
-const DepartmentUsersList = () => {
+const DepartmentUserManagement = () => {
     const { department_code } = useParams(); // Get department_code from URL
     const [users, setUsers] = useState([]);
     const [departments, setDepartments] = useState([]);
@@ -330,4 +330,4 @@ const DepartmentUsersList = () => {
     );
 }
 
-export default DepartmentUsersList;
+export default DepartmentUserManagement;

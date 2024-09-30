@@ -4,9 +4,10 @@ import { useNavigate } from 'react-router-dom';
 import AdminNavigation from "./AdminNavigation";
 import AdminInfo from "./AdminInfo";
 import SearchAndFilter from '../general/SearchAndFilter';
+
 import UserDropdownButton from '../../components/Button/UserDropdownButton';
-import Students from "../administrator/Students";
-import Employees from "../administrator/Employees";
+import StudentsTable from '../../elements/administrator/tables/StudentsTable';
+import EmployeesTable from '../../elements/administrator/tables/EmployeesTable';
 import ImportCSVButton from '../../components/Button/ImportCSVButton';
 
 export default function AdminUserManagement() {
@@ -74,8 +75,8 @@ export default function AdminUserManagement() {
                     <label htmlFor="employees" style={{ color: 'gray', cursor: 'pointer' }}>Employees</label>
                 </div>
             </div>
-            {selectedComponent === 'students' && <Students />}
-            {selectedComponent === 'employees' && <Employees />}
+            {selectedComponent === 'students' && <StudentsTable />}
+            {selectedComponent === 'employees' && <EmployeesTable />}
         </div>
     );
 }

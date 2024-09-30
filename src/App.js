@@ -19,18 +19,18 @@ import EmployeeLogin from './pages/employees/EmployeeLogin';
 import StudentLogin from './pages/student/StudentLogin';
 
 /*user registration*/
-import EmployeeRegistration from './pages/administrator/EmployeeRegistration';
-import StudentRegistration from './pages/administrator/StudentRegistration';
+import EmployeeRegistrationForm from './elements/administrator/forms/EmployeeRegistrationForm';
+import StudentRegistrationForm from './elements/administrator/forms/StudentRegistrationForm';
 
 /*administrator*/
 import AdminDashboard from './pages/administrator/AdminDashboard';
 import AdminUserManagement from './pages/administrator/AdminUserManagement';
-import DepartmentUsersList from './pages/administrator/DepartmentUsersList';
+import DepartmentUserManagement from './pages/administrator/DepartmentUserManagement';
 import AdminSettings from './pages/administrator/AdminSettings';
-import ManageDepartments from './pages/administrator/ManageDepartments';
-import ManagePrograms from './pages/administrator/ManagePrograms';
-import ManageAcademicYears from './pages/administrator/ManageAcademicYears';
-import ManageArchives from './pages/administrator/ManageArchives';
+import ManageDepartments from './elements/administrator/tables/ManageDepartments';
+import ManagePrograms from '././elements/administrator/tables/ManagePrograms';
+import ManageAcademicYears from './elements/administrator/tables/ManageAcademicYears';
+import ManageArchives from './elements/administrator/tables/ManageArchives';
 
 
 /*osa coordinator*/
@@ -82,12 +82,12 @@ function App() {
                 <Route path='/employee-login' element={<EmployeeLogin />} />
                 <Route path='/student-login' element={<StudentLogin />} />
 
-                <Route path='/register-employee' element={<EmployeeRegistration />} />
-                <Route path='/register-student' element={<StudentRegistration />} />
+                <Route path='/register-employee' element={<EmployeeRegistrationForm />} />
+                <Route path='/register-student' element={<StudentRegistrationForm />} />
 
                 <Route path='/admin-dashboard' element={<AdminDashboard />} />
                 <Route path='/admin-usermanagement' element={<AdminUserManagement />} />
-                <Route path="/admin-usermanagement/:department_code" element={<DepartmentUsersList />} />
+                <Route path="/admin-usermanagement/:department_code" element={<DepartmentUserManagement />} />
                 <Route path='/admin-settings' element={<AdminSettings />} />
                 <Route path='/manage-departments' element={<ManageDepartments />} />
                 <Route path='/manage-programs' element={<ManagePrograms />} />

@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 
-import AdminNavigation from './AdminNavigation';
-import AdminInfo from './AdminInfo';
-import SearchAndFilter from '../general/SearchAndFilter';
-import ArchivesTable from '../../elements/administrator/ArchivesTable';
+import AdminNavigation from '../../../pages/administrator/AdminNavigation';
+import AdminInfo from '../../../pages/administrator/AdminInfo';
+import SearchAndFilter from '../../../pages/general/SearchAndFilter';
+import ArchivesTable from './ArchivesTable';
 
 export default function ManageArchives() {
     const [searchTerm, setSearchTerm] = useState('');

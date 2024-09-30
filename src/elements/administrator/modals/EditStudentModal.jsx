@@ -3,7 +3,7 @@ import axios from 'axios';
 import Swal from 'sweetalert2';
 import { Form, Button, Row, Col } from 'react-bootstrap';
 
-const StudentUpdate = ({ user, handleClose, fetchUsers, headers, departments, programs }) => {
+const EditStudentModal = ({ user, handleClose, fetchUsers, headers, departments, programs }) => {
     const [formData, setFormData] = useState({ ...user });
 
     const handleChange = (e) => {
@@ -227,4 +227,4 @@ const StudentUpdate = ({ user, handleClose, fetchUsers, headers, departments, pr
     );
 }
 
-export default StudentUpdate;
+export default EditStudentModal;

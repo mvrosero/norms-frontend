@@ -3,7 +3,7 @@ import axios from 'axios';
 import Swal from 'sweetalert2';
 import { Form, Row, Col } from 'react-bootstrap';
 
-const EmployeeUpdate = ({ user, handleClose, fetchUsers, headers, roles }) => {
+const EditEmployeeModal = ({ user, handleClose, fetchUsers, headers, roles }) => {
     const [formData, setFormData] = useState({
         employee_idnumber: user.employee_idnumber,
         first_name: user.first_name,
@@ -133,4 +133,4 @@ const EmployeeUpdate = ({ user, handleClose, fetchUsers, headers, roles }) => {
     );
 }
 
-export default EmployeeUpdate;
+export default EditEmployeeModal;

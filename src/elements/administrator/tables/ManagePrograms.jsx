@@ -7,9 +7,9 @@ import { FaPlus } from 'react-icons/fa';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 
-import AdminNavigation from './AdminNavigation';
-import AdminInfo from './AdminInfo';
-import SearchAndFilter from '../general/SearchAndFilter';
+import AdminNavigation from '../../../pages/administrator/AdminNavigation';
+import AdminInfo from '../../../pages/administrator/AdminInfo';
+import SearchAndFilter from '../../../pages/general/SearchAndFilter';
 
 export default function ManagePrograms() {
     const navigate = useNavigate();

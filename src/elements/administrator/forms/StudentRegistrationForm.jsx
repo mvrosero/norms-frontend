@@ -4,10 +4,11 @@ import axios from 'axios';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import Swal from 'sweetalert2';
-import '@fortawesome/fontawesome-free/css/all.min.css';
-import './Registration.css';
 
-export default function StudentRegistration() {
+import '@fortawesome/fontawesome-free/css/all.min.css';
+import '../../../styles/Registration.css';
+
+export default function StudentRegistrationForm() {
     const navigate = useNavigate(); 
 
     const [student_idnumber, setStudentIdNumber] = useState('');

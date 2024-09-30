@@ -3,12 +3,12 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
-import Swal from 'sweetalert2'; // Import Swal from sweetalert2
+import Swal from 'sweetalert2'; 
+
 import '@fortawesome/fontawesome-free/css/all.min.css';
+import '../../../styles/Registration.css';
 
-import './Registration.css';
-
-export default function EmployeeRegistration() {
+export default function EmployeeRegistrationForm() {
     const navigate = useNavigate(); // Initialize useNavigate
     const [employee_idnumber, setEmployeeIdNumber] = useState('');
     const [first_name, setFirstName] = useState('');

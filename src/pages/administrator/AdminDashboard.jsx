@@ -19,15 +19,15 @@ import chsBackgroundImage from "../../components/images/chs.png";
 import coeBackgroundImage from "../../components/images/coe.png";
 import ctedBackgroundImage from "../../components/images/cted.png";
 
-// Define department data
+// Define department data in the specified order
 const departments = [
-  { code: '1', name: 'CAS', fullName: 'College of Arts and Sciences' },
   { code: '2', name: 'CAF', fullName: 'College of Accountancy and Finance' },
-  { code: '3', name: 'CBM', fullName: 'College of Business and Management' },
+  { code: '1', name: 'CAS', fullName: 'College of Arts and Sciences' },
+  { code: '6', name: 'CHS', fullName: 'College of Health Sciences' },
   { code: '4', name: 'CCJE', fullName: 'College of Criminal Justice Education' },
   { code: '5', name: 'CCS', fullName: 'College of Computer Studies' },
-  { code: '6', name: 'CHS', fullName: 'College of Health Sciences' },
   { code: '7', name: 'COE', fullName: 'College of Engineering' },
+  { code: '3', name: 'CBM', fullName: 'College of Business and Management' },
   { code: '8', name: 'CTED', fullName: 'College of Teacher Education' }
 ];
 
