@@ -12,6 +12,7 @@ const MyRecordsTable = () => {
     const [sanctions, setSanctions] = useState([]);
     const [academicYears, setAcademicYears] = useState([]);
     const [semesters, setSemesters] = useState([]);
+    const [subcategories, setSubcategories] = useState([]); // New state for subcategories
     const [selectedRecord, setSelectedRecord] = useState(null);
 
     useEffect(() => {
@@ -45,6 +46,10 @@ const MyRecordsTable = () => {
                 // Fetch semesters
                 const semestersResponse = await axios.get('http://localhost:9000/semesters');
                 setSemesters(semestersResponse.data);
+
+                // Fetch subcategories (newly added)
+                const subcategoriesResponse = await axios.get('http://localhost:9000/subcategories');
+                setSubcategories(subcategoriesResponse.data);
             } catch (error) {
                 setError(error.message || 'An error occurred');
             } finally {
@@ -54,6 +59,11 @@ const MyRecordsTable = () => {
 
         fetchData();
     }, []);
+
+    const getSubcategoryName = (subcategory_id) => {
+        const subcategory = subcategories.find(subcat => subcat.subcategory_id === subcategory_id);
+        return subcategory ? subcategory.subcategory_name : 'Unknown';
+    };
 
     const getCategoryName = (category_id) => {
         const category = categories.find(cat => cat.category_id === category_id);
@@ -68,19 +78,6 @@ const MyRecordsTable = () => {
     const getSanctionName = (sanction_id) => {
         const sanction = sanctions.find(sanction => sanction.sanction_id === sanction_id);
         return sanction ? sanction.sanction_name : 'Unknown';
-    };
-
-    const getAcademicYearName = (acadyear_id) => {
-        const academicYear = academicYears.find(academicYear => academicYear.acadyear_id === acadyear_id);
-        if (academicYear) {
-            return `${academicYear.start_year} - ${academicYear.end_year}`;
-        }
-        return 'Unknown';
-    };
-
-    const getSemesterName = (semester_id) => {
-        const semester = semesters.find(semester => semester.semester_id === semester_id);
-        return semester ? semester.semester_name : 'Unknown';
     };
 
     const handleViewDetails = (record) => {
@@ -108,24 +105,22 @@ const MyRecordsTable = () => {
                     <Table bordered hover style={{ marginTop: '30px', marginBottom: '50px', marginLeft: '105px', borderRadius: '20px' }}>
                         <thead style={{ backgroundColor: '#f8f9fa' }}>
                             <tr>
-                                <th style={{ width: '5%'}}> ID</th>
-                                <th style={{ width: '13%'}}>Category</th>
+                                <th style={{ width: '5%' }}>ID</th>
+                                <th style={{ width: '20%' }}>Created At</th>
+                                <th style={{ width: '13%' }}>Category</th>
                                 <th>Offense Name</th>
-                                <th style={{ width: '15%'}}>Sanction</th>
-                                <th style={{ width: '13%'}}>Academic Year</th>
-                                <th style={{ width: '15%'}}>Semester</th>
-                                <th style={{ width: '10%'}}>Action</th>
+                                <th style={{ width: '15%' }}>Sanction</th>
+                                <th style={{ width: '15%' }}>Action</th>
                             </tr>
                         </thead>
                         <tbody>
                             {records.map(record => (
                                 <tr key={record.record_id}>
                                     <td style={{ textAlign: 'center' }}>{record.record_id}</td>
+                                    <td style={{ textAlign: 'center' }}>{new Date(record.created_at).toLocaleString()}</td>
                                     <td>{getCategoryName(record.category_id)}</td>
                                     <td>{getOffenseName(record.offense_id)}</td>
                                     <td>{getSanctionName(record.sanction_id)}</td>
-                                    <td>{getAcademicYearName(record.acadyear_id)}</td>
-                                    <td>{getSemesterName(record.semester_id)}</td>
                                     <td style={{ display: 'flex', justifyContent: 'center' }}>
                                         <Button style={buttonStyles} onClick={() => handleViewDetails(record)}>
                                             View
@@ -145,9 +140,10 @@ const MyRecordsTable = () => {
                                 <p><strong>Record ID:</strong> {selectedRecord.record_id}</p>
                                 <p><strong>Category:</strong> {getCategoryName(selectedRecord.category_id)}</p>
                                 <p><strong>Offense:</strong> {getOffenseName(selectedRecord.offense_id)}</p>
+                                <p><strong>Subcategory:</strong> {getSubcategoryName(selectedRecord.subcategory_id)}</p> 
                                 <p><strong>Sanction:</strong> {getSanctionName(selectedRecord.sanction_id)}</p>
-                                <p><strong>Academic Year:</strong> {getAcademicYearName(selectedRecord.acadyear_id)}</p>
-                                <p><strong>Semester:</strong> {getSemesterName(selectedRecord.semester_id)}</p>
+                                <p><strong>Academic Year:</strong> {selectedRecord.acadyear_id}</p>
+                                <p><strong>Semester:</strong> {selectedRecord.semester_id}</p>
                                 <p><strong>Description:</strong> {selectedRecord.description}</p>
                                 <p><strong>Created At:</strong> {selectedRecord.created_at}</p>
                             </Modal.Body>
