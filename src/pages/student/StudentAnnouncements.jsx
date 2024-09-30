@@ -25,17 +25,16 @@ export default function StudentAnnouncements() {
         if (!token || roleId !== '3') {
             navigate('/unauthorized', { replace: true });
         } else {
-            // Fetch announcements
+            // Fetch all announcements
             axios.get('http://localhost:9000/announcements', {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }
             })
             .then(response => {
-                // Filter announcements with status "Published"
-                const publishedAnnouncements = response.data.filter(announcement => announcement.status === 'Published');
-                setAnnouncements(publishedAnnouncements);
-                setFilteredAnnouncements(publishedAnnouncements);
+                // Set all announcements, remove filtering for published only
+                setAnnouncements(response.data);
+                setFilteredAnnouncements(response.data);
                 setLoading(false);
             })
             .catch(error => {
@@ -77,9 +76,9 @@ export default function StudentAnnouncements() {
             <div key={index} style={{ position: 'relative', margin: '10px' }}>
                 <Card
                     style={{
-                        width: isModal ? '75px' : '300px', // Size for modal and container
-                        height: isModal ? '75px' : '300px', // Size for modal and container
-                        cursor: isModal ? 'pointer' : 'default', // Clickable in modal view
+                        width: isModal ? '75px' : '300px',
+                        height: isModal ? '75px' : '300px',
+                        cursor: isModal ? 'pointer' : 'default',
                     }}
                     onClick={() => isModal && window.open(`http://localhost:9000/uploads/${file}`, '_blank')}
                 >
