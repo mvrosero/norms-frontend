@@ -26,6 +26,7 @@ export default function ManagePrograms() {
     });
     const [editProgramId, setEditProgramId] = useState(null);
 
+    // Authentication check
     useEffect(() => {
         const token = localStorage.getItem('token');
         const roleId = localStorage.getItem('role_id');
@@ -34,6 +35,7 @@ export default function ManagePrograms() {
         }
     }, [navigate]);
 
+    // Fetch programs on component mount
     useEffect(() => {
         fetchPrograms();
     }, []);
@@ -41,7 +43,7 @@ export default function ManagePrograms() {
     const fetchPrograms = async () => {
         try {
             const response = await axios.get('http://localhost:9000/programs', {
-                headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+                headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
             });
             setPrograms(response.data);
             setLoading(false);
@@ -70,7 +72,7 @@ export default function ManagePrograms() {
 
     const handleProgramChange = (e) => {
         const { name, value } = e.target;
-        setProgramFormData(prevState => ({
+        setProgramFormData((prevState) => ({
             ...prevState,
             [name]: value
         }));
@@ -80,12 +82,12 @@ export default function ManagePrograms() {
         e.preventDefault();
         try {
             await axios.post('http://localhost:9000/register-program', programFormData, {
-                headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+                headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
             });
             Swal.fire({
                 icon: 'success',
                 title: 'Program Added Successfully!',
-                text: 'The new program has been added successfully.',
+                text: 'The new program has been added successfully.'
             });
             handleCloseProgramModal();
             fetchPrograms();
@@ -93,19 +95,19 @@ export default function ManagePrograms() {
             Swal.fire({
                 icon: 'error',
                 title: 'Oops...',
-                text: 'An error occurred while adding the program. Please try again later!',
+                text: 'An error occurred while adding the program. Please try again later!'
             });
         }
     };
 
     const handleEditProgram = (id) => {
-        const program = programs.find(prog => prog.program_id === id);
+        const program = programs.find((prog) => prog.program_id === id);
         if (program) {
             setProgramFormData({
                 program_code: program.program_code,
                 program_name: program.program_name,
                 department_id: program.department_id,
-                status: program.status,
+                status: program.status
             });
             setEditProgramId(id);
             setShowEditModal(true);
@@ -116,12 +118,12 @@ export default function ManagePrograms() {
         e.preventDefault();
         try {
             await axios.put(`http://localhost:9000/program/${editProgramId}`, programFormData, {
-                headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+                headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
             });
             Swal.fire({
                 icon: 'success',
                 title: 'Program Updated Successfully!',
-                text: 'The program has been updated successfully.',
+                text: 'The program has been updated successfully.'
             });
             setShowEditModal(false);
             fetchPrograms();
@@ -129,7 +131,7 @@ export default function ManagePrograms() {
             Swal.fire({
                 icon: 'error',
                 title: 'Oops...',
-                text: 'An error occurred while updating the program. Please try again later!',
+                text: 'An error occurred while updating the program. Please try again later!'
             });
         }
     };
@@ -147,19 +149,15 @@ export default function ManagePrograms() {
             if (result.isConfirmed) {
                 try {
                     await axios.delete(`http://localhost:9000/program/${id}`, {
-                        headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+                        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
                     });
-                    Swal.fire(
-                        'Deleted!',
-                        'The program has been deleted.',
-                        'success'
-                    );
+                    Swal.fire('Deleted!', 'The program has been deleted.', 'success');
                     fetchPrograms();
                 } catch (error) {
                     Swal.fire({
                         icon: 'error',
                         title: 'Oops...',
-                        text: 'An error occurred while deleting the program. Please try again later!',
+                        text: 'An error occurred while deleting the program. Please try again later!'
                     });
                 }
             }
@@ -195,8 +193,8 @@ export default function ManagePrograms() {
             <h6 className="page-title">Manage Programs</h6>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', marginTop: '30px' }}>
                 <SearchAndFilter />
-                <button 
-                    onClick={handleCreateNewProgram} 
+                <button
+                    onClick={handleCreateNewProgram}
                     style={{
                         backgroundColor: '#FAD32E',
                         color: 'white',
@@ -208,7 +206,7 @@ export default function ManagePrograms() {
                         marginLeft: '10px',
                         display: 'flex',
                         alignItems: 'center',
-                        boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
+                        boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)'
                     }}
                 >
                     Add Program
@@ -236,14 +234,16 @@ export default function ManagePrograms() {
                                 <td style={{ textAlign: 'center', border: '1px solid #ddd', padding: '8px' }}>{program.department_id}</td>
                                 <td style={{ textAlign: 'center', border: '1px solid #ddd', padding: '8px' }}>{program.status}</td>
                                 <td style={{ textAlign: 'center', border: '1px solid #ddd', padding: '8px' }}>
-                                    <EditIcon style={{ cursor: 'pointer' }} onClick={() => handleEditProgram(program.program_id)} />
-                                    <DeleteIcon style={{ cursor: 'pointer', marginLeft: '10px' }} onClick={() => handleDeleteProgram(program.program_id)} />
+                                    <EditIcon style={{ marginRight: '10px', cursor: 'pointer' }} onClick={() => handleEditProgram(program.program_id)} />
+                                    <DeleteIcon style={{ cursor: 'pointer' }} onClick={() => handleDeleteProgram(program.program_id)} />
                                 </td>
                             </tr>
                         ))}
                     </tbody>
                 </table>
             </div>
+
+            {/* Add Program Modal */}
             <Modal show={showProgramModal} onHide={handleCloseProgramModal}>
                 <Modal.Header closeButton>
                     <Modal.Title>Add New Program</Modal.Title>
@@ -306,6 +306,8 @@ export default function ManagePrograms() {
                     </Form>
                 </Modal.Body>
             </Modal>
+
+            {/* Edit Program Modal */}
             <Modal show={showEditModal} onHide={() => setShowEditModal(false)}>
                 <Modal.Header closeButton>
                     <Modal.Title>Edit Program</Modal.Title>
@@ -363,7 +365,7 @@ export default function ManagePrograms() {
                             </Form.Control>
                         </Form.Group>
                         <Button variant="primary" type="submit" style={buttonStyle}>
-                            Save Changes
+                            Update Program
                         </Button>
                     </Form>
                 </Modal.Body>
