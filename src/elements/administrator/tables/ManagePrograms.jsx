@@ -219,6 +219,8 @@ export default function ManagePrograms() {
                     <FaPlus style={{ marginLeft: '10px' }} />
                 </button>
             </div>
+
+            {/* Program Table */}
             <div style={{ margin: 'auto', marginTop: '20px', marginBottom: '30px', marginLeft: '20px', paddingLeft: '20px' }}>
                 <table style={{ width: '90%', borderCollapse: 'collapse', marginLeft: '90px', paddingLeft: '50px' }}>
                     <thead>
