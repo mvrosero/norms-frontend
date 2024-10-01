@@ -1,8 +1,7 @@
 import React from 'react';
 import { Modal, Form, Button } from 'react-bootstrap';
 
-export default function EditProgramModal({ show, handleClose, handleSubmit, programFormData, handleChange, inputStyle, buttonStyle 
-}) {
+export default function EditProgramModal({ show, handleClose, handleSubmit, programFormData, handleChange, inputStyle, buttonStyle }) {
     return (
         <Modal show={show} onHide={handleClose}>
             <Modal.Header closeButton>
@@ -53,7 +52,9 @@ export default function EditProgramModal({ show, handleClose, handleSubmit, prog
                             style={inputStyle}
                             required
                         >
-                            <option value="">Select Status</option>
+                            <option value={programFormData.status}>
+                                {programFormData.status || "Select Status"}
+                            </option>
                             <option value="Active">Active</option>
                             <option value="Inactive">Inactive</option>
                         </Form.Control>
