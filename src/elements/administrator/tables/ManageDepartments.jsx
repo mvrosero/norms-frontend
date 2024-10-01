@@ -180,6 +180,7 @@ export default function ManageDepartments() {
                     </tbody>
                 </table>
             </div>
+            
             {/* Add Department Modal */}
             <AddDepartmentModal 
                 show={showDepartmentModal} 
@@ -190,6 +191,7 @@ export default function ManageDepartments() {
                 inputStyle={{ width: '100%' }} 
                 buttonStyle={{ marginTop: '20px', backgroundColor: '#FAD32E', border: 'none' }} 
             />
+
             {/* Edit Department Modal */}
             <EditDepartmentModal 
                 show={showEditModal} 

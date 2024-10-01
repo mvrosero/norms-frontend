@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Swal from 'sweetalert2';
 import { Modal, Form, Button } from 'react-bootstrap';
+
 import { FaPlus } from 'react-icons/fa';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -10,6 +11,9 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import AdminNavigation from '../../../pages/administrator/AdminNavigation';
 import AdminInfo from '../../../pages/administrator/AdminInfo';
 import SearchAndFilter from '../../../pages/general/SearchAndFilter';
+
+import AddDProgramModal from '../../../elements/administrator/modals/AddProgramModal';
+import EditProgramModal from '../../../elements/administrator/modals/EditProgramModal';
 
 export default function ManagePrograms() {
     const navigate = useNavigate();
@@ -26,7 +30,6 @@ export default function ManagePrograms() {
     });
     const [editProgramId, setEditProgramId] = useState(null);
 
-    // Authentication check
     useEffect(() => {
         const token = localStorage.getItem('token');
         const roleId = localStorage.getItem('role_id');
@@ -35,7 +38,6 @@ export default function ManagePrograms() {
         }
     }, [navigate]);
 
-    // Fetch programs on component mount
     useEffect(() => {
         fetchPrograms();
     }, []);
@@ -43,7 +45,7 @@ export default function ManagePrograms() {
     const fetchPrograms = async () => {
         try {
             const response = await axios.get('http://localhost:9000/programs', {
-                headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+                headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
             });
             setPrograms(response.data);
             setLoading(false);
@@ -72,7 +74,7 @@ export default function ManagePrograms() {
 
     const handleProgramChange = (e) => {
         const { name, value } = e.target;
-        setProgramFormData((prevState) => ({
+        setProgramFormData(prevState => ({
             ...prevState,
             [name]: value
         }));
@@ -82,12 +84,12 @@ export default function ManagePrograms() {
         e.preventDefault();
         try {
             await axios.post('http://localhost:9000/register-program', programFormData, {
-                headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+                headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
             });
             Swal.fire({
                 icon: 'success',
                 title: 'Program Added Successfully!',
-                text: 'The new program has been added successfully.'
+                text: 'The new program has been added successfully.',
             });
             handleCloseProgramModal();
             fetchPrograms();
@@ -95,19 +97,19 @@ export default function ManagePrograms() {
             Swal.fire({
                 icon: 'error',
                 title: 'Oops...',
-                text: 'An error occurred while adding the program. Please try again later!'
+                text: 'An error occurred while adding the program. Please try again later!',
             });
         }
     };
 
     const handleEditProgram = (id) => {
-        const program = programs.find((prog) => prog.program_id === id);
+        const program = programs.find(prog => prog.program_id === id);
         if (program) {
             setProgramFormData({
                 program_code: program.program_code,
                 program_name: program.program_name,
                 department_id: program.department_id,
-                status: program.status
+                status: program.status,
             });
             setEditProgramId(id);
             setShowEditModal(true);
@@ -118,12 +120,12 @@ export default function ManagePrograms() {
         e.preventDefault();
         try {
             await axios.put(`http://localhost:9000/program/${editProgramId}`, programFormData, {
-                headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+                headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
             });
             Swal.fire({
                 icon: 'success',
                 title: 'Program Updated Successfully!',
-                text: 'The program has been updated successfully.'
+                text: 'The program has been updated successfully.',
             });
             setShowEditModal(false);
             fetchPrograms();
@@ -131,7 +133,7 @@ export default function ManagePrograms() {
             Swal.fire({
                 icon: 'error',
                 title: 'Oops...',
-                text: 'An error occurred while updating the program. Please try again later!'
+                text: 'An error occurred while updating the program. Please try again later!',
             });
         }
     };
@@ -149,15 +151,19 @@ export default function ManagePrograms() {
             if (result.isConfirmed) {
                 try {
                     await axios.delete(`http://localhost:9000/program/${id}`, {
-                        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+                        headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
                     });
-                    Swal.fire('Deleted!', 'The program has been deleted.', 'success');
+                    Swal.fire(
+                        'Deleted!',
+                        'The program has been deleted.',
+                        'success'
+                    );
                     fetchPrograms();
                 } catch (error) {
                     Swal.fire({
                         icon: 'error',
                         title: 'Oops...',
-                        text: 'An error occurred while deleting the program. Please try again later!'
+                        text: 'An error occurred while deleting the program. Please try again later!',
                     });
                 }
             }
@@ -193,8 +199,8 @@ export default function ManagePrograms() {
             <h6 className="page-title">Manage Programs</h6>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', marginTop: '30px' }}>
                 <SearchAndFilter />
-                <button
-                    onClick={handleCreateNewProgram}
+                <button 
+                    onClick={handleCreateNewProgram} 
                     style={{
                         backgroundColor: '#FAD32E',
                         color: 'white',
@@ -206,7 +212,7 @@ export default function ManagePrograms() {
                         marginLeft: '10px',
                         display: 'flex',
                         alignItems: 'center',
-                        boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)'
+                        boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
                     }}
                 >
                     Add Program
@@ -234,8 +240,8 @@ export default function ManagePrograms() {
                                 <td style={{ textAlign: 'center', border: '1px solid #ddd', padding: '8px' }}>{program.department_id}</td>
                                 <td style={{ textAlign: 'center', border: '1px solid #ddd', padding: '8px' }}>{program.status}</td>
                                 <td style={{ textAlign: 'center', border: '1px solid #ddd', padding: '8px' }}>
-                                    <EditIcon style={{ marginRight: '10px', cursor: 'pointer' }} onClick={() => handleEditProgram(program.program_id)} />
-                                    <DeleteIcon style={{ cursor: 'pointer' }} onClick={() => handleDeleteProgram(program.program_id)} />
+                                    <EditIcon style={{ cursor: 'pointer' }} onClick={() => handleEditProgram(program.program_id)} />
+                                    <DeleteIcon style={{ cursor: 'pointer', marginLeft: '10px' }} onClick={() => handleDeleteProgram(program.program_id)} />
                                 </td>
                             </tr>
                         ))}
@@ -244,132 +250,26 @@ export default function ManagePrograms() {
             </div>
 
             {/* Add Program Modal */}
-            <Modal show={showProgramModal} onHide={handleCloseProgramModal}>
-                <Modal.Header closeButton>
-                    <Modal.Title>Add New Program</Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-                    <Form onSubmit={handleProgramSubmit}>
-                        <Form.Group controlId="formProgramCode">
-                            <Form.Label>Program Code</Form.Label>
-                            <Form.Control
-                                type="text"
-                                placeholder="Enter program code"
-                                name="program_code"
-                                value={programFormData.program_code}
-                                onChange={handleProgramChange}
-                                required
-                                style={inputStyle}
-                            />
-                        </Form.Group>
-                        <Form.Group controlId="formProgramName">
-                            <Form.Label>Program Name</Form.Label>
-                            <Form.Control
-                                type="text"
-                                placeholder="Enter program name"
-                                name="program_name"
-                                value={programFormData.program_name}
-                                onChange={handleProgramChange}
-                                required
-                                style={inputStyle}
-                            />
-                        </Form.Group>
-                        <Form.Group controlId="formDepartmentId">
-                            <Form.Label>Department ID</Form.Label>
-                            <Form.Control
-                                type="text"
-                                placeholder="Enter department ID"
-                                name="department_id"
-                                value={programFormData.department_id}
-                                onChange={handleProgramChange}
-                                required
-                                style={inputStyle}
-                            />
-                        </Form.Group>
-                        <Form.Group controlId="formStatus">
-                            <Form.Label>Status</Form.Label>
-                            <Form.Control
-                                as="select"
-                                name="status"
-                                value={programFormData.status}
-                                onChange={handleProgramChange}
-                                required
-                                style={inputStyle}
-                            >
-                                <option value="active">Active</option>
-                                <option value="inactive">Inactive</option>
-                            </Form.Control>
-                        </Form.Group>
-                        <Button variant="primary" type="submit" style={buttonStyle}>
-                            Add Program
-                        </Button>
-                    </Form>
-                </Modal.Body>
-            </Modal>
+            <AddDProgramModal 
+                show={showProgramModal} 
+                handleClose={handleCloseProgramModal} 
+                handleSubmit={handleProgramSubmit} 
+                programFormData={programFormData}
+                handleChange={handleProgramChange}
+                inputStyle={{ width: '100%' }} 
+                buttonStyle={{ marginTop: '20px', backgroundColor: '#FAD32E', border: 'none' }} 
+            />
 
             {/* Edit Program Modal */}
-            <Modal show={showEditModal} onHide={() => setShowEditModal(false)}>
-                <Modal.Header closeButton>
-                    <Modal.Title>Edit Program</Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-                    <Form onSubmit={handleEditSubmit}>
-                        <Form.Group controlId="formProgramCode">
-                            <Form.Label>Program Code</Form.Label>
-                            <Form.Control
-                                type="text"
-                                placeholder="Enter program code"
-                                name="program_code"
-                                value={programFormData.program_code}
-                                onChange={handleProgramChange}
-                                required
-                                style={inputStyle}
-                            />
-                        </Form.Group>
-                        <Form.Group controlId="formProgramName">
-                            <Form.Label>Program Name</Form.Label>
-                            <Form.Control
-                                type="text"
-                                placeholder="Enter program name"
-                                name="program_name"
-                                value={programFormData.program_name}
-                                onChange={handleProgramChange}
-                                required
-                                style={inputStyle}
-                            />
-                        </Form.Group>
-                        <Form.Group controlId="formDepartmentId">
-                            <Form.Label>Department ID</Form.Label>
-                            <Form.Control
-                                type="text"
-                                placeholder="Enter department ID"
-                                name="department_id"
-                                value={programFormData.department_id}
-                                onChange={handleProgramChange}
-                                required
-                                style={inputStyle}
-                            />
-                        </Form.Group>
-                        <Form.Group controlId="formStatus">
-                            <Form.Label>Status</Form.Label>
-                            <Form.Control
-                                as="select"
-                                name="status"
-                                value={programFormData.status}
-                                onChange={handleProgramChange}
-                                required
-                                style={inputStyle}
-                            >
-                                <option value="active">Active</option>
-                                <option value="inactive">Inactive</option>
-                            </Form.Control>
-                        </Form.Group>
-                        <Button variant="primary" type="submit" style={buttonStyle}>
-                            Update Program
-                        </Button>
-                    </Form>
-                </Modal.Body>
-            </Modal>
+            <EditProgramModal 
+                show={showEditModal} 
+                handleClose={() => setShowEditModal(false)} 
+                handleSubmit={handleEditSubmit} 
+                programFormData={programFormData}
+                handleChange={handleProgramChange}
+                inputStyle={{ width: '100%' }} 
+                buttonStyle={{ marginTop: '20px', backgroundColor: '#FAD32E', border: 'none' }} 
+            />
         </div>
     );
 }
