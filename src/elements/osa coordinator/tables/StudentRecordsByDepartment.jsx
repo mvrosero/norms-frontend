@@ -7,12 +7,13 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import PersonIcon from '@mui/icons-material/Person';
 import { FaPlus } from 'react-icons/fa';
 
-import CoordinatorNavigation from './CoordinatorNavigation';
-import CoordinatorInfo from './CoordinatorInfo';
-import SearchAndFilter from '../general/SearchAndFilter';
-import CreateViolationRecordForm from './CreateViolationRecord';
+import CoordinatorNavigation from '../../../pages/osa coordinator/CoordinatorNavigation';
+import CoordinatorInfo from '../../../pages/osa coordinator/CoordinatorInfo';
+import SearchAndFilter from '../../../pages/general/SearchAndFilter';
 
-const StudentRecordsByDepartment = () => {
+import CreateViolationRecordForm from '../../../pages/osa coordinator/CreateViolationRecord';
+
+const DepartmentalStudentsTable = () => {
     const { department_code } = useParams(); // Get department_code from URL
     const navigate = useNavigate(); // Add useNavigate hook
     const [users, setUsers] = useState([]);
@@ -255,4 +256,4 @@ const StudentRecordsByDepartment = () => {
     );
 };
 
-export default StudentRecordsByDepartment;
+export default DepartmentalStudentsTable;

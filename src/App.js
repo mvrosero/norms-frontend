@@ -36,7 +36,7 @@ import ManageArchives from './elements/administrator/tables/ManageArchives';
 /*osa coordinator*/
 import CoordinatorDashboard from './pages/osa coordinator/CoordinatorDashboard';
 import CoordinatorStudentRecords from './pages/osa coordinator/CoordinatorStudentRecords';
-import StudentRecordsByDepartment from './pages/osa coordinator/StudentRecordsByDepartment';
+import StudentRecordsByDepartment from './elements/osa coordinator/tables/StudentRecordsByDepartment';
 import CoordinatorUniformDefiance from './pages/osa coordinator/CoordinatorUniformDefiance';
 import CoordinatorViolations from './pages/osa coordinator/CoordinatorViolations';
 import CoordinatorAnnouncements from './pages/osa coordinator/CoordinatorAnnouncements';
