@@ -25,7 +25,7 @@ import StudentRegistrationForm from './elements/administrator/forms/StudentRegis
 /*administrator*/
 import AdminDashboard from './pages/administrator/AdminDashboard';
 import AdminUserManagement from './pages/administrator/AdminUserManagement';
-import DepartmentUserManagement from './pages/administrator/DepartmentUserManagement';
+import DepartmentUserManagement from './elements/administrator/tables/DepartmentalStudentsTable';
 import AdminSettings from './pages/administrator/AdminSettings';
 import ManageDepartments from './elements/administrator/tables/ManageDepartments';
 import ManagePrograms from '././elements/administrator/tables/ManagePrograms';
