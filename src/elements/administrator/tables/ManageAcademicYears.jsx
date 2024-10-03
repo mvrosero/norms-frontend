@@ -1,8 +1,9 @@
+// ManageAcademicYears.jsx
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Swal from 'sweetalert2';
-import { Modal, Form, Button } from 'react-bootstrap';
+import { Button } from 'react-bootstrap';
 import { FaPlus } from 'react-icons/fa';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -10,7 +11,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import AdminNavigation from '../../../pages/administrator/AdminNavigation';
 import AdminInfo from '../../../pages/administrator/AdminInfo';
 import SearchAndFilter from '../../../pages/general/SearchAndFilter';
-
+import EditAcademicYearModal from '../modals/EditAcademicYearModal'; // Import the new modal
 
 export default function ManageAcademicYears() {
     const [academicYears, setAcademicYears] = useState([]);
@@ -113,18 +114,14 @@ export default function ManageAcademicYears() {
             showCancelButton: true,
             confirmButtonColor: '#3085d6',
             cancelButtonColor: '#d33',
-            confirmButtonText: 'Yes, delete it!'
+            confirmButtonText: 'Yes, delete it!',
         }).then(async (result) => {
             if (result.isConfirmed) {
                 try {
                     await axios.delete(`http://localhost:9000/academic_year/${id}`, {
                         headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
                     });
-                    Swal.fire(
-                        'Deleted!',
-                        'The academic year has been deleted.',
-                        'success'
-                    );
+                    Swal.fire('Deleted!', 'The academic year has been deleted.', 'success');
                     fetchAcademicYears();
                 } catch (error) {
                     Swal.fire({
@@ -135,14 +132,6 @@ export default function ManageAcademicYears() {
                 }
             }
         });
-    };
-
-    const inputStyle = {
-        backgroundColor: '#f2f2f2',
-        border: '1px solid #ced4da',
-        borderRadius: '.25rem',
-        height: '40px',
-        width: '100%'
     };
 
     const buttonStyle = {
@@ -156,7 +145,7 @@ export default function ManageAcademicYears() {
         marginLeft: '10px',
         display: 'flex',
         alignItems: 'center',
-        boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)'
+        boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
     };
 
     return (
@@ -175,97 +164,42 @@ export default function ManageAcademicYears() {
                 <table style={{ width: '90%', borderCollapse: 'collapse', marginLeft: 'auto', marginRight: 'auto' }}>
                     <thead>
                         <tr>
-                            <th style={{ textAlign: 'center', border: '1px solid #ddd', padding: '8px', backgroundColor: '#a8a8a8', color: 'white' }}>Academic Year Code</th>
-                            <th style={{ textAlign: 'center', border: '1px solid #ddd', padding: '8px', backgroundColor: '#a8a8a8', color: 'white' }}>Start Year</th>
-                            <th style={{ textAlign: 'center', border: '1px solid #ddd', padding: '8px', backgroundColor: '#a8a8a8', color: 'white' }}>End Year</th>
-                            <th style={{ textAlign: 'center', border: '1px solid #ddd', padding: '8px', backgroundColor: '#a8a8a8', color: 'white' }}>Status</th>
-                            <th style={{ textAlign: 'center', border: '1px solid #ddd', padding: '8px', backgroundColor: '#a8a8a8', color: 'white' }}>Actions</th>
+                            <th style={{ borderBottom: '2px solid #000', padding: '10px' }}>Code</th>
+                            <th style={{ borderBottom: '2px solid #000', padding: '10px' }}>Start Year</th>
+                            <th style={{ borderBottom: '2px solid #000', padding: '10px' }}>End Year</th>
+                            <th style={{ borderBottom: '2px solid #000', padding: '10px' }}>Status</th>
+                            <th style={{ borderBottom: '2px solid #000', padding: '10px' }}>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {academicYears.map((year, index) => (
-                            <tr key={year.acadyear_id} style={{ backgroundColor: index % 2 === 0 ? 'white' : '#f2f2f2' }}>
-                                <td style={{ textAlign: 'center', border: '1px solid #ddd', padding: '8px' }}>{year.acadyear_code}</td>
-                                <td style={{ textAlign: 'center', border: '1px solid #ddd', padding: '8px' }}>{year.start_year}</td>
-                                <td style={{ textAlign: 'center', border: '1px solid #ddd', padding: '8px' }}>{year.end_year}</td>
-                                <td style={{ textAlign: 'center', border: '1px solid #ddd', padding: '8px' }}>{year.status}</td>
-                                <td style={{ textAlign: 'center', border: '1px solid #ddd', padding: '8px' }}>
-                                    <EditIcon 
-                                        onClick={() => handleEdit(year.acadyear_id)} 
-                                        style={{ cursor: 'pointer', color: 'blue', marginRight: '10px' }} 
-                                    />
-                                    <DeleteIcon 
-                                        onClick={() => handleDelete(year.acadyear_id)} 
-                                        style={{ cursor: 'pointer', color: 'red' }} 
-                                    />
+                        {academicYears.map((year) => (
+                            <tr key={year.acadyear_id}>
+                                <td style={{ borderBottom: '1px solid #ddd', padding: '8px' }}>{year.acadyear_code}</td>
+                                <td style={{ borderBottom: '1px solid #ddd', padding: '8px' }}>{year.start_year}</td>
+                                <td style={{ borderBottom: '1px solid #ddd', padding: '8px' }}>{year.end_year}</td>
+                                <td style={{ borderBottom: '1px solid #ddd', padding: '8px' }}>{year.status}</td>
+                                <td style={{ borderBottom: '1px solid #ddd', padding: '8px' }}>
+                                    <Button onClick={() => handleEdit(year.acadyear_id)}>
+                                        <EditIcon />
+                                    </Button>
+                                    <Button onClick={() => handleDelete(year.acadyear_id)}>
+                                        <DeleteIcon />
+                                    </Button>
                                 </td>
                             </tr>
                         ))}
                     </tbody>
                 </table>
             </div>
-
-            <Modal show={showModal} onHide={handleCloseModal}>
-                <Modal.Header closeButton>
-                    <Modal.Title>{editMode ? 'Edit Academic Year' : 'Add Academic Year'}</Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-                    <Form onSubmit={handleSubmit}>
-                        <Form.Group className="mb-3">
-                            <Form.Label>Academic Year Code</Form.Label>
-                            <Form.Control
-                                type="text"
-                                name="acadyear_code"
-                                value={formData.acadyear_code}
-                                onChange={handleChange}
-                                placeholder="Enter academic year code"
-                                style={inputStyle}
-                                required
-                            />
-                        </Form.Group>
-                        <Form.Group className="mb-3">
-                            <Form.Label>Start Year</Form.Label>
-                            <Form.Control
-                                type="number"
-                                name="start_year"
-                                value={formData.start_year}
-                                onChange={handleChange}
-                                placeholder="Enter start year"
-                                style={inputStyle}
-                                required
-                            />
-                        </Form.Group>
-                        <Form.Group className="mb-3">
-                            <Form.Label>End Year</Form.Label>
-                            <Form.Control
-                                type="number"
-                                name="end_year"
-                                value={formData.end_year}
-                                onChange={handleChange}
-                                placeholder="Enter end year"
-                                style={inputStyle}
-                                required
-                            />
-                        </Form.Group>
-                        <Form.Group className="mb-3">
-                            <Form.Label>Status</Form.Label>
-                            <Form.Control
-                                as="select"
-                                name="status"
-                                value={formData.status}
-                                onChange={handleChange}
-                                style={inputStyle}
-                            >
-                                <option value="active">Active</option>
-                                <option value="inactive">Inactive</option>
-                            </Form.Control>
-                        </Form.Group>
-                        <Button type="submit" variant="primary">
-                            {editMode ? 'Update Academic Year' : 'Add Academic Year'}
-                        </Button>
-                    </Form>
-                </Modal.Body>
-            </Modal>
+            {/* Include the EditAcademicYearModal here */}
+            <EditAcademicYearModal 
+                show={showModal} 
+                handleClose={handleCloseModal} 
+                handleSubmit={handleSubmit} 
+                formData={formData} 
+                handleChange={handleChange} 
+                editMode={editMode} 
+            />
         </div>
     );
 }
