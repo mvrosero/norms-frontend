@@ -6,9 +6,9 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import PersonIcon from '@mui/icons-material/Person';
 
-// Assuming EditStudentModal and ViewStudentModal are defined in their respective files
+// Import the ViewStudentModal component
+import ViewStudentModal from '../modals/ViewStudentModal'; 
 import EditStudentModal from '../modals/EditStudentModal';
-import ViewStudentModal from '../modals/ViewStudentModal'; // Import the new ViewStudentModal
 import "../../../styles/Students.css";
 
 const StudentsTable = () => {
@@ -63,16 +63,6 @@ const StudentsTable = () => {
         setShowReadModal(false);
     };
 
-    const getDepartmentName = (departmentId) => {
-        const department = departments.find((d) => d.department_id === departmentId);
-        return department ? department.department_name : '';
-    };
-
-    const getProgramName = (programId) => {
-        const program = programs.find((p) => p.program_id === programId);
-        return program ? program.program_name : '';
-    };
-
     const handleUpdateModalShow = (user) => {
         setSelectedUser(user);
         setShowUpdateModal(true);
@@ -81,7 +71,7 @@ const StudentsTable = () => {
     const handleUpdateModalClose = () => {
         setShowUpdateModal(false);
     };
-    
+
     const deleteUser = async (userId) => {
         const isConfirm = await Swal.fire({
             title: 'Are you sure?',
@@ -139,8 +129,8 @@ const StudentsTable = () => {
                                 <td>{user.student_idnumber}</td>
                                 <td>{`${user.first_name} ${user.middle_name} ${user.last_name} ${user.suffix}`}</td>
                                 <td>{user.year_level}</td>
-                                <td>{getDepartmentName(user.department_id)}</td>
-                                <td>{getProgramName(user.program_id)}</td>
+                                <td>{departments.find(department => department.department_id === user.department_id)?.department_name || ''}</td>
+                                <td>{programs.find(program => program.program_id === user.program_id)?.program_name || ''}</td>
                                 <td style={{ textAlign: 'center' }}>
                                     <div style={{
                                         backgroundColor: user.status === 'active' ? '#DBF0DC' : '#F0DBDB',
@@ -180,10 +170,10 @@ const StudentsTable = () => {
                     </tbody>
                 </Table>
             </div>
-
-            <Modal show={showReadModal} onHide={handleReadModalClose} dialogClassName="modal-lg">
+ 
+            <Modal show={showReadModal} onHide={handleReadModalClose}>
                 <Modal.Header closeButton>
-                    <Modal.Title style={{ marginLeft: '180px' }}>VIEW STUDENT RECORD</Modal.Title>
+                    <Modal.Title style={{ marginLeft: '65px' }}>VIEW STUDENT RECORD</Modal.Title>
                     <button
                         type="button"
                         className="close"
@@ -205,7 +195,7 @@ const StudentsTable = () => {
                 <Modal.Body>
                     {selectedUser && (
                         <ViewStudentModal 
-                            user={selectedUser} 
+                            user={selectedUser}
                             handleClose={handleReadModalClose} 
                             departments={departments}
                             programs={programs}
@@ -248,6 +238,6 @@ const StudentsTable = () => {
             </Modal>
         </>
     );
-};
+}
 
 export default StudentsTable;
