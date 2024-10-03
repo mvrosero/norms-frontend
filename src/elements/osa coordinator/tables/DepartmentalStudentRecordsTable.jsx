@@ -11,9 +11,9 @@ import CoordinatorNavigation from '../../../pages/osa coordinator/CoordinatorNav
 import CoordinatorInfo from '../../../pages/osa coordinator/CoordinatorInfo';
 import SearchAndFilter from '../../../pages/general/SearchAndFilter';
 
-import CreateViolationRecordForm from '../../../pages/osa coordinator/CreateViolationRecord';
+import DepartmentalCreateViolationModal from '../modals/DepartmentalCreateViolationModal';
 
-const DepartmentalRecordsTable = () => {
+const DepartmentalStudentRecordsTable = () => {
     const { department_code } = useParams(); // Get department_code from URL
     const navigate = useNavigate(); // Add useNavigate hook
     const [users, setUsers] = useState([]);
@@ -142,7 +142,6 @@ const DepartmentalRecordsTable = () => {
         <>
             <CoordinatorNavigation />
             <CoordinatorInfo />
-            
             <h6 className="page-title">{departmentName || department_code || 'STUDENT RECORDS'}</h6>
             <div style={{ display: 'flex', marginTop: '20px', alignItems: 'center' }}>
                 <div style={{ width: '900px', marginLeft: '80px' }}>
@@ -252,18 +251,17 @@ const DepartmentalRecordsTable = () => {
             </div>
 
   
-
-            {/* Violation Modal */}
+            {/*Create Violation Modal*/}
             <Modal show={showViolationModal} onHide={handleCloseModal}>
                 <Modal.Header closeButton>
                     <Modal.Title>Create Violation Record</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                    <CreateViolationRecordForm onClose={handleCloseModal} />
+                    <DepartmentalCreateViolationModal onClose={handleCloseModal} />
                 </Modal.Body>
             </Modal>
         </>
     );
 };
 
-export default DepartmentalRecordsTable;
+export default DepartmentalStudentRecordsTable;

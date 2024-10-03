@@ -7,7 +7,7 @@ import CoordinatorNavigation from './CoordinatorNavigation';
 import CoordinatorInfo from './CoordinatorInfo';
 import StudentRecordsTable from './StudentRecordsTable';
 import SearchAndFilter from '../general/SearchAndFilter';
-import CreateViolationRecordForm from './CreateViolationRecord';
+import CreateViolationModal from '../../elements/osa coordinator/modals/CreateViolationModal';
 
 export default function CoordinatorStudentRecords() {
     const [searchQuery, setSearchQuery] = useState('');
@@ -56,7 +56,7 @@ export default function CoordinatorStudentRecords() {
                         boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
                     }}
                 >
-                    Add Violation
+                    Create Violation
                     <FaPlus style={{ marginLeft: '10px' }} />
                 </button>
             </div>
@@ -69,7 +69,7 @@ export default function CoordinatorStudentRecords() {
                 </Modal.Header>
                 <Modal.Body>
                     {/* Render ViolationRecordForm component within the modal */}
-                    <CreateViolationRecordForm handleCloseModal={handleCloseModal} />
+                    <CreateViolationModal handleCloseModal={handleCloseModal} />
                 </Modal.Body>
             </Modal>
         </div>

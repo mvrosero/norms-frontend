@@ -4,7 +4,7 @@ import Swal from 'sweetalert2';
 import { Form, Button, Row, Col } from 'react-bootstrap';
 import Select from 'react-select';
 
-export default function CreateViolationRecordForm({ handleCloseModal }) {
+export default function DepartmentalCreateViolationModal({ handleCloseModal }) {
     const [formData, setFormData] = useState({
         user_id: '',
         description: '',

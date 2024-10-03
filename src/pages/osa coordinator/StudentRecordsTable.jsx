@@ -140,7 +140,6 @@ const StudentRecordsTable = ({ searchQuery }) => {
                 <br />
                 <div className='col-12'>
                 </div>
-
                 {/*student table*/}
                 <Table bordered hover style={{ borderRadius: '20px', marginLeft: '110px' }}>
                     <thead style={{ backgroundColor: '#f8f9fa' }}> {/* Setting header background color */}
@@ -152,7 +151,6 @@ const StudentRecordsTable = ({ searchQuery }) => {
                             <th>Department</th>
                             <th>Program</th>
                             <th style={{ width: '12%'}}>Status</th>
-                            <th style={{ width: '10%'}}>Action</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -160,7 +158,28 @@ const StudentRecordsTable = ({ searchQuery }) => {
                             <tr key={index}>
                                 <td style={{ textAlign: 'center' }}>{user.user_id}</td>
                                 <td>{user.student_idnumber}</td>
-                                <td>{`${user.first_name} ${user.middle_name} ${user.last_name} ${user.suffix}`.trim()}</td>
+                                <td>
+                                    <a
+                                        href="#"
+                                        onClick={() => handleRedirect(user.student_idnumber)}
+                                        style={{
+                                        textDecoration: 'none',  // Start with no underline
+                                        color: 'black',
+                                        cursor: 'pointer',
+                                        transition: 'color 0.3s ease, text-decoration 0.3s ease',  // Smooth transition
+                                        }}
+                                        onMouseEnter={(e) => {
+                                        e.target.style.textDecoration = 'underline';  // Add underline on hover
+                                        e.target.style.color = '#007bff';  // Change color to indicate hover
+                                        }}
+                                        onMouseLeave={(e) => {
+                                        e.target.style.textDecoration = 'none';  // Remove underline when not hovering
+                                        e.target.style.color = 'black';  // Revert to original color
+                                        }}
+                                    >
+                                        {`${user.first_name} ${user.middle_name} ${user.last_name} ${user.suffix}`}
+                                    </a>
+                                    </td>
                                 <td>{user.year_level}</td>
                                 <td>{getDepartmentName(user.department_id)}</td>
                                 <td>{getProgramName(user.program_id)}</td>
@@ -183,16 +202,6 @@ const StudentRecordsTable = ({ searchQuery }) => {
                                             marginRight: '7px', 
                                         }} />
                                         {user.status}
-                                    </div>
-                                </td>
-                                <td>
-                                    <div className="d-flex justify-content-around">
-                                        <Button className='btn btn-secondary btn-md ms-2' onClick={() => handleRedirect(user.student_idnumber)}>
-                                            <PersonIcon />
-                                        </Button>
-                                        <Button className='btn btn-danger btn-md ms-2' onClick={() => deleteUser(user.user_id)}>
-                                            <DeleteIcon />
-                                        </Button>
                                     </div>
                                 </td>
                             </tr>
