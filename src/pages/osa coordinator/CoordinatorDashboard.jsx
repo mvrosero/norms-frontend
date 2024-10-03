@@ -3,6 +3,7 @@ import axios from 'axios';
 import { useNavigate } from "react-router-dom";
 import { Button, Card } from "react-bootstrap";
 import styled from "@emotion/styled";
+
 import CoordinatorNavigation from "./CoordinatorNavigation";
 import CoordinatorInfo from "./CoordinatorInfo";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
@@ -76,15 +77,16 @@ const data = [
 ];
 
 const departments = [
-  { code: '1', name: 'CAS', fullName: 'College of Arts and Sciences' },
   { code: '2', name: 'CAF', fullName: 'College of Accountancy and Finance' },
-  { code: '3', name: 'CBM', fullName: 'College of Business and Management' },
+  { code: '1', name: 'CAS', fullName: 'College of Arts and Sciences' },
+  { code: '6', name: 'CHS', fullName: 'College of Health Sciences' },
   { code: '4', name: 'CCJE', fullName: 'College of Criminal Justice Education' },
   { code: '5', name: 'CCS', fullName: 'College of Computer Studies' },
-  { code: '6', name: 'CHS', fullName: 'College of Health Sciences' },
   { code: '7', name: 'COE', fullName: 'College of Engineering' },
+  { code: '3', name: 'CBM', fullName: 'College of Business and Management' },
   { code: '8', name: 'CTED', fullName: 'College of Teacher Education' }
 ];
+
 
 const CoordinatorDashboard = () => {
   const navigate = useNavigate();

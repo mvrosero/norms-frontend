@@ -13,7 +13,7 @@ import SearchAndFilter from '../../../pages/general/SearchAndFilter';
 
 import CreateViolationRecordForm from '../../../pages/osa coordinator/CreateViolationRecord';
 
-const DepartmentalStudentsTable = () => {
+const DepartmentalRecordsTable = () => {
     const { department_code } = useParams(); // Get department_code from URL
     const navigate = useNavigate(); // Add useNavigate hook
     const [users, setUsers] = useState([]);
@@ -142,7 +142,7 @@ const DepartmentalStudentsTable = () => {
         <>
             <CoordinatorNavigation />
             <CoordinatorInfo />
-
+            
             <h6 className="page-title">{departmentName || department_code || 'STUDENT RECORDS'}</h6>
             <div style={{ display: 'flex', marginTop: '20px', alignItems: 'center' }}>
                 <div style={{ width: '900px', marginLeft: '80px' }}>
@@ -193,7 +193,6 @@ const DepartmentalStudentsTable = () => {
                             <th style={{ width: '10%' }}>Year Level</th>
                             <th>Program</th>
                             <th style={{ width: '12%' }}>Status</th>
-                            <th style={{ width: '13%' }}>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -201,7 +200,28 @@ const DepartmentalStudentsTable = () => {
                             <tr key={index}>
                                 <td style={{ textAlign: 'center' }}>{user.user_id}</td>
                                 <td>{user.student_idnumber}</td>
-                                <td>{`${user.first_name} ${user.middle_name} ${user.last_name} ${user.suffix}`}</td>
+                                <td>
+                                    <a
+                                        href="#"
+                                        onClick={() => handleReadModalShow(user)}
+                                        style={{
+                                        textDecoration: 'none',  // Start with no underline
+                                        color: 'black',
+                                        cursor: 'pointer',
+                                        transition: 'color 0.3s ease, text-decoration 0.3s ease',  // Smooth transition
+                                        }}
+                                        onMouseEnter={(e) => {
+                                        e.target.style.textDecoration = 'underline';  // Add underline on hover
+                                        e.target.style.color = '#007bff';  // Change color to indicate hover
+                                        }}
+                                        onMouseLeave={(e) => {
+                                        e.target.style.textDecoration = 'none';  // Remove underline when not hovering
+                                        e.target.style.color = 'black';  // Revert to original color
+                                        }}
+                                    >
+                                        {`${user.first_name} ${user.middle_name} ${user.last_name} ${user.suffix}`}
+                                    </a>
+                                    </td>
                                 <td>{user.year_level}</td>
                                 <td>{getProgramName(user.program_id)}</td>
                                 <td style={{ textAlign: 'center' }}>
@@ -225,16 +245,6 @@ const DepartmentalStudentsTable = () => {
                                         {user.status}
                                     </div>
                                 </td>
-                                <td>
-                                    <div className="d-flex justify-content-around">
-                                        <Button className='btn btn-secondary btn-sm' onClick={() => handleReadModalShow(user)}>
-                                            <PersonIcon />
-                                        </Button>
-                                        <Button className='btn btn-danger btn-sm' onClick={() => deleteUser(user.user_id)}>
-                                            <DeleteIcon />
-                                        </Button>
-                                    </div>
-                                </td>
                             </tr>
                         ))}
                     </tbody>
@@ -256,4 +266,4 @@ const DepartmentalStudentsTable = () => {
     );
 };
 
-export default DepartmentalStudentsTable;
+export default DepartmentalRecordsTable;
