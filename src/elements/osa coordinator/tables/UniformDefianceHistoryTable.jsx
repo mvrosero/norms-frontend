@@ -147,9 +147,9 @@ const UniformDefianceHistoryTable = ({ searchQuery }) => {
                     <thead>
                         <tr>
                             <th>ID</th>
+                            <th>Date Submitted</th>
                             <th>ID Number</th>
                             <th>Nature of Violation</th>
-                            <th>Submitted By</th>
                             <th>Details</th>
                             <th>Status</th>
                         </tr>
@@ -158,6 +158,7 @@ const UniformDefianceHistoryTable = ({ searchQuery }) => {
                         {defiances.map((defiance, index) => (
                             <tr key={index}>
                                 <td>{defiance.slip_id}</td>
+                                <td>{defiance.created_at}</td>
                                 <td>
                                     <Link 
                                         to={`/individualuniformdefiance/${defiance.student_idnumber}`}
@@ -167,7 +168,6 @@ const UniformDefianceHistoryTable = ({ searchQuery }) => {
                                     </Link>
                                 </td>
                                 <td>{defiance.nature_name}</td>
-                                <td>{employeeNames[defiance.submitted_by] || defiance.submitted_by}</td>
                                 <td>
                                     <span 
                                         onClick={() => handleShowDetailsModal(defiance)} 

@@ -44,7 +44,6 @@ const ViewUniformDefianceModal = ({ show, onHide, record }) => {
                 {record && (
                     <div>
                         <p><strong>Slip ID:</strong> {record.slip_id}</p>
-                        <p><strong>Student ID:</strong> {record.student_idnumber}</p>
                         <p><strong>Nature of Violation:</strong> {record.nature_name}</p>
                         <p><strong>Files Attached:</strong></p>
                         {renderFile()}

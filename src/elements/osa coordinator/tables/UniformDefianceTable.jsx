@@ -120,9 +120,9 @@ const UniformDefianceTable = ({ searchQuery }) => {
                     <thead style={{ backgroundColor: '#f8f9fa' }}>
                         <tr>
                             <th style={{ width: '5%' }}>ID</th>
+                            <th>Date Submitted</th>
                             <th style={{ width: '10%' }}>ID Number</th>
                             <th>Nature of Violation</th>
-                            <th>Submitted By</th>
                             <th>Actions</th>
                             <th>Status</th>
                         </tr>
@@ -131,9 +131,9 @@ const UniformDefianceTable = ({ searchQuery }) => {
                         {defiances.map((defiance, index) => (
                             <tr key={index}>
                                 <td style={{ textAlign: 'center' }}>{defiance.slip_id}</td>
+                                <td>{defiance.created_at}</td>
                                 <td>{defiance.student_idnumber}</td>
                                 <td>{defiance.nature_name}</td>
-                                <td>{defiance.submitted_by}</td>
                                 <td>
                                     <div 
                                         className="d-flex align-items-center" 
@@ -144,15 +144,38 @@ const UniformDefianceTable = ({ searchQuery }) => {
                                     </div>
                                 </td>
                                 <td>
-                                    <div className="d-flex justify-content-around">
-                                        <Button className='btn btn-success btn-md ms-2' onClick={() => updateStatus(defiance.slip_id, 'Approved')} style={{ backgroundColor: '#008000' }}>
-                                            <CheckIcon />
-                                        </Button>
-                                        <Button className='btn btn-danger btn-md ms-2' onClick={() => updateStatus(defiance.slip_id, 'Declined')} style={{ backgroundColor: '#ff0000' }}>
-                                            <CloseIcon />
-                                        </Button>
-                                    </div>
-                                </td>
+    <div className="d-flex justify-content-around">
+        <Button
+            className='btn btn-success btn-md d-flex align-items-center ms-2'
+            onClick={() => updateStatus(defiance.slip_id, 'Approved')}
+            style={{ 
+                backgroundColor: '#28a745', // Bootstrap success color
+                color: '#fff',
+                border: '2px solid #28a745', // Border color matching fill color
+                borderRadius: '25px',
+                padding: '2px 10px' // Added padding for left and right
+            }}
+        >
+            <CheckIcon style={{ marginRight: '5px' }} />
+            Approve
+        </Button>
+        <Button
+            className='btn btn-danger btn-md d-flex align-items-center ms-2'
+            onClick={() => updateStatus(defiance.slip_id, 'Declined')}
+            style={{ 
+                backgroundColor: '#dc3545', // Bootstrap danger color
+                color: '#fff',
+                border: '2px solid #dc3545', // Border color matching fill color
+                borderRadius: '25px',
+                padding: '2px 10px' // Added padding for left and right
+            }}
+        >
+            <CloseIcon style={{ marginRight: '5px' }} />
+            Reject
+        </Button>
+    </div>
+</td>
+
                             </tr>
                         ))}
                     </tbody>

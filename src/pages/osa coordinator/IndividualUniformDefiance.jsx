@@ -1,17 +1,17 @@
+// IndividualUniformDefiance.js
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import axios from 'axios';
-import { Modal, Button, Table } from 'react-bootstrap';
+import { Modal, Button } from 'react-bootstrap';
 import { useNavigate, useLocation } from 'react-router-dom';
-import Fuse from 'fuse.js';
 import { FaPlus } from 'react-icons/fa';
 import defaultProfile from '../../assets/images/default_profile.jpg'; // Adjust path as necessary
-import { format } from 'date-fns';
 
 import CoordinatorNavigation from './CoordinatorNavigation';
 import CoordinatorInfo from './CoordinatorInfo';
 import SearchAndFilter from '../general/SearchAndFilter';
 import AddUniformDefianceModal from '../../elements/osa coordinator/modals/AddUniformDefianceModal';
 import ViewUniformDefianceModal from '../../elements/osa coordinator/modals/ViewUniformDefianceModal';
+import IndividualUniformDefianceTable from '../../elements/osa coordinator/tables/IndividualUniformDefianceTable';
 
 const IndividualUniformDefiance = () => {
     const [studentInfo, setStudentInfo] = useState(null);
@@ -97,12 +97,6 @@ const IndividualUniformDefiance = () => {
         await fetchDefiances();
     };
 
-    const formatDate = (dateString) => {
-        if (!dateString) return '';
-        const date = new Date(dateString);
-        return format(date, 'MM-dd-yyyy, HH:mm:ss');
-    };
-
     return (
         <>
             <CoordinatorNavigation />
@@ -138,63 +132,37 @@ const IndividualUniformDefiance = () => {
                     <Button
                         onClick={() => setShowAddViolationModal(true)} // Show modal on click
                         title="Add Record"
-                        style={{ backgroundColor: '#FAD32E', color: 'white', fontWeight: '900', padding: '12px 20px', border: 'none', borderRadius: '10px', cursor: 'pointer', display: 'flex', alignItems: 'center', boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)', marginLeft: '10px' }}
+                        style={{ backgroundColor: '#FAD32E', color: 'white', fontWeight: '900', padding: '12px 20px', border: 'none', borderRadius: '10px', cursor: 'pointer' }}
                     >
+                        <FaPlus style={{ marginRight: '8px' }} />
                         Add Violation
-                        <FaPlus style={{ marginLeft: '2px' }} />
                     </Button>
                 </div>
 
-                <Table bordered hover style={{ borderRadius: '20px', marginTop: '20px' }}>
-                    <thead style={{ backgroundColor: '#f8f9fa' }}>
-                        <tr>
-                            <th style={{ width: '5%' }}>ID</th>
-                            <th style={{ width: '10%' }}>ID Number</th>
-                            <th>Nature of Violation</th>
-                            <th>Created At</th>
-                            <th>Submitted By</th>
-                            <th>File Attached</th>
-                            <th>Status</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {defiances.map((defiance, index) => (
-                            <tr key={defiance.slip_id}> {/* Use a unique identifier */}
-                                <td style={{ textAlign: 'center' }}>{defiance.slip_id}</td>
-                                <td>{defiance.student_idnumber}</td>
-                                <td>{defiance.nature_name}</td>
-                                <td>{formatDate(defiance.created_at)}</td>
-                                <td>{employees[defiance.submitted_by] || defiance.submitted_by}</td>
-                                <td>
-                                    <div 
-                                        className="d-flex align-items-center" 
-                                        style={{ cursor: 'pointer', color: '#000000', textDecoration: 'underline', fontWeight: 'bold' }} 
-                                        onClick={() => handleShowDetailsModal(defiance)}
-                                    >
-                                        View
-                                    </div>
-                                </td>
-                                <td>{defiance.status}</td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </Table>
+                <IndividualUniformDefianceTable 
+                    defiances={defiances.filter(defiance => 
+                        defiance.student_idnumber.includes(searchQuery) || 
+                        defiance.nature_name.toLowerCase().includes(searchQuery.toLowerCase())
+                    )} 
+                    employees={employees}
+                    handleShowDetailsModal={handleShowDetailsModal}
+                />
             </div>
 
-            {/* Show the ViewUniformDefianceModal when selectedRecord is set */}
+            <AddUniformDefianceModal
+                show={showAddViolationModal}
+                onHide={() => setShowAddViolationModal(false)}
+                onClose={handleCloseAddViolationModal}
+                studentInfo={studentInfo} // Pass student info to modal
+            />
+
             {selectedRecord && (
                 <ViewUniformDefianceModal
-                    show={!!selectedRecord}
+                    show={Boolean(selectedRecord)}
                     onHide={() => setSelectedRecord(null)}
                     record={selectedRecord}
                 />
             )}
-
-            {/* Add Violation Modal */}
-            <AddUniformDefianceModal
-                show={showAddViolationModal} // Show modal based on state
-                handleCloseModal={handleCloseAddViolationModal} // Close modal on action
-            />
         </>
     );
 };

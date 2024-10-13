@@ -194,8 +194,11 @@ const AddUniformDefianceModal = ({ show, handleCloseModal }) => {
                         </Col>
                     </Row>
                     <div className="d-flex justify-content-end mt-3">
-                        <Button type="submit" variant="primary">
+                        <Button type="submit" variant="primary" className="me-2">
                             Submit
+                        </Button>
+                        <Button variant="secondary" onClick={handleCloseModal}>
+                            Cancel
                         </Button>
                     </div>
                 </Form>
