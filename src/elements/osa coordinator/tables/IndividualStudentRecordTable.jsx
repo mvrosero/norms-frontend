@@ -1,11 +1,11 @@
+// IndividualStudentRecordTable.js
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Table from 'react-bootstrap/Table';
-import Modal from 'react-bootstrap/Modal';
-import Button from 'react-bootstrap/Button';
 import styled from '@emotion/styled';
+import ViewViolationModal from '../modals/ViewViolationModal';
 
-const IndividualViolationRecordsTable = ({ records }) => {
+const IndividualStudentRecordTable = ({ records }) => {
     const [categories, setCategories] = useState([]);
     const [offenses, setOffenses] = useState([]);
     const [sanctions, setSanctions] = useState([]);
@@ -17,24 +17,18 @@ const IndividualViolationRecordsTable = ({ records }) => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                // Fetch categories
-                const categoriesResponse = await axios.get('http://localhost:9000/categories');
+                const [categoriesResponse, offensesResponse, sanctionsResponse, academicYearsResponse, semestersResponse] = await Promise.all([
+                    axios.get('http://localhost:9000/categories'),
+                    axios.get('http://localhost:9000/offenses'),
+                    axios.get('http://localhost:9000/sanctions'),
+                    axios.get('http://localhost:9000/academic_years'),
+                    axios.get('http://localhost:9000/semesters')
+                ]);
+
                 setCategories(categoriesResponse.data);
-
-                // Fetch offenses
-                const offensesResponse = await axios.get('http://localhost:9000/offenses');
                 setOffenses(offensesResponse.data);
-
-                // Fetch sanctions
-                const sanctionsResponse = await axios.get('http://localhost:9000/sanctions');
                 setSanctions(sanctionsResponse.data);
-
-                // Fetch academic years
-                const academicYearsResponse = await axios.get('http://localhost:9000/academic_years');
                 setAcademicYears(academicYearsResponse.data);
-
-                // Fetch semesters
-                const semestersResponse = await axios.get('http://localhost:9000/semesters');
                 setSemesters(semestersResponse.data);
             } catch (error) {
                 console.error('Error fetching data:', error);
@@ -61,10 +55,7 @@ const IndividualViolationRecordsTable = ({ records }) => {
 
     const getAcademicYearName = (acadyear_id) => {
         const academicYear = academicYears.find(academicYear => academicYear.acadyear_id === acadyear_id);
-        if (academicYear) {
-            return `${academicYear.start_year} - ${academicYear.end_year}`;
-        }
-        return 'Unknown';
+        return academicYear ? `${academicYear.start_year} - ${academicYear.end_year}` : 'Unknown';
     };
 
     const getSemesterName = (semester_id) => {
@@ -82,30 +73,30 @@ const IndividualViolationRecordsTable = ({ records }) => {
     };
 
     const ViewButton = styled.button`
-    border-radius: 20px;
-    background: linear-gradient(45deg, #015901, #006637, #4AA616);
-    color: white;
-    border: none;
-    padding: 5px 30px;
-    cursor: pointer;
-    text-align: center;
-    &:hover {
-        background: linear-gradient(45deg, #4AA616, #006637, #015901);
-    }
-`;
+        border-radius: 20px;
+        background: linear-gradient(45deg, #015901, #006637, #4AA616);
+        color: white;
+        border: none;
+        padding: 5px 30px;
+        cursor: pointer;
+        text-align: center;
+        &:hover {
+            background: linear-gradient(45deg, #4AA616, #006637, #015901);
+        }
+    `;
 
     return (
         <>
             <Table bordered hover style={{ borderRadius: '20px', marginBottom: '50px', marginLeft: '100px' }}>
                 <thead style={{ backgroundColor: '#f8f9fa' }}>
                     <tr>
-                        <th style={{ width: '5%'}}>ID</th>
-                        <th style={{ width: '12%'}}>Category</th>
+                        <th style={{ width: '5%' }}>ID</th>
+                        <th style={{ width: '12%' }}>Category</th>
                         <th>Offense</th>
-                        <th style={{ width: '15%'}}>Sanction</th>
-                        <th style={{ width: '14%'}}>Academic Year</th>
-                        <th style={{ width: '14%'}}>Semester</th>
-                        <th style={{ width: '12%'}}>Action</th>
+                        <th style={{ width: '15%' }}>Sanction</th>
+                        <th style={{ width: '14%' }}>Academic Year</th>
+                        <th style={{ width: '14%' }}>Semester</th>
+                        <th style={{ width: '12%' }}>Action</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -127,32 +118,18 @@ const IndividualViolationRecordsTable = ({ records }) => {
                 </tbody>
             </Table>
             {/* Modal to display record details */}
-            <Modal show={showDetailsModal} onHide={handleCloseDetailsModal}>
-                <Modal.Header closeButton>
-                    <Modal.Title style={{ marginLeft: '100px' }}>RECORD DETAILS</Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-                    {selectedRecord && (
-                        <div>
-                            <p><strong>Record ID:</strong> {selectedRecord.record_id}</p>
-                            <p><strong>Category:</strong> {getCategoryName(selectedRecord.category_id)}</p>
-                            <p><strong>Offense:</strong> {getOffenseName(selectedRecord.offense_id)}</p>
-                            <p><strong>Sanction:</strong> {getSanctionName(selectedRecord.sanction_id)}</p>
-                            <p><strong>Academic Year:</strong> {getAcademicYearName(selectedRecord.acadyear_id)}</p>
-                            <p><strong>Semester:</strong> {getSemesterName(selectedRecord.semester_id)}</p>
-                            <p><strong>Description:</strong> {selectedRecord.description}</p>
-                            <p><strong>Created At:</strong>{selectedRecord.created_at}</p>
-                        </div>
-                    )}
-                </Modal.Body>
-                <Modal.Footer>
-                    <Button variant="secondary" onClick={handleCloseDetailsModal}>
-                        Close
-                    </Button>
-                </Modal.Footer>
-            </Modal>
+            <ViewViolationModal
+                show={showDetailsModal}
+                onHide={handleCloseDetailsModal}
+                selectedRecord={selectedRecord}
+                getCategoryName={getCategoryName}
+                getOffenseName={getOffenseName}
+                getSanctionName={getSanctionName}
+                getAcademicYearName={getAcademicYearName}
+                getSemesterName={getSemesterName}
+            />
         </>
     );
 };
 
-export default IndividualViolationRecordsTable;
+export default IndividualStudentRecordTable;

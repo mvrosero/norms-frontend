@@ -10,7 +10,7 @@ import { format } from 'date-fns';
 import CoordinatorNavigation from './CoordinatorNavigation';
 import CoordinatorInfo from './CoordinatorInfo';
 import SearchAndFilter from '../general/SearchAndFilter';
-import AddViolationRecordForm from './AddViolationRecord';
+import AddViolationModal from '../../elements/osa coordinator/modals/AddViolationModal';
 
 const IndividualUniformDefiance = () => {
     const [studentInfo, setStudentInfo] = useState(null);
@@ -271,7 +271,7 @@ const IndividualUniformDefiance = () => {
                     <Modal.Title>Add Violation Record</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                    <AddViolationRecordForm handleCloseModal={handleCloseAddViolationModal} />
+                    <AddViolationModal handleCloseModal={handleCloseAddViolationModal} />
                 </Modal.Body>
             </Modal>
             </div>

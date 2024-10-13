@@ -8,8 +8,8 @@ import { AiOutlineClose } from 'react-icons/ai';
 
 import CoordinatorNavigation from './CoordinatorNavigation';
 import CoordinatorInfo from './CoordinatorInfo';
-import IndividualViolationRecordsTable from './IndividualViolationRecordsTable';
-import AddViolationRecordForm from './AddViolationRecord';
+import IndividualStudentRecordTable from '../../elements/osa coordinator/tables/IndividualStudentRecordTable';
+import AddViolationModal from '../../elements/osa coordinator/modals/AddViolationModal';
 import defaultProfile from '../../assets/images/default_profile.jpg'; // Import default profile image
 
 export default function IndividualStudentRecord() {
@@ -128,7 +128,7 @@ export default function IndividualStudentRecord() {
             </div>
             {/* Table for displaying violation records */}
             <div style={{ marginTop: '20px', marginLeft: '20px', marginRight: '30px' }}>
-                <IndividualViolationRecordsTable records={violationRecords} />
+                <IndividualStudentRecordTable records={violationRecords} />
             </div>
             {/* AddViolationRecordForm modal */}
             <Modal show={showAddViolationModal} onHide={handleCloseModal}>
@@ -137,7 +137,7 @@ export default function IndividualStudentRecord() {
                 </Modal.Header>
                 <Modal.Body>
                     {/* Pass handleCloseModal function as onClose prop */}
-                    <AddViolationRecordForm handleCloseModal={handleCloseModal} />
+                    <AddViolationModal handleCloseModal={handleCloseModal} />
                 </Modal.Body>
             </Modal>
         </div>

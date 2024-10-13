@@ -4,7 +4,7 @@ import Swal from 'sweetalert2';
 import { Form, Button, Row, Col } from 'react-bootstrap';
 import { useParams } from 'react-router-dom';
 
-export default function AddViolationRecordForm({ handleCloseModal }) {
+export default function AddViolationModal({ handleCloseModal }) {
     const { student_idnumber } = useParams(); // Get student_idnumber from URL
     const [formData, setFormData] = useState({
         student_idnumber: student_idnumber || '', // Initialize with URL parameter

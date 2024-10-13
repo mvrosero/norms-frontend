@@ -5,7 +5,7 @@ import { FaPlus } from 'react-icons/fa';
 import CoordinatorNavigation from './CoordinatorNavigation';
 import CoordinatorInfo from './CoordinatorInfo';
 import SearchAndFilter from '../general/SearchAndFilter';
-import VRtable from "./IndividualViolationRecordsTable";
+import IndividualStudentRecordTable from '../../elements/osa coordinator/tables/IndividualStudentRecordTable';
 
 export default function CoordinatorViolations() {
     const [isCreateViolationModalOpen, setIsCreateViolationModalOpen] = useState(false);
@@ -46,7 +46,7 @@ export default function CoordinatorViolations() {
                     <FaPlus style={{ marginLeft: '10px' }} /> {/* Plus icon */}
                 </button>
             </div>
-            <VRtable />
+            <IndividualStudentRecordTable />
         </div>
     );
 }
