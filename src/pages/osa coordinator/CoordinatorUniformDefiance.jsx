@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import CoordinatorNavigation from './CoordinatorNavigation';
 import CoordinatorInfo from './CoordinatorInfo';
 import SearchAndFilter from '../general/SearchAndFilter';
-import UniformDefianceTable from './UniformDefianceTable';
+import UniformDefianceTable from '../../elements/osa coordinator/tables/UniformDefianceTable';
 
 export default function CoordinatorUniformDefiance() {
     const [searchQuery, setSearchQuery] = useState('');

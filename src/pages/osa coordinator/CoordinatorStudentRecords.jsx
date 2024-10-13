@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 
 import CoordinatorNavigation from './CoordinatorNavigation';
 import CoordinatorInfo from './CoordinatorInfo';
-import StudentRecordsTable from './StudentRecordsTable';
+import StudentRecordsTable from '../../elements/osa coordinator/tables/StudentRecordsTable';
 import SearchAndFilter from '../general/SearchAndFilter';
 import CreateViolationModal from '../../elements/osa coordinator/modals/CreateViolationModal';
 

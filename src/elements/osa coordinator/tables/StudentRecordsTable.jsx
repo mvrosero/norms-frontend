@@ -6,7 +6,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import PersonIcon from '@mui/icons-material/Person';
 import { useNavigate } from 'react-router';
 import Fuse from 'fuse.js'; // Import fuse.js
-import "../../styles/Students.css";
+import "../../../styles/Students.css"
 
 const StudentRecordsTable = ({ searchQuery }) => {
     const [users, setUsers] = useState([]);

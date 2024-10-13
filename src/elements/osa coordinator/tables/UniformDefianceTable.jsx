@@ -165,7 +165,7 @@ const UniformDefianceTable = ({ searchQuery }) => {
                             <tr key={index}>
                                 <td style={{ textAlign: 'center' }}>{defiance.slip_id}</td>
                                 <td>{defiance.student_idnumber}</td>
-                                <td>{defiance.violation_nature}</td>
+                                <td>{defiance.nature_id}</td>
                                 <td>{defiance.submitted_by}</td>
                                 <td>
                                     <div 
@@ -202,7 +202,7 @@ const UniformDefianceTable = ({ searchQuery }) => {
                         <div>
                             <p><strong>Slip ID:</strong> {selectedRecord.slip_id}</p>
                             <p><strong>Student ID:</strong> {selectedRecord.student_idnumber}</p>
-                            <p><strong>Nature of Violation:</strong> {selectedRecord.violation_nature}</p>
+                            <p><strong>Nature of Violation:</strong> {selectedRecord.nature_id}</p>
                             <p><strong>Files Attached:</strong></p>
                             {renderFile()}
                             <p><strong>Status:</strong> {selectedRecord.status}</p>
