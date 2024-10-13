@@ -42,7 +42,7 @@ import CoordinatorAnnouncements from './pages/osa coordinator/CoordinatorAnnounc
 import CoordinatorSettings from './pages/osa coordinator/CoordinatorSettings';
 import UniformDefianceHistory from './pages/osa coordinator/UniformDefianceHistory';
 import IndividualStudentRecord from './pages/osa coordinator/IndividualStudentRecord';
-import IndividualUniformDefiance from './pages/osa coordinator/IndividualUniformDefianceTable';
+import IndividualUniformDefiance from './pages/osa coordinator/IndividualUniformDefiance';
 import ManageCategories from './pages/osa coordinator/ManageCategories';
 import ManageOffenses from './pages/osa coordinator/ManageOffenses';
 import ManageSanctions from './pages/osa coordinator/ManageSanctions';
