@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import CoordinatorNavigation from './CoordinatorNavigation';
 import CoordinatorInfo from './CoordinatorInfo';
 import SearchAndFilter from '../general/SearchAndFilter';
-import HistoryTable from './HistoryTable';
+import UniformDefianceHistoryTable from '../../elements/osa coordinator/tables/UniformDefianceHistoryTable';
 
 export default function UniformDefianceHistory() {
     const [searchQuery, setSearchQuery] = useState('');
@@ -29,7 +29,7 @@ export default function UniformDefianceHistory() {
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', marginTop: '30px' }}>
                 <SearchAndFilter setSearchQuery={setSearchQuery} />
             </div>
-            <HistoryTable searchQuery={searchQuery} />
+            <UniformDefianceHistoryTable searchQuery={searchQuery} />
         </div>
     );
 }

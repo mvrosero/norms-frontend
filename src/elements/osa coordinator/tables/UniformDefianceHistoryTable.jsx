@@ -1,11 +1,12 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import axios from 'axios';
-import { Modal, Button, Table } from 'react-bootstrap';
+import { Table, Button } from 'react-bootstrap';
 import Swal from 'sweetalert2';
 import { useNavigate, Link } from 'react-router-dom';
 import Fuse from 'fuse.js';
+import ViewHistoryModal from '../modals/ViewHistoryModal';
 
-const HistoryTable = ({ searchQuery }) => {
+const UniformDefianceHistoryTable = ({ searchQuery }) => {
     const [defiances, setDefiances] = useState([]);
     const [deletionStatus, setDeletionStatus] = useState(false); 
     const [showModal, setShowModal] = useState(false); 
@@ -132,39 +133,6 @@ const HistoryTable = ({ searchQuery }) => {
         setShowModal(false);
     };
 
-    const renderFile = () => {
-        if (selectedRecord) {
-            const { photo_video_filenames } = selectedRecord;
-            const filenames = photo_video_filenames.split(',');
-    
-            return filenames.map((filename, index) => {
-                const fileExtension = filename.split('.').pop().toLowerCase();
-                const fileUrl = `http://localhost:9000/uploads/${filename}`;
-        
-                if (fileExtension === 'mp4' || fileExtension === 'avi' || fileExtension === 'mov') {
-                    return (
-                        <div key={index} style={{ marginBottom: '10px' }}>
-                            <a href={fileUrl} target="_blank" rel="noopener noreferrer">
-                                <video controls src={fileUrl} style={{ maxWidth: '100%' }} />
-                            </a>
-                        </div>
-                    );
-                } else if (fileExtension === 'jpg' || fileExtension === 'jpeg' || fileExtension === 'png' || fileExtension === 'gif') {
-                    return (
-                        <div key={index} style={{ marginBottom: '10px' }}>
-                            <a href={fileUrl} target="_blank" rel="noopener noreferrer">
-                                <img src={fileUrl} alt="File Preview" style={{ maxWidth: '100%' }} />
-                            </a>
-                        </div>
-                    );
-                } else {
-                    return <p key={index}>Unsupported file format</p>; 
-                }
-            });
-        }
-        return null;
-    };
-
     // Function to format date
     const formatDate = (dateString) => {
         const options = { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' };
@@ -198,7 +166,7 @@ const HistoryTable = ({ searchQuery }) => {
                                         {defiance.student_idnumber}
                                     </Link>
                                 </td>
-                                <td>{defiance.violation_nature}</td>
+                                <td>{defiance.nature_name}</td>
                                 <td>{employeeNames[defiance.submitted_by] || defiance.submitted_by}</td>
                                 <td>
                                     <span 
@@ -215,32 +183,14 @@ const HistoryTable = ({ searchQuery }) => {
                 </Table>
             </div>
 
-            {/* Modal for displaying record details */}
-            <Modal show={showModal} onHide={handleCloseDetailsModal}>
-                <Modal.Header closeButton>
-                    <Modal.Title>Uniform Defiance Slip Details</Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-                    {selectedRecord && (
-                        <div>
-                            <p><strong>Slip ID:</strong> {selectedRecord.slip_id}</p>
-                            <p><strong>Student ID:</strong> {selectedRecord.student_idnumber}</p>
-                            <p><strong>Violation Nature:</strong> {selectedRecord.violation_nature}</p>
-                            <p><strong>File Preview:</strong></p>
-                            {renderFile()}
-                            <p><strong>Status:</strong> {selectedRecord.status}</p>
-                            <p><strong>Updated At:</strong> {formatDate(selectedRecord.updated_at)}</p>
-                        </div>
-                    )}
-                </Modal.Body>
-                <Modal.Footer>
-                    <Button variant="secondary" onClick={handleCloseDetailsModal}>
-                        Close
-                    </Button>
-                </Modal.Footer>
-            </Modal>
+            {/* Use the imported ViewHistoryModal instead of inline modal */}
+            <ViewHistoryModal 
+                show={showModal} 
+                onHide={handleCloseDetailsModal} 
+                selectedRecord={selectedRecord} 
+            />
         </>
     );
 };
 
-export default HistoryTable;
+export default UniformDefianceHistoryTable;

@@ -38,7 +38,6 @@ import CoordinatorDashboard from './pages/osa coordinator/CoordinatorDashboard';
 import CoordinatorStudentRecords from './pages/osa coordinator/CoordinatorStudentRecords';
 import DepartmentalStudentRecordsTable from './elements/osa coordinator/tables/DepartmentalStudentRecordsTable';
 import CoordinatorUniformDefiance from './pages/osa coordinator/CoordinatorUniformDefiance';
-import CoordinatorViolations from './pages/osa coordinator/CoordinatorViolations';
 import CoordinatorAnnouncements from './pages/osa coordinator/CoordinatorAnnouncements';
 import CoordinatorSettings from './pages/osa coordinator/CoordinatorSettings';
 import UniformDefianceHistory from './pages/osa coordinator/UniformDefianceHistory';
@@ -98,7 +97,6 @@ function App() {
                 <Route path='/coordinator-studentrecords' element={<CoordinatorStudentRecords />} />
                 <Route path="/coordinator-studentrecords/:department_code" element={<DepartmentalStudentRecordsTable />} />
                 <Route path='/coordinator-uniformdefiance' element={<CoordinatorUniformDefiance />} />
-                <Route path='/coordinator-violations' element={<CoordinatorViolations />} />
                 <Route path='/coordinator-announcements' element={<CoordinatorAnnouncements />} />
                 <Route path='/coordinator-settings' element={<CoordinatorSettings />} />
                 <Route path='/uniformdefiance-history' element={<UniformDefianceHistory />} />
