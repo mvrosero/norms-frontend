@@ -159,7 +159,7 @@ const IndividualUniformDefiance = () => {
                     </thead>
                     <tbody>
                         {defiances.map((defiance, index) => (
-                            <tr key={index}>
+                            <tr key={defiance.slip_id}> {/* Use a unique identifier */}
                                 <td style={{ textAlign: 'center' }}>{defiance.slip_id}</td>
                                 <td>{defiance.student_idnumber}</td>
                                 <td>{defiance.nature_name}</td>
@@ -193,7 +193,7 @@ const IndividualUniformDefiance = () => {
             {/* Add Violation Modal */}
             <AddUniformDefianceModal
                 show={showAddViolationModal} // Show modal based on state
-                onHide={handleCloseAddViolationModal} // Close modal on action
+                handleCloseModal={handleCloseAddViolationModal} // Close modal on action
             />
         </>
     );
