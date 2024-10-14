@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Swal from 'sweetalert2';
-import { Modal, Form, Button } from 'react-bootstrap';
 import { FaPlus } from 'react-icons/fa';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -10,6 +9,8 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import CoordinatorNavigation from './CoordinatorNavigation';
 import CoordinatorInfo from './CoordinatorInfo';
 import SearchAndFilter from '../general/SearchAndFilter';
+import AddOffenseModal from '../../elements/osa coordinator/modals/AddOffenseModal';
+import EditOffenseModal from '../../elements/osa coordinator/modals/EditOffenseModal';
 
 export default function ManageOffenses() {
     const navigate = useNavigate();
@@ -17,15 +18,14 @@ export default function ManageOffenses() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [showOffenseModal, setShowOffenseModal] = useState(false);
-    const [showEditModal, setShowEditModal] = useState(false);
+    const [showEditOffenseModal, setShowEditOffenseModal] = useState(false);
     const [offenseFormData, setOffenseFormData] = useState({
         offense_code: '',
         offense_name: '',
-        status: 'active', // Default status
+        status: 'active',
         category_id: '',
-        subcategory_id: '' // Added subcategory_id
+        subcategory_id: ''
     });
-    const [editOffenseId, setEditOffenseId] = useState(null);
 
     useEffect(() => {
         const token = localStorage.getItem('token');
@@ -52,30 +52,33 @@ export default function ManageOffenses() {
         }
     };
 
-    if (loading) return <p>Loading...</p>;
-    if (error) return <p>{error}</p>;
-
-    const handleCreateNewOffense = () => {
-        setShowOffenseModal(true);
-    };
+    const handleCreateNewOffense = () => setShowOffenseModal(true);
 
     const handleCloseOffenseModal = () => {
         setShowOffenseModal(false);
         setOffenseFormData({
             offense_code: '',
             offense_name: '',
-            status: 'active', // Reset to default
+            status: 'active',
             category_id: '',
-            subcategory_id: '' // Reset subcategory_id
+            subcategory_id: ''
+        });
+    };
+
+    const handleCloseEditOffenseModal = () => {
+        setShowEditOffenseModal(false);
+        setOffenseFormData({
+            offense_code: '',
+            offense_name: '',
+            status: 'active',
+            category_id: '',
+            subcategory_id: ''
         });
     };
 
     const handleOffenseChange = (e) => {
         const { name, value } = e.target;
-        setOffenseFormData(prevState => ({
-            ...prevState,
-            [name]: value
-        }));
+        setOffenseFormData(prevState => ({ ...prevState, [name]: value }));
     };
 
     const handleOffenseSubmit = async (e) => {
@@ -100,25 +103,15 @@ export default function ManageOffenses() {
         }
     };
 
-    const handleEditOffense = (id) => {
-        const offense = offenses.find(off => off.offense_id === id);
-        if (offense) {
-            setOffenseFormData({
-                offense_code: offense.offense_code,
-                offense_name: offense.offense_name,
-                status: offense.status,
-                category_id: offense.category_id,
-                subcategory_id: offense.subcategory_id // Added subcategory_id
-            });
-            setEditOffenseId(id);
-            setShowEditModal(true);
-        }
+    const handleEditOffense = (offense) => {
+        setOffenseFormData(offense);
+        setShowEditOffenseModal(true);
     };
 
-    const handleEditSubmit = async (e) => {
+    const handleOffenseUpdateSubmit = async (e) => {
         e.preventDefault();
         try {
-            await axios.put(`http://localhost:9000/offense/${editOffenseId}`, offenseFormData, {
+            await axios.put(`http://localhost:9000/offense/${offenseFormData.offense_id}`, offenseFormData, {
                 headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
             });
             Swal.fire({
@@ -126,7 +119,7 @@ export default function ManageOffenses() {
                 title: 'Offense Updated Successfully!',
                 text: 'The offense has been updated successfully.',
             });
-            setShowEditModal(false);
+            handleCloseEditOffenseModal();
             fetchOffenses();
         } catch (error) {
             Swal.fire({
@@ -137,36 +130,37 @@ export default function ManageOffenses() {
         }
     };
 
-    const handleDeleteOffense = (id) => {
-        Swal.fire({
+    // Define handleDeleteOffense function
+    const handleDeleteOffense = async (offenseId) => {
+        const result = await Swal.fire({
             title: 'Are you sure?',
-            text: "You won't be able to revert this!",
+            text: "This will permanently delete the offense.",
             icon: 'warning',
             showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
             confirmButtonText: 'Yes, delete it!'
-        }).then(async (result) => {
-            if (result.isConfirmed) {
-                try {
-                    await axios.delete(`http://localhost:9000/offense/${id}`, {
-                        headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
-                    });
-                    Swal.fire(
-                        'Deleted!',
-                        'The offense has been deleted.',
-                        'success'
-                    );
-                    fetchOffenses();
-                } catch (error) {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Oops...',
-                        text: 'An error occurred while deleting the offense. Please try again later!',
-                    });
-                }
-            }
         });
+
+        if (result.isConfirmed) {
+            try {
+                await axios.delete(`http://localhost:9000/offenses/${offenseId}`, {
+                    headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+                });
+                Swal.fire(
+                    'Deleted!',
+                    'The offense has been deleted.',
+                    'success'
+                );
+                fetchOffenses();
+            } catch (error) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'An error occurred while deleting the offense. Please try again later!',
+                });
+            }
+        }
     };
 
     const inputStyle = {
@@ -177,19 +171,8 @@ export default function ManageOffenses() {
         width: '100%'
     };
 
-    const buttonStyle = {
-        backgroundColor: '#28a745',
-        color: 'white',
-        fontWeight: '600',
-        padding: '12px 15px',
-        border: 'none',
-        borderRadius: '10px',
-        cursor: 'pointer',
-        marginLeft: '10px',
-        display: 'flex',
-        alignItems: 'center',
-        boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)'
-    };
+    if (loading) return <p>Loading...</p>;
+    if (error) return <p>{error}</p>;
 
     return (
         <div>
@@ -241,8 +224,14 @@ export default function ManageOffenses() {
                                 <td style={{ textAlign: 'center', border: '1px solid #ddd', padding: '8px' }}>{offense.subcategory_id}</td> {/* New Column */}
                                 <td style={{ textAlign: 'center', border: '1px solid #ddd', padding: '8px' }}>{offense.status}</td>
                                 <td style={{ textAlign: 'center', border: '1px solid #ddd', padding: '8px' }}>
-                                    <EditIcon onClick={() => handleEditOffense(offense.offense_id)} style={{ cursor: 'pointer', color: '#28a745' }} />
-                                    <DeleteIcon onClick={() => handleDeleteOffense(offense.offense_id)} style={{ cursor: 'pointer', color: '#d33', marginLeft: '10px' }} />
+                                    <EditIcon
+                                        onClick={() => handleEditOffense(offense)}
+                                        style={{ cursor: 'pointer', color: '#FAD32E' }}
+                                    />
+                                    <DeleteIcon
+                                        onClick={() => handleDeleteOffense(offense.offense_id)}
+                                        style={{ cursor: 'pointer', color: 'red', marginLeft: '10px' }}
+                                    />
                                 </td>
                             </tr>
                         ))}
@@ -250,141 +239,23 @@ export default function ManageOffenses() {
                 </table>
             </div>
 
-            {/* Add Offense Modal */}
-            <Modal show={showOffenseModal} onHide={handleCloseOffenseModal}>
-                <Modal.Header closeButton>
-                    <Modal.Title>Add Offense</Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-                    <Form onSubmit={handleOffenseSubmit}>
-                        <Form.Group className="mb-3">
-                            <Form.Label>Offense Code</Form.Label>
-                            <Form.Control
-                                type="text"
-                                name="offense_code"
-                                value={offenseFormData.offense_code}
-                                onChange={handleOffenseChange}
-                                style={inputStyle}
-                                required
-                            />
-                        </Form.Group>
-                        <Form.Group className="mb-3">
-                            <Form.Label>Offense Name</Form.Label>
-                            <Form.Control
-                                type="text"
-                                name="offense_name"
-                                value={offenseFormData.offense_name}
-                                onChange={handleOffenseChange}
-                                style={inputStyle}
-                                required
-                            />
-                        </Form.Group>
-                        <Form.Group className="mb-3">
-                            <Form.Label>Category ID</Form.Label>
-                            <Form.Control
-                                type="text"
-                                name="category_id"
-                                value={offenseFormData.category_id}
-                                onChange={handleOffenseChange}
-                                style={inputStyle}
-                                required
-                            />
-                        </Form.Group>
-                        <Form.Group className="mb-3">
-                            <Form.Label>Subcategory ID</Form.Label>
-                            <Form.Control
-                                type="text"
-                                name="subcategory_id"
-                                value={offenseFormData.subcategory_id}
-                                onChange={handleOffenseChange}
-                                style={inputStyle}
-                                required
-                            />
-                        </Form.Group>
-                        <Form.Group className="mb-3">
-                            <Form.Label>Status</Form.Label>
-                            <Form.Select
-                                name="status"
-                                value={offenseFormData.status}
-                                onChange={handleOffenseChange}
-                                style={inputStyle}
-                            >
-                                <option value="active">Active</option>
-                                <option value="inactive">Inactive</option>
-                            </Form.Select>
-                        </Form.Group>
-                        <Button type="submit" style={buttonStyle}>Add Offense</Button>
-                    </Form>
-                </Modal.Body>
-            </Modal>
+            <AddOffenseModal
+                show={showOffenseModal}
+                handleClose={handleCloseOffenseModal}
+                offenseFormData={offenseFormData}
+                handleOffenseChange={handleOffenseChange}
+                handleOffenseSubmit={handleOffenseSubmit}
+                inputStyle={inputStyle}
+            />
 
-            {/* Edit Offense Modal */}
-            <Modal show={showEditModal} onHide={() => setShowEditModal(false)}>
-                <Modal.Header closeButton>
-                    <Modal.Title>Edit Offense</Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-                    <Form onSubmit={handleEditSubmit}>
-                        <Form.Group className="mb-3">
-                            <Form.Label>Offense Code</Form.Label>
-                            <Form.Control
-                                type="text"
-                                name="offense_code"
-                                value={offenseFormData.offense_code}
-                                onChange={handleOffenseChange}
-                                style={inputStyle}
-                                required
-                            />
-                        </Form.Group>
-                        <Form.Group className="mb-3">
-                            <Form.Label>Offense Name</Form.Label>
-                            <Form.Control
-                                type="text"
-                                name="offense_name"
-                                value={offenseFormData.offense_name}
-                                onChange={handleOffenseChange}
-                                style={inputStyle}
-                                required
-                            />
-                        </Form.Group>
-                        <Form.Group className="mb-3">
-                            <Form.Label>Category ID</Form.Label>
-                            <Form.Control
-                                type="text"
-                                name="category_id"
-                                value={offenseFormData.category_id}
-                                onChange={handleOffenseChange}
-                                style={inputStyle}
-                                required
-                            />
-                        </Form.Group>
-                        <Form.Group className="mb-3">
-                            <Form.Label>Subcategory ID</Form.Label>
-                            <Form.Control
-                                type="text"
-                                name="subcategory_id"
-                                value={offenseFormData.subcategory_id}
-                                onChange={handleOffenseChange}
-                                style={inputStyle}
-                                required
-                            />
-                        </Form.Group>
-                        <Form.Group className="mb-3">
-                            <Form.Label>Status</Form.Label>
-                            <Form.Select
-                                name="status"
-                                value={offenseFormData.status}
-                                onChange={handleOffenseChange}
-                                style={inputStyle}
-                            >
-                                <option value="active">Active</option>
-                                <option value="inactive">Inactive</option>
-                            </Form.Select>
-                        </Form.Group>
-                        <Button type="submit" style={buttonStyle}>Update Offense</Button>
-                    </Form>
-                </Modal.Body>
-            </Modal>
+            <EditOffenseModal
+                show={showEditOffenseModal}
+                handleClose={handleCloseEditOffenseModal}
+                offenseFormData={offenseFormData}
+                handleOffenseChange={handleOffenseChange}
+                handleOffenseSubmit={handleOffenseUpdateSubmit}
+                inputStyle={inputStyle}
+            />
         </div>
     );
 }

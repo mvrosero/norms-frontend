@@ -274,7 +274,7 @@ export default function CoordinatorAnnouncements() {
         <div>
             <CoordinatorNavigation />
             <CoordinatorInfo />
-            <h6 className="page-title">Manage Announcements</h6>
+            <h6 className="page-title">Announcements</h6>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', marginTop: '30px' }}>
                 <SearchAndFilter />
                 <button
