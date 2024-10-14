@@ -76,9 +76,13 @@ export default function ManageCategories() {
     const handleCategorySubmit = async (e) => {
         e.preventDefault();
         try {
+            // Debugging: Check the form data before submission
+            console.log('Submitting Category:', categoryFormData);
+
             await axios.post('http://localhost:9000/register-category', categoryFormData, {
                 headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
             });
+
             Swal.fire({
                 icon: 'success',
                 title: 'Category Added Successfully!',
@@ -113,6 +117,7 @@ export default function ManageCategories() {
             await axios.put(`http://localhost:9000/category/${editCategoryId}`, categoryFormData, {
                 headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
             });
+
             Swal.fire({
                 icon: 'success',
                 title: 'Category Updated Successfully!',
@@ -225,7 +230,7 @@ export default function ManageCategories() {
                             <tr key={category.category_id} style={{ backgroundColor: index % 2 === 0 ? 'white' : '#f2f2f2' }}>
                                 <td style={{ textAlign: 'center', border: '1px solid #ddd', padding: '8px' }}>{category.category_id}</td>
                                 <td style={{ textAlign: 'center', border: '1px solid #ddd', padding: '8px' }}>{category.category_name}</td>
-                                <td style={{ textAlign: 'center', border: '1px solid #ddd', padding: '8px' }}>{category.status}</td> {/* Displaying Status */}
+                                <td style={{ textAlign: 'center', border: '1px solid #ddd', padding: '8px' }}>{category.status}</td> {/* Display Status */}
                                 <td style={{ textAlign: 'center', border: '1px solid #ddd', padding: '8px' }}>
                                     <EditIcon onClick={() => handleEditCategory(category.category_id)} style={{ cursor: 'pointer', color: 'blue' }} />
                                     <DeleteIcon onClick={() => handleDeleteCategory(category.category_id)} style={{ cursor: 'pointer', color: 'red', marginLeft: '10px' }} />
@@ -236,31 +241,31 @@ export default function ManageCategories() {
                 </table>
             </div>
 
-            {/* Create Category Modal */}
+            {/* Add Category Modal */}
             <Modal show={showCategoryModal} onHide={handleCloseCategoryModal}>
                 <Modal.Header closeButton>
-                    <Modal.Title>Add New Category</Modal.Title>
+                    <Modal.Title>Add Category</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                     <Form onSubmit={handleCategorySubmit}>
-                        <Form.Group controlId="category_name">
+                        <Form.Group controlId="formCategoryName">
                             <Form.Label>Category Name</Form.Label>
-                            <Form.Control
-                                type="text"
-                                name="category_name"
-                                value={categoryFormData.category_name}
-                                onChange={handleCategoryChange}
-                                required
-                                style={inputStyle}
+                            <Form.Control 
+                                type="text" 
+                                name="category_name" 
+                                value={categoryFormData.category_name} 
+                                onChange={handleCategoryChange} 
+                                required 
+                                style={inputStyle} 
                             />
                         </Form.Group>
-                        <Form.Group controlId="status">
+                        <Form.Group controlId="formCategoryStatus">
                             <Form.Label>Status</Form.Label>
-                            <Form.Select
-                                name="status"
-                                value={categoryFormData.status}
-                                onChange={handleCategoryChange}
-                                required
+                            <Form.Select 
+                                name="status" 
+                                value={categoryFormData.status} 
+                                onChange={handleCategoryChange} 
+                                required 
                                 style={inputStyle}
                             >
                                 <option value="">Select Status</option>
@@ -268,7 +273,9 @@ export default function ManageCategories() {
                                 <option value="Inactive">Inactive</option>
                             </Form.Select>
                         </Form.Group>
-                        <Button type="submit" style={buttonStyle}>Add Category</Button>
+                        <Button type="submit" style={buttonStyle}>
+                            Add Category
+                        </Button>
                     </Form>
                 </Modal.Body>
             </Modal>
@@ -280,32 +287,33 @@ export default function ManageCategories() {
                 </Modal.Header>
                 <Modal.Body>
                     <Form onSubmit={handleEditSubmit}>
-                        <Form.Group controlId="category_name">
+                        <Form.Group controlId="formCategoryName">
                             <Form.Label>Category Name</Form.Label>
-                            <Form.Control
-                                type="text"
-                                name="category_name"
-                                value={categoryFormData.category_name}
-                                onChange={handleCategoryChange}
-                                required
-                                style={inputStyle}
+                            <Form.Control 
+                                type="text" 
+                                name="category_name" 
+                                value={categoryFormData.category_name} 
+                                onChange={handleCategoryChange} 
+                                required 
+                                style={inputStyle} 
                             />
                         </Form.Group>
-                        <Form.Group controlId="status">
+                        <Form.Group controlId="formCategoryStatus">
                             <Form.Label>Status</Form.Label>
-                            <Form.Select
-                                name="status"
-                                value={categoryFormData.status}
-                                onChange={handleCategoryChange}
+                            <Form.Select 
+                                name="status" 
+                                value={categoryFormData.status} // Default to current status
+                                onChange={handleCategoryChange} // Handle changes
                                 required
-                                style={inputStyle}
+                                style={inputStyle} 
                             >
-                                <option value="">Select Status</option>
-                                <option value="Active">Active</option>
-                                <option value="Inactive">Inactive</option>
+                                <option value="active">Active</option>
+                                <option value="inactive">Inactive</option>
                             </Form.Select>
                         </Form.Group>
-                        <Button type="submit" style={buttonStyle}>Update Category</Button>
+                        <Button type="submit" style={buttonStyle}>
+                            Update Category
+                        </Button>
                     </Form>
                 </Modal.Body>
             </Modal>
