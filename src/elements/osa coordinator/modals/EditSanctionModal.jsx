@@ -39,7 +39,9 @@ const EditSanctionModal = ({ show, handleClose, handleSubmit, sanctionFormData, 
                             name="status" 
                             value={sanctionFormData.status}  
                             onChange={handleChange} 
+                            required // This ensures a selection is mandatory
                         >
+                            <option value="">Select status</option>
                             <option value="Active">Active</option>
                             <option value="Inactive">Inactive</option>
                         </Form.Control>
