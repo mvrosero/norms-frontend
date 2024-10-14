@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Swal from 'sweetalert2';
-import { Modal, Form, Button } from 'react-bootstrap';
 import { FaPlus } from 'react-icons/fa';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -10,6 +9,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import CoordinatorNavigation from './CoordinatorNavigation';
 import CoordinatorInfo from './CoordinatorInfo';
 import SearchAndFilter from '../general/SearchAndFilter';
+import AddSanctionModal from '../../elements/osa coordinator/modals/AddSanctionModal';
 
 export default function ManageSanctions() {
     const navigate = useNavigate();
@@ -40,12 +40,12 @@ export default function ManageSanctions() {
     const fetchSanctions = async () => {
         try {
             const response = await axios.get('http://localhost:9000/sanctions', {
-                headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+                headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` },
             });
             setSanctions(response.data);
-            setLoading(false);
         } catch (error) {
             setError('Failed to fetch sanctions');
+        } finally {
             setLoading(false);
         }
     };
@@ -78,7 +78,7 @@ export default function ManageSanctions() {
         e.preventDefault();
         try {
             await axios.post('http://localhost:9000/register-sanction', sanctionFormData, {
-                headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+                headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` },
             });
             Swal.fire({
                 icon: 'success',
@@ -113,7 +113,7 @@ export default function ManageSanctions() {
         e.preventDefault();
         try {
             await axios.put(`http://localhost:9000/sanction/${editSanctionId}`, sanctionFormData, {
-                headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+                headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` },
             });
             Swal.fire({
                 icon: 'success',
@@ -144,13 +144,9 @@ export default function ManageSanctions() {
             if (result.isConfirmed) {
                 try {
                     await axios.delete(`http://localhost:9000/sanction/${id}`, {
-                        headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+                        headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` },
                     });
-                    Swal.fire(
-                        'Deleted!',
-                        'The sanction has been deleted.',
-                        'success'
-                    );
+                    Swal.fire('Deleted!', 'The sanction has been deleted.', 'success');
                     fetchSanctions();
                 } catch (error) {
                     Swal.fire({
@@ -161,28 +157,6 @@ export default function ManageSanctions() {
                 }
             }
         });
-    };
-
-    const inputStyle = {
-        backgroundColor: '#f2f2f2',
-        border: '1px solid #ced4da',
-        borderRadius: '.25rem',
-        height: '40px',
-        width: '100%'
-    };
-
-    const buttonStyle = {
-        backgroundColor: '#28a745',
-        color: 'white',
-        fontWeight: '600',
-        padding: '12px 15px',
-        border: 'none',
-        borderRadius: '10px',
-        cursor: 'pointer',
-        marginLeft: '10px',
-        display: 'flex',
-        alignItems: 'center',
-        boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)'
     };
 
     return (
@@ -205,31 +179,30 @@ export default function ManageSanctions() {
                         marginLeft: '10px',
                         display: 'flex',
                         alignItems: 'center',
-                        boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
                     }}
                 >
                     Add Sanction
                     <FaPlus style={{ marginLeft: '10px' }} />
                 </button>
             </div>
-            <div style={{ margin: 'auto', marginTop: '20px', marginBottom: '30px', marginLeft: '20px', paddingLeft: '20px' }}>
-                <table style={{ width: '90%', borderCollapse: 'collapse', marginLeft: '90px', paddingLeft: '50px' }}>
+            <div style={{ margin: 'auto', marginTop: '20px', marginBottom: '30px' }}>
+                <table style={{ width: '90%', borderCollapse: 'collapse', marginLeft: '90px' }}>
                     <thead>
                         <tr>
-                            <th style={{ textAlign: 'center', border: '1px solid #ddd', padding: '8px', backgroundColor: '#a8a8a8', color: 'white' }}>ID</th>
-                            <th style={{ textAlign: 'center', border: '1px solid #ddd', padding: '8px', backgroundColor: '#a8a8a8', color: 'white' }}>Sanction Code</th>
-                            <th style={{ textAlign: 'center', border: '1px solid #ddd', padding: '8px', backgroundColor: '#a8a8a8', color: 'white' }}>Sanction Name</th>
-                            <th style={{ textAlign: 'center', border: '1px solid #ddd', padding: '8px', backgroundColor: '#a8a8a8', color: 'white' }}>Status</th>
-                            <th style={{ textAlign: 'center', border: '1px solid #ddd', padding: '8px', backgroundColor: '#a8a8a8', color: 'white' }}>Actions</th>
+                            <th>ID</th>
+                            <th>Sanction Code</th>
+                            <th>Sanction Name</th>
+                            <th>Status</th>
+                            <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {sanctions.map((sanction, index) => (
-                            <tr key={sanction.sanction_id} style={{ backgroundColor: index % 2 === 0 ? 'white' : '#f2f2f2' }}>
-                                <td style={{ textAlign: 'center', border: '1px solid #ddd', padding: '8px' }}>{sanction.sanction_id}</td>
-                                <td style={{ textAlign: 'center', border: '1px solid #ddd', padding: '8px' }}>{sanction.sanction_code}</td>
-                                <td style={{ textAlign: 'center', border: '1px solid #ddd', padding: '8px' }}>{sanction.sanction_name}</td>
-                                <td style={{ textAlign: 'center', border: '1px solid #ddd', padding: '8px' }}>{sanction.status}</td>
+                        {sanctions.map((sanction) => (
+                            <tr key={sanction.sanction_id}>
+                                <td>{sanction.sanction_id}</td>
+                                <td>{sanction.sanction_code}</td>
+                                <td>{sanction.sanction_name}</td>
+                                <td>{sanction.status}</td>
                                 <td style={{ textAlign: 'center', border: '1px solid #ddd', padding: '8px' }}>
                                     <EditIcon 
                                         onClick={() => handleEditSanction(sanction.sanction_id)} 
@@ -247,98 +220,11 @@ export default function ManageSanctions() {
             </div>
 
             {/* Add Sanction Modal */}
-            <Modal show={showSanctionModal} onHide={handleCloseSanctionModal}>
-                <Modal.Header closeButton>
-                    <Modal.Title>Add New Sanction</Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-                    <Form onSubmit={handleSanctionSubmit}>
-                        <Form.Group className="mb-3">
-                            <Form.Label>Sanction Code</Form.Label>
-                            <Form.Control 
-                                type="text" 
-                                name="sanction_code" 
-                                value={sanctionFormData.sanction_code}
-                                onChange={handleSanctionChange}
-                                style={inputStyle}
-                                required
-                            />
-                        </Form.Group>
-                        <Form.Group className="mb-3">
-                            <Form.Label>Sanction Name</Form.Label>
-                            <Form.Control 
-                                type="text" 
-                                name="sanction_name" 
-                                value={sanctionFormData.sanction_name}
-                                onChange={handleSanctionChange}
-                                style={inputStyle}
-                                required
-                            />
-                        </Form.Group>
-                        <Form.Group className="mb-3">
-                            <Form.Label>Status</Form.Label>
-                            <Form.Control 
-                                type="text" 
-                                name="status" 
-                                value={sanctionFormData.status}
-                                onChange={handleSanctionChange}
-                                style={inputStyle}
-                                required
-                            />
-                        </Form.Group>
-                        <Button type="submit" style={buttonStyle}>
-                            Add Sanction
-                        </Button>
-                    </Form>
-                </Modal.Body>
-            </Modal>
-
-            {/* Edit Sanction Modal */}
-            <Modal show={showEditModal} onHide={() => setShowEditModal(false)}>
-                <Modal.Header closeButton>
-                    <Modal.Title>Edit Sanction</Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-                    <Form onSubmit={handleEditSubmit}>
-                        <Form.Group className="mb-3">
-                            <Form.Label>Sanction Code</Form.Label>
-                            <Form.Control 
-                                type="text" 
-                                name="sanction_code" 
-                                value={sanctionFormData.sanction_code}
-                                onChange={handleSanctionChange}
-                                style={inputStyle}
-                                required
-                            />
-                        </Form.Group>
-                        <Form.Group className="mb-3">
-                            <Form.Label>Sanction Name</Form.Label>
-                            <Form.Control 
-                                type="text" 
-                                name="sanction_name" 
-                                value={sanctionFormData.sanction_name}
-                                onChange={handleSanctionChange}
-                                style={inputStyle}
-                                required
-                            />
-                        </Form.Group>
-                        <Form.Group className="mb-3">
-                            <Form.Label>Status</Form.Label>
-                            <Form.Control 
-                                type="text" 
-                                name="status" 
-                                value={sanctionFormData.status}
-                                onChange={handleSanctionChange}
-                                style={inputStyle}
-                                required
-                            />
-                        </Form.Group>
-                        <Button type="submit" style={buttonStyle}>
-                            Save Changes
-                        </Button>
-                    </Form>
-                </Modal.Body>
-            </Modal>
+            <AddSanctionModal 
+                show={showSanctionModal} 
+                onHide={handleCloseSanctionModal} 
+                fetchSanctions={fetchSanctions} 
+            />
         </div>
     );
 }
