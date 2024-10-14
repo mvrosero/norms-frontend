@@ -1,59 +1,55 @@
+// EditSanctionModal.js
 import React from 'react';
 import { Modal, Form, Button } from 'react-bootstrap';
 
-const EditSanctionModal = ({ 
-    show, 
-    onHide, 
-    sanctionFormData, 
-    handleSanctionChange, 
-    handleEditSubmit 
-}) => {
+const EditSanctionModal = ({ show, handleClose, handleSubmit, sanctionFormData, handleChange, isSubmitting }) => {
     return (
-        <Modal show={show} onHide={onHide}>
+        <Modal show={show} onHide={handleClose}>
             <Modal.Header closeButton>
                 <Modal.Title>Edit Sanction</Modal.Title>
             </Modal.Header>
             <Modal.Body>
-                <Form onSubmit={handleEditSubmit}>
-                    <Form.Group className="mb-3">
+                <Form onSubmit={handleSubmit}>
+                    <Form.Group controlId="sanction_code">
                         <Form.Label>Sanction Code</Form.Label>
                         <Form.Control 
                             type="text" 
                             name="sanction_code" 
-                            value={sanctionFormData.sanction_code}
-                            onChange={handleSanctionChange}
-                            required
+                            value={sanctionFormData.sanction_code} 
+                            onChange={handleChange} 
+                            required 
+                            placeholder="Enter sanction code"
                         />
                     </Form.Group>
-                    <Form.Group className="mb-3">
+                    <Form.Group controlId="sanction_name">
                         <Form.Label>Sanction Name</Form.Label>
                         <Form.Control 
                             type="text" 
                             name="sanction_name" 
-                            value={sanctionFormData.sanction_name}
-                            onChange={handleSanctionChange}
-                            required
+                            value={sanctionFormData.sanction_name} 
+                            onChange={handleChange} 
+                            required 
+                            placeholder="Enter sanction name"
                         />
                     </Form.Group>
-                    <Form.Group className="mb-3">
+                    <Form.Group controlId="status">
                         <Form.Label>Status</Form.Label>
                         <Form.Control 
-                            as="select"  // Changed to a select dropdown for status
+                            as="select" 
                             name="status" 
-                            value={sanctionFormData.status}
-                            onChange={handleSanctionChange}
-                            required
+                            value={sanctionFormData.status}  
+                            onChange={handleChange} 
                         >
-                            <option value="">Select Status</option>
                             <option value="Active">Active</option>
                             <option value="Inactive">Inactive</option>
                         </Form.Control>
                     </Form.Group>
                     <Button 
+                        variant="primary" 
                         type="submit" 
-                        style={{ backgroundColor: '#FAD32E', color: 'white' }}
+                        disabled={isSubmitting}
                     >
-                        Save Changes
+                        {isSubmitting ? 'Submitting...' : 'Update Sanction'}
                     </Button>
                 </Form>
             </Modal.Body>

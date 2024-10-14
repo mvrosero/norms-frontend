@@ -10,6 +10,7 @@ import CoordinatorNavigation from './CoordinatorNavigation';
 import CoordinatorInfo from './CoordinatorInfo';
 import SearchAndFilter from '../general/SearchAndFilter';
 import AddSanctionModal from '../../elements/osa coordinator/modals/AddSanctionModal';
+import EditSanctionModal from '../../elements/osa coordinator/modals/EditSanctionModal';
 
 export default function ManageSanctions() {
     const navigate = useNavigate();
@@ -24,6 +25,7 @@ export default function ManageSanctions() {
         status: ''
     });
     const [editSanctionId, setEditSanctionId] = useState(null);
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     useEffect(() => {
         const token = localStorage.getItem('token');
@@ -102,7 +104,7 @@ export default function ManageSanctions() {
             setSanctionFormData({
                 sanction_code: sanction.sanction_code,
                 sanction_name: sanction.sanction_name,
-                status: sanction.status
+                status: sanction.status // Ensure this is correctly set
             });
             setEditSanctionId(id);
             setShowEditModal(true);
@@ -111,6 +113,7 @@ export default function ManageSanctions() {
 
     const handleEditSubmit = async (e) => {
         e.preventDefault();
+        setIsSubmitting(true);
         try {
             await axios.put(`http://localhost:9000/sanction/${editSanctionId}`, sanctionFormData, {
                 headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` },
@@ -128,6 +131,8 @@ export default function ManageSanctions() {
                 title: 'Oops...',
                 text: 'An error occurred while updating the sanction. Please try again later!',
             });
+        } finally {
+            setIsSubmitting(false);
         }
     };
 
@@ -224,6 +229,16 @@ export default function ManageSanctions() {
                 show={showSanctionModal} 
                 onHide={handleCloseSanctionModal} 
                 fetchSanctions={fetchSanctions} 
+            />
+
+            {/* Edit Sanction Modal */}
+            <EditSanctionModal 
+                show={showEditModal} 
+                handleClose={() => setShowEditModal(false)} 
+                handleSubmit={handleEditSubmit} 
+                sanctionFormData={sanctionFormData} 
+                handleChange={handleSanctionChange} 
+                isSubmitting={isSubmitting} 
             />
         </div>
     );
