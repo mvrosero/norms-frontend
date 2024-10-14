@@ -1,3 +1,4 @@
+// ManageCategories.js
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
@@ -10,6 +11,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import CoordinatorNavigation from './CoordinatorNavigation';
 import CoordinatorInfo from './CoordinatorInfo';
 import SearchAndFilter from '../general/SearchAndFilter';
+import AddCategoryModal from '../../elements/osa coordinator/modals/AddCategoryModal';
 
 export default function ManageCategories() {
     const navigate = useNavigate();
@@ -63,36 +65,6 @@ export default function ManageCategories() {
         setCategoryFormData({
             category_name: ''
         });
-    };
-
-    const handleCategoryChange = (e) => {
-        const { name, value } = e.target;
-        setCategoryFormData(prevState => ({
-            ...prevState,
-            [name]: value
-        }));
-    };
-
-    const handleCategorySubmit = async (e) => {
-        e.preventDefault();
-        try {
-            await axios.post('http://localhost:9000/register-category', categoryFormData, {
-                headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
-            });
-            Swal.fire({
-                icon: 'success',
-                title: 'Category Added Successfully!',
-                text: 'The new category has been added successfully.',
-            });
-            handleCloseCategoryModal();
-            fetchCategories();
-        } catch (error) {
-            Swal.fire({
-                icon: 'error',
-                title: 'Oops...',
-                text: 'An error occurred while adding the category. Please try again later!',
-            });
-        }
     };
 
     const handleEditCategory = (id) => {
@@ -160,28 +132,6 @@ export default function ManageCategories() {
         });
     };
 
-    const inputStyle = {
-        backgroundColor: '#f2f2f2',
-        border: '1px solid #ced4da',
-        borderRadius: '.25rem',
-        height: '40px',
-        width: '100%'
-    };
-
-    const buttonStyle = {
-        backgroundColor: '#28a745',
-        color: 'white',
-        fontWeight: '600',
-        padding: '12px 15px',
-        border: 'none',
-        borderRadius: '10px',
-        cursor: 'pointer',
-        marginLeft: '10px',
-        display: 'flex',
-        alignItems: 'center',
-        boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)'
-    };
-
     return (
         <div>
             <CoordinatorNavigation />
@@ -215,22 +165,24 @@ export default function ManageCategories() {
                         <tr>
                             <th style={{ textAlign: 'center', border: '1px solid #ddd', padding: '8px', backgroundColor: '#a8a8a8', color: 'white' }}>ID</th>
                             <th style={{ textAlign: 'center', border: '1px solid #ddd', padding: '8px', backgroundColor: '#a8a8a8', color: 'white' }}>Category Name</th>
+                            <th style={{ textAlign: 'center', border: '1px solid #ddd', padding: '8px', backgroundColor: '#a8a8a8', color: 'white' }}>Status</th>
                             <th style={{ textAlign: 'center', border: '1px solid #ddd', padding: '8px', backgroundColor: '#a8a8a8', color: 'white' }}>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {categories.map((category, index) => (
-                            <tr key={category.category_id} style={{ backgroundColor: index % 2 === 0 ? 'white' : '#f2f2f2' }}>
-                                <td style={{ textAlign: 'center', border: '1px solid #ddd', padding: '8px' }}>{category.category_id}</td>
-                                <td style={{ textAlign: 'center', border: '1px solid #ddd', padding: '8px' }}>{category.category_name}</td>
-                                <td style={{ textAlign: 'center', border: '1px solid #ddd', padding: '8px' }}>
+                        {categories.map(category => (
+                            <tr key={category.category_id}>
+                                <td style={{ border: '1px solid #ddd', padding: '8px', textAlign: 'center' }}>{category.category_id}</td>
+                                <td style={{ border: '1px solid #ddd', padding: '8px', textAlign: 'center' }}>{category.category_name}</td>
+                                <td style={{ border: '1px solid #ddd', padding: '8px', textAlign: 'center' }}>{category.status}</td>
+                                <td style={{ border: '1px solid #ddd', padding: '8px', textAlign: 'center' }}>
                                     <EditIcon 
                                         onClick={() => handleEditCategory(category.category_id)} 
-                                        style={{ cursor: 'pointer', color: '#007bff' }}
+                                        style={{ cursor: 'pointer', color: '#007bff' }} 
                                     />
                                     <DeleteIcon 
                                         onClick={() => handleDeleteCategory(category.category_id)} 
-                                        style={{ cursor: 'pointer', color: '#dc3545', marginLeft: '10px' }}
+                                        style={{ cursor: 'pointer', color: 'red', marginLeft: '10px' }} 
                                     />
                                 </td>
                             </tr>
@@ -238,56 +190,17 @@ export default function ManageCategories() {
                     </tbody>
                 </table>
             </div>
-
-            {/* Add Category Modal */}
-            <Modal show={showCategoryModal} onHide={handleCloseCategoryModal}>
-                <Modal.Header closeButton>
-                    <Modal.Title>Add New Category</Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-                    <Form onSubmit={handleCategorySubmit}>
-                        <Form.Group className="mb-3">
-                            <Form.Label>Category Name</Form.Label>
-                            <Form.Control 
-                                type="text" 
-                                name="category_name" 
-                                value={categoryFormData.category_name}
-                                onChange={handleCategoryChange}
-                                style={inputStyle}
-                                required
-                            />
-                        </Form.Group>
-                        <Button type="submit" style={buttonStyle}>
-                            Add Category
-                        </Button>
-                    </Form>
-                </Modal.Body>
-            </Modal>
-
-            {/* Edit Category Modal */}
-            <Modal show={showEditModal} onHide={() => setShowEditModal(false)}>
-                <Modal.Header closeButton>
-                    <Modal.Title>Edit Category</Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-                    <Form onSubmit={handleEditSubmit}>
-                        <Form.Group className="mb-3">
-                            <Form.Label>Category Name</Form.Label>
-                            <Form.Control 
-                                type="text" 
-                                name="category_name" 
-                                value={categoryFormData.category_name}
-                                onChange={handleCategoryChange}
-                                style={inputStyle}
-                                required
-                            />
-                        </Form.Group>
-                        <Button type="submit" style={buttonStyle}>
-                            Save Changes
-                        </Button>
-                    </Form>
-                </Modal.Body>
-            </Modal>
+            
+            {/* Add the new modal here */}
+            <AddCategoryModal 
+                show={showCategoryModal} 
+                onHide={handleCloseCategoryModal} 
+                categoryFormData={categoryFormData} 
+                setCategoryFormData={setCategoryFormData} 
+                fetchCategories={fetchCategories} 
+            />
+            
+            {/* Edit Category Modal can be placed here similarly if needed */}
         </div>
     );
 }
