@@ -3,13 +3,15 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Swal from 'sweetalert2';
 import { Modal, Form, Button } from 'react-bootstrap';
-import { FaPlus } from 'react-icons/fa';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
+import { FaPlus } from 'react-icons/fa';
 
 import CoordinatorNavigation from './CoordinatorNavigation';
 import CoordinatorInfo from './CoordinatorInfo';
 import SearchAndFilter from '../general/SearchAndFilter';
+import AddCategoryModal from '../../elements/osa coordinator/modals/AddCategoryModal';
+import EditCategoryModal from '../../elements/osa coordinator/modals/EditCategoryModal';
 
 export default function ManageCategories() {
     const navigate = useNavigate();
@@ -20,7 +22,7 @@ export default function ManageCategories() {
     const [showEditModal, setShowEditModal] = useState(false);
     const [categoryFormData, setCategoryFormData] = useState({
         category_name: '',
-        status: '' // Add status to the form data
+        status: ''
     });
     const [editCategoryId, setEditCategoryId] = useState(null);
 
@@ -61,42 +63,8 @@ export default function ManageCategories() {
         setShowCategoryModal(false);
         setCategoryFormData({
             category_name: '',
-            status: '' // Reset status
+            status: ''
         });
-    };
-
-    const handleCategoryChange = (e) => {
-        const { name, value } = e.target;
-        setCategoryFormData(prevState => ({
-            ...prevState,
-            [name]: value
-        }));
-    };
-
-    const handleCategorySubmit = async (e) => {
-        e.preventDefault();
-        try {
-            // Debugging: Check the form data before submission
-            console.log('Submitting Category:', categoryFormData);
-
-            await axios.post('http://localhost:9000/register-category', categoryFormData, {
-                headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
-            });
-
-            Swal.fire({
-                icon: 'success',
-                title: 'Category Added Successfully!',
-                text: 'The new category has been added successfully.',
-            });
-            handleCloseCategoryModal();
-            fetchCategories();
-        } catch (error) {
-            Swal.fire({
-                icon: 'error',
-                title: 'Oops...',
-                text: 'An error occurred while adding the category. Please try again later!',
-            });
-        }
     };
 
     const handleEditCategory = (id) => {
@@ -104,33 +72,10 @@ export default function ManageCategories() {
         if (category) {
             setCategoryFormData({
                 category_name: category.category_name,
-                status: category.status // Set status for editing
+                status: category.status
             });
             setEditCategoryId(id);
             setShowEditModal(true);
-        }
-    };
-
-    const handleEditSubmit = async (e) => {
-        e.preventDefault();
-        try {
-            await axios.put(`http://localhost:9000/category/${editCategoryId}`, categoryFormData, {
-                headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
-            });
-
-            Swal.fire({
-                icon: 'success',
-                title: 'Category Updated Successfully!',
-                text: 'The category has been updated successfully.',
-            });
-            setShowEditModal(false);
-            fetchCategories();
-        } catch (error) {
-            Swal.fire({
-                icon: 'error',
-                title: 'Oops...',
-                text: 'An error occurred while updating the category. Please try again later!',
-            });
         }
     };
 
@@ -166,28 +111,6 @@ export default function ManageCategories() {
         });
     };
 
-    const inputStyle = {
-        backgroundColor: '#f2f2f2',
-        border: '1px solid #ced4da',
-        borderRadius: '.25rem',
-        height: '40px',
-        width: '100%'
-    };
-
-    const buttonStyle = {
-        backgroundColor: '#28a745',
-        color: 'white',
-        fontWeight: '600',
-        padding: '12px 15px',
-        border: 'none',
-        borderRadius: '10px',
-        cursor: 'pointer',
-        marginLeft: '10px',
-        display: 'flex',
-        alignItems: 'center',
-        boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)'
-    };
-
     return (
         <div>
             <CoordinatorNavigation />
@@ -215,8 +138,8 @@ export default function ManageCategories() {
                     <FaPlus style={{ marginLeft: '10px' }} />
                 </button>
             </div>
-            <div style={{ margin: 'auto', marginTop: '20px', marginBottom: '30px', marginLeft: '20px', paddingLeft: '20px' }}>
-                <table style={{ width: '90%', borderCollapse: 'collapse', marginLeft: '90px', paddingLeft: '50px' }}>
+
+            <table style={{ width: '90%', borderCollapse: 'collapse', marginLeft: '90px', paddingLeft: '50px', marginBottom: '50px' }}>
                     <thead>
                         <tr>
                             <th style={{ textAlign: 'center', border: '1px solid #ddd', padding: '8px', backgroundColor: '#a8a8a8', color: 'white' }}>ID</th>
@@ -239,84 +162,22 @@ export default function ManageCategories() {
                         ))}
                     </tbody>
                 </table>
-            </div>
 
-            {/* Add Category Modal */}
-            <Modal show={showCategoryModal} onHide={handleCloseCategoryModal}>
-                <Modal.Header closeButton>
-                    <Modal.Title>Add Category</Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-                    <Form onSubmit={handleCategorySubmit}>
-                        <Form.Group controlId="formCategoryName">
-                            <Form.Label>Category Name</Form.Label>
-                            <Form.Control 
-                                type="text" 
-                                name="category_name" 
-                                value={categoryFormData.category_name} 
-                                onChange={handleCategoryChange} 
-                                required 
-                                style={inputStyle} 
-                            />
-                        </Form.Group>
-                        <Form.Group controlId="formCategoryStatus">
-                            <Form.Label>Status</Form.Label>
-                            <Form.Select 
-                                name="status" 
-                                value={categoryFormData.status} 
-                                onChange={handleCategoryChange} 
-                                required 
-                                style={inputStyle}
-                            >
-                                <option value="">Select Status</option>
-                                <option value="Active">Active</option>
-                                <option value="Inactive">Inactive</option>
-                            </Form.Select>
-                        </Form.Group>
-                        <Button type="submit" style={buttonStyle}>
-                            Add Category
-                        </Button>
-                    </Form>
-                </Modal.Body>
-            </Modal>
-
-            {/* Edit Category Modal */}
-            <Modal show={showEditModal} onHide={() => setShowEditModal(false)}>
-                <Modal.Header closeButton>
-                    <Modal.Title>Edit Category</Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-                    <Form onSubmit={handleEditSubmit}>
-                        <Form.Group controlId="formCategoryName">
-                            <Form.Label>Category Name</Form.Label>
-                            <Form.Control 
-                                type="text" 
-                                name="category_name" 
-                                value={categoryFormData.category_name} 
-                                onChange={handleCategoryChange} 
-                                required 
-                                style={inputStyle} 
-                            />
-                        </Form.Group>
-                        <Form.Group controlId="formCategoryStatus">
-                            <Form.Label>Status</Form.Label>
-                            <Form.Select 
-                                name="status" 
-                                value={categoryFormData.status} // Default to current status
-                                onChange={handleCategoryChange} // Handle changes
-                                required
-                                style={inputStyle} 
-                            >
-                                <option value="active">Active</option>
-                                <option value="inactive">Inactive</option>
-                            </Form.Select>
-                        </Form.Group>
-                        <Button type="submit" style={buttonStyle}>
-                            Update Category
-                        </Button>
-                    </Form>
-                </Modal.Body>
-            </Modal>
+            <AddCategoryModal 
+                show={showCategoryModal} 
+                handleClose={handleCloseCategoryModal} 
+                categoryFormData={categoryFormData} 
+                setCategoryFormData={setCategoryFormData} 
+                fetchCategories={fetchCategories} 
+            />
+            <EditCategoryModal 
+                show={showEditModal} 
+                handleClose={() => setShowEditModal(false)} 
+                categoryFormData={categoryFormData} 
+                setCategoryFormData={setCategoryFormData} 
+                fetchCategories={fetchCategories} 
+                editCategoryId={editCategoryId} 
+            />
         </div>
     );
 }
