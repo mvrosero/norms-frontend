@@ -1,4 +1,3 @@
-// EditSanctionModal.js
 import React from 'react';
 import { Modal, Form, Button } from 'react-bootstrap';
 
@@ -37,11 +36,10 @@ const EditSanctionModal = ({ show, handleClose, handleSubmit, sanctionFormData, 
                         <Form.Control 
                             as="select" 
                             name="status" 
-                            value={sanctionFormData.status}  
+                            value={sanctionFormData.status || ''}  // Fallback to empty string if undefined
                             onChange={handleChange} 
-                            required // This ensures a selection is mandatory
+                            required 
                         >
-                            <option value="">Select status</option>
                             <option value="Active">Active</option>
                             <option value="Inactive">Inactive</option>
                         </Form.Control>
