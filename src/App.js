@@ -61,6 +61,15 @@ import StudentAnnouncements from './pages/student/StudentAnnouncements';
 import StudentLegislations from './pages/student/StudentLegislation';
 import StudentMyRecords from './pages/student/StudentMyRecords';
 import StudentSettings from './pages/student/StudentSettings';
+import StudentFAQs from './pages/student/StudentFAQs';
+import StudentFAQsDataPrivacy from './pages/student/StudentFAQsDataPrivacy';
+import StudentFAQssGeneral from './pages/student/StudentFAQsGeneral';
+import StudentFAQsPolicies from './pages/student/StudentFAQsPolicies';
+import StudentFAQsServices from './pages/student/StudentFAQsServices';
+import StudentFAQsSystem from './pages/student/StudentFAQsSystem';
+import StudentFAQsViolations from './pages/student/StudentFAQsViolations';
+import StudentFAQsGeneral from './pages/student/StudentFAQsGeneral';
+
 
 function App() {
   return (
@@ -118,6 +127,13 @@ function App() {
                 <Route path='/legislations' element={<StudentLegislations />} />
                 <Route path='/student-myrecords' element={<StudentMyRecords />} />
                 <Route path='/student-settings' element={<StudentSettings />} />
+                <Route path='/student-faqs' element={<StudentFAQs />} />
+                <Route path='/student-faqs/data-privacy' element={<StudentFAQsDataPrivacy />} />
+                <Route path='/student-faqs/general' element={<StudentFAQsGeneral />} />
+                <Route path='/student-faqs/policies' element={<StudentFAQsPolicies />} />
+                <Route path='/student-faqs/services' element={<StudentFAQsServices />} />
+                <Route path='/student-faqs/system' element={<StudentFAQsSystem />} />
+                <Route path='/student-faqs/violations' element={<StudentFAQsViolations />} />
               </Routes>
             </Col>
           </Row>

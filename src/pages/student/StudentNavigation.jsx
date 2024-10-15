@@ -8,6 +8,7 @@ import { MdAnnouncement } from "react-icons/md";
 import { PiGavelFill } from "react-icons/pi";
 import { MdInfo } from "react-icons/md";
 import { FaGear } from "react-icons/fa6";
+import { GiHelp } from "react-icons/gi";
 
 import logo from "../../assets/images/norms_logo.png";
 import "../general/General.css";
@@ -31,7 +32,9 @@ export default function StudentNavigation() {
       path = "student-settings"; 
     } else if (menuItem === "Announcements") {
       path = "student-announcements"; 
-    }
+    } else if (menuItem === "FAQs") { 
+      path = "student-faqs"; 
+  }
     navigate(`/${path}`);
   };
 
@@ -134,6 +137,13 @@ export default function StudentNavigation() {
                       active={activeMenuItem === "Legislations"}
                     >
                       Legislations
+                    </MenuItem>
+                    <MenuItem
+                      icon={<GiHelp style={{ fontSize: iconSize, color: getItemColor("FAQs") }} />} 
+                      onClick={() => handleMenuItemClick("FAQs")}
+                      active={activeMenuItem === "FAQs"}
+                    >
+                      FAQs
                     </MenuItem>
                     <MenuItem
                       icon={<MdInfo style={{ fontSize: iconSize, color: getItemColor("About and Contact") }} />}
