@@ -7,7 +7,7 @@ const AddSanctionModal = ({ show, onHide, fetchSanctions }) => {
     const [sanctionFormData, setSanctionFormData] = React.useState({
         sanction_code: '',
         sanction_name: '',
-        status: 'Active', // Default status can be set here
+        status: '', 
     });
 
     const handleSanctionChange = (e) => {
@@ -99,14 +99,14 @@ const AddSanctionModal = ({ show, onHide, fetchSanctions }) => {
                             value={sanctionFormData.status}
                             onChange={handleSanctionChange}
                             required
-                            style={inputStyle} // Apply input style
+                            style={inputStyle}
                         >
-                            <option value="">Select Status</option>
+                            <option value="" disabled>Select Status</option> 
                             <option value="Active">Active</option>
                             <option value="Inactive">Inactive</option>
                         </Form.Select>
                     </Form.Group>
-                    <Button type="submit" variant="success" style={buttonStyle}> {/* Apply button style */}
+                    <Button type="submit" variant="success" style={buttonStyle}> 
                         Add Sanction
                     </Button>
                 </Form>

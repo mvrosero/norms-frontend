@@ -104,7 +104,7 @@ export default function ManageSanctions() {
             setSanctionFormData({
                 sanction_code: sanction.sanction_code,
                 sanction_name: sanction.sanction_name,
-                status: sanction.status // Ensure this is correctly set
+                status: sanction.status 
             });
             setEditSanctionId(id);
             setShowEditModal(true);

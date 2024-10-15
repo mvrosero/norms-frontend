@@ -24,7 +24,7 @@ export default function ManageViolationNature() {
     const [natureFormData, setNatureFormData] = useState({
         nature_code: '',
         nature_name: '',
-        status: 'active' // Default status
+        status: '' 
     });
     const [editNatureId, setEditNatureId] = useState(null);
 
@@ -69,7 +69,7 @@ export default function ManageViolationNature() {
         setNatureFormData({
             nature_code: '',
             nature_name: '',
-            status: 'active' // Reset to default
+            status: '' // Reset to default
         });
     };
 

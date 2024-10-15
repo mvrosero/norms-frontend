@@ -8,7 +8,6 @@ import styled from '@emotion/styled';
 const UniformDefianceTable = () => {
     const [records, setRecords] = useState([]);
     const [selectedRecord, setSelectedRecord] = useState(null);
-    const [natureNames, setNatureNames] = useState({}); // Store nature names
     const [employeeName, setEmployeeName] = useState('');
     const [showDetailsModal, setShowDetailsModal] = useState(false);
 
@@ -16,20 +15,7 @@ const UniformDefianceTable = () => {
         const fetchData = async () => {
             try {
                 const response = await axios.get('http://localhost:9000/uniform_defiances');
-                const fetchedRecords = response.data;
-                setRecords(fetchedRecords);
-
-                // Fetch nature names for all records
-                const natureIds = [...new Set(fetchedRecords.map(record => record.nature_id))];
-                const natureNamePromises = natureIds.map(id => fetchNatureName(id));
-
-                const fetchedNatureNames = await Promise.all(natureNamePromises);
-                const natureNamesMap = natureIds.reduce((acc, id, index) => {
-                    acc[id] = fetchedNatureNames[index];
-                    return acc;
-                }, {});
-
-                setNatureNames(natureNamesMap);
+                setRecords(response.data);
             } catch (error) {
                 console.error('Error fetching data:', error);
             }
@@ -41,7 +27,6 @@ const UniformDefianceTable = () => {
     const fetchEmployeeName = async (employeeIdNumber) => {
         try {
             const response = await axios.get(`http://localhost:9000/employees/${employeeIdNumber}`);
-            console.log('Employee API Response:', response.data);
             return response.data.name; // Adjust if the response structure differs
         } catch (error) {
             console.error('Error fetching employee data:', error);
@@ -49,21 +34,9 @@ const UniformDefianceTable = () => {
         }
     };
 
-    const fetchNatureName = async (natureIdNumber) => {
-        try {
-            const response = await axios.get(`http://localhost:9000/violation-nature/${natureIdNumber}`);
-            console.log('Nature API Response:', response.data); // Log response to verify structure
-            return response.data.nature_name; // Access the nature_name field
-        } catch (error) {
-            console.error('Error fetching nature data:', error);
-            return 'Unknown Nature'; // Fallback name if the request fails
-        }
-    };
-
     const handleViewDetails = async (record) => {
         setSelectedRecord(record);
         const name = await fetchEmployeeName(record.submitted_by);
-        console.log('Fetched Employee Name:', name); // Log fetched name
         setEmployeeName(name);
         setShowDetailsModal(true);
     };
@@ -145,7 +118,7 @@ const UniformDefianceTable = () => {
                         <tr key={index}>
                             <td style={{ textAlign: 'center' }}>{record.slip_id}</td>
                             <td>{record.student_idnumber}</td>
-                            <td>{natureNames[record.nature_id] || 'Unknown Nature'}</td> {/* Use fetched nature name */}
+                            <td>{record.nature_name}</td> 
                             <td>{record.status}</td>
                             <td>{new Date(record.created_at).toLocaleString()}</td>
                             <td style={{ display: 'flex', justifyContent: 'center' }}>
@@ -166,12 +139,12 @@ const UniformDefianceTable = () => {
                         <div>
                             <p><strong>Slip ID:</strong> {selectedRecord.slip_id}</p>
                             <p><strong>Student ID:</strong> {selectedRecord.student_idnumber}</p>
-                            <p><strong>Violation Nature:</strong> {natureNames[selectedRecord.nature_id] || 'Unknown Nature'}</p> {/* Display nature name */}
+                            <p><strong>Violation Nature:</strong> {selectedRecord.nature_name}</p> 
                             <p><strong>File Preview:</strong></p>
                             {renderFile()}
                             <p><strong>Status:</strong> {selectedRecord.status}</p>
                             <p><strong>Created At:</strong> {new Date(selectedRecord.created_at).toLocaleString()}</p>
-                            <p><strong>Submitted By:</strong> {employeeName}</p> {/* Display employee name */}
+                            <p><strong>Submitted By:</strong> {employeeName}</p> 
                         </div>
                     )}
                 </Modal.Body>

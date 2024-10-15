@@ -38,8 +38,9 @@ const AddViolationNatureModal = ({ show, handleClose, handleSubmit, natureFormDa
                             value={natureFormData.status}
                             onChange={handleChange}
                         >
-                            <option value="active">Active</option>
-                            <option value="inactive">Inactive</option>
+                            <option value="" disabled>Select Status</option>
+                            <option value="Active">Active</option>
+                            <option value="Inactive">Inactive</option>
                         </Form.Select>
                     </Form.Group>
                     <Button variant="primary" type="submit" style={{ marginTop: '20px' }}>

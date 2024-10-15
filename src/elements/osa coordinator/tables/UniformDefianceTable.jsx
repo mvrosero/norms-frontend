@@ -144,37 +144,37 @@ const UniformDefianceTable = ({ searchQuery }) => {
                                     </div>
                                 </td>
                                 <td>
-    <div className="d-flex justify-content-around">
-        <Button
-            className='btn btn-success btn-md d-flex align-items-center ms-2'
-            onClick={() => updateStatus(defiance.slip_id, 'Approved')}
-            style={{ 
-                backgroundColor: '#28a745', // Bootstrap success color
-                color: '#fff',
-                border: '2px solid #28a745', // Border color matching fill color
-                borderRadius: '25px',
-                padding: '2px 10px' // Added padding for left and right
-            }}
-        >
-            <CheckIcon style={{ marginRight: '5px' }} />
-            Approve
-        </Button>
-        <Button
-            className='btn btn-danger btn-md d-flex align-items-center ms-2'
-            onClick={() => updateStatus(defiance.slip_id, 'Declined')}
-            style={{ 
-                backgroundColor: '#dc3545', // Bootstrap danger color
-                color: '#fff',
-                border: '2px solid #dc3545', // Border color matching fill color
-                borderRadius: '25px',
-                padding: '2px 10px' // Added padding for left and right
-            }}
-        >
-            <CloseIcon style={{ marginRight: '5px' }} />
-            Reject
-        </Button>
-    </div>
-</td>
+                                    <div className="d-flex justify-content-around">
+                                        <Button
+                                            className='btn btn-success btn-md d-flex align-items-center ms-2'
+                                            onClick={() => updateStatus(defiance.slip_id, 'Approved')}
+                                            style={{ 
+                                                backgroundColor: '#28a745', // Bootstrap success color
+                                                color: '#fff',
+                                                border: '2px solid #28a745', // Border color matching fill color
+                                                borderRadius: '25px',
+                                                padding: '2px 10px' // Added padding for left and right
+                                            }}
+                                        >
+                                            <CheckIcon style={{ marginRight: '5px' }} />
+                                            Approve
+                                        </Button>
+                                        <Button
+                                            className='btn btn-danger btn-md d-flex align-items-center ms-2'
+                                            onClick={() => updateStatus(defiance.slip_id, 'Declined')}
+                                            style={{ 
+                                                backgroundColor: '#dc3545', // Bootstrap danger color
+                                                color: '#fff',
+                                                border: '2px solid #dc3545', // Border color matching fill color
+                                                borderRadius: '25px',
+                                                padding: '2px 10px' // Added padding for left and right
+                                            }}
+                                        >
+                                            <CloseIcon style={{ marginRight: '5px' }} />
+                                            Reject
+                                        </Button>
+                                    </div>
+                                </td>
 
                             </tr>
                         ))}

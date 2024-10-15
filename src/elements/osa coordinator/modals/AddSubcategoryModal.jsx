@@ -51,9 +51,7 @@ const AddSubcategoryModal = ({ show, onHide, formData, onChange, onSubmit }) => 
                             required
                             style={inputStyle}
                         >
-                            <option value="" disabled>
-                                Select Status
-                            </option>
+                            <option value="" disabled>Select Status</option>
                             <option value="active">Active</option>
                             <option value="inactive">Inactive</option>
                         </Form.Select>

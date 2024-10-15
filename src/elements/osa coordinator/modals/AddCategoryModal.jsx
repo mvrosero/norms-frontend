@@ -99,7 +99,7 @@ const AddCategoryModal = ({ show, handleClose, categoryFormData, setCategoryForm
                             required 
                             style={inputStyle}
                         >
-                            <option value="">Select Status</option>
+                            <option value="" disabled>Select Status</option>
                             <option value="Active">Active</option>
                             <option value="Inactive">Inactive</option>
                         </Form.Select>
