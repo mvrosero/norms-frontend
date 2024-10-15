@@ -1,13 +1,13 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Accordion } from 'react-bootstrap';
 import StudentNavigation from '../student/StudentNavigation';
 import StudentInfo from '../student/StudentInfo';
 import SearchAndFilter from '../general/SearchAndFilter';
-import 'bootstrap/dist/css/bootstrap.min.css';
+
 
 const StudentFAQsSystem = () => {
     const navigate = useNavigate();
+    const [openIndex, setOpenIndex] = useState(null);
 
     useEffect(() => {
         const token = localStorage.getItem('token');
@@ -19,10 +19,12 @@ const StudentFAQsSystem = () => {
     }, [navigate]);
 
     if (!localStorage.getItem('token') || localStorage.getItem('role_id') !== '3') {
-        return null;
+        return null; // Redirect to unauthorized if not a valid user
     }
 
-    console.log("Rendering FAQs System");
+    const toggleCollapsible = (index) => {
+        setOpenIndex(openIndex === index ? null : index);
+    };
 
     return (
         <div>
@@ -33,7 +35,7 @@ const StudentFAQsSystem = () => {
                     <li className="breadcrumb-item" onClick={() => navigate('/student-faqs')} style={{ cursor: 'pointer' }}>
                         FAQs
                     </li>
-                    <li className="breadcrumb-item active" aria-current="page">
+                    <li className="breadcrumb-item">
                         System
                     </li>
                 </ol>
@@ -41,26 +43,75 @@ const StudentFAQsSystem = () => {
             <StudentNavigation />
             <StudentInfo />
 
-            <Accordion defaultActiveKey="0" className="mt-4">
-                <Accordion.Item eventKey="0" style={{ marginBottom: '1rem' }}> {/* Add margin bottom here */}
-                    <Accordion.Header>Question 1: What is the system?</Accordion.Header>
-                    <Accordion.Body>
-                        This system is designed to provide students with easy access to frequently asked questions regarding various topics.
-                    </Accordion.Body>
-                </Accordion.Item>
-                <Accordion.Item eventKey="1" style={{ marginBottom: '1rem' }}> {/* Add margin bottom here */}
-                    <Accordion.Header>Question 2: How can I access my profile?</Accordion.Header>
-                    <Accordion.Body>
-                        You can access your profile by navigating to the 'Profile' section in the main menu.
-                    </Accordion.Body>
-                </Accordion.Item>
-                <Accordion.Item eventKey="2" style={{ marginBottom: '1rem' }}> {/* Add margin bottom here */}
-                    <Accordion.Header>Question 3: Who can I contact for support?</Accordion.Header>
-                    <Accordion.Body>
-                        For support, you can contact the IT help desk via email or visit the support page on the website.
-                    </Accordion.Body>
-                </Accordion.Item>
-            </Accordion>
+            <style>
+                {`
+                    .collapsible {
+                        background-color: #48794B; /* Updated green background */
+                        color: white;
+                        cursor: pointer;
+                        padding: 18px;
+                        width: 90%; /* Increased width for collapsible */
+                        max-width: 1000px; /* Increased max width */
+                        margin: 0 auto; /* Centering the button */
+                        border: none;
+                        text-align: left;
+                        outline: none;
+                        font-size: 15px;
+                        display: flex;
+                        align-items: center;
+                        justify-content: space-between;
+                        transition: background-color 0.3s ease; /* Smooth background color transition */
+                        height: 60px; /* Fixed height for the button */
+                    }
+
+                    .active, .collapsible:hover {
+                        background-color: #365b42; /* Slightly darker green on hover */
+                    }
+
+                    .content {
+                        max-height: 0; /* Initially collapsed */
+                        max-width: 1000px; /* Adjusted max-width */
+                        margin: 0 auto;
+                        padding: 0 18px;
+                        overflow: hidden;
+                        background-color: #f1f1f1;
+                        transition: max-height 0.3s ease, padding 0.3s ease; /* Smooth height and padding transition */
+                        width: 100%; /* Ensure consistent width */
+                        box-sizing: border-box; /* Include padding in width calculation */
+                        margin-bottom: 0.5rem; /* Reduced space after each container when collapsed */
+                    }
+
+                    .content.show {
+                        max-height: 200px; /* Adjust as needed for expanded content */
+                        padding: 18px;
+                        margin-bottom: 1rem; /* Maintain space after each opened container */
+                    }
+                `}
+            </style>
+
+            {['Question 1: What is the system?', 
+              'Question 2: How can I access my profile?', 
+              'Question 3: Who can I contact for support?'].map((question, index) => (
+                <div key={index}>
+                    <button
+                        type="button"
+                        className={`collapsible ${openIndex === index ? 'active' : ''}`}
+                        onClick={() => toggleCollapsible(index)}
+                    >
+                        {question}
+                        <span className="icon" style={{ fontSize: '24px', lineHeight: '60px' }}>
+                            {openIndex === index ? '-' : '+'}
+                        </span>
+                    </button>
+                    <div className={`content ${openIndex === index ? 'show' : ''}`}>
+                        <p>
+                            {index === 0 && "This system is designed to provide students with easy access to frequently asked questions regarding various topics."}
+                            {index === 1 && "You can access your profile by navigating to the 'Profile' section in the main menu."}
+                            {index === 2 && "For support, you can contact the IT help desk via email or visit the support page on the website."}
+                        </p>
+                    </div>
+                </div>
+            ))}
         </div>
     );
 };
