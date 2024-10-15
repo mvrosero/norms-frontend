@@ -3,10 +3,10 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { Table } from 'react-bootstrap';
 
-import StudentNavigation from '../student/StudentNavigation';
-import StudentInfo from '../student/StudentInfo';
+import StudentNavigation from '../../../pages/student/StudentNavigation';
+import StudentInfo from '../../../pages/student/StudentInfo';
 
-const StudentFAQsGeneral = () => {
+const StudentLegislationOne = () => {
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -28,11 +28,11 @@ const StudentFAQsGeneral = () => {
     // Render the component if token and role_id are valid
     return (
         <div>
-            <h6 className="page-title">General</h6>
+            <h6 className="page-title">Anti Bullying Act</h6>
             <StudentNavigation />
             <StudentInfo />
         </div>
     );
 };
 
-export default StudentFAQsGeneral;
+export default StudentLegislationOne;

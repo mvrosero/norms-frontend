@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import StudentNavigation from '../student/StudentNavigation';
-import StudentInfo from '../student/StudentInfo';
-import SearchAndFilter from '../general/SearchAndFilter';
+import StudentNavigation from '../../../pages/student/StudentNavigation';
+import StudentInfo from '../../../pages/student/StudentInfo';
+import SearchAndFilter from '../../../pages/general/SearchAndFilter';
 
 const StudentFAQsSystem = () => {
     const navigate = useNavigate();

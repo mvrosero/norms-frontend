@@ -3,8 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { Table } from 'react-bootstrap';
 
-import StudentNavigation from '../student/StudentNavigation';
-import StudentInfo from '../student/StudentInfo';
+import StudentNavigation from '../../../pages/student/StudentNavigation';
+import StudentInfo from '../../../pages/student/StudentInfo';
 
 const StudentFAQsPolicies = () => {
     const navigate = useNavigate();

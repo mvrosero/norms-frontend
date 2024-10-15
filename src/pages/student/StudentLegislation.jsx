@@ -1,106 +1,85 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { FaChevronDown, FaChevronUp } from 'react-icons/fa';
-
+import React, { useEffect } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
 import StudentNavigation from '../student/StudentNavigation';
 import StudentInfo from './StudentInfo';
+import SearchAndFilter from '../general/SearchAndFilter';
+
+// Import images directly from the src folder
+import cbm from '../../components/images/cbm.png';
 
 export default function StudentLegislations() {
     const navigate = useNavigate();
-    const [openIndex, setOpenIndex] = useState(null);
 
     useEffect(() => {
-        // Check if token and role_id exist in localStorage
         const token = localStorage.getItem('token');
         const roleId = localStorage.getItem('role_id');
 
-        // If token or role_id is invalid, redirect to unauthorized page
         if (!token || roleId !== '3') {
             navigate('/unauthorized', { replace: true });
         }
     }, [navigate]);
 
-    // Collapsible toggle function
-    const toggleCollapsible = (index) => {
-        setOpenIndex(openIndex === index ? null : index);
-    };
-
-    // Render null or a loading indicator until the redirection check is complete
     if (!localStorage.getItem('token') || localStorage.getItem('role_id') !== '3') {
         return null;
     }
+
+    // Array of imported image objects (use the same image or different images if needed)
+    const images = [cbm, cbm, cbm, cbm, cbm, cbm, cbm, cbm];
 
     return (
         <div>
             <StudentNavigation />
             <StudentInfo />
             <h6 className="page-title">LEGISLATIONS</h6>
+            <SearchAndFilter />
 
             <style>
                 {`
-                    .collapsible {
-                        background-color: #48794B; /* Updated green background */
-                        color: white;
-                        cursor: pointer;
-                        padding: 18px;
-                        width: 70%; /* Consistent width */
-                        max-width: 600px;
-                        margin: 0px auto;
-                        border: none;
-                        text-align: left;
-                        outline: none;
-                        font-size: 15px;
-                        display: flex;
-                        align-items: center;
-                        justify-content: space-between;
-                        transition: background-color 0.3s ease; /* Smooth background color transition */
+                    .grid-container {
+                        display: grid;
+                        grid-template-columns: repeat(4, 1fr);
+                        gap: 20px;
+                        margin: 20px auto;
+                        max-width: 1200px;
                     }
 
-                    .active, .collapsible:hover {
-                        background-color: #365b42; /* Slightly darker green on hover */
-                    }
-
-                    .content {
-                        max-height: 0; /* Initially collapsed */
-                        max-width: 600px;
-                        margin: 0px auto;
-                        padding: 0 18px;
-                        overflow: hidden;
+                    .grid-item {
                         background-color: #f1f1f1;
-                        transition: max-height 0.3s ease, padding 0.3s ease; /* Smooth height and padding transition */
-                        width: 100%; /* Ensure consistent width */
-                        box-sizing: border-box; /* Include padding in width calculation */
+                        border-radius: 8px;
+                        text-align: center;
+                        padding: 0;
+                        cursor: pointer;
+                        transition: transform 0.2s;
+                        overflow: hidden;
                     }
 
-                    .content.show {
-                        max-height: 100px; /* Adjust as needed */
-                        max-width: 600px;
-                        padding: 18px;
+                    .grid-item:hover {
+                        transform: scale(1.05);
                     }
 
-                    .icon {
-                        font-size: 18px;
+                    .grid-item img {
+                        width: 100%;
+                        height: 150px;
+                        object-fit: cover;
+                        border-bottom: 2px solid #ddd;
+                    }
+
+                    .grid-item p {
+                        margin: 10px 0;
+                        font-size: 14px;
+                        padding: 0 10px;
                     }
                 `}
             </style>
 
-            {['Section 1', 'Section 2', 'Section 3'].map((section, index) => (
-                <div key={index}>
-                    <button
-                        type="button"
-                        className={`collapsible ${openIndex === index ? 'active' : ''}`}
-                        onClick={() => toggleCollapsible(index)}
-                    >
-                        {`Open ${section}`}
-                        <span className="icon">
-                            {openIndex === index ? <FaChevronUp /> : <FaChevronDown />}
-                        </span>
-                    </button>
-                    <div className={`content ${openIndex === index ? 'show' : ''}`}>
-                        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
-                    </div>
-                </div>
-            ))}
+            <div className="grid-container">
+                {images.map((image, index) => (
+                    <Link to={`/legislations/${index + 1}`} className="grid-item" key={index}>
+                        <img src={image} alt={`Legislation ${index + 1}`} />
+                        <p>Text for Item {index + 1}</p>
+                    </Link>
+                ))}
+            </div>
         </div>
     );
 }
