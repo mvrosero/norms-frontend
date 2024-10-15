@@ -11,6 +11,8 @@ import CoordinatorNavigation from './CoordinatorNavigation';
 import CoordinatorInfo from './CoordinatorInfo';
 import SearchAndFilter from '../general/SearchAndFilter';
 
+import AddSubcategoryModal from '../../elements/osa coordinator/modals/AddSubcategoryModal';
+
 export default function ManageSubcategories() {
     const navigate = useNavigate();
     const [subcategories, setSubcategories] = useState([]);
@@ -21,7 +23,7 @@ export default function ManageSubcategories() {
     const [subcategoryFormData, setSubcategoryFormData] = useState({
         subcategory_code: '',
         subcategory_name: '',
-        status: 'active', // Default status
+        status: '', 
         category_id: ''
     });
     const [editSubcategoryId, setEditSubcategoryId] = useState(null);
@@ -236,53 +238,13 @@ export default function ManageSubcategories() {
             </div>
 
             {/* Add Subcategory Modal */}
-            <Modal show={showSubcategoryModal} onHide={handleCloseSubcategoryModal}>
-                <Modal.Header closeButton>
-                    <Modal.Title>Add Subcategory</Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-                    <Form onSubmit={handleSubcategorySubmit}>
-                        <Form.Group controlId="subcategory_code">
-                            <Form.Label>Subcategory Code</Form.Label>
-                            <Form.Control 
-                                type="text" 
-                                name="subcategory_code" 
-                                value={subcategoryFormData.subcategory_code} 
-                                onChange={handleSubcategoryChange} 
-                                required 
-                                style={inputStyle} 
-                            />
-                        </Form.Group>
-                        <Form.Group controlId="subcategory_name">
-                            <Form.Label>Subcategory Name</Form.Label>
-                            <Form.Control 
-                                type="text" 
-                                name="subcategory_name" 
-                                value={subcategoryFormData.subcategory_name} 
-                                onChange={handleSubcategoryChange} 
-                                required 
-                                style={inputStyle} 
-                            />
-                        </Form.Group>
-                        <Form.Group controlId="status">
-                            <Form.Label>Status</Form.Label>
-                            <Form.Select 
-                                name="status" 
-                                value={subcategoryFormData.status} 
-                                onChange={handleSubcategoryChange} 
-                                required 
-                                style={inputStyle}
-                            >
-                                <option value="active">Active</option>
-                                <option value="inactive">Inactive</option>
-                            </Form.Select>
-                        </Form.Group>
-                        <Button variant="primary" type="submit" style={{ marginTop: '15px' }}>
-                            Add Subcategory
-                        </Button>
-                    </Form>
-                </Modal.Body>
-            </Modal>
+            <AddSubcategoryModal
+                show={showSubcategoryModal}
+                onHide={handleCloseSubcategoryModal}
+                formData={subcategoryFormData}
+                onChange={handleSubcategoryChange}
+                onSubmit={handleSubcategorySubmit}
+            />
 
             {/* Edit Subcategory Modal */}
             <Modal show={showEditModal} onHide={() => setShowEditModal(false)}>
