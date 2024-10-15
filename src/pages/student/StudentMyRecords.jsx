@@ -5,7 +5,7 @@ import { Table } from 'react-bootstrap';
 
 import StudentNavigation from '../student/StudentNavigation';
 import StudentInfo from '../student/StudentInfo';
-import MyRecordsTable from './ViolationRecordsTable';
+import MyRecordsTable from '../../elements/student/tables/MyRecordsTable';
 
 const StudentMyRecords = () => {
     const navigate = useNavigate();

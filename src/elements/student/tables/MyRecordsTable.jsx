@@ -3,6 +3,8 @@ import axios from 'axios';
 import { Table, Spinner, Alert, Button } from 'react-bootstrap';
 import Modal from 'react-bootstrap/Modal';
 
+import ViewRecordModal from '../modals/ViewRecordModal';
+
 const MyRecordsTable = () => {
     const [records, setRecords] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -12,7 +14,7 @@ const MyRecordsTable = () => {
     const [sanctions, setSanctions] = useState([]);
     const [academicYears, setAcademicYears] = useState([]);
     const [semesters, setSemesters] = useState([]);
-    const [subcategories, setSubcategories] = useState([]); // New state for subcategories
+    const [subcategories, setSubcategories] = useState([]); 
     const [selectedRecord, setSelectedRecord] = useState(null);
 
     useEffect(() => {
@@ -80,6 +82,18 @@ const MyRecordsTable = () => {
         return sanction ? sanction.sanction_name : 'Unknown';
     };
 
+    // Function to get academic year name by ID in "start_year - end_year" format
+    const getAcademicYearName = (acadyear_id) => {
+        const academicYear = academicYears.find(year => year.acadyear_id === acadyear_id);
+        return academicYear ? `${academicYear.start_year} - ${academicYear.end_year}` : 'Unknown';
+    };
+
+    // Function to get semester name by ID
+    const getSemesterName = (semester_id) => {
+        const semester = semesters.find(sem => sem.semester_id === semester_id);
+        return semester ? semester.semester_name : 'Unknown';
+    };
+
     const handleViewDetails = (record) => {
         setSelectedRecord(record);
     };
@@ -130,27 +144,20 @@ const MyRecordsTable = () => {
                             ))}
                         </tbody>
                     </Table>
+
                     {/* Modal to display record details */}
                     {selectedRecord && (
-                        <Modal show={selectedRecord !== null} onHide={() => setSelectedRecord(null)}>
-                            <Modal.Header closeButton>
-                                <Modal.Title style={{ marginLeft: '100px' }}>RECORD DETAILS</Modal.Title>
-                            </Modal.Header>
-                            <Modal.Body>
-                                <p><strong>Record ID:</strong> {selectedRecord.record_id}</p>
-                                <p><strong>Category:</strong> {getCategoryName(selectedRecord.category_id)}</p>
-                                <p><strong>Offense:</strong> {getOffenseName(selectedRecord.offense_id)}</p>
-                                <p><strong>Subcategory:</strong> {getSubcategoryName(selectedRecord.subcategory_id)}</p> 
-                                <p><strong>Sanction:</strong> {getSanctionName(selectedRecord.sanction_id)}</p>
-                                <p><strong>Academic Year:</strong> {selectedRecord.acadyear_id}</p>
-                                <p><strong>Semester:</strong> {selectedRecord.semester_id}</p>
-                                <p><strong>Description:</strong> {selectedRecord.description}</p>
-                                <p><strong>Created At:</strong> {selectedRecord.created_at}</p>
-                            </Modal.Body>
-                            <Modal.Footer>
-                                <Button variant="secondary" onClick={() => setSelectedRecord(null)}>Close</Button>
-                            </Modal.Footer>
-                        </Modal>
+                        <ViewRecordModal 
+                            show={selectedRecord !== null} 
+                            onHide={() => setSelectedRecord(null)} 
+                            record={selectedRecord}
+                            getCategoryName={getCategoryName}
+                            getOffenseName={getOffenseName}
+                            getSubcategoryName={getSubcategoryName}
+                            getSanctionName={getSanctionName}
+                            getAcademicYearName={getAcademicYearName} 
+                            getSemesterName={getSemesterName} 
+                        />
                     )}
                 </>
             )}
