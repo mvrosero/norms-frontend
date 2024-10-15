@@ -4,7 +4,6 @@ import StudentNavigation from '../student/StudentNavigation';
 import StudentInfo from '../student/StudentInfo';
 import SearchAndFilter from '../general/SearchAndFilter';
 
-
 const StudentFAQsSystem = () => {
     const navigate = useNavigate();
     const [openIndex, setOpenIndex] = useState(null);
@@ -46,8 +45,8 @@ const StudentFAQsSystem = () => {
             <style>
                 {`
                     .collapsible {
-                        background-color: #48794B; /* Updated green background */
-                        color: white;
+                        background-color: #006600; /* Updated background color */
+                        color: white; /* Text color for contrast */
                         cursor: pointer;
                         padding: 18px;
                         width: 90%; /* Increased width for collapsible */
@@ -62,10 +61,11 @@ const StudentFAQsSystem = () => {
                         justify-content: space-between;
                         transition: background-color 0.3s ease; /* Smooth background color transition */
                         height: 60px; /* Fixed height for the button */
+                        border-radius: 8px; /* All corners rounded when collapsed */
                     }
 
                     .active, .collapsible:hover {
-                        background-color: #365b42; /* Slightly darker green on hover */
+                        background-color: #005500; /* Darker green on hover */
                     }
 
                     .content {
@@ -74,11 +74,15 @@ const StudentFAQsSystem = () => {
                         margin: 0 auto;
                         padding: 0 18px;
                         overflow: hidden;
-                        background-color: #f1f1f1;
+                        background-color: #f1f1f1; /* Content background color */
                         transition: max-height 0.3s ease, padding 0.3s ease; /* Smooth height and padding transition */
                         width: 100%; /* Ensure consistent width */
                         box-sizing: border-box; /* Include padding in width calculation */
                         margin-bottom: 0.5rem; /* Reduced space after each container when collapsed */
+                        border-top-left-radius: 0; /* Square top left when expanded */
+                        border-top-right-radius: 0; /* Square top right when expanded */
+                        border-bottom-left-radius: 8px; /* Rounded corners for bottom left when expanded */
+                        border-bottom-right-radius: 8px; /* Rounded corners for bottom right when expanded */
                     }
 
                     .content.show {
