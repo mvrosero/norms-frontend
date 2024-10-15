@@ -47,7 +47,7 @@ import ManageCategories from './pages/osa coordinator/ManageCategories';
 import ManageOffenses from './pages/osa coordinator/ManageOffenses';
 import ManageSanctions from './pages/osa coordinator/ManageSanctions';
 import ManageSubcategories from './pages/osa coordinator/ManageSubcategories'
-import ManageNatureOfViolation from './pages/osa coordinator/ManageViolationNature';
+import ManageNatureOfViolation from './pages/osa coordinator/ManageNatureOfViolation';
 
 /*security personnel*/
 import SecurityLandingPage from './pages/security/SecurityLandingPage';

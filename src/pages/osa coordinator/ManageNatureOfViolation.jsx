@@ -11,6 +11,9 @@ import CoordinatorNavigation from './CoordinatorNavigation';
 import CoordinatorInfo from './CoordinatorInfo';
 import SearchAndFilter from '../general/SearchAndFilter';
 
+import AddViolationNatureModal from '../../elements/osa coordinator/modals/AddViolationNatureModal';
+import EditViolationNatureModal from '../../elements/osa coordinator/modals/EditViolationNatureModal';
+
 export default function ManageViolationNature() {
     const navigate = useNavigate();
     const [natures, setNatures] = useState([]);
@@ -226,103 +229,23 @@ export default function ManageViolationNature() {
                 </table>
             </div>
 
-            {/* Modal for Adding Violation Nature */}
-            <Modal show={showNatureModal} onHide={handleCloseNatureModal}>
-                <Modal.Header closeButton>
-                    <Modal.Title>Add Violation Nature</Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-                    <Form onSubmit={handleNatureSubmit}>
-                        <Form.Group controlId="nature_code">
-                            <Form.Label>Violation Nature Code</Form.Label>
-                            <Form.Control
-                                type="text"
-                                name="nature_code"
-                                value={natureFormData.nature_code}
-                                onChange={handleNatureChange}
-                                style={inputStyle}
-                                required
-                            />
-                        </Form.Group>
-                        <Form.Group controlId="nature_name">
-                            <Form.Label>Violation Nature Name</Form.Label>
-                            <Form.Control
-                                type="text"
-                                name="nature_name"
-                                value={natureFormData.nature_name}
-                                onChange={handleNatureChange}
-                                style={inputStyle}
-                                required
-                            />
-                        </Form.Group>
-                        <Form.Group controlId="status">
-                            <Form.Label>Status</Form.Label>
-                            <Form.Select
-                                name="status"
-                                value={natureFormData.status}
-                                onChange={handleNatureChange}
-                                style={inputStyle}
-                            >
-                                <option value="active">Active</option>
-                                <option value="inactive">Inactive</option>
-                            </Form.Select>
-                        </Form.Group>
-                        <Modal.Footer>
-                            <Button variant="secondary" onClick={handleCloseNatureModal}>Close</Button>
-                            <Button variant="primary" type="submit">Save Nature</Button>
-                        </Modal.Footer>
-                    </Form>
-                </Modal.Body>
-            </Modal>
+            {/* Add Violation Nature Modal */}
+            <AddViolationNatureModal 
+                show={showNatureModal} 
+                handleClose={() => setShowNatureModal(false)} 
+                handleSubmit={handleNatureSubmit} 
+                natureFormData={natureFormData} 
+                handleChange={handleNatureChange} 
+            />
 
-            {/* Modal for Editing Violation Nature */}
-            <Modal show={showEditModal} onHide={() => setShowEditModal(false)}>
-                <Modal.Header closeButton>
-                    <Modal.Title>Edit Violation Nature</Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-                    <Form onSubmit={handleEditSubmit}>
-                        <Form.Group controlId="nature_code">
-                            <Form.Label>Violation Nature Code</Form.Label>
-                            <Form.Control
-                                type="text"
-                                name="nature_code"
-                                value={natureFormData.nature_code}
-                                onChange={handleNatureChange}
-                                style={inputStyle}
-                                required
-                            />
-                        </Form.Group>
-                        <Form.Group controlId="nature_name">
-                            <Form.Label>Violation Nature Name</Form.Label>
-                            <Form.Control
-                                type="text"
-                                name="nature_name"
-                                value={natureFormData.nature_name}
-                                onChange={handleNatureChange}
-                                style={inputStyle}
-                                required
-                            />
-                        </Form.Group>
-                        <Form.Group controlId="status">
-                            <Form.Label>Status</Form.Label>
-                            <Form.Select
-                                name="status"
-                                value={natureFormData.status}
-                                onChange={handleNatureChange}
-                                style={inputStyle}
-                            >
-                                <option value="active">Active</option>
-                                <option value="inactive">Inactive</option>
-                            </Form.Select>
-                        </Form.Group>
-                        <Modal.Footer>
-                            <Button variant="secondary" onClick={() => setShowEditModal(false)}>Close</Button>
-                            <Button variant="primary" type="submit">Update Nature</Button>
-                        </Modal.Footer>
-                    </Form>
-                </Modal.Body>
-            </Modal>
+            {/* Edit Violation Nature Modal */}
+            <EditViolationNatureModal
+                show={showEditModal}
+                handleClose={() => setShowEditModal(false)}
+                handleSubmit={handleEditSubmit}
+                natureFormData={natureFormData}
+                handleChange={handleNatureChange}
+            />
         </div>
     );
 }
