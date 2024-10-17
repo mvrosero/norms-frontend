@@ -59,6 +59,8 @@ import SecuritySettings from './pages/security/SecuritySettings';
 import StudentAboutAndContact from './pages/student/StudentAboutAndContact';
 import StudentAnnouncements from './pages/student/StudentAnnouncements';
 import StudentMyRecords from './pages/student/StudentMyRecords';
+import StudentVisualRecords from './pages/student/StudentVisualRecords';
+import StudentSubcategoryRecords from './pages/student/StudentSubcategoryRecords';
 import StudentSettings from './pages/student/StudentSettings';
 import StudentLegislations from './pages/student/StudentLegislation';
 import StudentLegislationOne from './elements/student/containers/StudentLegislationOne';
@@ -125,6 +127,8 @@ function App() {
                 <Route path='/aboutcontact' element={<StudentAboutAndContact/>} />
                 <Route path='/student-announcements' element={<StudentAnnouncements />} />
                 <Route path='/student-myrecords' element={<StudentMyRecords />} />
+                <Route path='/student-myrecords-visual' element={<StudentVisualRecords />} />
+                <Route path='/student-myrecords/subcategory' element={<StudentSubcategoryRecords />} />
                 <Route path='/student-settings' element={<StudentSettings />} />
                 <Route path='/legislations' element={<StudentLegislations />} />
                 <Route path='/legislations/1' element={<StudentLegislationOne />} />
