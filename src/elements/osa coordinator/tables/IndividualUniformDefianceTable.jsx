@@ -1,4 +1,3 @@
-// IndividualUniformDefianceTable.js
 import React from 'react';
 import { Table } from 'react-bootstrap';
 import { format } from 'date-fns';

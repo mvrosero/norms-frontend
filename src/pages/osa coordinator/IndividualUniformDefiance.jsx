@@ -1,11 +1,9 @@
-// IndividualUniformDefiance.js
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import axios from 'axios';
 import { Modal, Button } from 'react-bootstrap';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { FaPlus } from 'react-icons/fa';
 import defaultProfile from '../../components/images/default_profile.jpg';
-
 
 import CoordinatorNavigation from './CoordinatorNavigation';
 import CoordinatorInfo from './CoordinatorInfo';
@@ -95,7 +93,7 @@ const IndividualUniformDefiance = () => {
 
     const handleCloseAddViolationModal = async () => {
         setShowAddViolationModal(false);
-        await fetchDefiances();
+        await fetchDefiances(); // Fetch the updated defiances
     };
 
     return (
@@ -152,8 +150,7 @@ const IndividualUniformDefiance = () => {
 
             <AddUniformDefianceModal
                 show={showAddViolationModal}
-                onHide={() => setShowAddViolationModal(false)}
-                onClose={handleCloseAddViolationModal}
+                handleCloseModal={handleCloseAddViolationModal} // Ensure this function is passed correctly
                 studentInfo={studentInfo} // Pass student info to modal
             />
 

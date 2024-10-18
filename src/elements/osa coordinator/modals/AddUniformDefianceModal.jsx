@@ -3,6 +3,7 @@ import axios from 'axios';
 import Swal from 'sweetalert2';
 import { Modal, Button, Form, Row, Col } from 'react-bootstrap';
 import { useParams } from 'react-router-dom';
+import Select from 'react-select'; // Import Select from react-select
 
 const AddUniformDefianceModal = ({ show, handleCloseModal }) => {
     const { student_idnumber } = useParams(); // Get student_idnumber from URL
@@ -11,7 +12,7 @@ const AddUniformDefianceModal = ({ show, handleCloseModal }) => {
         description: '',
         category_id: '',
         offense_id: '',
-        sanction_id: '',
+        sanctions: [],  // Change from sanction_id to sanctions (array)
         acadyear_id: '',
         semester_id: '',
     });
@@ -33,11 +34,11 @@ const AddUniformDefianceModal = ({ show, handleCloseModal }) => {
                     axios.get('http://localhost:9000/semesters'),
                 ]);
 
-                setCategories(categoriesResponse.data);
-                setOffenses(offensesResponse.data);
-                setSanctions(sanctionsResponse.data);
-                setAcademicYears(academic_yearsResponse.data);
-                setSemesters(semestersResponse.data);
+                setCategories(categoriesResponse.data || []);
+                setOffenses(offensesResponse.data || []);
+                setSanctions(sanctionsResponse.data || []);
+                setAcademicYears(academic_yearsResponse.data || []);
+                setSemesters(semestersResponse.data || []);
             } catch (error) {
                 console.error('Error fetching data:', error);
                 Swal.fire({
@@ -57,11 +58,19 @@ const AddUniformDefianceModal = ({ show, handleCloseModal }) => {
         }));
     };
 
+    const handleSanctionSelectChange = (selectedOptions) => {
+        const selectedSanctions = selectedOptions ? selectedOptions.map(option => option.value) : [];
+        setFormData(prevState => ({
+            ...prevState,
+            sanctions: selectedSanctions,
+        }));
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        const { student_idnumber, description, category_id, offense_id, sanction_id, acadyear_id, semester_id } = formData;
-        if (!student_idnumber || !description || !category_id || !offense_id || !sanction_id || !acadyear_id || !semester_id) {
+        const { student_idnumber, description, category_id, offense_id, sanctions, acadyear_id, semester_id } = formData;
+        if (!student_idnumber || !description || !category_id || !offense_id || sanctions.length === 0 || !acadyear_id || !semester_id) {
             Swal.fire({
                 icon: 'warning',
                 title: 'Form Incomplete',
@@ -71,7 +80,7 @@ const AddUniformDefianceModal = ({ show, handleCloseModal }) => {
         }
 
         try {
-            const response = await axios.post(`http://localhost:9000/create-violationrecord/${student_idnumber}`, formData);
+            const response = await axios.post(`http://localhost:9000/create-violationrecord/${student_idnumber}`, { ...formData, sanctions });
             console.log(response.data);
             Swal.fire({
                 icon: 'success',
@@ -176,20 +185,19 @@ const AddUniformDefianceModal = ({ show, handleCloseModal }) => {
                                     ))}
                                 </Form.Select> 
                             </Form.Group>
-                            <Form.Group controlId='sanction_id'>
-                                <Form.Label className="fw-bold">Sanction</Form.Label>
-                                <Form.Select
-                                    name='sanction_id' 
-                                    value={formData.sanction_id} 
-                                    onChange={handleChange} 
-                                >
-                                    <option value=''>Select Sanction</option>
-                                    {sanctions.map((sanction) => (
-                                        <option key={sanction.sanction_id} value={sanction.sanction_id}>
-                                            {sanction.sanction_name}
-                                        </option>
-                                    ))}
-                                </Form.Select> 
+                            {/* Sanctions Multi-Select */}
+                            <Form.Group controlId='sanctions'>
+                                <Form.Label className="fw-bold">Sanctions</Form.Label>
+                                <Select
+                                    isMulti
+                                    name='sanctions'
+                                    options={sanctions.map((sanction) => ({
+                                        value: sanction.sanction_id,
+                                        label: sanction.sanction_name,
+                                    }))}
+                                    onChange={handleSanctionSelectChange} // Handle multi-select changes
+                                    required
+                                />
                             </Form.Group>
                         </Col>
                     </Row>
