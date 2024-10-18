@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Swal from 'sweetalert2';
 import { Form, Button, Row, Col } from 'react-bootstrap';
+import Select from 'react-select'; // Import Select for multi-select functionality
 import { useParams } from 'react-router-dom';
 
 export default function AddViolationModal({ handleCloseModal }) {
@@ -11,7 +12,7 @@ export default function AddViolationModal({ handleCloseModal }) {
         description: '',
         category_id: '',
         offense_id: '',
-        sanction_id: '',
+        sanctions: [], // Change sanction_id to sanctions for multi-select
         acadyear_id: '',
         semester_id: '',
     });
@@ -55,6 +56,14 @@ export default function AddViolationModal({ handleCloseModal }) {
         }));
     };
 
+    // Handle changes for the multi-select sanctions field
+    const handleSanctionSelectChange = (selectedOptions) => {
+        setFormData(prevState => ({
+            ...prevState,
+            sanctions: selectedOptions ? selectedOptions.map(option => option.value) : []
+        }));
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         if (
@@ -62,7 +71,7 @@ export default function AddViolationModal({ handleCloseModal }) {
             formData.description === '' ||
             formData.category_id === '' ||
             formData.offense_id === '' ||
-            formData.sanction_id === '' ||
+            formData.sanctions.length === 0 || // Check if sanctions are selected
             formData.acadyear_id === '' ||
             formData.semester_id === ''
         ) {
@@ -107,7 +116,7 @@ export default function AddViolationModal({ handleCloseModal }) {
         marginLeft: '10px',
         display: 'flex',
         alignItems: 'center',
-        boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)'
+        boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
     };
 
     return (
@@ -115,6 +124,7 @@ export default function AddViolationModal({ handleCloseModal }) {
             <Form onSubmit={handleSubmit}>
                 <Row>
                     <Col md={12}>
+                        {/* Student ID Number */}
                         <Form.Group controlId='student_idnumber'>
                             <Form.Label className="fw-bold">Student ID Number</Form.Label>
                             <Form.Control 
@@ -125,6 +135,107 @@ export default function AddViolationModal({ handleCloseModal }) {
                                 style={inputStyle} 
                             />
                         </Form.Group>
+                    </Col>
+                </Row>
+                <Row>
+                    <Col md={6}>
+                        {/* Academic Year */}
+                        <Form.Group controlId='acadyear_id'>
+                            <Form.Label className="fw-bold">Academic Year</Form.Label>
+                            <Form.Select
+                                name='acadyear_id' 
+                                value={formData.acadyear_id} 
+                                onChange={handleChange} 
+                                style={inputStyle}>
+                             <option value=''>Select Academic Year</option>
+                                {academic_years.map((academic_year) => (
+                                    <option key={academic_year.acadyear_id} value={academic_year.acadyear_id}>
+                                        {academic_year.start_year} - {academic_year.end_year}
+                                    </option>
+                                ))}
+                            </Form.Select> 
+                        </Form.Group>
+                    </Col>
+                    <Col md={6}>
+                        {/* Semester */}
+                        <Form.Group controlId='semester_id'>
+                            <Form.Label className="fw-bold">Semester</Form.Label>
+                            <Form.Select
+                                name='semester_id' 
+                                value={formData.semester_id} 
+                                onChange={handleChange} 
+                                style={inputStyle}>
+                             <option value=''>Select Semester</option>
+                                {semesters.map((semester) => (
+                                    <option key={semester.semester_id} value={semester.semester_id}>
+                                        {semester.semester_name}
+                                    </option>
+                                ))}
+                            </Form.Select>
+                        </Form.Group>
+                    </Col>
+                </Row>
+                <Row>
+                    <Col md={12}>
+                        {/* Category */}
+                        <Form.Group controlId='category_id'>
+                            <Form.Label className="fw-bold">Category</Form.Label>
+                            <Form.Select
+                                name='category_id' 
+                                value={formData.category_id} 
+                                onChange={handleChange} 
+                                style={inputStyle}>
+                             <option value=''>Select Category</option>
+                                {categories.map((category) => (
+                                    <option key={category.category_id} value={category.category_id}>
+                                        {category.category_name}
+                                    </option>
+                                ))}
+                            </Form.Select>
+                        </Form.Group>
+                    </Col>
+                </Row>
+                <Row>
+                    <Col md={12}>
+                        {/* Offense */}
+                        <Form.Group controlId='offense_id'>
+                            <Form.Label className="fw-bold">Offense</Form.Label>
+                            <Form.Select
+                                name='offense_id' 
+                                value={formData.offense_id} 
+                                onChange={handleChange} 
+                                style={inputStyle}>
+                             <option value=''>Select Offense</option>
+                                {offenses.map((offense) => (
+                                    <option key={offense.offense_id} value={offense.offense_id}>
+                                        {offense.offense_name}
+                                    </option>
+                                ))}
+                            </Form.Select>
+                        </Form.Group>
+                    </Col>
+                </Row>
+                <Row>
+                    <Col md={12}>
+                        {/* Sanctions Multi-Select */}
+                        <Form.Group controlId='sanctions'>
+                            <Form.Label className="fw-bold">Sanctions</Form.Label>
+                            <Select
+                                isMulti
+                                name='sanctions'
+                                options={sanctions.map((sanction) => ({
+                                    value: sanction.sanction_id,
+                                    label: sanction.sanction_name,
+                                }))}
+                                onChange={handleSanctionSelectChange} // Handle multi-select changes
+                                required
+                            />
+                        </Form.Group>
+                    </Col>
+                </Row>
+                <Row>
+                    <Col md={12}>
+                        {/* Description */}
                         <Form.Group controlId='description'>
                             <Form.Label className="fw-bold">Description</Form.Label>
                             <Form.Control 
@@ -135,93 +246,15 @@ export default function AddViolationModal({ handleCloseModal }) {
                                 style={inputStyle} 
                             />
                         </Form.Group>
-                        <Form.Group controlId='acadyear_id'>
-                            <Form.Label className="fw-bold">Academic Year</Form.Label>
-                            <Form.Select
-                                name='acadyear_id' 
-                                value={formData.acadyear_id} 
-                                onChange={handleChange} 
-                                style={inputStyle}>
-                            
-                                <option value=''>Select Academic Year</option>
-                                    {academic_years.map((academic_year) => (
-                                        <option key={academic_year.acadyear_id} value={academic_year.acadyear_id}>
-                                            {academic_year.start_year} - {academic_year.end_year}
-                                        </option>
-                                    ))}
-                                </Form.Select> 
-                        </Form.Group>
-                        <Form.Group controlId='semester_id'>
-                            <Form.Label className="fw-bold">Semester</Form.Label>
-                            <Form.Select
-                                name='semester_id' 
-                                value={formData.semester_id} 
-                                onChange={handleChange} 
-                                style={inputStyle}>
-                            
-                                <option value=''>Select Semester</option>
-                                    {semesters.map((semester) => (
-                                        <option key={semester.semester_id} value={semester.semester_id}>
-                                            {semester.semester_name}
-                                        </option>
-                                    ))}
-                                </Form.Select> 
-                        </Form.Group>
-                        <Form.Group controlId='category_id'>
-                            <Form.Label className="fw-bold">Category</Form.Label>
-                            <Form.Select
-                                name='category_id' 
-                                value={formData.category_id} 
-                                onChange={handleChange} 
-                                style={inputStyle}>
-                            
-                                <option value=''>Select Category</option>
-                                    {categories.map((category) => (
-                                        <option key={category.category_id} value={category.category_id}>
-                                            {category.category_name}
-                                        </option>
-                                    ))}
-                                </Form.Select> 
-                        </Form.Group>
-                        <Form.Group controlId='offense_id'>
-                            <Form.Label className="fw-bold">Offense</Form.Label>
-                            <Form.Select
-                                name='offense_id' 
-                                value={formData.offense_id} 
-                                onChange={handleChange} 
-                                style={inputStyle}>
-                            
-                                <option value=''>Select Offense</option>
-                                    {offenses.map((offense) => (
-                                        <option key={offense.offense_id} value={offense.offense_id}>
-                                            {offense.offense_name}
-                                        </option>
-                                    ))}
-                                </Form.Select> 
-                        </Form.Group>
-                        <Form.Group controlId='sanction_id'>
-                            <Form.Label className="fw-bold">Sanction</Form.Label>
-                            <Form.Select
-                                name='sanction_id' 
-                                value={formData.sanction_id} 
-                                onChange={handleChange} 
-                                style={inputStyle}>
-                            
-                                <option value=''>Select Sanction</option>
-                                    {sanctions.map((sanction) => (
-                                        <option key={sanction.sanction_id} value={sanction.sanction_id}>
-                                            {sanction.sanction_name}
-                                        </option>
-                                    ))}
-                                </Form.Select> 
-                        </Form.Group>
                     </Col>
                 </Row>
-                <div className="d-flex justify-content-end mt-3">
-                    <Button type="submit" style={buttonStyle}>
-                        Submit
-                    </Button>
-                </div>
+                <Row>
+                    <Col className="text-end" style={{ marginTop: '20px' }}>
+                        <Button variant="primary" type="submit" style={buttonStyle}>
+                            Submit
+                        </Button>
+                    </Col>
+                </Row>
             </Form>
         </div>
     );
