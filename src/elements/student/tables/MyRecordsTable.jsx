@@ -63,7 +63,7 @@ const MyRecordsTable = () => {
     }, []);
 
     const getSubcategoryName = (subcategory_id) => {
-        const subcategory = subcategories.find(subcat => subcat.subcategory_id === subcategory_id);
+        const subcategory = subcategories.find(subcategory => subcategory.subcategory_id === subcategory_id);
         return subcategory ? subcategory.subcategory_name : 'Unknown';
     };
 
