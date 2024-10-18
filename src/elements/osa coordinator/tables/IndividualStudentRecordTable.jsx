@@ -1,4 +1,3 @@
-// IndividualStudentRecordTable.js
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Table from 'react-bootstrap/Table';
@@ -48,8 +47,22 @@ const IndividualStudentRecordTable = ({ records }) => {
         return offense ? offense.offense_name : 'Unknown';
     };
 
+    const getSanctionNames = (sanction_ids) => {
+        if (!sanction_ids) return 'Unknown';
+        
+        const ids = sanction_ids.split(',').map(id => id.trim());
+        
+        const sanctionNames = ids.map(id => getSanctionName(id));
+
+        // Log sanction names for debugging
+        console.log('Sanction Names:', sanctionNames);
+
+        return sanctionNames.every(name => name === 'Unknown') ? 'Unknown' : sanctionNames.join(', ');
+    };
+
     const getSanctionName = (sanction_id) => {
-        const sanction = sanctions.find(sanction => sanction.sanction_id === sanction_id);
+        sanction_id = String(sanction_id);
+        const sanction = sanctions.find(sanction => String(sanction.sanction_id) === sanction_id);
         return sanction ? sanction.sanction_name : 'Unknown';
     };
 
@@ -105,11 +118,11 @@ const IndividualStudentRecordTable = ({ records }) => {
                             <td style={{ textAlign: 'center' }}>{record.record_id}</td>
                             <td>{getCategoryName(record.category_id)}</td>
                             <td>{getOffenseName(record.offense_id)}</td>
-                            <td>{getSanctionName(record.sanction_id)}</td>
+                            <td>{getSanctionNames(record.sanction_ids)}</td>
                             <td>{getAcademicYearName(record.acadyear_id)}</td>
                             <td>{getSemesterName(record.semester_id)}</td>
                             <td style={{ display: 'flex', justifyContent: 'center' }}>
-                                <ViewButton onClick={() => handleViewDetails(record)} >
+                                <ViewButton onClick={() => handleViewDetails(record)}>
                                     View
                                 </ViewButton>
                             </td>
@@ -117,14 +130,13 @@ const IndividualStudentRecordTable = ({ records }) => {
                     ))}
                 </tbody>
             </Table>
-            {/* Modal to display record details */}
             <ViewViolationModal
                 show={showDetailsModal}
                 onHide={handleCloseDetailsModal}
                 selectedRecord={selectedRecord}
                 getCategoryName={getCategoryName}
                 getOffenseName={getOffenseName}
-                getSanctionName={getSanctionName}
+                getSanctionNames={getSanctionNames}
                 getAcademicYearName={getAcademicYearName}
                 getSemesterName={getSemesterName}
             />
