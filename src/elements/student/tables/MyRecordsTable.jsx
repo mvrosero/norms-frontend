@@ -77,8 +77,22 @@ const MyRecordsTable = () => {
         return offense ? offense.offense_name : 'Unknown';
     };
 
+    const getSanctionNames = (sanction_ids) => {
+        if (!sanction_ids) return 'Unknown';
+        
+        const ids = sanction_ids.split(',').map(id => id.trim());
+        
+        const sanctionNames = ids.map(id => getSanctionName(id));
+
+        // Log sanction names for debugging
+        console.log('Sanction Names:', sanctionNames);
+
+        return sanctionNames.every(name => name === 'Unknown') ? 'Unknown' : sanctionNames.join(', ');
+    };
+
     const getSanctionName = (sanction_id) => {
-        const sanction = sanctions.find(sanction => sanction.sanction_id === sanction_id);
+        sanction_id = String(sanction_id);
+        const sanction = sanctions.find(sanction => String(sanction.sanction_id) === sanction_id);
         return sanction ? sanction.sanction_name : 'Unknown';
     };
 
@@ -134,7 +148,7 @@ const MyRecordsTable = () => {
                                     <td style={{ textAlign: 'center' }}>{new Date(record.created_at).toLocaleString()}</td>
                                     <td>{getCategoryName(record.category_id)}</td>
                                     <td>{getOffenseName(record.offense_id)}</td>
-                                    <td>{getSanctionName(record.sanction_id)}</td>
+                                    <td>{getSanctionNames(record.sanction_ids)}</td>
                                     <td style={{ display: 'flex', justifyContent: 'center' }}>
                                         <Button style={buttonStyles} onClick={() => handleViewDetails(record)}>
                                             View
@@ -154,7 +168,7 @@ const MyRecordsTable = () => {
                             getCategoryName={getCategoryName}
                             getOffenseName={getOffenseName}
                             getSubcategoryName={getSubcategoryName}
-                            getSanctionName={getSanctionName}
+                            getSanctionNames={getSanctionNames}
                             getAcademicYearName={getAcademicYearName} 
                             getSemesterName={getSemesterName} 
                         />

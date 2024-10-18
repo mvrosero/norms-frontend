@@ -9,7 +9,7 @@ const ViewRecordModal = ({
     getCategoryName,
     getOffenseName,
     getSubcategoryName,
-    getSanctionName,
+    getSanctionNames,
     getAcademicYearName,
     getSemesterName
 }) => {
@@ -23,7 +23,7 @@ const ViewRecordModal = ({
                 <p><strong>Category:</strong> {getCategoryName(record.category_id)}</p>
                 <p><strong>Offense:</strong> {getOffenseName(record.offense_id)}</p>
                 <p><strong>Subcategory:</strong> {getSubcategoryName(record.subcategory_id)}</p>
-                <p><strong>Sanction:</strong> {getSanctionName(record.sanction_id)}</p>
+                <p><strong>Sanction:</strong> {getSanctionNames(record.sanction_ids)}</p>
                 <p><strong>Academic Year:</strong> {getAcademicYearName(record.acadyear_id)}</p>
                 <p><strong>Semester:</strong> {getSemesterName(record.semester_id)}</p>
                 <p><strong>Description:</strong> {record.description}</p>

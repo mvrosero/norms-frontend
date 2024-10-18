@@ -10,8 +10,8 @@ const AddUniformDefianceModal = ({ show, handleCloseModal }) => {
     const [formData, setFormData] = useState({
         student_idnumber: student_idnumber || '',
         description: '',
-        category_id: '',
-        offense_id: '',
+        category_id: '1', // Default to "Minor Offense"
+        offense_id: '3', // Default to "Uniform and Dress Code Defiance"
         sanctions: [],  // Change from sanction_id to sanctions (array)
         acadyear_id: '',
         semester_id: '',
@@ -162,7 +162,7 @@ const AddUniformDefianceModal = ({ show, handleCloseModal }) => {
                                     value={formData.category_id} 
                                     onChange={handleChange} 
                                 >
-                                    <option value=''>Select Category</option>
+                                    <option value='1'>Minor Offense</option> {/* Default value */}
                                     {categories.map((category) => (
                                         <option key={category.category_id} value={category.category_id}>
                                             {category.category_name}
@@ -177,7 +177,7 @@ const AddUniformDefianceModal = ({ show, handleCloseModal }) => {
                                     value={formData.offense_id} 
                                     onChange={handleChange} 
                                 >
-                                    <option value=''>Select Offense</option>
+                                    <option value='3'>Uniform and Dress Code Defiance</option> {/* Default value */}
                                     {offenses.map((offense) => (
                                         <option key={offense.offense_id} value={offense.offense_id}>
                                             {offense.offense_name}
