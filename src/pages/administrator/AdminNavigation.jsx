@@ -8,7 +8,7 @@ import { FaGear } from "react-icons/fa6";
 
 import { useNavigate, useLocation } from "react-router-dom";
 
-import logo from "../../assets/images/norms_logo.png";
+import logo from "../../components/images/norms_logo.png";
 
 export default function AdminNavigation() {
   const [collapsed, setCollapsed] = React.useState(true); // Default state is collapsed

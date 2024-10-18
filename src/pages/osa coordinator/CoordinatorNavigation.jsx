@@ -7,7 +7,7 @@ import { RiBook2Fill, RiShirtFill } from "react-icons/ri";
 import { MdAnnouncement } from "react-icons/md";
 import { FaGear } from "react-icons/fa6";
 
-import logo from "../../assets/images/norms_logo.png";
+import logo from "../../components/images/norms_logo.png";
 import "../general/General.css";
 
 export default function CoordinatorNavigation() {

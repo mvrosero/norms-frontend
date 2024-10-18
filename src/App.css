@@ -52,6 +52,7 @@
     padding: 30px 40px;
     box-shadow: 20px 20px 80px rgb(206, 206, 206);
 }
+
 .h2{
     font-family: 'Kaushan Script', cursive;
     font-size: 3.5rem;
@@ -59,6 +60,7 @@
     color: #400485;
     font-style: italic;  
 }
+
 .h4{
     font-family: 'Poppins', sans-serif; 
 }
@@ -241,7 +243,6 @@ button[type="submit"]:hover {
 }
 
 
-/*mobile-first approach*/
 /*styles for small screens*/
 .container {
     width: 100%;

@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import '../general/General.css';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import user_icon from '../../assets/images/default_profile.jpg';
+import user_icon from '../../components/images/default_profile.jpg';
 
 const StudentInfo = ({ role }) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);

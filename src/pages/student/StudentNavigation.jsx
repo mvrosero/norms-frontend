@@ -10,7 +10,7 @@ import { MdInfo } from "react-icons/md";
 import { FaGear } from "react-icons/fa6";
 import { GiHelp } from "react-icons/gi";
 
-import logo from "../../assets/images/norms_logo.png";
+import logo from "../../components/images/norms_logo.png";
 import "../general/General.css";
 
 export default function StudentNavigation() {

@@ -12,7 +12,7 @@ import Papa from 'papaparse';
 import AdminNavigation from "../../../pages/administrator/AdminNavigation";
 import AdminInfo from "../../../pages/administrator/AdminInfo";
 import SearchAndFilter from '../../../pages/general/SearchAndFilter';
-import ImportCSVButton from '../../../components/Button/ImportCSVButton';
+import ImportCSVButton from '../../general/buttons/ImportCSVButton';
 import ViewStudentModal from '../modals/ViewStudentModal';
 import EditStudentModal from '../modals/EditStudentModal';
 import "../../../styles/Students.css";

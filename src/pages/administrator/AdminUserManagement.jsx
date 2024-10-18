@@ -5,10 +5,10 @@ import AdminNavigation from "./AdminNavigation";
 import AdminInfo from "./AdminInfo";
 import SearchAndFilter from '../general/SearchAndFilter';
 
-import UserDropdownButton from '../../components/Button/UserDropdownButton';
 import StudentsTable from '../../elements/administrator/tables/StudentsTable';
 import EmployeesTable from '../../elements/administrator/tables/EmployeesTable';
-import ImportCSVButton from '../../components/Button/ImportCSVButton';
+import ImportCSVButton from '../../elements/general/buttons/ImportCSVButton';
+import UserDropdownButton from '../../elements/general/buttons/UserDropdownButton';
 
 export default function AdminUserManagement() {
     const [selectedComponent, setSelectedComponent] = useState('students');

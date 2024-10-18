@@ -4,7 +4,8 @@ import axios from 'axios';
 import { Modal, Button } from 'react-bootstrap';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { FaPlus } from 'react-icons/fa';
-import defaultProfile from '../../assets/images/default_profile.jpg'; // Adjust path as necessary
+import defaultProfile from '../../components/images/default_profile.jpg';
+
 
 import CoordinatorNavigation from './CoordinatorNavigation';
 import CoordinatorInfo from './CoordinatorInfo';

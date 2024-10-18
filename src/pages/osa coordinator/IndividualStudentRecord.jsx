@@ -10,7 +10,7 @@ import CoordinatorNavigation from './CoordinatorNavigation';
 import CoordinatorInfo from './CoordinatorInfo';
 import IndividualStudentRecordTable from '../../elements/osa coordinator/tables/IndividualStudentRecordTable';
 import AddViolationModal from '../../elements/osa coordinator/modals/AddViolationModal';
-import defaultProfile from '../../assets/images/default_profile.jpg'; // Import default profile image
+import defaultProfile from '../../components/images/default_profile.jpg';
 
 export default function IndividualStudentRecord() {
     const [studentInfo, setStudentInfo] = useState(null);
