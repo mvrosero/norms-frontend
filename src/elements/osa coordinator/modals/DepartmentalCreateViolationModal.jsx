@@ -9,8 +9,8 @@ export default function DepartmentalCreateViolationModal({ handleCloseModal, dep
         description: '',
         category_id: '',
         offense_id: '',
-        users: [], // Multi-select field for user IDs
-        sanctions: [], // Multi-select field for sanction IDs
+        users: [], // Store user IDs here
+        sanctions: [], // Store sanction IDs here
         acadyear_id: '',
         semester_id: '',
         department_code: department_code,
@@ -26,8 +26,15 @@ export default function DepartmentalCreateViolationModal({ handleCloseModal, dep
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const [studentsResponse, categoriesResponse, offensesResponse, sanctionsResponse, academicYearsResponse, semestersResponse] = await Promise.all([
-                    axios.get(`http://localhost:9000/students/${department_code}`), // Fetch students by department_code
+                const [
+                    studentsResponse, 
+                    categoriesResponse, 
+                    offensesResponse, 
+                    sanctionsResponse, 
+                    academicYearsResponse, 
+                    semestersResponse
+                ] = await Promise.all([
+                    axios.get(`http://localhost:9000/students/${department_code}`), // Fetch students
                     axios.get('http://localhost:9000/categories'),
                     axios.get('http://localhost:9000/offenses'),
                     axios.get('http://localhost:9000/sanctions'),
@@ -47,7 +54,7 @@ export default function DepartmentalCreateViolationModal({ handleCloseModal, dep
         };
 
         fetchData();
-    }, [department_code]); // Include department_code as a dependency
+    }, [department_code]);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -57,7 +64,8 @@ export default function DepartmentalCreateViolationModal({ handleCloseModal, dep
         }));
     };
 
-    const handleSelectChange = (selectedOptions, { name }) => {
+    const handleSelectChange = (selectedOptions, actionMeta) => {
+        const { name } = actionMeta;
         setFormData(prevState => ({
             ...prevState,
             [name]: selectedOptions ? selectedOptions.map(option => option.value) : [],
@@ -86,7 +94,7 @@ export default function DepartmentalCreateViolationModal({ handleCloseModal, dep
 
         try {
             const response = await axios.post('http://localhost:9000/create-violationrecord', formData);
-            console.log(response.data);
+            console.log('Response:', response.data);
 
             Swal.fire({
                 icon: 'success',
@@ -96,8 +104,6 @@ export default function DepartmentalCreateViolationModal({ handleCloseModal, dep
 
             if (typeof handleCloseModal === 'function') {
                 handleCloseModal();
-            } else {
-                console.error('handleCloseModal is not a function');
             }
         } catch (error) {
             console.error('Error creating violation record:', error);
@@ -122,7 +128,6 @@ export default function DepartmentalCreateViolationModal({ handleCloseModal, dep
     return (
         <div className="violation-record-form-container">
             <Form onSubmit={handleSubmit}>
-                {/* Users */}
                 <Form.Group className="mb-3">
                     <Form.Label className="fw-bold">Users</Form.Label>
                     <Select
@@ -131,11 +136,9 @@ export default function DepartmentalCreateViolationModal({ handleCloseModal, dep
                         options={studentOptions}
                         onChange={handleSelectChange}
                         placeholder="Select Students"
-                        required
                     />
                 </Form.Group>
 
-                {/* Academic Year and Semester */}
                 <Row>
                     <Col>
                         <Form.Group className="mb-3">
@@ -144,12 +147,11 @@ export default function DepartmentalCreateViolationModal({ handleCloseModal, dep
                                 name="acadyear_id"
                                 value={formData.acadyear_id}
                                 onChange={handleChange}
-                                required
                             >
                                 <option value="">Select Year</option>
-                                {academicYears.map(academic_year => (
-                                    <option key={academic_year.acadyear_id} value={academic_year.acadyear_id}>
-                                        {academic_year.start_year} - {academic_year.end_year}
+                                {academicYears.map(year => (
+                                    <option key={year.acadyear_id} value={year.acadyear_id}>
+                                        {year.start_year} - {year.end_year}
                                     </option>
                                 ))}
                             </Form.Select>
@@ -163,12 +165,11 @@ export default function DepartmentalCreateViolationModal({ handleCloseModal, dep
                                 name="semester_id"
                                 value={formData.semester_id}
                                 onChange={handleChange}
-                                required
                             >
                                 <option value="">Select Semester</option>
-                                {semesters.map(semester => (
-                                    <option key={semester.semester_id} value={semester.semester_id}>
-                                        {semester.semester_name}
+                                {semesters.map(sem => (
+                                    <option key={sem.semester_id} value={sem.semester_id}>
+                                        {sem.semester_name}
                                     </option>
                                 ))}
                             </Form.Select>
@@ -176,7 +177,6 @@ export default function DepartmentalCreateViolationModal({ handleCloseModal, dep
                     </Col>
                 </Row>
 
-                {/* Category */}
                 <Row>
                     <Col>
                         <Form.Group className="mb-3">
@@ -185,12 +185,11 @@ export default function DepartmentalCreateViolationModal({ handleCloseModal, dep
                                 name="category_id"
                                 value={formData.category_id}
                                 onChange={handleChange}
-                                required
                             >
                                 <option value="">Select Category</option>
-                                {categories.map(category => (
-                                    <option key={category.category_id} value={category.category_id}>
-                                        {category.category_name}
+                                {categories.map(cat => (
+                                    <option key={cat.category_id} value={cat.category_id}>
+                                        {cat.category_name}
                                     </option>
                                 ))}
                             </Form.Select>
@@ -198,7 +197,6 @@ export default function DepartmentalCreateViolationModal({ handleCloseModal, dep
                     </Col>
                 </Row>
 
-                {/* Offenses */}
                 <Row>
                     <Col>
                         <Form.Group className="mb-3">
@@ -207,12 +205,11 @@ export default function DepartmentalCreateViolationModal({ handleCloseModal, dep
                                 name="offense_id"
                                 value={formData.offense_id}
                                 onChange={handleChange}
-                                required
                             >
                                 <option value="">Select Offense</option>
-                                {offenses.map(offense => (
-                                    <option key={offense.offense_id} value={offense.offense_id}>
-                                        {offense.offense_name}
+                                {offenses.map(off => (
+                                    <option key={off.offense_id} value={off.offense_id}>
+                                        {off.offense_name}
                                     </option>
                                 ))}
                             </Form.Select>
@@ -220,7 +217,6 @@ export default function DepartmentalCreateViolationModal({ handleCloseModal, dep
                     </Col>
                 </Row>
 
-                {/* Sanctions */}
                 <Form.Group className="mb-3">
                     <Form.Label className="fw-bold">Sanctions</Form.Label>
                     <Select
@@ -228,11 +224,9 @@ export default function DepartmentalCreateViolationModal({ handleCloseModal, dep
                         name="sanctions"
                         options={sanctionOptions}
                         onChange={handleSelectChange}
-                        required
                     />
                 </Form.Group>
 
-                {/* Description */}
                 <Form.Group className="mb-3">
                     <Form.Label className="fw-bold">Description</Form.Label>
                     <Form.Control
@@ -240,7 +234,6 @@ export default function DepartmentalCreateViolationModal({ handleCloseModal, dep
                         name="description"
                         value={formData.description}
                         onChange={handleChange}
-                        required
                         rows={3}
                     />
                 </Form.Group>
