@@ -89,57 +89,7 @@ export default function CreateViolationModal({ handleCloseModal }) {
 
     return (
         <Form onSubmit={handleSubmit}>
-            <Form.Group className="mb-3">
-                <Form.Label>Description</Form.Label>
-                <Form.Control
-                    as="textarea"
-                    name="description"
-                    value={formData.description}
-                    onChange={handleChange}
-                    required
-                />
-            </Form.Group>
-
-            <Row>
-                <Col>
-                    <Form.Group className="mb-3">
-                        <Form.Label>Category</Form.Label>
-                        <Form.Select
-                            name="category_id"
-                            value={formData.category_id}
-                            onChange={handleChange}
-                            required
-                        >
-                            <option value="">Select Category</option>
-                            {categories.map((category) => (
-                                <option key={category.category_id} value={category.category_id}>
-                                    {category.category_name}
-                                </option>
-                            ))}
-                        </Form.Select>
-                    </Form.Group>
-                </Col>
-
-                <Col>
-                    <Form.Group className="mb-3">
-                        <Form.Label>Offense</Form.Label>
-                        <Form.Select
-                            name="offense_id"
-                            value={formData.offense_id}
-                            onChange={handleChange}
-                            required
-                        >
-                            <option value="">Select Offense</option>
-                            {offenses.map((offense) => (
-                                <option key={offense.offense_id} value={offense.offense_id}>
-                                    {offense.offense_name}
-                                </option>
-                            ))}
-                        </Form.Select>
-                    </Form.Group>
-                </Col>
-            </Row>
-
+            {/* Users */}
             <Form.Group className="mb-3">
                 <Form.Label>Users</Form.Label>
                 <Select
@@ -154,20 +104,7 @@ export default function CreateViolationModal({ handleCloseModal }) {
                 />
             </Form.Group>
 
-            <Form.Group className="mb-3">
-                <Form.Label>Sanctions</Form.Label>
-                <Select
-                    isMulti
-                    name="sanctions"
-                    options={sanctions.map((sanction) => ({
-                        value: sanction.sanction_id,
-                        label: sanction.sanction_name,
-                    }))}
-                    onChange={handleSelectChange}
-                    required
-                />
-            </Form.Group>
-
+            {/* Academic Year and Semester */}
             <Row>
                 <Col>
                     <Form.Group className="mb-3">
@@ -207,6 +144,77 @@ export default function CreateViolationModal({ handleCloseModal }) {
                     </Form.Group>
                 </Col>
             </Row>
+
+            {/* Category */}
+            <Row>
+                <Col>
+                    <Form.Group className="mb-3">
+                        <Form.Label>Category</Form.Label>
+                        <Form.Select
+                            name="category_id"
+                            value={formData.category_id}
+                            onChange={handleChange}
+                            required
+                        >
+                            <option value="">Select Category</option>
+                            {categories.map((category) => (
+                                <option key={category.category_id} value={category.category_id}>
+                                    {category.category_name}
+                                </option>
+                            ))}
+                        </Form.Select>
+                    </Form.Group>
+                </Col>
+            </Row>
+
+            {/* Offense */}
+            <Row>
+                <Col>
+                    <Form.Group className="mb-3">
+                        <Form.Label>Offense</Form.Label>
+                        <Form.Select
+                            name="offense_id"
+                            value={formData.offense_id}
+                            onChange={handleChange}
+                            required
+                        >
+                            <option value="">Select Offense</option>
+                            {offenses.map((offense) => (
+                                <option key={offense.offense_id} value={offense.offense_id}>
+                                    {offense.offense_name}
+                                </option>
+                            ))}
+                        </Form.Select>
+                    </Form.Group>
+                </Col>
+            </Row>
+
+            {/* Sanction */}
+            <Form.Group className="mb-3">
+                <Form.Label>Sanctions</Form.Label>
+                <Select
+                    isMulti
+                    name="sanctions"
+                    options={sanctions.map((sanction) => ({
+                        value: sanction.sanction_id,
+                        label: sanction.sanction_name,
+                    }))}
+                    onChange={handleSelectChange}
+                    required
+                />
+            </Form.Group>
+
+            {/* Description */}
+            <Form.Group className="mb-3">
+                <Form.Label>Description</Form.Label>
+                <Form.Control
+                    as="textarea"
+                    name="description"
+                    value={formData.description}
+                    onChange={handleChange}
+                    required
+                />
+            </Form.Group>
 
             <Button variant="primary" type="submit">
                 Submit
