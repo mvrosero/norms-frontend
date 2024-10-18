@@ -198,7 +198,7 @@ export default function DepartmentalCreateViolationModal({ handleCloseModal, dep
                     </Col>
                 </Row>
 
-                {/* Offense */}
+                {/* Offenses */}
                 <Row>
                     <Col>
                         <Form.Group className="mb-3">
