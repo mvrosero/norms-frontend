@@ -257,7 +257,10 @@ const DepartmentalStudentRecordsTable = () => {
                     <Modal.Title>Create Violation Record</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                    <DepartmentalCreateViolationModal onClose={handleCloseModal} />
+                    <DepartmentalCreateViolationModal 
+                        department_code={department_code} // Pass the department_code here
+                        handleCloseModal={handleCloseModal} 
+                    />
                 </Modal.Body>
             </Modal>
         </>
