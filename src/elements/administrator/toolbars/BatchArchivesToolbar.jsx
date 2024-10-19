@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import '@fortawesome/fontawesome-free/css/all.min.css'; // Ensure you have this import
 
-const BatchProcessToolbar = ({ selectedItemsCount, onEdit, onDelete }) => {
+const BatchArchivesToolbar = ({ selectedItemsCount, onEdit, onDelete }) => {
   const [isVisible, setIsVisible] = useState(true);
 
   const handleClose = () => {
@@ -123,4 +123,4 @@ const styles = {
   },
 };
 
-export default BatchProcessToolbar;
+export default BatchArchivesToolbar;

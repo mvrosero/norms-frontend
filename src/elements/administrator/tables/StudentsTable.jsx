@@ -5,10 +5,10 @@ import Swal from 'sweetalert2';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import PersonIcon from '@mui/icons-material/Person';
-import BatchProcessToolbar from '../toolbars/BatchProcessToolbar'; // Import the BatchProcessToolbar component
+import BatchStudentsToolbar from '../toolbars/BatchStudentsToolbar';
 
 // Import the ViewStudentModal and EditStudentModal components
-import ViewStudentModal from '../modals/ViewStudentModal'; 
+import ViewStudentModal from '../modals/ViewStudentModal';
 import EditStudentModal from '../modals/EditStudentModal';
 import "../../../styles/Students.css";
 
@@ -20,42 +20,41 @@ const StudentsTable = () => {
     const [showUpdateModal, setShowUpdateModal] = useState(false);
     const [selectedUser, setSelectedUser] = useState(null);
     const [headers, setHeaders] = useState({});
-    const [selectedUsers, setSelectedUsers] = useState(new Set()); // New state to track selected users
-    const [deletionStatus, setDeletionStatus] = useState(false);
+    const [selectedUsers, setSelectedUsers] = useState(new Set());
     const [selectAll, setSelectAll] = useState(false); // New state for "Select All" checkbox
 
-    const fetchUsers = useCallback(async () => {  
+    const fetchUsers = useCallback(async () => {
         try {
             const response = await axios.get('http://localhost:9000/students', { headers });
             setUsers(response.data);
         } catch (error) {
             console.error('Error fetching students:', error);
         }
-    }, [headers, deletionStatus]);
+    }, [headers]);
 
-    const fetchDepartments = useCallback(async () => {  
+    const fetchDepartments = useCallback(async () => {
         try {
             const response = await axios.get('http://localhost:9000/departments', { headers });
             setDepartments(response.data);
         } catch (error) {
             console.error('Error fetching departments:', error);
         }
-    }, [headers]); 
+    }, [headers]);
 
-    const fetchPrograms = useCallback(async () => {  
+    const fetchPrograms = useCallback(async () => {
         try {
             const response = await axios.get('http://localhost:9000/programs', { headers });
             setPrograms(response.data);
         } catch (error) {
             console.error('Error fetching programs:', error);
         }
-    }, [headers]); 
+    }, [headers]);
 
     useEffect(() => {
         fetchUsers();
         fetchDepartments();
         fetchPrograms();
-    }, [fetchUsers]); 
+    }, [fetchUsers, fetchDepartments, fetchPrograms]);
 
     const handleReadModalShow = (user) => {
         setSelectedUser(user);
@@ -87,11 +86,11 @@ const StudentsTable = () => {
         }).then((result) => {
             return result.isConfirmed;
         });
-    
+
         if (!isConfirm) {
             return;
         }
-    
+
         try {
             await axios.delete(`http://localhost:9000/student/${userId}`, { headers });
             Swal.fire({
@@ -139,8 +138,8 @@ const StudentsTable = () => {
         <>
             <div className='container'>
                 <br />
-                {selectedUsers.size > 0 && ( // Show BatchProcessToolbar if there are selected users
-                    <BatchProcessToolbar
+                {selectedUsers.size > 0 && (
+                    <BatchStudentsToolbar
                         selectedItemsCount={selectedUsers.size}
                         onEdit={handleEditSelected}
                         onDelete={handleDeleteSelected}
@@ -150,12 +149,12 @@ const StudentsTable = () => {
                     <thead>
                         <tr>
                             <th style={{ width: '5%' }}>
-                                <input 
-                                    type="checkbox" 
-                                    checked={selectAll} 
-                                    onChange={handleSelectAllChange} 
+                                <input
+                                    type="checkbox"
+                                    checked={selectAll}
+                                    onChange={handleSelectAllChange}
                                 />
-                            </th> {/* Checkbox column */}
+                            </th>
                             <th style={{ width: '5%' }}>ID</th>
                             <th style={{ width: '10%' }}>ID Number</th>
                             <th>Full Name</th>
@@ -167,18 +166,18 @@ const StudentsTable = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        {users.map((user, index) => (
-                            <tr key={index}>
+                        {users.map((user) => (
+                            <tr key={user.user_id}>
                                 <td style={{ textAlign: 'center' }}>
-                                    <input 
-                                        type="checkbox" 
-                                        checked={selectedUsers.has(user.user_id)} 
-                                        onChange={() => handleCheckboxChange(user.user_id)} 
+                                    <input
+                                        type="checkbox"
+                                        checked={selectedUsers.has(user.user_id)}
+                                        onChange={() => handleCheckboxChange(user.user_id)}
                                     />
                                 </td>
                                 <td style={{ textAlign: 'center' }}>{user.user_id}</td>
                                 <td>{user.student_idnumber}</td>
-                                <td>{`${user.first_name} ${user.middle_name} ${user.last_name} ${user.suffix}`}</td>
+                                <td>{`${user.first_name} ${user.middle_name || ''} ${user.last_name} ${user.suffix || ''}`}</td>
                                 <td>{user.year_level}</td>
                                 <td>{departments.find(department => department.department_id === user.department_id)?.department_name || ''}</td>
                                 <td>{programs.find(program => program.program_id === user.program_id)?.program_name || ''}</td>
@@ -189,16 +188,16 @@ const StudentsTable = () => {
                                         fontWeight: '600',
                                         fontSize: '14px',
                                         borderRadius: '30px',
-                                        padding: '5px 20px', 
-                                        display: 'inline-flex', 
-                                        alignItems: 'center', 
+                                        padding: '5px 20px',
+                                        display: 'inline-flex',
+                                        alignItems: 'center',
                                     }}>
                                         <div style={{
                                             width: '8px',
                                             height: '8px',
                                             borderRadius: '50%',
                                             backgroundColor: user.status === 'active' ? '#30A530' : '#D9534F',
-                                            marginRight: '7px', 
+                                            marginRight: '7px',
                                         }} />
                                         {user.status}
                                     </div>
@@ -221,54 +220,22 @@ const StudentsTable = () => {
                     </tbody>
                 </Table>
             </div>
- 
+
             <Modal show={showReadModal} onHide={handleReadModalClose}>
                 <Modal.Header closeButton>
                     <Modal.Title style={{ marginLeft: '65px' }}>VIEW STUDENT RECORD</Modal.Title>
-                    <button
-                        type="button"
-                        className="close"
-                        onClick={handleReadModalClose}
-                        style={{
-                            color: '#6c757d',
-                            border: 'none',
-                            background: 'transparent',
-                            fontSize: '30px',
-                            position: 'absolute',
-                            right: '15px',
-                            top: '10px',
-                        }}
-                    >
-                        &times;
-                    </button>
                 </Modal.Header>
                 <Modal.Body>
-                    <ViewStudentModal user={selectedUser} />
+                    {selectedUser && <ViewStudentModal user={selectedUser} departments={departments} programs={programs} />}
                 </Modal.Body>
             </Modal>
 
             <Modal show={showUpdateModal} onHide={handleUpdateModalClose}>
                 <Modal.Header closeButton>
                     <Modal.Title style={{ marginLeft: '65px' }}>EDIT STUDENT RECORD</Modal.Title>
-                    <button
-                        type="button"
-                        className="close"
-                        onClick={handleUpdateModalClose}
-                        style={{
-                            color: '#6c757d',
-                            border: 'none',
-                            background: 'transparent',
-                            fontSize: '30px',
-                            position: 'absolute',
-                            right: '15px',
-                            top: '10px',
-                        }}
-                    >
-                        &times;
-                    </button>
                 </Modal.Header>
                 <Modal.Body>
-                    <EditStudentModal user={selectedUser} />
+                    {selectedUser && <EditStudentModal user={selectedUser} />}
                 </Modal.Body>
             </Modal>
         </>
