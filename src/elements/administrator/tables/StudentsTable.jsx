@@ -12,6 +12,7 @@ import ViewStudentModal from '../modals/ViewStudentModal';
 import EditStudentModal from '../modals/EditStudentModal';
 import "../../../styles/Students.css";
 
+
 const StudentsTable = () => {
     const [users, setUsers] = useState([]);
     const [departments, setDepartments] = useState([]);
