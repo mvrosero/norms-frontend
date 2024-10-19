@@ -12,7 +12,7 @@ import Papa from 'papaparse';
 import AdminNavigation from "../../../pages/administrator/AdminNavigation";
 import AdminInfo from "../../../pages/administrator/AdminInfo";
 import SearchAndFilter from '../../../pages/general/SearchAndFilter';
-import ImportCSVButton from '../../general/buttons/ImportCSVButton';
+import ImportDepartmentalCSV from '../../general/imports/ImportDepartmentalCSV';
 import ViewStudentModal from '../modals/ViewStudentModal';
 import EditStudentModal from '../modals/EditStudentModal';
 import "../../../styles/Students.css";
@@ -170,7 +170,7 @@ const DepartmentalStudentsTable = () => {
                     Add Student
                     <FaPlus style={{ marginLeft: '10px' }} />
                 </button>
-                <ImportCSVButton />
+                <ImportDepartmentalCSV />
             </div>
             
             {/* Breadcrumbs */}
