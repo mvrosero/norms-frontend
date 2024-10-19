@@ -7,7 +7,7 @@ import SearchAndFilter from '../general/SearchAndFilter';
 
 import StudentsTable from '../../elements/administrator/tables/StudentsTable';
 import EmployeesTable from '../../elements/administrator/tables/EmployeesTable';
-import ImportCSVButton from '../../elements/general/buttons/ImportCSVButton';
+import ImportUsersCSV from '../../elements/general/imports/ImportUsersCSV';
 import UserDropdownButton from '../../elements/general/buttons/UserDropdownButton';
 
 export default function AdminUserManagement() {
@@ -37,7 +37,7 @@ export default function AdminUserManagement() {
                     <SearchAndFilter />
                 </div>
                 <UserDropdownButton />
-                <ImportCSVButton />
+                <ImportUsersCSV />
             </div>
             <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: '20px', marginBottom: '10px' }}>
                 <div style={{ display: 'flex', alignItems: 'center', marginRight: '20px' }}>
