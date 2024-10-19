@@ -22,6 +22,7 @@ const StudentsTable = () => {
     const [headers, setHeaders] = useState({});
     const [selectedUsers, setSelectedUsers] = useState(new Set()); // New state to track selected users
     const [deletionStatus, setDeletionStatus] = useState(false);
+    const [selectAll, setSelectAll] = useState(false); // New state for "Select All" checkbox
 
     const fetchUsers = useCallback(async () => {  
         try {
@@ -117,9 +118,16 @@ const StudentsTable = () => {
         setSelectedUsers(updatedSelection);
     };
 
+    const handleSelectAllChange = () => {
+        const newSelectedUsers = selectAll ? new Set() : new Set(users.map(user => user.user_id));
+        setSelectedUsers(newSelectedUsers);
+        setSelectAll(!selectAll);
+    };
+
     const handleDeleteSelected = () => {
         selectedUsers.forEach(userId => deleteUser(userId));
         setSelectedUsers(new Set()); // Clear selection after deletion
+        setSelectAll(false); // Reset "Select All" checkbox
     };
 
     const handleEditSelected = () => {
@@ -141,7 +149,13 @@ const StudentsTable = () => {
                 <Table bordered hover responsive style={{ borderRadius: '20px', marginBottom: '50px', marginLeft: '110px' }}>
                     <thead>
                         <tr>
-                            <th style={{ width: '5%' }}>Select</th> {/* Checkbox column */}
+                            <th style={{ width: '5%' }}>
+                                <input 
+                                    type="checkbox" 
+                                    checked={selectAll} 
+                                    onChange={handleSelectAllChange} 
+                                />
+                            </th> {/* Checkbox column */}
                             <th style={{ width: '5%' }}>ID</th>
                             <th style={{ width: '10%' }}>ID Number</th>
                             <th>Full Name</th>
@@ -170,7 +184,7 @@ const StudentsTable = () => {
                                 <td>{programs.find(program => program.program_id === user.program_id)?.program_name || ''}</td>
                                 <td style={{ textAlign: 'center' }}>
                                     <div style={{
-                                        backgroundColor: user.status === 'active' ? '#DBF0DC' : '#F0DBDB',
+                                        backgroundColor: user.status === 'active' ? '#DBF0DC' : '#F0DBF0',
                                         color: user.status === 'active' ? '#30A530' : '#D9534F',
                                         fontWeight: '600',
                                         fontSize: '14px',
@@ -221,29 +235,21 @@ const StudentsTable = () => {
                             background: 'transparent',
                             fontSize: '30px',
                             position: 'absolute',
-                            top: '2px',
-                            right: '12px',
-                            cursor: 'pointer',
+                            right: '15px',
+                            top: '10px',
                         }}
                     >
                         &times;
                     </button>
                 </Modal.Header>
                 <Modal.Body>
-                    {selectedUser && (
-                        <ViewStudentModal 
-                            user={selectedUser}
-                            handleClose={handleReadModalClose} 
-                            departments={departments}
-                            programs={programs}
-                        />
-                    )}
+                    <ViewStudentModal user={selectedUser} />
                 </Modal.Body>
             </Modal>
 
-            <Modal show={showUpdateModal} onHide={handleUpdateModalClose} dialogClassName="modal-90w">
+            <Modal show={showUpdateModal} onHide={handleUpdateModalClose}>
                 <Modal.Header closeButton>
-                    <Modal.Title style={{ marginLeft: '65px' }}>UPDATE STUDENT RECORD</Modal.Title>
+                    <Modal.Title style={{ marginLeft: '65px' }}>EDIT STUDENT RECORD</Modal.Title>
                     <button
                         type="button"
                         className="close"
@@ -254,23 +260,15 @@ const StudentsTable = () => {
                             background: 'transparent',
                             fontSize: '30px',
                             position: 'absolute',
-                            top: '2px',
-                            right: '12px',
-                            cursor: 'pointer',
+                            right: '15px',
+                            top: '10px',
                         }}
                     >
                         &times;
                     </button>
                 </Modal.Header>
                 <Modal.Body>
-                    {selectedUser && (
-                        <EditStudentModal 
-                            user={selectedUser} 
-                            handleClose={handleUpdateModalClose} 
-                            departments={departments}
-                            programs={programs}
-                        />
-                    )}
+                    <EditStudentModal user={selectedUser} />
                 </Modal.Body>
             </Modal>
         </>
