@@ -5,8 +5,9 @@ import Swal from 'sweetalert2';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import PersonIcon from '@mui/icons-material/Person';
+import BatchProcessToolbar from '../toolbars/BatchProcessToolbar'; // Import the BatchProcessToolbar component
 
-// Import the ViewStudentModal component
+// Import the ViewStudentModal and EditStudentModal components
 import ViewStudentModal from '../modals/ViewStudentModal'; 
 import EditStudentModal from '../modals/EditStudentModal';
 import "../../../styles/Students.css";
@@ -19,6 +20,7 @@ const StudentsTable = () => {
     const [showUpdateModal, setShowUpdateModal] = useState(false);
     const [selectedUser, setSelectedUser] = useState(null);
     const [headers, setHeaders] = useState({});
+    const [selectedUsers, setSelectedUsers] = useState(new Set()); // New state to track selected users
     const [deletionStatus, setDeletionStatus] = useState(false);
 
     const fetchUsers = useCallback(async () => {  
@@ -104,14 +106,42 @@ const StudentsTable = () => {
             });
         }
     };
-    
+
+    const handleCheckboxChange = (userId) => {
+        const updatedSelection = new Set(selectedUsers);
+        if (updatedSelection.has(userId)) {
+            updatedSelection.delete(userId);
+        } else {
+            updatedSelection.add(userId);
+        }
+        setSelectedUsers(updatedSelection);
+    };
+
+    const handleDeleteSelected = () => {
+        selectedUsers.forEach(userId => deleteUser(userId));
+        setSelectedUsers(new Set()); // Clear selection after deletion
+    };
+
+    const handleEditSelected = () => {
+        // Implement your batch edit logic here
+        console.log("Edit selected users: ", Array.from(selectedUsers));
+    };
+
     return (
         <>
             <div className='container'>
                 <br />
+                {selectedUsers.size > 0 && ( // Show BatchProcessToolbar if there are selected users
+                    <BatchProcessToolbar
+                        selectedItemsCount={selectedUsers.size}
+                        onEdit={handleEditSelected}
+                        onDelete={handleDeleteSelected}
+                    />
+                )}
                 <Table bordered hover responsive style={{ borderRadius: '20px', marginBottom: '50px', marginLeft: '110px' }}>
                     <thead>
                         <tr>
+                            <th style={{ width: '5%' }}>Select</th> {/* Checkbox column */}
                             <th style={{ width: '5%' }}>ID</th>
                             <th style={{ width: '10%' }}>ID Number</th>
                             <th>Full Name</th>
@@ -125,6 +155,13 @@ const StudentsTable = () => {
                     <tbody>
                         {users.map((user, index) => (
                             <tr key={index}>
+                                <td style={{ textAlign: 'center' }}>
+                                    <input 
+                                        type="checkbox" 
+                                        checked={selectedUsers.has(user.user_id)} 
+                                        onChange={() => handleCheckboxChange(user.user_id)} 
+                                    />
+                                </td>
                                 <td style={{ textAlign: 'center' }}>{user.user_id}</td>
                                 <td>{user.student_idnumber}</td>
                                 <td>{`${user.first_name} ${user.middle_name} ${user.last_name} ${user.suffix}`}</td>
@@ -204,9 +241,9 @@ const StudentsTable = () => {
                 </Modal.Body>
             </Modal>
 
-            <Modal show={showUpdateModal} onHide={handleUpdateModalClose} dialogClassName="modal-lg">
+            <Modal show={showUpdateModal} onHide={handleUpdateModalClose} dialogClassName="modal-90w">
                 <Modal.Header closeButton>
-                    <Modal.Title style={{ marginLeft: '180px' }}>UPDATE STUDENT RECORD</Modal.Title>
+                    <Modal.Title style={{ marginLeft: '65px' }}>UPDATE STUDENT RECORD</Modal.Title>
                     <button
                         type="button"
                         className="close"
@@ -226,18 +263,18 @@ const StudentsTable = () => {
                     </button>
                 </Modal.Header>
                 <Modal.Body>
-                    <EditStudentModal 
-                        user={selectedUser} 
-                        handleClose={handleUpdateModalClose} 
-                        fetchUsers={fetchUsers} 
-                        headers={headers} 
-                        departments={departments}
-                        programs={programs}
-                    />
+                    {selectedUser && (
+                        <EditStudentModal 
+                            user={selectedUser} 
+                            handleClose={handleUpdateModalClose} 
+                            departments={departments}
+                            programs={programs}
+                        />
+                    )}
                 </Modal.Body>
             </Modal>
         </>
     );
-}
+};
 
 export default StudentsTable;
