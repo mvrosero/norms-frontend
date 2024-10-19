@@ -184,7 +184,7 @@ const StudentsTable = () => {
                                 <td>{programs.find(program => program.program_id === user.program_id)?.program_name || ''}</td>
                                 <td style={{ textAlign: 'center' }}>
                                     <div style={{
-                                        backgroundColor: user.status === 'active' ? '#DBF0DC' : '#F0DBF0',
+                                        backgroundColor: user.status === 'active' ? '#DBF0DC' : '#F0DBDB',
                                         color: user.status === 'active' ? '#30A530' : '#D9534F',
                                         fontWeight: '600',
                                         fontSize: '14px',
