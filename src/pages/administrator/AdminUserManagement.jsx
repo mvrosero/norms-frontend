@@ -7,7 +7,8 @@ import SearchAndFilter from '../general/SearchAndFilter';
 
 import StudentsTable from '../../elements/administrator/tables/StudentsTable';
 import EmployeesTable from '../../elements/administrator/tables/EmployeesTable';
-import ImportEmployeesCSV from '../../elements/general/imports/ImportEmployeesCSV';
+import ImportStudentsCSV from '../../elements/general/imports/ImportStudentsCSV'; // Import Students CSV component
+import ImportEmployeesCSV from '../../elements/general/imports/ImportEmployeesCSV'; // Import Employees CSV component
 import UserDropdownButton from '../../elements/general/buttons/UserDropdownButton';
 
 export default function AdminUserManagement() {
@@ -25,7 +26,6 @@ export default function AdminUserManagement() {
     const handleComponentChange = (event) => {
         setSelectedComponent(event.target.value);
     };
-    
 
     return (
         <div>
@@ -37,9 +37,13 @@ export default function AdminUserManagement() {
                     <SearchAndFilter />
                 </div>
                 <UserDropdownButton />
-                <ImportEmployeesCSV />
+                {selectedComponent === 'students' && <ImportStudentsCSV />} {/* Show Import Students CSV component */}
+                {selectedComponent === 'employees' && <ImportEmployeesCSV />} {/* Show Import Employees CSV component */}
             </div>
-            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: '20px', marginBottom: '10px' }}>
+
+
+            {/* Radio buttons for selecting user type */}
+            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: '10px' }}>
                 <div style={{ display: 'flex', alignItems: 'center', marginRight: '20px' }}>
                     <input
                         type="radio"
@@ -75,8 +79,10 @@ export default function AdminUserManagement() {
                     <label htmlFor="employees" style={{ color: 'gray', cursor: 'pointer' }}>Employees</label>
                 </div>
             </div>
-            {selectedComponent === 'students' && <StudentsTable />}
-            {selectedComponent === 'employees' && <EmployeesTable />}
+
+            {/* Display the tables based on selected radio button */}
+            {selectedComponent === 'students' && <StudentsTable />} {/* Show Students Table */}
+            {selectedComponent === 'employees' && <EmployeesTable />} {/* Show Employees Table */}
         </div>
     );
 }

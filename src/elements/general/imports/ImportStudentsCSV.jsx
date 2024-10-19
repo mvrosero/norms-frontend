@@ -42,7 +42,7 @@ const ImportStudentsCSV = () => {
                     backgroundColor: '#FAD32E',
                     color: 'white',
                     fontWeight: '900',
-                    padding: '5px 15px',
+                    padding: '10px 20px', // Increased padding for better sizing
                     border: 'none',
                     borderRadius: '10px',
                     marginLeft: '2px',
@@ -50,6 +50,10 @@ const ImportStudentsCSV = () => {
                     display: 'flex',
                     alignItems: 'center',
                     boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
+                    height: '40px', // Set consistent height
+                    minWidth: '80px', // Set minimum width
+                    maxWidth: '150px', // Set maximum width
+                    justifyContent: 'center', // Center the text inside
                 }}
             >
                 Import CSV
