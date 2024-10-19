@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import '@fortawesome/fontawesome-free/css/all.min.css'; // Ensure you have this import
 
 const BatchProcessToolbar = ({ selectedItemsCount, onEdit, onDelete }) => {
   const [isVisible, setIsVisible] = useState(true);
@@ -16,12 +17,16 @@ const BatchProcessToolbar = ({ selectedItemsCount, onEdit, onDelete }) => {
       </button>
       <div style={styles.content}>
         <span style={styles.itemCount}>{selectedItemsCount} item(s) selected</span>
-        <button style={styles.editButton} onClick={onEdit}>
-          Edit
-        </button>
-        <button style={styles.deleteButton} onClick={onDelete}>
-          Delete
-        </button>
+        <div style={styles.buttonContainer}>
+          <button style={styles.editButton} onClick={onEdit}>
+            <i className="fas fa-pen" style={styles.icon}></i> {/* Simpler pen icon */}
+            Edit
+          </button>
+          <button style={styles.deleteButton} onClick={onDelete}>
+            <i className="fas fa-trash" style={styles.icon}></i> {/* Trash can icon */}
+            Delete
+          </button>
+        </div>
       </div>
     </div>
   );
@@ -29,16 +34,19 @@ const BatchProcessToolbar = ({ selectedItemsCount, onEdit, onDelete }) => {
 
 const styles = {
   toolbar: {
-    width: '400px',
+    width: '600px', // Increased width for a longer rectangle
     padding: '15px',
     backgroundColor: '#f5f5f5',
-    borderRadius: '15px',
+    borderRadius: '100px',
     boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
-    position: 'relative',
-    margin: '20px auto',
+    position: 'fixed', // Fixed positioning
+    bottom: '20px', // Positioned at the bottom
+    left: '50%', // Center horizontally
+    transform: 'translateX(-50%)', // Center alignment
     display: 'flex',
     alignItems: 'center',
-    justifyContent: 'space-between',
+    justifyContent: 'flex-start', // Align items to the start (left)
+    zIndex: 1000, // Ensure it overlaps other elements
   },
   closeButton: {
     background: 'none',
@@ -46,9 +54,7 @@ const styles = {
     fontSize: '20px',
     cursor: 'pointer',
     color: '#888',
-    position: 'absolute',
-    top: '10px',
-    right: '10px',
+    marginRight: '15px', // Add margin to space from the text
   },
   content: {
     flex: 1,
@@ -57,24 +63,37 @@ const styles = {
     alignItems: 'center',
   },
   itemCount: {
-    marginRight: '20px',
     fontWeight: 'bold',
+    marginRight: '20px',
+  },
+  buttonContainer: {
+    display: 'flex',
+    gap: '5px', // Space between the buttons
   },
   editButton: {
-    backgroundColor: '#4caf50',
-    color: 'white',
+    backgroundColor: '#E8EBF6', // Changed to specified color
+    color: '#4169E1', // Changed text color for edit button
+    fontWeight: 'bold', // Make text bold
     border: 'none',
-    borderRadius: '5px',
-    padding: '10px 15px',
+    borderRadius: '30px', // Rounded corners
+    padding: '7px 20px', // Adjusted padding for better spacing
     cursor: 'pointer',
+    display: 'flex', // Allow icon and text to align properly
+    alignItems: 'center', // Center align the icon and text
   },
   deleteButton: {
-    backgroundColor: '#f44336',
-    color: 'white',
+    backgroundColor: '#F2DFE1', // Changed to specified color
+    color: '#DC3545', // Changed text color for delete button
+    fontWeight: 'bold', // Make text bold
     border: 'none',
-    borderRadius: '5px',
-    padding: '10px 15px',
+    borderRadius: '30px', // Rounded corners
+    padding: '7px 20px', // Adjusted padding for better spacing
     cursor: 'pointer',
+    display: 'flex', // Allow icon and text to align properly
+    alignItems: 'center', // Center align the icon and text
+  },
+  icon: {
+    marginRight: '8px', // Space between icon and text
   },
 };
 
