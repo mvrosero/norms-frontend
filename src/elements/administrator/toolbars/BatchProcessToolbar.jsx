@@ -16,15 +16,20 @@ const BatchProcessToolbar = ({ selectedItemsCount, onEdit, onDelete }) => {
         &times;
       </button>
       <div style={styles.content}>
-        <span style={styles.itemCount}>{selectedItemsCount} item(s) selected</span>
+        <div style={styles.itemInfoContainer}>
+          <div style={styles.itemCountContainer}>
+            <span style={styles.itemCount}>{selectedItemsCount}</span>
+          </div>
+          <span style={styles.selectedText}>
+            item{selectedItemsCount !== 1 ? 's' : ''} selected
+          </span>
+        </div>
         <div style={styles.buttonContainer}>
           <button style={styles.editButton} onClick={onEdit}>
-            <i className="fas fa-pen" style={styles.icon}></i> {/* Simpler pen icon */}
-            Edit
+            <i className="fas fa-pen" style={styles.icon}></i> Edit
           </button>
           <button style={styles.deleteButton} onClick={onDelete}>
-            <i className="fas fa-trash" style={styles.icon}></i> {/* Trash can icon */}
-            Delete
+            <i className="fas fa-trash" style={styles.icon}></i> Delete
           </button>
         </div>
       </div>
@@ -34,27 +39,28 @@ const BatchProcessToolbar = ({ selectedItemsCount, onEdit, onDelete }) => {
 
 const styles = {
   toolbar: {
-    width: '600px', // Increased width for a longer rectangle
+    width: '600px',
     padding: '15px',
-    backgroundColor: '#f5f5f5',
+    backgroundColor: '#3B3B3B',
     borderRadius: '100px',
     boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
-    position: 'fixed', // Fixed positioning
-    bottom: '20px', // Positioned at the bottom
-    left: '50%', // Center horizontally
-    transform: 'translateX(-50%)', // Center alignment
+    position: 'fixed',
+    bottom: '20px',
+    left: '50%',
+    transform: 'translateX(-50%)',
     display: 'flex',
     alignItems: 'center',
-    justifyContent: 'flex-start', // Align items to the start (left)
-    zIndex: 1000, // Ensure it overlaps other elements
+    justifyContent: 'flex-start',
+    zIndex: 1000,
   },
   closeButton: {
     background: 'none',
     border: 'none',
-    fontSize: '20px',
+    fontSize: '25px', // Increased size of the 'x'
     cursor: 'pointer',
-    color: '#888',
-    marginRight: '15px', // Add margin to space from the text
+    color: '#C1C1C1',
+    marginRight: '20px', // Increased space on the right side
+    marginLeft: '10px', // Added space on the left side of 'x'
   },
   content: {
     flex: 1,
@@ -62,38 +68,58 @@ const styles = {
     justifyContent: 'space-between',
     alignItems: 'center',
   },
+  itemInfoContainer: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '15px', // Increased space between the circle and text
+    marginLeft: '20px', // Added space to the left of the number circle
+  },
+  itemCountContainer: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: '30px',
+    height: '30px',
+    borderRadius: '50%',
+    backgroundColor: '#C1C1C1',
+  },
   itemCount: {
     fontWeight: 'bold',
-    marginRight: '20px',
+    color: '#FFFFFF',
+  },
+  selectedText: {
+    color: '#FFFFFF',
+    fontWeight: 'normal',
   },
   buttonContainer: {
     display: 'flex',
-    gap: '5px', // Space between the buttons
+    gap: '10px',
   },
   editButton: {
-    backgroundColor: '#E8EBF6', // Changed to specified color
-    color: '#4169E1', // Changed text color for edit button
-    fontWeight: 'bold', // Make text bold
+    backgroundColor: '#E8EBF6',
+    color: '#4169E1',
+    fontWeight: 'bold',
     border: 'none',
-    borderRadius: '30px', // Rounded corners
-    padding: '7px 20px', // Adjusted padding for better spacing
+    borderRadius: '30px',
+    padding: '7px 20px',
     cursor: 'pointer',
-    display: 'flex', // Allow icon and text to align properly
-    alignItems: 'center', // Center align the icon and text
+    display: 'flex',
+    alignItems: 'center',
   },
   deleteButton: {
-    backgroundColor: '#F2DFE1', // Changed to specified color
-    color: '#DC3545', // Changed text color for delete button
-    fontWeight: 'bold', // Make text bold
+    backgroundColor: '#F2DFE1',
+    color: '#DC3545',
+    fontWeight: 'bold',
     border: 'none',
-    borderRadius: '30px', // Rounded corners
-    padding: '7px 20px', // Adjusted padding for better spacing
+    borderRadius: '30px',
+    padding: '7px 20px',
     cursor: 'pointer',
-    display: 'flex', // Allow icon and text to align properly
-    alignItems: 'center', // Center align the icon and text
+    display: 'flex',
+    alignItems: 'center',
+    marginRight: '20px',
   },
   icon: {
-    marginRight: '8px', // Space between icon and text
+    marginRight: '8px',
   },
 };
 
