@@ -15,17 +15,26 @@ const EditEmployeeModal = ({ user, handleClose, fetchUsers, headers, roles }) =>
         password: user.password,
         profile_photo_filename: user.profile_photo_filename,
         role_id: user.role_id,
-        status: user.status
+        status: user.status || 'active', // Default to 'active'
     });
 
     const handleChange = (e) => {
-        setFormData({ ...formData, [e.target.name]: e.target.value });
+        const { name, value } = e.target;
+        setFormData((prev) => ({
+            ...prev,
+            [name]: value,
+        }));
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        console.log('Submitting:', formData); // Debugging to confirm correct data
         try {
-            const response = await axios.put(`http://localhost:9000/employee/${user.user_id}`, formData, { headers });
+            const response = await axios.put(
+                `http://localhost:9000/employee/${user.user_id}`,
+                formData,
+                { headers }
+            );
             if (response.status === 200) {
                 Swal.fire({
                     icon: 'success',
@@ -43,7 +52,7 @@ const EditEmployeeModal = ({ user, handleClose, fetchUsers, headers, roles }) =>
             console.error('Error updating user:', error);
             Swal.fire({
                 icon: 'error',
-                text: 'An error occurred while updating user. Please try again later.',
+                text: 'An error occurred while updating the user. Please try again later.',
             });
         }
     };
@@ -52,7 +61,7 @@ const EditEmployeeModal = ({ user, handleClose, fetchUsers, headers, roles }) =>
         backgroundColor: '#f2f2f2',
         border: '1px solid #ced4da',
         borderRadius: '.25rem',
-        height: '40px'
+        height: '40px',
     };
 
     const buttonStyle = {
@@ -66,60 +75,113 @@ const EditEmployeeModal = ({ user, handleClose, fetchUsers, headers, roles }) =>
         marginLeft: '10px',
         display: 'flex',
         alignItems: 'center',
-        boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)'
+        boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
     };
 
     return (
         <form onSubmit={handleSubmit}>
             <Row>
                 <Col md={6}>
-                    <Form.Group controlId='employee_idnumber'>
+                    <Form.Group controlId="employee_idnumber">
                         <Form.Label className="fw-bold">Employee ID</Form.Label>
-                        <Form.Control type='text' name='employee_idnumber' value={formData.employee_idnumber} onChange={handleChange} style={inputStyle} />
+                        <Form.Control
+                            type="text"
+                            name="employee_idnumber"
+                            value={formData.employee_idnumber}
+                            onChange={handleChange}
+                            style={inputStyle}
+                        />
                     </Form.Group>
-                    <Form.Group controlId='first_name'>
+                    <Form.Group controlId="first_name">
                         <Form.Label className="fw-bold">First Name</Form.Label>
-                        <Form.Control type='text' name='first_name' value={formData.first_name} onChange={handleChange} style={inputStyle} />
+                        <Form.Control
+                            type="text"
+                            name="first_name"
+                            value={formData.first_name}
+                            onChange={handleChange}
+                            style={inputStyle}
+                        />
                     </Form.Group>
-                    <Form.Group controlId='middle_name'>
-                        <Form.Label className="fw-bold"> Middle Name</Form.Label>
-                        <Form.Control type='text' name='middle_name' value={formData.middle_name} onChange={handleChange} style={inputStyle} />
+                    <Form.Group controlId="middle_name">
+                        <Form.Label className="fw-bold">Middle Name</Form.Label>
+                        <Form.Control
+                            type="text"
+                            name="middle_name"
+                            value={formData.middle_name}
+                            onChange={handleChange}
+                            style={inputStyle}
+                        />
                     </Form.Group>
-                    <Form.Group controlId='last_name'>
+                    <Form.Group controlId="last_name">
                         <Form.Label className="fw-bold">Last Name</Form.Label>
-                        <Form.Control type='text' name='last_name' value={formData.last_name} onChange={handleChange} style={inputStyle} />
+                        <Form.Control
+                            type="text"
+                            name="last_name"
+                            value={formData.last_name}
+                            onChange={handleChange}
+                            style={inputStyle}
+                        />
                     </Form.Group>
-                    <Form.Group controlId='suffix'>
+                    <Form.Group controlId="suffix">
                         <Form.Label className="fw-bold">Suffix</Form.Label>
-                        <Form.Control type='text' name='suffix' value={formData.suffix} onChange={handleChange} style={inputStyle} />
+                        <Form.Control
+                            type="text"
+                            name="suffix"
+                            value={formData.suffix}
+                            onChange={handleChange}
+                            style={inputStyle}
+                        />
                     </Form.Group>
                 </Col>
                 <Col md={6}>
-                    <Form.Group controlId='email'>
+                    <Form.Group controlId="email">
                         <Form.Label className="fw-bold">Email</Form.Label>
-                        <Form.Control type='text' name='email' value={formData.email} onChange={handleChange} style={inputStyle} />
+                        <Form.Control
+                            type="text"
+                            name="email"
+                            value={formData.email}
+                            onChange={handleChange}
+                            style={inputStyle}
+                        />
                     </Form.Group>
-                    <Form.Group controlId='password'>
+                    <Form.Group controlId="password">
                         <Form.Label className="fw-bold">Password</Form.Label>
-                        <Form.Control type='password' name='password' value={formData.password} onChange={handleChange} style={inputStyle} />
+                        <Form.Control
+                            type="password"
+                            name="password"
+                            value={formData.password}
+                            onChange={handleChange}
+                            style={inputStyle}
+                        />
                     </Form.Group>
-                    <Form.Group controlId='role_id'>
+                    <Form.Group controlId="role_id">
                         <Form.Label className="fw-bold">Role</Form.Label>
-                        <Form.Select name='role_id' value={formData.role_id} onChange={handleChange} style={inputStyle}>
-                            <option value=''>Select Role</option>
-                            {roles.filter(role => role.role_name.toLowerCase() !== 'student').map((role) => (
-                                <option key={role.role_id} value={role.role_id}>
-                                    {role.role_name}
-                                </option>
-                            ))}
+                        <Form.Select
+                            name="role_id"
+                            value={formData.role_id}
+                            onChange={handleChange}
+                            style={inputStyle}
+                        >
+                            <option value="">Select Role</option>
+                            {roles
+                                .filter((role) => role.role_name.toLowerCase() !== 'student')
+                                .map((role) => (
+                                    <option key={role.role_id} value={role.role_id}>
+                                        {role.role_name}
+                                    </option>
+                                ))}
                         </Form.Select>
                     </Form.Group>
-                    <Form.Group controlId='status'>
+                    <Form.Group controlId="status">
                         <Form.Label className="fw-bold">Status</Form.Label>
-                        <Form.Select name='status' value={formData.status} onChange={handleChange} style={inputStyle}>
-                            <option value=''>Select Status</option>
-                            <option value='active'>Active</option>
-                            <option value='inactive'>Inactive</option>
+                        <Form.Select
+                            name="status"
+                            value={formData.status}
+                            onChange={handleChange}
+                            style={inputStyle}
+                        >
+                            <option value="active">Active</option>
+                            <option value="inactive">Inactive</option>
                         </Form.Select>
                     </Form.Group>
                 </Col>
@@ -131,6 +193,6 @@ const EditEmployeeModal = ({ user, handleClose, fetchUsers, headers, roles }) =>
             </div>
         </form>
     );
-}
+};
 
 export default EditEmployeeModal;
