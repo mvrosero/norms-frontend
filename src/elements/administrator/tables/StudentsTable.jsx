@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import { Modal, Button, Table } from 'react-bootstrap';
@@ -21,9 +22,8 @@ const StudentsTable = () => {
     const [selectedUser, setSelectedUser] = useState(null);
     const [headers, setHeaders] = useState({});
     const [selectedUsers, setSelectedUsers] = useState(new Set());
-    const [selectAll, setSelectAll] = useState(false); // New state for "Select All" checkbox
+    const [selectAll, setSelectAll] = useState(false);
 
-    // Fetch users, departments, and programs using useCallback
     const fetchUsers = useCallback(async () => {
         try {
             const response = await axios.get('http://localhost:9000/students', { headers });
@@ -54,7 +54,6 @@ const StudentsTable = () => {
         }
     }, [headers]);
 
-    // Fetch data on component mount
     useEffect(() => {
         fetchUsers();
         fetchDepartments();
@@ -75,7 +74,8 @@ const StudentsTable = () => {
 
     const handleUpdateModalClose = () => setShowUpdateModal(false);
 
-    const deleteUser = async (userId) => {
+    // Updated deleteUser function to handle an array of user IDs
+    const deleteUsers = async (userIds) => {
         const isConfirm = await Swal.fire({
             title: 'Are you sure?',
             text: "You won't be able to revert this!",
@@ -88,14 +88,20 @@ const StudentsTable = () => {
 
         if (!isConfirm) return;
 
-        try {
-            await axios.delete(`http://localhost:9000/student/${userId}`, { headers });
-            Swal.fire('Deleted!', 'Successfully Deleted.', 'success');
-            setUsers(prevUsers => prevUsers.filter(user => user.user_id !== userId));
-        } catch (error) {
-            console.error('Error deleting user:', error);
-            Swal.fire('Error', 'An error occurred while deleting user. Please try again later.', 'error');
-        }
+        const promises = userIds.map(async (userId) => {
+            try {
+                await axios.delete(`http://localhost:9000/student/${userId}`, { headers });
+                return userId; // Return the deleted user ID for filtering
+            } catch (error) {
+                console.error('Error deleting user:', error);
+                Swal.fire('Error', 'An error occurred while deleting user. Please try again later.', 'error');
+                return null; // Return null if an error occurred
+            }
+        });
+
+        const deletedUserIds = await Promise.all(promises);
+        setUsers(prevUsers => prevUsers.filter(user => !deletedUserIds.includes(user.user_id)));
+        Swal.fire('Deleted!', 'Successfully Deleted.', 'success');
     };
 
     const handleCheckboxChange = (userId) => {
@@ -113,14 +119,12 @@ const StudentsTable = () => {
     };
 
     const handleDeleteSelected = async () => {
-        const promises = Array.from(selectedUsers).map(userId => deleteUser(userId));
-        await Promise.all(promises);
+        await deleteUsers(Array.from(selectedUsers)); // Pass the array of selected user IDs
         setSelectedUsers(new Set()); // Clear selection after deletion
         setSelectAll(false); // Reset "Select All" checkbox
     };
 
     const handleEditSelected = () => {
-        // Implement your batch edit logic here
         console.log("Edit selected users: ", Array.from(selectedUsers));
     };
 
@@ -200,7 +204,7 @@ const StudentsTable = () => {
                                         <Button className='btn btn-success btn-sm' onClick={() => handleUpdateModalShow(user)}>
                                             <EditIcon />
                                         </Button>
-                                        <Button className='btn btn-danger btn-sm' onClick={() => deleteUser(user.user_id)}>
+                                        <Button className='btn btn-danger btn-sm' onClick={() => deleteUsers([user.user_id])}>
                                             <DeleteIcon />
                                         </Button>
                                     </div>

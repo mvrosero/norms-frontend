@@ -13,7 +13,7 @@ const ImportStudentsCSV = () => {
         formData.append('file', selectedFile);
 
         try {
-            const response = await axios.post('http://localhost:9000/register-student', formData, {
+            const response = await axios.post('http://localhost:9000/importcsv-student', formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                 },
