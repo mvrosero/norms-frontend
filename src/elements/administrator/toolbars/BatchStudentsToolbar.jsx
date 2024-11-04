@@ -1,14 +1,24 @@
 import React, { useState } from 'react';
-import '@fortawesome/fontawesome-free/css/all.min.css'; // Ensure you have this import
+import '@fortawesome/fontawesome-free/css/all.min.css';
+import BatchEditStudentModal from '../modals/BatchEditStudentModal';
 
-const BatchStudentsToolbar = ({ selectedItemsCount, onEdit, onDelete }) => {
+const BatchStudentsToolbar = ({ selectedItemsCount, onEdit, onDelete, studentIds }) => {
   const [isVisible, setIsVisible] = useState(true);
+  const [isModalVisible, setIsModalVisible] = useState(false); // State for modal visibility
 
   const handleClose = () => {
     setIsVisible(false);
   };
 
-  if (!isVisible) return null; // Hide the toolbar when closed
+  const handleEdit = () => {
+    setIsModalVisible(true); // Show the modal when edit is clicked
+  };
+
+  const handleModalClose = () => {
+    setIsModalVisible(false); // Close the modal
+  };
+
+  if (!isVisible) return null;
 
   return (
     <div style={styles.toolbar}>
@@ -25,7 +35,7 @@ const BatchStudentsToolbar = ({ selectedItemsCount, onEdit, onDelete }) => {
           </span>
         </div>
         <div style={styles.buttonContainer}>
-          <button style={styles.editButton} onClick={onEdit}>
+          <button style={styles.editButton} onClick={handleEdit}>
             <i className="fas fa-pen" style={styles.icon}></i> Edit
           </button>
           <button style={styles.deleteButton} onClick={onDelete}>
@@ -33,6 +43,13 @@ const BatchStudentsToolbar = ({ selectedItemsCount, onEdit, onDelete }) => {
           </button>
         </div>
       </div>
+
+      {/* Batch Edit Student Modal */}
+      <BatchEditStudentModal
+        show={isModalVisible}
+        handleClose={handleModalClose}
+        studentIds={studentIds} // Pass selected student IDs to the modal
+      />
     </div>
   );
 };
@@ -56,11 +73,11 @@ const styles = {
   closeButton: {
     background: 'none',
     border: 'none',
-    fontSize: '25px', // Increased size of the 'x'
+    fontSize: '25px',
     cursor: 'pointer',
     color: '#C1C1C1',
-    marginRight: '20px', // Increased space on the right side
-    marginLeft: '10px', // Added space on the left side of 'x'
+    marginRight: '20px',
+    marginLeft: '10px',
   },
   content: {
     flex: 1,
@@ -71,8 +88,8 @@ const styles = {
   itemInfoContainer: {
     display: 'flex',
     alignItems: 'center',
-    gap: '15px', // Increased space between the circle and text
-    marginLeft: '20px', // Added space to the left of the number circle
+    gap: '15px',
+    marginLeft: '20px',
   },
   itemCountContainer: {
     display: 'flex',
