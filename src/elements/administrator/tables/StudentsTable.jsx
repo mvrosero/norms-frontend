@@ -12,7 +12,6 @@ import ViewStudentModal from '../modals/ViewStudentModal';
 import EditStudentModal from '../modals/EditStudentModal';
 import "../../../styles/Students.css";
 
-
 const StudentsTable = () => {
     const [users, setUsers] = useState([]);
     const [departments, setDepartments] = useState([]);
@@ -24,12 +23,14 @@ const StudentsTable = () => {
     const [selectedUsers, setSelectedUsers] = useState(new Set());
     const [selectAll, setSelectAll] = useState(false); // New state for "Select All" checkbox
 
+    // Fetch users, departments, and programs using useCallback
     const fetchUsers = useCallback(async () => {
         try {
             const response = await axios.get('http://localhost:9000/students', { headers });
             setUsers(response.data);
         } catch (error) {
             console.error('Error fetching students:', error);
+            Swal.fire('Error', 'Failed to fetch students.', 'error');
         }
     }, [headers]);
 
@@ -39,6 +40,7 @@ const StudentsTable = () => {
             setDepartments(response.data);
         } catch (error) {
             console.error('Error fetching departments:', error);
+            Swal.fire('Error', 'Failed to fetch departments.', 'error');
         }
     }, [headers]);
 
@@ -48,9 +50,11 @@ const StudentsTable = () => {
             setPrograms(response.data);
         } catch (error) {
             console.error('Error fetching programs:', error);
+            Swal.fire('Error', 'Failed to fetch programs.', 'error');
         }
     }, [headers]);
 
+    // Fetch data on component mount
     useEffect(() => {
         fetchUsers();
         fetchDepartments();
@@ -62,18 +66,14 @@ const StudentsTable = () => {
         setShowReadModal(true);
     };
 
-    const handleReadModalClose = () => {
-        setShowReadModal(false);
-    };
+    const handleReadModalClose = () => setShowReadModal(false);
 
     const handleUpdateModalShow = (user) => {
         setSelectedUser(user);
         setShowUpdateModal(true);
     };
 
-    const handleUpdateModalClose = () => {
-        setShowUpdateModal(false);
-    };
+    const handleUpdateModalClose = () => setShowUpdateModal(false);
 
     const deleteUser = async (userId) => {
         const isConfirm = await Swal.fire({
@@ -84,48 +84,37 @@ const StudentsTable = () => {
             confirmButtonColor: '#3085d6',
             cancelButtonColor: '#d33',
             confirmButtonText: 'Yes, Delete it!'
-        }).then((result) => {
-            return result.isConfirmed;
-        });
+        }).then((result) => result.isConfirmed);
 
-        if (!isConfirm) {
-            return;
-        }
+        if (!isConfirm) return;
 
         try {
             await axios.delete(`http://localhost:9000/student/${userId}`, { headers });
-            Swal.fire({
-                icon: 'success',
-                text: "Successfully Deleted"
-            });
+            Swal.fire('Deleted!', 'Successfully Deleted.', 'success');
             setUsers(prevUsers => prevUsers.filter(user => user.user_id !== userId));
         } catch (error) {
             console.error('Error deleting user:', error);
-            Swal.fire({
-                icon: 'error',
-                text: 'An error occurred while deleting user. Please try again later.',
-            });
+            Swal.fire('Error', 'An error occurred while deleting user. Please try again later.', 'error');
         }
     };
 
     const handleCheckboxChange = (userId) => {
-        const updatedSelection = new Set(selectedUsers);
-        if (updatedSelection.has(userId)) {
-            updatedSelection.delete(userId);
-        } else {
-            updatedSelection.add(userId);
-        }
-        setSelectedUsers(updatedSelection);
+        setSelectedUsers((prev) => {
+            const updatedSelection = new Set(prev);
+            updatedSelection.has(userId) ? updatedSelection.delete(userId) : updatedSelection.add(userId);
+            return updatedSelection;
+        });
     };
 
     const handleSelectAllChange = () => {
         const newSelectedUsers = selectAll ? new Set() : new Set(users.map(user => user.user_id));
         setSelectedUsers(newSelectedUsers);
-        setSelectAll(!selectAll);
+        setSelectAll(prev => !prev);
     };
 
-    const handleDeleteSelected = () => {
-        selectedUsers.forEach(userId => deleteUser(userId));
+    const handleDeleteSelected = async () => {
+        const promises = Array.from(selectedUsers).map(userId => deleteUser(userId));
+        await Promise.all(promises);
         setSelectedUsers(new Set()); // Clear selection after deletion
         setSelectAll(false); // Reset "Select All" checkbox
     };
@@ -236,7 +225,7 @@ const StudentsTable = () => {
                     <Modal.Title style={{ marginLeft: '65px' }}>EDIT STUDENT RECORD</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                    {selectedUser && <EditStudentModal user={selectedUser} />}
+                    {selectedUser && <EditStudentModal fetchUsers={fetchUsers} user={selectedUser} departments={departments} programs={programs} handleClose={handleUpdateModalClose} />}
                 </Modal.Body>
             </Modal>
         </>
