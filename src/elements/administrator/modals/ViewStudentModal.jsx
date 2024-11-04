@@ -18,6 +18,7 @@ const ViewStudentModal = ({ user, handleClose, departments, programs }) => {
             <p><strong>Full Name:</strong> {`${user.first_name} ${user.middle_name} ${user.last_name} ${user.suffix}`}</p>
             <p><strong>Email Address:</strong> {user.email}</p>
             <p><strong>Year Level:</strong> {user.year_level}</p>
+            <p><strong>Batch:</strong> {user.batch}</p>
             <p><strong>Department:</strong> {getDepartmentName(user.department_id)}</p>
             <p><strong>Program:</strong> {getProgramName(user.program_id)}</p>
             <p><strong>Status:</strong> {user.status}</p>

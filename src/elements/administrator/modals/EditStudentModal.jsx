@@ -13,10 +13,10 @@ const EditStudentModal = ({ user, handleClose, fetchUsers, headers, departments,
         email: user.email,
         password: user.password,
         year_level: user.year_level,
-        batch: user.batch, // Added batch
+        batch: user.batch,
         department_id: user.department_id,
         program_id: user.program_id,
-        status: user.status || 'active', // Default to 'active'
+        status: user.status || 'active',
     });
 
     const handleChange = (e) => {
@@ -29,7 +29,7 @@ const EditStudentModal = ({ user, handleClose, fetchUsers, headers, departments,
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log('Submitting:', formData); // Debugging to confirm correct data
+        console.log('Submitting:', formData);
         try {
             const response = await axios.put(
                 `http://localhost:9000/student/${user.user_id}`,
@@ -78,6 +78,12 @@ const EditStudentModal = ({ user, handleClose, fetchUsers, headers, departments,
         alignItems: 'center',
         boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
     };
+
+    // Generate the batch options from 2018 to 2030
+    const batchYears = [];
+    for (let year = 2018; year <= 2030; year++) {
+        batchYears.push(year);
+    }
 
     return (
         <Form onSubmit={handleSubmit}>
@@ -157,23 +163,33 @@ const EditStudentModal = ({ user, handleClose, fetchUsers, headers, departments,
                     </Form.Group>
                     <Form.Group controlId='year_level'>
                         <Form.Label className="fw-bold">Year Level</Form.Label>
-                        <Form.Control 
-                            type='text' 
+                        <Form.Select 
                             name='year_level' 
                             value={formData.year_level} 
                             onChange={handleChange} 
-                            style={inputStyle} 
-                        />
+                            style={inputStyle}
+                        >
+                            <option value='First Year'>First Year</option>
+                            <option value='Second Year'>Second Year</option>
+                            <option value='Third Year'>Third Year</option>
+                            <option value='Fourth Year'>Fourth Year</option>
+                            <option value='Fifth Year'>Fifth Year</option>
+                        </Form.Select>
                     </Form.Group>
                     <Form.Group controlId='batch'>
                         <Form.Label className="fw-bold">Batch</Form.Label>
-                        <Form.Control 
-                            type='text' 
+                        <Form.Select 
                             name='batch' 
-                            value={formData.batch} 
+                            value={formData.batch || ''} // Set to '' if formData.batch is undefined
                             onChange={handleChange} 
-                            style={inputStyle} 
-                        />
+                            style={inputStyle}
+                        >
+                            {batchYears.map((year) => (
+                                <option key={year} value={year}>
+                                    {year}
+                                </option>
+                            ))}
+                        </Form.Select>
                     </Form.Group>
                     <Form.Group controlId='department_id'>
                         <Form.Label className="fw-bold">Department</Form.Label>
@@ -222,9 +238,8 @@ const EditStudentModal = ({ user, handleClose, fetchUsers, headers, departments,
                 </Col>
             </Row>
             <div className="d-flex justify-content-end mt-3">
-                <button type="submit" style={buttonStyle}>
-                    Update
-                </button>
+                <button type="submit" style={buttonStyle}>Save Changes</button>
+                <button type="button" onClick={handleClose} style={buttonStyle}>Cancel</button>
             </div>
         </Form>
     );
