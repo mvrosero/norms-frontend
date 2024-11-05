@@ -1,22 +1,98 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import '@fortawesome/fontawesome-free/css/all.min.css';
-import BatchEditStudentModal from '../modals/BatchEditStudentModal';
+import { Modal, Button, Form } from 'react-bootstrap';
+import axios from 'axios';
 
-const BatchStudentsToolbar = ({ selectedItemsCount, onEdit, onDelete, studentIds }) => {
+const BatchStudentsToolbar = ({ selectedItemsCount, onEdit, onDelete, selectedStudentIds }) => {
   const [isVisible, setIsVisible] = useState(true);
-  const [isModalVisible, setIsModalVisible] = useState(false); // State for modal visibility
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [yearLevel, setYearLevel] = useState('');
+  const [departmentId, setDepartmentId] = useState('');
+  const [programId, setProgramId] = useState('');
+  const [status, setStatus] = useState('');
+  const [departments, setDepartments] = useState([]);
+  const [programs, setPrograms] = useState([]);
+  const [error, setError] = useState('');
+  const [successMessage, setSuccessMessage] = useState('');
 
   const handleClose = () => {
     setIsVisible(false);
   };
 
   const handleEdit = () => {
-    setIsModalVisible(true); // Show the modal when edit is clicked
+    setIsModalVisible(true);
   };
 
   const handleModalClose = () => {
-    setIsModalVisible(false); // Close the modal
+    setIsModalVisible(false);
+    resetForm();
   };
+
+  const resetForm = () => {
+    setYearLevel('');
+    setDepartmentId('');
+    setProgramId('');
+    setStatus('');
+    setError('');
+    setSuccessMessage('');
+  };
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [departmentResponse, programResponse] = await Promise.all([
+          axios.get('http://localhost:9000/departments'),
+          axios.get('http://localhost:9000/programs'),
+        ]);
+        setDepartments(departmentResponse.data);
+        setPrograms(programResponse.data);
+      } catch (error) {
+        console.error('Error fetching departments or programs:', error);
+        setError('Failed to load departments or programs.');
+      }
+    };
+
+    if (isModalVisible) {
+      fetchData();
+    }
+  }, [isModalVisible]);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError('');
+    setSuccessMessage('');
+  
+    try {
+      const updates = {
+        ...(yearLevel && { year_level: yearLevel }),
+        ...(departmentId && { department_id: departmentId }),
+        ...(programId && { program_id: programId }),
+        ...(status && { status: status }),
+      };
+  
+      if (Object.keys(updates).length === 0) {
+        setError('No fields to update.');
+        return;
+      }
+  
+      console.log('Submitting payload:', {
+        student_ids: selectedStudentIds,
+        updates: updates,
+      });
+  
+      const response = await axios.put('http://localhost:9000/students', {
+        student_ids: selectedStudentIds,
+        updates: updates,
+      });
+  
+      setSuccessMessage(response.data.message);
+      handleModalClose();
+    } catch (error) {
+      console.error('Error updating students:', error.response?.data || error.message);
+      setError(error.response?.data?.error || 'Failed to update students. Please try again.');
+    }
+  };
+  
 
   if (!isVisible) return null;
 
@@ -44,17 +120,88 @@ const BatchStudentsToolbar = ({ selectedItemsCount, onEdit, onDelete, studentIds
         </div>
       </div>
 
-      {/* Batch Edit Student Modal */}
-      <BatchEditStudentModal
-        show={isModalVisible}
-        handleClose={handleModalClose}
-        studentIds={studentIds} // Pass selected student IDs to the modal
-      />
+      {/* Embedded Batch Edit Student Modal */}
+      <Modal show={isModalVisible} onHide={handleModalClose}>
+        <Modal.Header closeButton>
+          <Modal.Title>BATCH UPDATE STUDENTS</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          {error && <div className="alert alert-danger">{error}</div>}
+          {successMessage && <div className="alert alert-success">{successMessage}</div>}
+          <Form onSubmit={handleSubmit}>
+            <Form.Group controlId="year_level">
+              <Form.Label className="fw-bold">Year Level</Form.Label>
+              <Form.Select
+                name="year_level"
+                value={yearLevel}
+                onChange={(e) => setYearLevel(e.target.value)}
+              >
+                <option value="">Select Year Level</option>
+                <option value="First Year">First Year</option>
+                <option value="Second Year">Second Year</option>
+                <option value="Third Year">Third Year</option>
+                <option value="Fourth Year">Fourth Year</option>
+                <option value="Fifth Year">Fifth Year</option>
+              </Form.Select>
+            </Form.Group>
+
+            <Form.Group controlId="department_id">
+              <Form.Label className="fw-bold">Department</Form.Label>
+              <Form.Select
+                name="department_id"
+                value={departmentId}
+                onChange={(e) => setDepartmentId(e.target.value)}
+              >
+                <option value="">Select Department</option>
+                {departments.map((department) => (
+                  <option key={department.department_id} value={department.department_id}>
+                    {department.department_name}
+                  </option>
+                ))}
+              </Form.Select>
+            </Form.Group>
+
+            <Form.Group controlId="program_id">
+              <Form.Label className="fw-bold">Program</Form.Label>
+              <Form.Select
+                name="program_id"
+                value={programId}
+                onChange={(e) => setProgramId(e.target.value)}
+              >
+                <option value="">Select Program</option>
+                {programs.map((program) => (
+                  <option key={program.program_id} value={program.program_id}>
+                    {program.program_name}
+                  </option>
+                ))}
+              </Form.Select>
+            </Form.Group>
+
+            <Form.Group controlId="status">
+              <Form.Label className="fw-bold">Status</Form.Label>
+              <Form.Select
+                name="status"
+                value={status}
+                onChange={(e) => setStatus(e.target.value)}
+              >
+                <option value="">Select Status</option>
+                <option value="active">Active</option>
+                <option value="inactive">Inactive</option>
+              </Form.Select>
+            </Form.Group>
+
+            <Button variant="primary" type="submit">
+              Update
+            </Button>
+          </Form>
+        </Modal.Body>
+      </Modal>
     </div>
   );
 };
 
 const styles = {
+  // Styling remains the same
   toolbar: {
     width: '600px',
     padding: '15px',
