@@ -201,7 +201,6 @@ const BatchStudentsToolbar = ({ selectedItemsCount, onEdit, onDelete, selectedSt
 };
 
 const styles = {
-  // Styling remains the same
   toolbar: {
     width: '600px',
     padding: '15px',
@@ -280,10 +279,9 @@ const styles = {
     cursor: 'pointer',
     display: 'flex',
     alignItems: 'center',
-    marginRight: '20px',
   },
   icon: {
-    marginRight: '8px',
+    marginRight: '5px',
   },
 };
 
