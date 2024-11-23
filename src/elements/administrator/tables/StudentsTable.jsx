@@ -2,7 +2,6 @@ import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import { Modal, Button, Table } from 'react-bootstrap';
 import Swal from 'sweetalert2';
-import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import PersonIcon from '@mui/icons-material/Person';
 import BatchStudentsToolbar from '../toolbars/BatchStudentsToolbar';
@@ -157,7 +156,7 @@ const StudentsTable = () => {
                             <th>Department</th>
                             <th>Program</th>
                             <th style={{ width: '12%' }}>Status</th>
-                            <th style={{ width: '13%' }}>Actions</th>
+                            <th style={{ width: '10%' }}>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -204,9 +203,6 @@ const StudentsTable = () => {
                                         </Button>
                                         <Button className='btn btn-success btn-sm' onClick={() => handleUpdateModalShow(user)}>
                                             <EditIcon />
-                                        </Button>
-                                        <Button className='btn btn-danger btn-sm' onClick={() => deleteUsers([user.user_id])}>
-                                            <DeleteIcon />
                                         </Button>
                                     </div>
                                 </td>

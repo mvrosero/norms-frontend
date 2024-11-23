@@ -3,7 +3,7 @@ import '@fortawesome/fontawesome-free/css/all.min.css';
 import { Modal, Button, Form } from 'react-bootstrap';
 import axios from 'axios';
 
-const BatchStudentsToolbar = ({ selectedItemsCount, onEdit, onDelete, selectedStudentIds }) => {
+const BatchStudentsToolbar = ({ selectedItemsCount, selectedStudentIds }) => {
   const [isVisible, setIsVisible] = useState(true);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [yearLevel, setYearLevel] = useState('');
@@ -61,7 +61,7 @@ const BatchStudentsToolbar = ({ selectedItemsCount, onEdit, onDelete, selectedSt
     e.preventDefault();
     setError('');
     setSuccessMessage('');
-  
+
     try {
       const updates = {
         ...(yearLevel && { year_level: yearLevel }),
@@ -69,22 +69,22 @@ const BatchStudentsToolbar = ({ selectedItemsCount, onEdit, onDelete, selectedSt
         ...(programId && { program_id: programId }),
         ...(status && { status: status }),
       };
-  
+
       if (Object.keys(updates).length === 0) {
         setError('No fields to update.');
         return;
       }
-  
+
       console.log('Submitting payload:', {
         student_ids: selectedStudentIds,
         updates: updates,
       });
-  
+
       const response = await axios.put('http://localhost:9000/students', {
         student_ids: selectedStudentIds,
         updates: updates,
       });
-  
+
       setSuccessMessage(response.data.message);
       handleModalClose();
     } catch (error) {
@@ -92,7 +92,6 @@ const BatchStudentsToolbar = ({ selectedItemsCount, onEdit, onDelete, selectedSt
       setError(error.response?.data?.error || 'Failed to update students. Please try again.');
     }
   };
-  
 
   if (!isVisible) return null;
 
@@ -113,9 +112,6 @@ const BatchStudentsToolbar = ({ selectedItemsCount, onEdit, onDelete, selectedSt
         <div style={styles.buttonContainer}>
           <button style={styles.editButton} onClick={handleEdit}>
             <i className="fas fa-pen" style={styles.icon}></i> Edit
-          </button>
-          <button style={styles.deleteButton} onClick={onDelete}>
-            <i className="fas fa-trash" style={styles.icon}></i> Delete
           </button>
         </div>
       </div>
@@ -187,7 +183,7 @@ const BatchStudentsToolbar = ({ selectedItemsCount, onEdit, onDelete, selectedSt
                 <option value="">Select Status</option>
                 <option value="active">Active</option>
                 <option value="inactive">Inactive</option>
-                <option value="inactive">Archived</option>
+                <option value="archived">Archived</option>
               </Form.Select>
             </Form.Group>
 
@@ -266,17 +262,7 @@ const styles = {
     border: 'none',
     borderRadius: '30px',
     padding: '7px 20px',
-    cursor: 'pointer',
-    display: 'flex',
-    alignItems: 'center',
-  },
-  deleteButton: {
-    backgroundColor: '#F2DFE1',
-    color: '#DC3545',
-    fontWeight: 'bold',
-    border: 'none',
-    borderRadius: '30px',
-    padding: '7px 20px',
+    marginRight: '25px',
     cursor: 'pointer',
     display: 'flex',
     alignItems: 'center',

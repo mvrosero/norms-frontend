@@ -3,15 +3,28 @@ import axios from 'axios';
 import { Modal, Button, Table } from 'react-bootstrap';
 import Swal from 'sweetalert2';
 import DeleteIcon from '@mui/icons-material/Delete';
+import EditIcon from '@mui/icons-material/Edit';
 import PersonIcon from '@mui/icons-material/Person';
+import BatchArchivesToolbar from '../toolbars/BatchArchivesToolbar';
+
+
+// Import the ViewStudentModal and EditStudentModal components
+import ViewStudentModal from '../modals/ViewStudentModal';
+import EditStudentModal from '../modals/EditStudentModal';
+import "../../../styles/Students.css";
+
 
 const ArchivesTable = () => {
     const [users, setUsers] = useState([]);
     const [departments, setDepartments] = useState([]);
     const [programs, setPrograms] = useState([]);
     const [showReadModal, setShowReadModal] = useState(false);
+    const [showUpdateModal, setShowUpdateModal] = useState(false);
     const [selectedUser, setSelectedUser] = useState(null);
     const [headers, setHeaders] = useState({});
+    const [selectedUsers, setSelectedUsers] = useState(new Set());
+    const [selectAll, setSelectAll] = useState(false);
+
 
     const fetchUsers = useCallback(async () => {
         try {
@@ -19,8 +32,10 @@ const ArchivesTable = () => {
             setUsers(response.data);
         } catch (error) {
             console.error('Error fetching students:', error);
+            Swal.fire('Error', 'Failed to fetch students.', 'error');
         }
     }, [headers]);
+
 
     const fetchDepartments = useCallback(async () => {
         try {
@@ -28,8 +43,10 @@ const ArchivesTable = () => {
             setDepartments(response.data);
         } catch (error) {
             console.error('Error fetching departments:', error);
+            Swal.fire('Error', 'Failed to fetch departments.', 'error');
         }
     }, [headers]);
+
 
     const fetchPrograms = useCallback(async () => {
         try {
@@ -37,35 +54,38 @@ const ArchivesTable = () => {
             setPrograms(response.data);
         } catch (error) {
             console.error('Error fetching programs:', error);
+            Swal.fire('Error', 'Failed to fetch programs.', 'error');
         }
     }, [headers]);
+
 
     useEffect(() => {
         fetchUsers();
         fetchDepartments();
         fetchPrograms();
-    }, [fetchUsers]);
+    }, [fetchUsers, fetchDepartments, fetchPrograms]);
+
 
     const handleReadModalShow = (user) => {
         setSelectedUser(user);
         setShowReadModal(true);
     };
 
-    const handleReadModalClose = () => {
-        setShowReadModal(false);
+
+    const handleReadModalClose = () => setShowReadModal(false);
+
+
+    const handleUpdateModalShow = (user) => {
+        setSelectedUser(user);
+        setShowUpdateModal(true);
     };
 
-    const getDepartmentName = (departmentId) => {
-        const department = departments.find((d) => d.department_id === departmentId);
-        return department ? department.department_name : '';
-    };
 
-    const getProgramName = (programId) => {
-        const program = programs.find((p) => p.program_id === programId);
-        return program ? program.program_name : '';
-    };
+    const handleUpdateModalClose = () => setShowUpdateModal(false);
 
-    const deleteUser = async (userId) => {
+
+    // Updated deleteUser function to handle an array of user IDs
+    const deleteUsers = async (userIds) => {
         const isConfirm = await Swal.fire({
             title: 'Are you sure?',
             text: "You won't be able to revert this!",
@@ -74,58 +94,107 @@ const ArchivesTable = () => {
             confirmButtonColor: '#3085d6',
             cancelButtonColor: '#d33',
             confirmButtonText: 'Yes, Delete it!'
-        }).then((result) => {
-            return result.isConfirmed;
+        }).then((result) => result.isConfirmed);
+
+
+        if (!isConfirm) return;
+
+
+        const promises = userIds.map(async (userId) => {
+            try {
+                await axios.delete(`http://localhost:9000/student/${userId}`, { headers });
+                return userId; // Return the deleted user ID for filtering
+            } catch (error) {
+                console.error('Error deleting user:', error);
+                Swal.fire('Error', 'An error occurred while deleting user. Please try again later.', 'error');
+                return null; // Return null if an error occurred
+            }
         });
 
-        if (!isConfirm) {
-            return;
-        }
 
-        try {
-            await axios.delete(`http://localhost:9000/student/${userId}`, { headers });
-            Swal.fire({
-                icon: 'success',
-                text: "Successfully Deleted"
-            });
-            setUsers(prevUsers => prevUsers.filter(user => user.user_id !== userId));
-        } catch (error) {
-            console.error('Error deleting user:', error);
-            Swal.fire({
-                icon: 'error',
-                text: 'An error occurred while deleting user. Please try again later.',
-            });
-        }
+        const deletedUserIds = await Promise.all(promises);
+        setUsers(prevUsers => prevUsers.filter(user => !deletedUserIds.includes(user.user_id)));
+        Swal.fire('Deleted!', 'Successfully Deleted.', 'success');
     };
+
+
+    const handleCheckboxChange = (userId) => {
+        setSelectedUsers((prev) => {
+            const updatedSelection = new Set(prev);
+            updatedSelection.has(userId) ? updatedSelection.delete(userId) : updatedSelection.add(userId);
+            return updatedSelection;
+        });
+    };
+   
+
+
+    const handleSelectAllChange = () => {
+        const newSelectedUsers = selectAll ? new Set() : new Set(users.map(user => user.user_id));
+        setSelectedUsers(newSelectedUsers);
+        setSelectAll(prev => !prev);
+    };
+
+
+    const handleDeleteSelected = async () => {
+        await deleteUsers(Array.from(selectedUsers)); // Pass the array of selected user IDs
+        setSelectedUsers(new Set()); // Clear selection after deletion
+        setSelectAll(false); // Reset "Select All" checkbox
+    };
+
+
+    const handleEditSelected = () => {
+        console.log("Edit selected users: ", Array.from(selectedUsers));
+    };
+
 
     return (
         <>
             <div className='container'>
                 <br />
+                {selectedUsers.size > 0 && (
+                    <BatchArchivesToolbar
+                        selectedItemsCount={selectedUsers.size}
+                        selectedStudentIds={Array.from(selectedUsers)}
+                        onEdit={handleEditSelected}
+                        onDelete={handleDeleteSelected}
+                    />
+                )}
                 <Table bordered hover responsive style={{ borderRadius: '20px', marginBottom: '50px', marginLeft: '110px' }}>
                     <thead>
                         <tr>
+                            <th style={{ width: '5%' }}>
+                                <input
+                                    type="checkbox"
+                                    checked={selectAll}
+                                    onChange={handleSelectAllChange}
+                                />
+                            </th>
                             <th style={{ width: '5%' }}>ID</th>
                             <th style={{ width: '10%' }}>ID Number</th>
                             <th>Full Name</th>
                             <th style={{ width: '10%' }}>Year Level</th>
                             <th>Department</th>
                             <th>Program</th>
-                            <th style={{ width: '10%' }}>Batch</th> {/* New Batch column */}
                             <th style={{ width: '12%' }}>Status</th>
                             <th style={{ width: '13%' }}>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {users.map((user, index) => (
-                            <tr key={index}>
+                        {users.map((user) => (
+                            <tr key={user.user_id}>
+                                <td style={{ textAlign: 'center' }}>
+                                    <input
+                                        type="checkbox"
+                                        checked={selectedUsers.has(user.user_id)}
+                                        onChange={() => handleCheckboxChange(user.user_id)}
+                                    />
+                                </td>
                                 <td style={{ textAlign: 'center' }}>{user.user_id}</td>
                                 <td>{user.student_idnumber}</td>
-                                <td>{`${user.first_name} ${user.middle_name} ${user.last_name} ${user.suffix}`}</td>
+                                <td>{`${user.first_name} ${user.middle_name || ''} ${user.last_name} ${user.suffix || ''}`}</td>
                                 <td>{user.year_level}</td>
-                                <td>{getDepartmentName(user.department_id)}</td>
-                                <td>{getProgramName(user.program_id)}</td>
-                                <td>{user.batch}</td> {/* Display batch information */}
+                                <td>{departments.find(department => department.department_id === user.department_id)?.department_name || ''}</td>
+                                <td>{programs.find(program => program.program_id === user.program_id)?.program_name || ''}</td>
                                 <td style={{ textAlign: 'center' }}>
                                     <div style={{
                                         backgroundColor: user.status === 'active' ? '#DBF0DC' : '#F0DBDB',
@@ -152,7 +221,10 @@ const ArchivesTable = () => {
                                         <Button className='btn btn-secondary btn-sm' onClick={() => handleReadModalShow(user)}>
                                             <PersonIcon />
                                         </Button>
-                                        <Button className='btn btn-danger btn-sm' onClick={() => deleteUser(user.user_id)}>
+                                        <Button className='btn btn-success btn-sm' onClick={() => handleUpdateModalShow(user)}>
+                                            <EditIcon />
+                                        </Button>
+                                        <Button className='btn btn-danger btn-sm' onClick={() => deleteUsers([user.user_id])}>
                                             <DeleteIcon />
                                         </Button>
                                     </div>
@@ -163,54 +235,28 @@ const ArchivesTable = () => {
                 </Table>
             </div>
 
+
             <Modal show={showReadModal} onHide={handleReadModalClose}>
                 <Modal.Header closeButton>
                     <Modal.Title style={{ marginLeft: '65px' }}>VIEW STUDENT RECORD</Modal.Title>
-                    <button
-                        type="button"
-                        className="close"
-                        onClick={handleReadModalClose}
-                        style={{
-                            color: '#6c757d',
-                            border: 'none',
-                            background: 'transparent',
-                            fontSize: '30px',
-                            position: 'absolute',
-                            top: '2px',
-                            right: '12px',
-                            cursor: 'pointer',
-                        }}
-                    >
-                        &times;
-                    </button>
                 </Modal.Header>
                 <Modal.Body>
-                    {selectedUser && (
-                        <div className="row">
-                            <div className="col-md-4">
-                                <p><strong>ID Number:</strong></p>
-                                <p><strong>Name:</strong></p>
-                                <p><strong>Email:</strong></p>
-                                <p><strong>Year Level:</strong></p>
-                                <p><strong>Department:</strong></p>
-                                <p><strong>Program:<br /></strong></p>
-                                <p><strong>Batch:</strong></p> {/* Display Batch field */}
-                            </div>
-                            <div className="col-md-8" style={{ display: 'flex', flexDirection: 'column' }}>
-                                <p>{selectedUser.student_idnumber}</p>
-                                <p>{selectedUser.first_name} {selectedUser.middle_name} {selectedUser.last_name} {selectedUser.suffix}</p>
-                                <p>{selectedUser.email}</p>
-                                <p>{selectedUser.year_level}</p>
-                                <p>{getDepartmentName(selectedUser.department_id)}</p>
-                                <p>{getProgramName(selectedUser.program_id)}</p>
-                                <p>{selectedUser.batch}</p> {/* Show batch information in modal */}
-                            </div>
-                        </div>
-                    )}
+                    {selectedUser && <ViewStudentModal user={selectedUser} departments={departments} programs={programs} />}
+                </Modal.Body>
+            </Modal>
+
+
+            <Modal show={showUpdateModal} onHide={handleUpdateModalClose}>
+                <Modal.Header closeButton>
+                    <Modal.Title style={{ marginLeft: '65px' }}>EDIT STUDENT RECORD</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    {selectedUser && <EditStudentModal fetchUsers={fetchUsers} user={selectedUser} departments={departments} programs={programs} handleClose={handleUpdateModalClose} />}
                 </Modal.Body>
             </Modal>
         </>
     );
-}
+};
+
 
 export default ArchivesTable;
