@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import { Modal, Button, Table } from 'react-bootstrap';
@@ -136,6 +135,7 @@ const StudentsTable = () => {
                 {selectedUsers.size > 0 && (
                     <BatchStudentsToolbar
                         selectedItemsCount={selectedUsers.size}
+                        selectedStudentIds={Array.from(selectedUsers)}
                         onEdit={handleEditSelected}
                         onDelete={handleDeleteSelected}
                     />
