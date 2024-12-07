@@ -175,7 +175,7 @@ const ArchivesTable = () => {
                             <th style={{ width: '10%' }}>Year Level</th>
                             <th>Department</th>
                             <th>Program</th>
-                            <th style={{ width: '12%' }}>Status</th>
+                            <th style={{ width: '13%' }}>Status</th>
                             <th style={{ width: '13%' }}>Actions</th>
                         </tr>
                     </thead>
@@ -197,8 +197,12 @@ const ArchivesTable = () => {
                                 <td>{programs.find(program => program.program_id === user.program_id)?.program_name || ''}</td>
                                 <td style={{ textAlign: 'center' }}>
                                     <div style={{
-                                        backgroundColor: user.status === 'active' ? '#DBF0DC' : '#F0DBDB',
-                                        color: user.status === 'active' ? '#30A530' : '#D9534F',
+                                        backgroundColor: 
+                                            user.status === 'active' ? '#DBF0DC' :
+                                            user.status === 'archived' ? '#E0E0E0' : '#F0DBDB',
+                                        color: 
+                                            user.status === 'active' ? '#30A530' :
+                                            user.status === 'archived' ? '#6C757D' : '#D9534F',
                                         fontWeight: '600',
                                         fontSize: '14px',
                                         borderRadius: '30px',
@@ -210,7 +214,9 @@ const ArchivesTable = () => {
                                             width: '8px',
                                             height: '8px',
                                             borderRadius: '50%',
-                                            backgroundColor: user.status === 'active' ? '#30A530' : '#D9534F',
+                                            backgroundColor: 
+                                                user.status === 'active' ? '#30A530' :
+                                                user.status === 'archived' ? '#6C757D' : '#D9534F',
                                             marginRight: '7px',
                                         }} />
                                         {user.status}
