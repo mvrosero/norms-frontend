@@ -28,7 +28,7 @@ const ArchivesTable = () => {
 
     const fetchUsers = useCallback(async () => {
         try {
-            const response = await axios.get('http://localhost:9000/students', { headers });
+            const response = await axios.get('http://localhost:9000/students-archived', { headers });
             setUsers(response.data);
         } catch (error) {
             console.error('Error fetching students:', error);
@@ -180,65 +180,63 @@ const ArchivesTable = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        {users
-                            .filter((user) => user.status === "archived") // Only include users with status "archived"
-                            .map((user) => (
-                                <tr key={user.user_id}>
-                                    <td style={{ textAlign: 'center' }}>
-                                        <input
-                                            type="checkbox"
-                                            checked={selectedUsers.has(user.user_id)}
-                                            onChange={() => handleCheckboxChange(user.user_id)}
-                                        />
-                                    </td>
-                                    <td style={{ textAlign: 'center' }}>{user.user_id}</td>
-                                    <td>{user.student_idnumber}</td>
-                                    <td>{`${user.first_name} ${user.middle_name || ''} ${user.last_name} ${user.suffix || ''}`}</td>
-                                    <td>{user.year_level}</td>
-                                    <td>{departments.find(department => department.department_id === user.department_id)?.department_name || ''}</td>
-                                    <td>{programs.find(program => program.program_id === user.program_id)?.program_name || ''}</td>
-                                    <td style={{ textAlign: 'center' }}>
+                        {users.map((user) => (
+                            <tr key={user.user_id}>
+                                <td style={{ textAlign: 'center' }}>
+                                    <input
+                                        type="checkbox"
+                                        checked={selectedUsers.has(user.user_id)}
+                                        onChange={() => handleCheckboxChange(user.user_id)}
+                                    />
+                                </td>
+                                <td style={{ textAlign: 'center' }}>{user.user_id}</td>
+                                <td>{user.student_idnumber}</td>
+                                <td>{`${user.first_name} ${user.middle_name || ''} ${user.last_name} ${user.suffix || ''}`}</td>
+                                <td>{user.year_level}</td>
+                                <td>{departments.find(department => department.department_id === user.department_id)?.department_name || ''}</td>
+                                <td>{programs.find(program => program.program_id === user.program_id)?.program_name || ''}</td>
+                                <td style={{ textAlign: 'center' }}>
+                                    <div style={{
+                                        backgroundColor: 
+                                            user.status === 'active' ? '#DBF0DC' :
+                                            user.status === 'archived' ? '#E0E0E0' : '#F0DBDB',
+                                        color: 
+                                            user.status === 'active' ? '#30A530' :
+                                            user.status === 'archived' ? '#6C757D' : '#D9534F',
+                                        fontWeight: '600',
+                                        fontSize: '14px',
+                                        borderRadius: '30px',
+                                        padding: '5px 20px',
+                                        display: 'inline-flex',
+                                        alignItems: 'center',
+                                    }}>
                                         <div style={{
+                                            width: '8px',
+                                            height: '8px',
+                                            borderRadius: '50%',
                                             backgroundColor: 
-                                                user.status === 'active' ? '#DBF0DC' :
-                                                user.status === 'archived' ? '#E0E0E0' : '#F0DBDB',
-                                            color: 
                                                 user.status === 'active' ? '#30A530' :
                                                 user.status === 'archived' ? '#6C757D' : '#D9534F',
-                                            fontWeight: '600',
-                                            fontSize: '14px',
-                                            borderRadius: '30px',
-                                            padding: '5px 20px',
-                                            display: 'inline-flex',
-                                            alignItems: 'center',
-                                        }}>
-                                            <div style={{
-                                                width: '8px',
-                                                height: '8px',
-                                                borderRadius: '50%',
-                                                backgroundColor: 
-                                                    user.status === 'active' ? '#30A530' :
-                                                    user.status === 'archived' ? '#6C757D' : '#D9534F',
-                                                marginRight: '7px',
-                                            }} />
-                                            {user.status}
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div className="d-flex justify-content-around">
-                                            <Button className='btn btn-secondary btn-sm' onClick={() => handleReadModalShow(user)}>
-                                                <PersonIcon />
-                                            </Button>
-                                            <Button className='btn btn-success btn-sm' onClick={() => handleUpdateModalShow(user)}>
-                                                <EditIcon />
-                                            </Button>
-                                            <Button className='btn btn-danger btn-sm' onClick={() => deleteUsers([user.user_id])}>
-                                                <DeleteIcon />
-                                            </Button>
-                                        </div>
-                                    </td>
-                                </tr>
-                            ))}
+                                            marginRight: '7px',
+                                        }} />
+                                        {user.status}
+                                    </div>
+                                </td>
+                                <td>
+                                    <div className="d-flex justify-content-around">
+                                        <Button className='btn btn-secondary btn-sm' onClick={() => handleReadModalShow(user)}>
+                                            <PersonIcon />
+                                        </Button>
+                                        <Button className='btn btn-success btn-sm' onClick={() => handleUpdateModalShow(user)}>
+                                            <EditIcon />
+                                        </Button>
+                                        <Button className='btn btn-danger btn-sm' onClick={() => deleteUsers([user.user_id])}>
+                                            <DeleteIcon />
+                                        </Button>
+                                    </div>
+                                </td>
+                            </tr>
+                        ))}
                     </tbody>
                 </Table>
             </div>
