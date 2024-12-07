@@ -233,6 +233,7 @@ const EditStudentModal = ({ user, handleClose, fetchUsers, headers, departments,
                         >
                             <option value="active">Active</option>
                             <option value="inactive">Inactive</option>
+                            <option value="archived">Archived</option> 
                         </Form.Select>
                     </Form.Group>
                 </Col>
