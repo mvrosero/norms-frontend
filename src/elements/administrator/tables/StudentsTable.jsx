@@ -4,6 +4,8 @@ import { Modal, Button, Table } from 'react-bootstrap';
 import Swal from 'sweetalert2';
 import EditIcon from '@mui/icons-material/Edit';
 import PersonIcon from '@mui/icons-material/Person';
+import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
+import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import BatchStudentsToolbar from '../toolbars/BatchStudentsToolbar';
 import ViewStudentModal from '../modals/ViewStudentModal';
 import EditStudentModal from '../modals/EditStudentModal';
@@ -22,6 +24,9 @@ const StudentsTable = () => {
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
   const rowsPerPage = 5;
+
+    // Sorting state for full name
+    const [sortOrder, setSortOrder] = useState('asc'); // 'asc' for ascending, 'desc' for descending
 
   // Fetch users, departments, and programs
   const fetchUsers = useCallback(async () => {
@@ -98,6 +103,25 @@ const StudentsTable = () => {
       });
   };
 
+
+    // Sort users based on full name
+    const handleSortFullName = () => {
+        const sortedUsers = [...users];
+        sortedUsers.sort((a, b) => {
+          const fullNameA = `${a.first_name} ${a.middle_name || ''} ${a.last_name} ${a.suffix || ''}`.toLowerCase();
+          const fullNameB = `${b.first_name} ${b.middle_name || ''} ${b.last_name} ${b.suffix || ''}`.toLowerCase();
+    
+          if (sortOrder === 'asc') {
+            return fullNameA.localeCompare(fullNameB);
+          } else {
+            return fullNameB.localeCompare(fullNameA);
+          }
+        });
+        setUsers(sortedUsers);
+        setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc'); // Toggle sort order
+      };
+
+
   // Calculate paginated users
   const indexOfLastUser = currentPage * rowsPerPage;
   const indexOfFirstUser = indexOfLastUser - rowsPerPage;
@@ -124,7 +148,20 @@ const StudentsTable = () => {
               />
             </th>
             <th style={{ width: '9%' }}>ID Number</th>
-            <th>Full Name</th>
+            <th style={{ textAlign: 'center', padding: '0', verticalAlign: 'middle' }}>
+            <button
+                style={{ border: 'none', background: 'none', cursor: 'pointer', display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center', width: '100%', 
+                }}
+                onClick={handleSortFullName}
+            >
+                <span style={{ textAlign: 'center' }}>Full Name</span>
+                {sortOrder === 'asc' ? (
+                <ArrowDropUpIcon style={{ marginLeft: '5px' }} />
+                ) : (
+                <ArrowDropDownIcon style={{ marginLeft: '5px' }} />
+                )}
+            </button>
+            </th>
             <th style={{ width: '9%' }}>Year Level</th>
             <th>Department</th>
             <th>Program</th>
