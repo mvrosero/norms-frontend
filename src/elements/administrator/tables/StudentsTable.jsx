@@ -25,8 +25,8 @@ const StudentsTable = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const rowsPerPage = 5;
 
-    // Sorting state for full name
-    const [sortOrder, setSortOrder] = useState('asc'); // 'asc' for ascending, 'desc' for descending
+  // Sorting state for full name
+  const [sortOrder, setSortOrder] = useState('asc'); // 'asc' for ascending, 'desc' for descending
 
   // Fetch users, departments, and programs
   const fetchUsers = useCallback(async () => {
@@ -122,6 +122,33 @@ const StudentsTable = () => {
       };
 
 
+      // Sort users based on idnumber
+      const handleSortIdNumber = () => {
+        const sortedUsers = [...users];
+        sortedUsers.sort((a, b) => {
+            // Parse student_idnumber as integers to ensure numeric sorting
+            const idNumberA = parseInt(a.student_idnumber, 10);
+            const idNumberB = parseInt(b.student_idnumber, 10);
+    
+            // Check if the parsed values are valid numbers
+            if (isNaN(idNumberA) || isNaN(idNumberB)) {
+                return 0; // If the values are invalid, maintain the order
+            }
+    
+            // Compare numeric values for sorting
+            if (sortOrder === 'asc') {
+                return idNumberA - idNumberB; // Ascending order
+            } else {
+                return idNumberB - idNumberA; // Descending order
+            }
+        });
+        setUsers(sortedUsers);
+        setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc'); // Toggle sort order
+    };
+    
+
+
+
   // Calculate paginated users
   const indexOfLastUser = currentPage * rowsPerPage;
   const indexOfFirstUser = indexOfLastUser - rowsPerPage;
@@ -147,7 +174,20 @@ const StudentsTable = () => {
                 onChange={handleSelectAll}
               />
             </th>
-            <th style={{ width: '9%' }}>ID Number</th>
+            <th style={{ textAlign: 'center', padding: '0', verticalAlign: 'middle', width: '11%' }}>
+            <button
+                style={{ border: 'none', background: 'none', cursor: 'pointer', display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center', width: '100%', 
+                }}
+                onClick={handleSortIdNumber}
+            >
+                <span style={{ textAlign: 'center' }}>ID Number</span>
+                {sortOrder === 'asc' ? (
+                <ArrowDropUpIcon style={{ marginLeft: '5px' }} />
+                ) : (
+                <ArrowDropDownIcon style={{ marginLeft: '5px' }} />
+                )}
+            </button>
+            </th>
             <th style={{ textAlign: 'center', padding: '0', verticalAlign: 'middle' }}>
             <button
                 style={{ border: 'none', background: 'none', cursor: 'pointer', display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center', width: '100%', 
