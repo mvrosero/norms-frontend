@@ -57,41 +57,52 @@ const BatchStudentsToolbar = ({ selectedItemsCount, selectedStudentIds }) => {
     }
   }, [isModalVisible]);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setError('');
-    setSuccessMessage('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-    try {
-      const updates = {
-        ...(yearLevel && { year_level: yearLevel }),
-        ...(departmentId && { department_id: departmentId }),
-        ...(programId && { program_id: programId }),
-        ...(status && { status: status }),
-      };
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  setError('');
+  setSuccessMessage('');
+  setIsSubmitting(true);
 
-      if (Object.keys(updates).length === 0) {
-        setError('No fields to update.');
-        return;
-      }
-
-      console.log('Submitting payload:', {
-        student_ids: selectedStudentIds,
-        updates: updates,
-      });
-
-      const response = await axios.put('http://localhost:9000/students', {
-        student_ids: selectedStudentIds,
-        updates: updates,
-      });
-
-      setSuccessMessage(response.data.message);
-      handleModalClose();
-    } catch (error) {
-      console.error('Error updating students:', error.response?.data || error.message);
-      setError(error.response?.data?.error || 'Failed to update students. Please try again.');
-    }
+  // Prepare updates object
+  const updates = {
+    ...(yearLevel && { year_level: yearLevel }),
+    ...(departmentId && { department_id: departmentId }),
+    ...(programId && { program_id: programId }),
+    ...(status && { status: status }),
   };
+
+  // Check if updates are provided
+  if (Object.keys(updates).length === 0) {
+    setError('No fields to update.');
+    setIsSubmitting(false);
+    return;
+  }
+
+  try {
+    // Log for debugging purposes
+    console.log('Submitting payload:', {
+      student_ids: selectedStudentIds,
+      updates: updates,
+    });
+
+    // Call backend API for batch update
+    const response = await axios.put('http://localhost:9000/students', {
+      student_ids: selectedStudentIds, // Ensure student IDs are correctly passed
+      updates: updates,
+    });
+
+    setSuccessMessage(response.data.message);
+    handleModalClose();
+  } catch (error) {
+    console.error('Error updating students:', error.response?.data || error.message);
+    setError(error.response?.data?.error || 'Failed to update students. Please try again.');
+  } finally {
+    setIsSubmitting(false);
+  }
+};
+
 
   if (!isVisible) return null;
 

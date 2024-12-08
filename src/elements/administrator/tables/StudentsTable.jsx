@@ -1,236 +1,279 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
-import { Modal, Button, Table } from 'react-bootstrap';
+import { Modal, Button, Table, Form } from 'react-bootstrap';
 import Swal from 'sweetalert2';
 import EditIcon from '@mui/icons-material/Edit';
 import PersonIcon from '@mui/icons-material/Person';
 import BatchStudentsToolbar from '../toolbars/BatchStudentsToolbar';
 
-// Import the ViewStudentModal and EditStudentModal components
-import ViewStudentModal from '../modals/ViewStudentModal';
-import EditStudentModal from '../modals/EditStudentModal';
-import "../../../styles/Students.css";
-
 const StudentsTable = () => {
-    const [users, setUsers] = useState([]);
-    const [departments, setDepartments] = useState([]);
-    const [programs, setPrograms] = useState([]);
-    const [showReadModal, setShowReadModal] = useState(false);
-    const [showUpdateModal, setShowUpdateModal] = useState(false);
-    const [selectedUser, setSelectedUser] = useState(null);
-    const [headers, setHeaders] = useState({});
-    const [selectedUsers, setSelectedUsers] = useState(new Set());
-    const [selectAll, setSelectAll] = useState(false);
+  const [users, setUsers] = useState([]);
+  const [departments, setDepartments] = useState([]);
+  const [programs, setPrograms] = useState([]);
+  const [showReadModal, setShowReadModal] = useState(false);
+  const [showUpdateModal, setShowUpdateModal] = useState(false);
+  const [selectedUser, setSelectedUser] = useState(null);
+  const [selectedStudentIds, setSelectedStudentIds] = useState([]);
+  const [selectAll, setSelectAll] = useState(false);
 
-    const fetchUsers = useCallback(async () => {
-        try {
-            const response = await axios.get('http://localhost:9000/students-not-archived', { headers });
-            setUsers(response.data);
-        } catch (error) {
-            console.error('Error fetching students:', error);
-            Swal.fire('Error', 'Failed to fetch students.', 'error');
-        }
-    }, [headers]);
+  // Fetch users, departments, and programs
+  const fetchUsers = useCallback(async () => {
+    try {
+      const [userResponse, departmentResponse, programResponse] = await Promise.all([
+        axios.get('http://localhost:9000/students'),
+        axios.get('http://localhost:9000/departments'),
+        axios.get('http://localhost:9000/programs'),
+      ]);
+      setUsers(userResponse.data);
+      setDepartments(departmentResponse.data);
+      setPrograms(programResponse.data);
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
+  }, []);
 
-    const fetchDepartments = useCallback(async () => {
-        try {
-            const response = await axios.get('http://localhost:9000/departments', { headers });
-            setDepartments(response.data);
-        } catch (error) {
-            console.error('Error fetching departments:', error);
-            Swal.fire('Error', 'Failed to fetch departments.', 'error');
-        }
-    }, [headers]);
+  useEffect(() => {
+    fetchUsers();
+  }, [fetchUsers]);
 
-    const fetchPrograms = useCallback(async () => {
-        try {
-            const response = await axios.get('http://localhost:9000/programs', { headers });
-            setPrograms(response.data);
-        } catch (error) {
-            console.error('Error fetching programs:', error);
-            Swal.fire('Error', 'Failed to fetch programs.', 'error');
-        }
-    }, [headers]);
+  // Handle selecting individual users
+  const handleSelectUser = (userId) => {
+    setSelectedStudentIds((prevSelectedIds) => {
+      if (prevSelectedIds.includes(userId)) {
+        return prevSelectedIds.filter(id => id !== userId);
+      } else {
+        return [...prevSelectedIds, userId];
+      }
+    });
+  };
 
-    useEffect(() => {
-        fetchUsers();
-        fetchDepartments();
-        fetchPrograms();
-    }, [fetchUsers, fetchDepartments, fetchPrograms]);
+  // Handle "Select All" checkbox
+  const handleSelectAll = () => {
+    if (selectAll) {
+      setSelectedStudentIds([]);
+    } else {
+      const allIds = users.map(user => user.student_idnumber);
+      setSelectedStudentIds(allIds);
+    }
+    setSelectAll(!selectAll);
+  };
 
-    const handleReadModalShow = (user) => {
-        setSelectedUser(user);
-        setShowReadModal(true);
-    };
+  // Handle modal to view user details
+  const handleViewUser = (user) => {
+    setSelectedUser(user);
+    setShowReadModal(true);
+  };
 
-    const handleReadModalClose = () => setShowReadModal(false);
+  const handleCloseReadModal = () => setShowReadModal(false);
 
-    const handleUpdateModalShow = (user) => {
-        setSelectedUser(user);
-        setShowUpdateModal(true);
-    };
+  // Handle modal to update user details
+  const handleUpdateUser = (user) => {
+    setSelectedUser(user);
+    setShowUpdateModal(true);
+  };
 
-    const handleUpdateModalClose = () => setShowUpdateModal(false);
+  const handleCloseUpdateModal = () => setShowUpdateModal(false);
 
-    // Updated deleteUser function to handle an array of user IDs
-    const deleteUsers = async (userIds) => {
-        const isConfirm = await Swal.fire({
-            title: 'Are you sure?',
-            text: "You won't be able to revert this!",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Yes, Delete it!'
-        }).then((result) => result.isConfirmed);
+  // Handle batch update
+  const handleBatchUpdate = (updates) => {
+    axios
+      .put('http://localhost:9000/students-multiupdate', {
+        student_ids: selectedStudentIds,
+        updates,
+      })
+      .then((response) => {
+        Swal.fire('Success', 'Batch update successful', 'success');
+        fetchUsers(); // Re-fetch users after a successful update
+        setShowUpdateModal(false); // Close the update modal
+      })
+      .catch((error) => {
+        Swal.fire('Error', error.response?.data?.error || 'Failed to update students', 'error');
+      });
+  };
 
-        if (!isConfirm) return;
-
-        const promises = userIds.map(async (userId) => {
-            try {
-                await axios.delete(`http://localhost:9000/student/${userId}`, { headers });
-                return userId; // Return the deleted user ID for filtering
-            } catch (error) {
-                console.error('Error deleting user:', error);
-                Swal.fire('Error', 'An error occurred while deleting user. Please try again later.', 'error');
-                return null; // Return null if an error occurred
-            }
-        });
-
-        const deletedUserIds = await Promise.all(promises);
-        setUsers(prevUsers => prevUsers.filter(user => !deletedUserIds.includes(user.user_id)));
-        Swal.fire('Deleted!', 'Successfully Deleted.', 'success');
-    };
-
-    const handleCheckboxChange = (userId) => {
-        setSelectedUsers((prev) => {
-            const updatedSelection = new Set(prev);
-            updatedSelection.has(userId) ? updatedSelection.delete(userId) : updatedSelection.add(userId);
-            return updatedSelection;
-        });
-    };
-    
-
-    const handleSelectAllChange = () => {
-        const newSelectedUsers = selectAll ? new Set() : new Set(users.map(user => user.user_id));
-        setSelectedUsers(newSelectedUsers);
-        setSelectAll(prev => !prev);
-    };
-
-    const handleDeleteSelected = async () => {
-        await deleteUsers(Array.from(selectedUsers)); // Pass the array of selected user IDs
-        setSelectedUsers(new Set()); // Clear selection after deletion
-        setSelectAll(false); // Reset "Select All" checkbox
-    };
-
-    const handleEditSelected = () => {
-        console.log("Edit selected users: ", Array.from(selectedUsers));
-    };
-
+  // Render Table
+  const renderTable = () => {
     return (
-        <>
-            <div className='container'>
-                <br />
-                {selectedUsers.size > 0 && (
-                    <BatchStudentsToolbar
-                        selectedItemsCount={selectedUsers.size}
-                        selectedStudentIds={Array.from(selectedUsers)}
-                        onEdit={handleEditSelected}
-                        onDelete={handleDeleteSelected}
-                    />
-                )}
-                <Table bordered hover responsive style={{ borderRadius: '20px', marginBottom: '50px', marginLeft: '110px' }}>
-                    <thead>
-                        <tr>
-                            <th style={{ width: '5%' }}>
-                                <input
-                                    type="checkbox"
-                                    checked={selectAll}
-                                    onChange={handleSelectAllChange}
-                                />
-                            </th>
-                            <th style={{ width: '5%' }}>ID</th>
-                            <th style={{ width: '10%' }}>ID Number</th>
-                            <th>Full Name</th>
-                            <th style={{ width: '10%' }}>Year Level</th>
-                            <th>Department</th>
-                            <th>Program</th>
-                            <th style={{ width: '12%' }}>Status</th>
-                            <th style={{ width: '10%' }}>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {users.map((user) => (
-                            <tr key={user.user_id}>
-                                <td style={{ textAlign: 'center' }}>
-                                    <input
-                                        type="checkbox"
-                                        checked={selectedUsers.has(user.user_id)}
-                                        onChange={() => handleCheckboxChange(user.user_id)}
-                                    />
-                                </td>
-                                <td style={{ textAlign: 'center' }}>{user.user_id}</td>
-                                <td>{user.student_idnumber}</td>
-                                <td>{`${user.first_name} ${user.middle_name || ''} ${user.last_name} ${user.suffix || ''}`}</td>
-                                <td>{user.year_level}</td>
-                                <td>{departments.find(department => department.department_id === user.department_id)?.department_name || ''}</td>
-                                <td>{programs.find(program => program.program_id === user.program_id)?.program_name || ''}</td>
-                                <td style={{ textAlign: 'center' }}>
-                                    <div style={{
-                                        backgroundColor: user.status === 'active' ? '#DBF0DC' : '#F0DBDB',
-                                        color: user.status === 'active' ? '#30A530' : '#D9534F',
-                                        fontWeight: '600',
-                                        fontSize: '14px',
-                                        borderRadius: '30px',
-                                        padding: '5px 20px',
-                                        display: 'inline-flex',
-                                        alignItems: 'center',
-                                    }}>
-                                        <div style={{
-                                            width: '8px',
-                                            height: '8px',
-                                            borderRadius: '50%',
-                                            backgroundColor: user.status === 'active' ? '#30A530' : '#D9534F',
-                                            marginRight: '7px',
-                                        }} />
-                                        {user.status}
-                                    </div>
-                                </td>
-                                <td>
-                                    <div className="d-flex justify-content-around">
-                                        <Button className='btn btn-secondary btn-sm' onClick={() => handleReadModalShow(user)}>
-                                            <PersonIcon />
-                                        </Button>
-                                        <Button className='btn btn-success btn-sm' onClick={() => handleUpdateModalShow(user)}>
-                                            <EditIcon />
-                                        </Button>
-                                    </div>
-                                </td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </Table>
-            </div>
-
-            <Modal show={showReadModal} onHide={handleReadModalClose}>
-                <Modal.Header closeButton>
-                    <Modal.Title style={{ marginLeft: '65px' }}>VIEW STUDENT RECORD</Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-                    {selectedUser && <ViewStudentModal user={selectedUser} departments={departments} programs={programs} />}
-                </Modal.Body>
-            </Modal>
-
-            <Modal show={showUpdateModal} onHide={handleUpdateModalClose}>
-                <Modal.Header closeButton>
-                    <Modal.Title style={{ marginLeft: '65px' }}>EDIT STUDENT RECORD</Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-                    {selectedUser && <EditStudentModal fetchUsers={fetchUsers} user={selectedUser} departments={departments} programs={programs} handleClose={handleUpdateModalClose} />}
-                </Modal.Body>
-            </Modal>
-        </>
+      <Table striped bordered hover responsive>
+        <thead>
+          <tr>
+            <th>
+              <input
+                type="checkbox"
+                checked={selectAll}
+                onChange={handleSelectAll}
+              />
+            </th>
+            <th>Student ID</th>
+            <th>Name</th>
+            <th>Year Level</th>
+            <th>Department</th>
+            <th>Program</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {users.map(user => (
+            <tr key={user.student_idnumber}>
+              <td>
+                <input
+                  type="checkbox"
+                  checked={selectedStudentIds.includes(user.student_idnumber)}
+                  onChange={() => handleSelectUser(user.student_idnumber)}
+                />
+              </td>
+              <td>{user.student_idnumber}</td>
+              <td>{user.full_name}</td>
+              <td>{user.year_level}</td>
+              <td>{user.department_name}</td>
+              <td>{user.program_name}</td>
+              <td>{user.status}</td>
+              <td>
+                <Button variant="info" onClick={() => handleViewUser(user)}>
+                  <PersonIcon />
+                </Button>
+                <Button variant="warning" onClick={() => handleUpdateUser(user)}>
+                  <EditIcon />
+                </Button>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </Table>
     );
+  };
+
+  return (
+    <div>
+      <BatchStudentsToolbar
+        selectedItemsCount={selectedStudentIds.length}
+        selectedStudentIds={selectedStudentIds}
+      />
+
+      {renderTable()}
+
+      {/* View Student Modal */}
+      <Modal show={showReadModal} onHide={handleCloseReadModal}>
+        <Modal.Header closeButton>
+          <Modal.Title>View Student</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <div>
+            <strong>Full Name:</strong> {selectedUser?.full_name}
+          </div>
+          <div>
+            <strong>Student ID:</strong> {selectedUser?.student_idnumber}
+          </div>
+          <div>
+            <strong>Year Level:</strong> {selectedUser?.year_level}
+          </div>
+          <div>
+            <strong>Department:</strong> {selectedUser?.department_name}
+          </div>
+          <div>
+            <strong>Program:</strong> {selectedUser?.program_name}
+          </div>
+          <div>
+            <strong>Status:</strong> {selectedUser?.status}
+          </div>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleCloseReadModal}>
+            Close
+          </Button>
+        </Modal.Footer>
+      </Modal>
+
+      {/* Update Student Modal */}
+      <Modal show={showUpdateModal} onHide={handleCloseUpdateModal}>
+        <Modal.Header closeButton>
+          <Modal.Title>Update Student</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Form
+            onSubmit={(e) => {
+              e.preventDefault();
+              const updates = {
+                year_level: selectedUser.year_level,
+                department_id: selectedUser.department_id,
+                program_id: selectedUser.program_id,
+                status: selectedUser.status,
+              };
+              handleBatchUpdate(updates);
+            }}
+          >
+            <Form.Group controlId="year_level">
+              <Form.Label>Year Level</Form.Label>
+              <Form.Control
+                as="select"
+                value={selectedUser?.year_level}
+                onChange={(e) => setSelectedUser({ ...selectedUser, year_level: e.target.value })}
+              >
+                <option>First Year</option>
+                <option>Second Year</option>
+                <option>Third Year</option>
+                <option>Fourth Year</option>
+                <option>Fifth Year</option>
+              </Form.Control>
+            </Form.Group>
+
+            <Form.Group controlId="department_id">
+              <Form.Label>Department</Form.Label>
+              <Form.Control
+                as="select"
+                value={selectedUser?.department_id}
+                onChange={(e) => setSelectedUser({ ...selectedUser, department_id: e.target.value })}
+              >
+                {departments.map(department => (
+                  <option key={department.department_id} value={department.department_id}>
+                    {department.department_name}
+                  </option>
+                ))}
+              </Form.Control>
+            </Form.Group>
+
+            <Form.Group controlId="program_id">
+              <Form.Label>Program</Form.Label>
+              <Form.Control
+                as="select"
+                value={selectedUser?.program_id}
+                onChange={(e) => setSelectedUser({ ...selectedUser, program_id: e.target.value })}
+              >
+                {programs.map(program => (
+                  <option key={program.program_id} value={program.program_id}>
+                    {program.program_name}
+                  </option>
+                ))}
+              </Form.Control>
+            </Form.Group>
+
+            <Form.Group controlId="status">
+              <Form.Label>Status</Form.Label>
+              <Form.Control
+                as="select"
+                value={selectedUser?.status}
+                onChange={(e) => setSelectedUser({ ...selectedUser, status: e.target.value })}
+              >
+                <option value="active">Active</option>
+                <option value="inactive">Inactive</option>
+                <option value="archived">Archived</option>
+              </Form.Control>
+            </Form.Group>
+
+            <Button variant="primary" type="submit">
+              Update Student
+            </Button>
+          </Form>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleCloseUpdateModal}>
+            Close
+          </Button>
+        </Modal.Footer>
+      </Modal>
+    </div>
+  );
 };
 
 export default StudentsTable;
