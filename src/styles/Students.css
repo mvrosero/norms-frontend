@@ -126,3 +126,17 @@
   }
 
   
+  /* Override React-Bootstrap Pagination */
+.custom-pagination-item.active {
+  background-color: #333 !important;  /* Dark gray for active page number */
+  color: #fff !important;  /* White text for active page */
+}
+
+.custom-pagination-item {
+  background-color: transparent;  /* Transparent background for inactive pages */
+  color: #ccc;  /* Light gray for inactive pages */
+}
+
+.custom-pagination-item:hover {
+  background-color: #555 !important;  /* Darker gray for hover effect */
+}

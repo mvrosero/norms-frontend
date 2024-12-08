@@ -43,7 +43,7 @@ export default function AdminUserManagement() {
 
 
             {/* Radio buttons for selecting user type */}
-            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: '10px' }}>
+            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: '20px' }}>
                 <div style={{ display: 'flex', alignItems: 'center', marginRight: '20px' }}>
                     <input
                         type="radio"

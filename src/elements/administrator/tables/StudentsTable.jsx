@@ -19,6 +19,10 @@ const StudentsTable = () => {
   const [selectedStudentIds, setSelectedStudentIds] = useState([]);
   const [selectAll, setSelectAll] = useState(false);
 
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1);
+  const rowsPerPage = 5;
+
   // Fetch users, departments, and programs
   const fetchUsers = useCallback(async () => {
     try {
@@ -94,10 +98,22 @@ const StudentsTable = () => {
       });
   };
 
+  // Calculate paginated users
+  const indexOfLastUser = currentPage * rowsPerPage;
+  const indexOfFirstUser = indexOfLastUser - rowsPerPage;
+  const currentUsers = users.slice(indexOfFirstUser, indexOfLastUser);
+
+  const totalPages = Math.ceil(users.length / rowsPerPage);
+
+  // Handle pagination change
+  const handlePaginationChange = (pageNumber) => {
+    setCurrentPage(pageNumber);
+  };
+
   // Render Table
   const renderTable = () => {
     return (
-      <Table bordered hover responsive style={{ borderRadius: '20px', marginBottom: '50px', marginLeft: '110px' }}>
+      <Table bordered hover responsive style={{ borderRadius: '20px', marginBottom: '20px', marginLeft: '110px' }}>
         <thead>
           <tr>
             <th style={{ width: '3%' }}>
@@ -107,17 +123,17 @@ const StudentsTable = () => {
                 onChange={handleSelectAll}
               />
             </th>
-            <th style={{ width: '10%' }}>ID Number</th>
+            <th style={{ width: '9%' }}>ID Number</th>
             <th>Full Name</th>
-            <th style={{ width: '10%' }}>Year Level</th>
+            <th style={{ width: '9%' }}>Year Level</th>
             <th>Department</th>
             <th>Program</th>
             <th style={{ width: '12%' }}>Status</th>
-            <th style={{ width: '11%' }}>Actions</th>
+            <th style={{ width: '9%' }}>Actions</th>
           </tr>
         </thead>
         <tbody>
-          {users.map(user => (
+          {currentUsers.map(user => (
             <tr key={user.student_idnumber}>
               <td>
                 <input
@@ -169,6 +185,97 @@ const StudentsTable = () => {
     );
   };
 
+
+// Render Custom Pagination
+const renderPagination = () => {
+    const pageNumbers = Array.from({ length: totalPages }, (_, i) => i + 1);
+  
+    const buttonStyle = {
+      width: '30px', // Fixed width for equal size
+      height: '30px', // Fixed height for equal size
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      border: '1px solid #a0a0a0',
+      backgroundColor: '#ebebeb',
+      color: '#4a4a4a',
+      fontSize: '0.75rem', // Smaller font size
+      cursor: 'pointer',
+    };
+  
+    const activeButtonStyle = {
+      ...buttonStyle,
+      backgroundColor: '#a0a0a0',
+      color: '#f1f1f1',
+    };
+  
+    const disabledButtonStyle = {
+      ...buttonStyle,
+      backgroundColor: '#ebebeb',
+      color: '#a1a1a1',
+      cursor: 'not-allowed',
+    };
+  
+    return (
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'flex-end',
+          marginBottom: '15px',
+        }}
+      >
+        {/* Page Info */}
+        <div style={{ fontSize: '0.875rem', color: '#4a4a4a', marginRight: '10px' }}>
+          Page {currentPage} out of {totalPages}
+        </div>
+  
+        {/* Pagination Buttons */}
+        <div style={{ display: 'flex', marginRight: '20px' }}>
+          <button
+            onClick={() => currentPage > 1 && handlePaginationChange(currentPage - 1)}
+            disabled={currentPage === 1}
+            style={{
+              ...buttonStyle,
+              borderTopLeftRadius: '10px',
+              borderBottomLeftRadius: '10px',
+              ...(currentPage === 1 && disabledButtonStyle),
+            }}
+          >
+            ❮
+          </button>
+          {pageNumbers.map((number) => (
+            <button
+              key={number}
+              onClick={() => handlePaginationChange(number)}
+              style={number === currentPage ? activeButtonStyle : buttonStyle}
+            >
+              {number}
+            </button>
+          ))}
+          <button
+            onClick={() => currentPage < totalPages && handlePaginationChange(currentPage + 1)}
+            disabled={currentPage === totalPages}
+            style={{
+              ...buttonStyle,
+              borderTopRightRadius: '10px',
+              borderBottomRightRadius: '10px',
+              ...(currentPage === totalPages && disabledButtonStyle),
+            }}
+          >
+            ❯
+          </button>
+        </div>
+      </div>
+    );
+  };
+  
+  
+  
+  
+  
+  
+
   return (
     <div>
       {selectedStudentIds.length > 0 && (
@@ -179,6 +286,9 @@ const StudentsTable = () => {
       )}
 
       {renderTable()}
+
+      {/* Custom Pagination */}
+      {renderPagination()}
 
       {/* View Student Modal */}
       <Modal show={showReadModal} onHide={handleReadModalClose}>
