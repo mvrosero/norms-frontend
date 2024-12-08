@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import { Modal, Button, Form } from 'react-bootstrap';
 import axios from 'axios';
+import Swal from 'sweetalert2';
 
 const BatchStudentsToolbar = ({ selectedItemsCount, selectedStudentIds }) => {
   const [isVisible, setIsVisible] = useState(true);
@@ -14,6 +15,7 @@ const BatchStudentsToolbar = ({ selectedItemsCount, selectedStudentIds }) => {
   const [programs, setPrograms] = useState([]);
   const [error, setError] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleClose = () => {
     setIsVisible(false);
@@ -57,52 +59,56 @@ const BatchStudentsToolbar = ({ selectedItemsCount, selectedStudentIds }) => {
     }
   }, [isModalVisible]);
 
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError('');
+    setSuccessMessage('');
+    setIsSubmitting(true);
 
-const handleSubmit = async (e) => {
-  e.preventDefault();
-  setError('');
-  setSuccessMessage('');
-  setIsSubmitting(true);
+    const updates = {
+      ...(yearLevel && { year_level: yearLevel }),
+      ...(departmentId && { department_id: departmentId }),
+      ...(programId && { program_id: programId }),
+      ...(status && { status: status }),
+    };
 
-  // Prepare updates object
-  const updates = {
-    ...(yearLevel && { year_level: yearLevel }),
-    ...(departmentId && { department_id: departmentId }),
-    ...(programId && { program_id: programId }),
-    ...(status && { status: status }),
+    if (Object.keys(updates).length === 0) {
+      setError('No fields to update.');
+      setIsSubmitting(false);
+      return;
+    }
+
+    try {
+      const response = await axios.put('http://localhost:9000/students', {
+        student_ids: selectedStudentIds,
+        updates: updates,
+      });
+
+      handleModalClose();
+
+      Swal.fire({
+        icon: 'success',
+        title: 'Success',
+        text: response.data.message,
+        confirmButtonText: 'OK',
+      }).then(() => {
+        window.location.reload();
+      });
+    } catch (error) {
+      console.error('Error updating students:', error.response?.data || error.message);
+
+      handleModalClose();
+
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: error.response?.data?.error || 'Failed to update students. Please try again.',
+        confirmButtonText: 'OK',
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
-
-  // Check if updates are provided
-  if (Object.keys(updates).length === 0) {
-    setError('No fields to update.');
-    setIsSubmitting(false);
-    return;
-  }
-
-  try {
-    // Log for debugging purposes
-    console.log('Submitting payload:', {
-      student_ids: selectedStudentIds,
-      updates: updates,
-    });
-
-    // Call backend API for batch update
-    const response = await axios.put('http://localhost:9000/students', {
-      student_ids: selectedStudentIds, // Ensure student IDs are correctly passed
-      updates: updates,
-    });
-
-    setSuccessMessage(response.data.message);
-    handleModalClose();
-  } catch (error) {
-    console.error('Error updating students:', error.response?.data || error.message);
-    setError(error.response?.data?.error || 'Failed to update students. Please try again.');
-  } finally {
-    setIsSubmitting(false);
-  }
-};
-
 
   if (!isVisible) return null;
 
@@ -127,7 +133,6 @@ const handleSubmit = async (e) => {
         </div>
       </div>
 
-      {/* Embedded Batch Edit Student Modal */}
       <Modal show={isModalVisible} onHide={handleModalClose}>
         <Modal.Header closeButton>
           <Modal.Title>BATCH UPDATE STUDENTS</Modal.Title>
@@ -198,8 +203,8 @@ const handleSubmit = async (e) => {
               </Form.Select>
             </Form.Group>
 
-            <Button variant="primary" type="submit">
-              Update
+            <Button variant="primary" type="submit" disabled={isSubmitting}>
+              {isSubmitting ? 'Updating...' : 'Update'}
             </Button>
           </Form>
         </Modal.Body>
