@@ -7,8 +7,9 @@ import Swal from 'sweetalert2';
 const BatchEmployeesToolbar = ({ selectedItemsCount, selectedEmployeeIds, onDelete }) => {
   const [isVisible, setIsVisible] = useState(true);
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [role, setRole] = useState('');
+  const [roleId, setRoleId] = useState('');
   const [status, setStatus] = useState('');
+  const [roles, setRoles] = useState([]); 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
@@ -27,11 +28,28 @@ const BatchEmployeesToolbar = ({ selectedItemsCount, selectedEmployeeIds, onDele
   };
 
   const resetForm = () => {
-    setRole('');
+    setRoleId('');
     setStatus('');
     setError('');
     setSuccessMessage('');
   };
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const roleResponse = await axios.get('http://localhost:9000/roles');
+        // Filter out role with role_id = 3 (for students)
+        setRoles(roleResponse.data.filter(role => role.role_id !== 3));
+      } catch (error) {
+        console.error('Error fetching roles:', error);
+        setError('Failed to load roles.');
+      }
+    };
+
+    if (isModalVisible) {
+      fetchData();
+    }
+  }, [isModalVisible]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -40,9 +58,13 @@ const BatchEmployeesToolbar = ({ selectedItemsCount, selectedEmployeeIds, onDele
     setIsSubmitting(true);
 
     const updates = {
-      ...(role && { role }),
-      ...(status && { status }),
+      ...(roleId && { role_id: roleId }),
+      ...(status && { status: status }),
     };
+
+    // Debugging: log the payload before sending the request
+    console.log('Selected Employee IDs:', selectedEmployeeIds);
+    console.log('Updates:', updates);
 
     if (Object.keys(updates).length === 0) {
       setError('No fields to update.');
@@ -53,8 +75,11 @@ const BatchEmployeesToolbar = ({ selectedItemsCount, selectedEmployeeIds, onDele
     try {
       const response = await axios.put('http://localhost:9000/employees', {
         employee_ids: selectedEmployeeIds,
-        updates,
+        updates: updates,
       });
+
+      // Debugging: log the response from the server
+      console.log('Response:', response);
 
       handleModalClose();
 
@@ -116,17 +141,19 @@ const BatchEmployeesToolbar = ({ selectedItemsCount, selectedEmployeeIds, onDele
           {error && <div className="alert alert-danger">{error}</div>}
           {successMessage && <div className="alert alert-success">{successMessage}</div>}
           <Form onSubmit={handleSubmit}>
-            <Form.Group controlId="role">
+            <Form.Group controlId="role_id">
               <Form.Label className="fw-bold">Role</Form.Label>
               <Form.Select
-                name="role"
-                value={role}
-                onChange={(e) => setRole(e.target.value)}
+                name="role_id"
+                value={roleId}
+                onChange={(e) => setRoleId(e.target.value)}
               >
                 <option value="">Select Role</option>
-                <option value="admin">Admin</option>
-                <option value="manager">Manager</option>
-                <option value="staff">Staff</option>
+                {roles.map((role) => (
+                  <option key={role.role_id} value={role.role_id}>
+                    {role.role_name}
+                  </option>
+                ))}
               </Form.Select>
             </Form.Group>
 
@@ -138,12 +165,10 @@ const BatchEmployeesToolbar = ({ selectedItemsCount, selectedEmployeeIds, onDele
                 onChange={(e) => setStatus(e.target.value)}
               >
                 <option value="">Select Status</option>
-                <option value="active">Active</option>
-                <option value="inactive">Inactive</option>
-                <option value="archived">Archived</option>
+                <option value="Active">Active</option>
+                <option value="Inactive">Inactive</option>
               </Form.Select>
             </Form.Group>
-
             <Button variant="primary" type="submit" disabled={isSubmitting}>
               {isSubmitting ? 'Updating...' : 'Update'}
             </Button>

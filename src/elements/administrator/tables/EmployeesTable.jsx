@@ -20,7 +20,8 @@ const EmployeesTable = () => {
     const [selectedUser, setSelectedUser] = useState(null);
     const [headers, setHeaders] = useState({});
     const [deletionStatus, setDeletionStatus] = useState(false);
-    const [selectedUsers, setSelectedUsers] = useState([]);  // To track selected users
+    const [selectedEmployeeIds, setSelectedEmployeeIds] = useState([]);  
+    const [selectAll, setSelectAll] = useState(false);  
 
     const fetchUsers = useCallback(async () => {
         try {
@@ -35,14 +36,15 @@ const EmployeesTable = () => {
         try {
             const response = await axios.get('http://localhost:9000/roles', { headers });
             setRoles(response.data);
+            console.log('Fetched roles:', response.data); // Add this line to check the roles
         } catch (error) {
             console.error('Error fetching roles:', error.response ? error.response.data : error.message);
         }
     }, [headers]);
+    
 
     useEffect(() => {
         fetchUsers();
-        fetchRoles();
     }, [fetchUsers]);
 
     const handleReadModalShow = (user) => {
@@ -56,7 +58,8 @@ const EmployeesTable = () => {
 
     const getRoleName = (roleId) => {
         const role = roles.find((r) => r.role_id === roleId);
-        return role ? role.role_name : '';
+        console.log('Role ID:', roleId, 'Role Name:', role ? role.role_name : 'Not Found'); // Add this line for debugging
+        return role ? role.role_name : 'Unknown Role';
     };
 
     const handleUpdateModalShow = (user) => {
@@ -101,21 +104,28 @@ const EmployeesTable = () => {
         }
     };
 
-    const handleSelectAll = (e) => {
-        if (e.target.checked) {
-            setSelectedUsers(users.map(user => user.user_id));
-        } else {
-            setSelectedUsers([]);
-        }
-    };
 
-    const handleSelectUser = (userId) => {
-        setSelectedUsers(prevSelected =>
-            prevSelected.includes(userId)
-                ? prevSelected.filter(id => id !== userId)
-                : [...prevSelected, userId]
-        );
-    };
+  // Handle selecting individual users
+  const handleSelectUser = (userId) => {
+    setSelectedEmployeeIds((prevSelectedIds) => {
+      if (prevSelectedIds.includes(userId)) {
+        return prevSelectedIds.filter(id => id !== userId);
+      } else {
+        return [...prevSelectedIds, userId];
+      }
+    });
+  };
+
+    // Handle "Select All" checkbox
+    const handleSelectAll = () => {
+        if (selectAll) {
+          setSelectedEmployeeIds([]);
+        } else {
+          const allIds = users.map(user => user.student_idnumber);
+          setSelectedEmployeeIds(allIds);
+        }
+        setSelectAll(!selectAll);
+      };
 
     const handleBatchDelete = async () => {
         const isConfirm = await Swal.fire({
@@ -132,7 +142,7 @@ const EmployeesTable = () => {
 
         try {
             await axios.delete('http://localhost:9000/employees', {
-                data: { employee_ids: selectedUsers },
+                data: { employee_ids: selectedUser },
                 headers
             });
             Swal.fire({
@@ -140,7 +150,7 @@ const EmployeesTable = () => {
                 text: 'Successfully deleted selected employees.'
             });
             setDeletionStatus(prevStatus => !prevStatus);
-            setSelectedUsers([]);
+            setSelectedUser([]);  // Clear the selection after deletion
         } catch (error) {
             console.error('Error deleting employees:', error.response?.data || error.message);
             Swal.fire({
@@ -150,14 +160,31 @@ const EmployeesTable = () => {
         }
     };
 
+      // Handle batch update
+  const handleBatchUpdate = (updates) => {
+    axios
+      .put('http://localhost:9000/employees', {
+        employee_ids: selectedEmployeeIds,
+        updates,
+      })
+      .then((response) => {
+        Swal.fire('Success', 'Batch update successful', 'success');
+        fetchUsers(); // Re-fetch users after a successful update
+        setShowUpdateModal(false); // Close the update modal
+      })
+      .catch((error) => {
+        Swal.fire('Error', error.response?.data?.error || 'Failed to update employees', 'error');
+      });
+  };
+
     return (
         <>
             <div className='container'>
                 <br />
-                {selectedUsers.length > 0 && (
+                {selectedEmployeeIds.length > 0 && (
                     <BatchEmployeesToolbar
-                        selectedItemsCount={selectedUsers.length}
-                        selectedEmployeeIds={selectedUsers}
+                    selectedItemsCount={selectedEmployeeIds.length}
+                    selectedEmployeeIds={selectedEmployeeIds}
                         onDelete={handleBatchDelete}
                     />
                 )}
@@ -167,7 +194,7 @@ const EmployeesTable = () => {
                             <th style={{ width: '5%' }}>
                                 <input
                                     type="checkbox"
-                                    checked={selectedUsers.length === users.length}
+                                    checked={selectAll}
                                     onChange={handleSelectAll}
                                 />
                             </th>
@@ -179,13 +206,13 @@ const EmployeesTable = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        {users.map((user) => (
-                            <tr key={user.user_id}>
-                                <td style={{ textAlign: 'center' }}>
+                    {users.map(user => (
+                                <tr key={user.employee_idnumber}>
+                                <td>
                                     <input
-                                        type="checkbox"
-                                        checked={selectedUsers.includes(user.user_id)}
-                                        onChange={() => handleSelectUser(user.user_id)}
+                                    type="checkbox"
+                                    checked={selectedEmployeeIds.includes(user.employee_idnumber)}
+                                    onChange={() => handleSelectUser(user.employee_idnumber)}
                                     />
                                 </td>
                                 <td>{user.employee_idnumber}</td>
