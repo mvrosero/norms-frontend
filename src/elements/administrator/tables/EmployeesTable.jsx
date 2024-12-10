@@ -45,7 +45,8 @@ const EmployeesTable = () => {
 
     useEffect(() => {
         fetchUsers();
-    }, [fetchUsers]);
+        fetchRoles();  
+    }, [fetchUsers, fetchRoles]); 
 
     const handleReadModalShow = (user) => {
         setSelectedUser(user);
@@ -121,13 +122,13 @@ const EmployeesTable = () => {
         if (selectAll) {
           setSelectedEmployeeIds([]);
         } else {
-          const allIds = users.map(user => user.student_idnumber);
+          const allIds = users.map(user => user.employee_idnumber);
           setSelectedEmployeeIds(allIds);
         }
         setSelectAll(!selectAll);
       };
 
-    const handleBatchDelete = async () => {
+      const handleBatchDelete = async () => {
         const isConfirm = await Swal.fire({
             title: 'Are you sure?',
             text: "You won't be able to revert this!",
@@ -137,20 +138,21 @@ const EmployeesTable = () => {
             cancelButtonColor: '#d33',
             confirmButtonText: 'Yes, Delete them!'
         }).then((result) => result.isConfirmed);
-
+    
         if (!isConfirm) return;
-
+    
         try {
+            // Make sure you're passing the correct employee IDs in the request body
             await axios.delete('http://localhost:9000/employees', {
-                data: { employee_ids: selectedUser },
+                data: { employee_ids: selectedEmployeeIds },
                 headers
             });
             Swal.fire({
                 icon: 'success',
                 text: 'Successfully deleted selected employees.'
             });
-            setDeletionStatus(prevStatus => !prevStatus);
-            setSelectedUser([]);  // Clear the selection after deletion
+            setDeletionStatus(prevStatus => !prevStatus);  // Trigger re-fetch of users
+            setSelectedEmployeeIds([]);  // Clear the selection after deletion
         } catch (error) {
             console.error('Error deleting employees:', error.response?.data || error.message);
             Swal.fire({
@@ -159,6 +161,7 @@ const EmployeesTable = () => {
             });
         }
     };
+    
 
       // Handle batch update
   const handleBatchUpdate = (updates) => {
