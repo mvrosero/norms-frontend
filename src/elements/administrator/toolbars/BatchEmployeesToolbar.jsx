@@ -1,14 +1,88 @@
-import React, { useState } from 'react';
-import '@fortawesome/fontawesome-free/css/all.min.css'; // Ensure you have this import
+import React, { useState, useEffect } from 'react';
+import '@fortawesome/fontawesome-free/css/all.min.css';
+import { Modal, Button, Form } from 'react-bootstrap';
+import axios from 'axios';
+import Swal from 'sweetalert2';
 
-const BatchEmployeesToolbar = ({ selectedItemsCount, onEdit, onDelete }) => {
+const BatchEmployeesToolbar = ({ selectedItemsCount, selectedEmployeeIds, onDelete }) => {
   const [isVisible, setIsVisible] = useState(true);
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [role, setRole] = useState('');
+  const [status, setStatus] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState('');
+  const [successMessage, setSuccessMessage] = useState('');
 
   const handleClose = () => {
     setIsVisible(false);
   };
 
-  if (!isVisible) return null; // Hide the toolbar when closed
+  const handleEdit = () => {
+    setIsModalVisible(true);
+  };
+
+  const handleModalClose = () => {
+    setIsModalVisible(false);
+    resetForm();
+  };
+
+  const resetForm = () => {
+    setRole('');
+    setStatus('');
+    setError('');
+    setSuccessMessage('');
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError('');
+    setSuccessMessage('');
+    setIsSubmitting(true);
+
+    const updates = {
+      ...(role && { role }),
+      ...(status && { status }),
+    };
+
+    if (Object.keys(updates).length === 0) {
+      setError('No fields to update.');
+      setIsSubmitting(false);
+      return;
+    }
+
+    try {
+      const response = await axios.put('http://localhost:9000/employees', {
+        employee_ids: selectedEmployeeIds,
+        updates,
+      });
+
+      handleModalClose();
+
+      Swal.fire({
+        icon: 'success',
+        title: 'Success',
+        text: response.data.message,
+        confirmButtonText: 'OK',
+      }).then(() => {
+        window.location.reload();
+      });
+    } catch (error) {
+      console.error('Error updating employees:', error.response?.data || error.message);
+
+      handleModalClose();
+
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: error.response?.data?.error || 'Failed to update employees. Please try again.',
+        confirmButtonText: 'OK',
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  if (!isVisible) return null;
 
   return (
     <div style={styles.toolbar}>
@@ -25,7 +99,7 @@ const BatchEmployeesToolbar = ({ selectedItemsCount, onEdit, onDelete }) => {
           </span>
         </div>
         <div style={styles.buttonContainer}>
-          <button style={styles.editButton} onClick={onEdit}>
+          <button style={styles.editButton} onClick={handleEdit}>
             <i className="fas fa-pen" style={styles.icon}></i> Edit
           </button>
           <button style={styles.deleteButton} onClick={onDelete}>
@@ -33,6 +107,49 @@ const BatchEmployeesToolbar = ({ selectedItemsCount, onEdit, onDelete }) => {
           </button>
         </div>
       </div>
+
+      <Modal show={isModalVisible} onHide={handleModalClose}>
+        <Modal.Header closeButton>
+          <Modal.Title>BATCH UPDATE EMPLOYEES</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          {error && <div className="alert alert-danger">{error}</div>}
+          {successMessage && <div className="alert alert-success">{successMessage}</div>}
+          <Form onSubmit={handleSubmit}>
+            <Form.Group controlId="role">
+              <Form.Label className="fw-bold">Role</Form.Label>
+              <Form.Select
+                name="role"
+                value={role}
+                onChange={(e) => setRole(e.target.value)}
+              >
+                <option value="">Select Role</option>
+                <option value="admin">Admin</option>
+                <option value="manager">Manager</option>
+                <option value="staff">Staff</option>
+              </Form.Select>
+            </Form.Group>
+
+            <Form.Group controlId="status">
+              <Form.Label className="fw-bold">Status</Form.Label>
+              <Form.Select
+                name="status"
+                value={status}
+                onChange={(e) => setStatus(e.target.value)}
+              >
+                <option value="">Select Status</option>
+                <option value="active">Active</option>
+                <option value="inactive">Inactive</option>
+                <option value="archived">Archived</option>
+              </Form.Select>
+            </Form.Group>
+
+            <Button variant="primary" type="submit" disabled={isSubmitting}>
+              {isSubmitting ? 'Updating...' : 'Update'}
+            </Button>
+          </Form>
+        </Modal.Body>
+      </Modal>
     </div>
   );
 };
@@ -56,11 +173,11 @@ const styles = {
   closeButton: {
     background: 'none',
     border: 'none',
-    fontSize: '25px', // Increased size of the 'x'
+    fontSize: '25px',
     cursor: 'pointer',
     color: '#C1C1C1',
-    marginRight: '20px', // Increased space on the right side
-    marginLeft: '10px', // Added space on the left side of 'x'
+    marginRight: '20px',
+    marginLeft: '10px',
   },
   content: {
     flex: 1,
@@ -71,8 +188,8 @@ const styles = {
   itemInfoContainer: {
     display: 'flex',
     alignItems: 'center',
-    gap: '15px', // Increased space between the circle and text
-    marginLeft: '20px', // Added space to the left of the number circle
+    gap: '15px',
+    marginLeft: '20px',
   },
   itemCountContainer: {
     display: 'flex',
@@ -108,7 +225,7 @@ const styles = {
   },
   deleteButton: {
     backgroundColor: '#F2DFE1',
-    color: '#DC3545',
+    color: '#FF5C5C',
     fontWeight: 'bold',
     border: 'none',
     borderRadius: '30px',
@@ -116,10 +233,9 @@ const styles = {
     cursor: 'pointer',
     display: 'flex',
     alignItems: 'center',
-    marginRight: '20px',
   },
   icon: {
-    marginRight: '8px',
+    marginRight: '5px',
   },
 };
 

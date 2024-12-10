@@ -9,6 +9,7 @@ import PersonIcon from '@mui/icons-material/Person';
 // Assuming EmployeeUpdate component is defined in './EmployeeUpdate.js'
 import EditEmployeeModal from '../modals/EditEmployeeModal';
 import ViewEmployeeModal from '../modals/ViewEmployeeModal';
+import BatchEmployeesToolbar from '../toolbars/BatchEmployeesToolbar';
 import "../../../styles/Employees.css";
 
 const EmployeesTable = () => {
@@ -19,8 +20,9 @@ const EmployeesTable = () => {
     const [selectedUser, setSelectedUser] = useState(null);
     const [headers, setHeaders] = useState({});
     const [deletionStatus, setDeletionStatus] = useState(false);
+    const [selectedUsers, setSelectedUsers] = useState([]);  // To track selected users
 
-    const fetchUsers = useCallback(async () => {  
+    const fetchUsers = useCallback(async () => {
         try {
             const response = await axios.get('http://localhost:9000/employees', { headers });
             setUsers(response.data);
@@ -29,19 +31,19 @@ const EmployeesTable = () => {
         }
     }, [headers, deletionStatus]);
 
-    const fetchRoles = useCallback(async () => {  
+    const fetchRoles = useCallback(async () => {
         try {
             const response = await axios.get('http://localhost:9000/roles', { headers });
             setRoles(response.data);
         } catch (error) {
             console.error('Error fetching roles:', error.response ? error.response.data : error.message);
         }
-    }, [headers]); 
+    }, [headers]);
 
     useEffect(() => {
         fetchUsers();
         fetchRoles();
-    }, [fetchUsers]); 
+    }, [fetchUsers]);
 
     const handleReadModalShow = (user) => {
         setSelectedUser(user);
@@ -65,7 +67,7 @@ const EmployeesTable = () => {
     const handleUpdateModalClose = () => {
         setShowUpdateModal(false);
     };
-    
+
     const deleteUser = async (userId) => {
         const isConfirm = await Swal.fire({
             title: 'Are you sure?',
@@ -81,14 +83,14 @@ const EmployeesTable = () => {
         if (!isConfirm) {
             return;
         }
-    
+
         try {
             await axios.delete(`http://localhost:9000/employee/${userId}`, { headers });
             Swal.fire({
                 icon: 'success',
                 text: "Successfully Deleted"
             });
-            setDeletionStatus(prevStatus => !prevStatus); 
+            setDeletionStatus(prevStatus => !prevStatus);
             setUsers(prevUsers => prevUsers.filter(user => user.user_id !== userId));
         } catch (error) {
             console.error('Error deleting user:', error.response ? error.response.data : error.message);
@@ -99,14 +101,76 @@ const EmployeesTable = () => {
         }
     };
 
+    const handleSelectAll = (e) => {
+        if (e.target.checked) {
+            setSelectedUsers(users.map(user => user.user_id));
+        } else {
+            setSelectedUsers([]);
+        }
+    };
+
+    const handleSelectUser = (userId) => {
+        setSelectedUsers(prevSelected =>
+            prevSelected.includes(userId)
+                ? prevSelected.filter(id => id !== userId)
+                : [...prevSelected, userId]
+        );
+    };
+
+    const handleBatchDelete = async () => {
+        const isConfirm = await Swal.fire({
+            title: 'Are you sure?',
+            text: "You won't be able to revert this!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, Delete them!'
+        }).then((result) => result.isConfirmed);
+
+        if (!isConfirm) return;
+
+        try {
+            await axios.delete('http://localhost:9000/employees', {
+                data: { employee_ids: selectedUsers },
+                headers
+            });
+            Swal.fire({
+                icon: 'success',
+                text: 'Successfully deleted selected employees.'
+            });
+            setDeletionStatus(prevStatus => !prevStatus);
+            setSelectedUsers([]);
+        } catch (error) {
+            console.error('Error deleting employees:', error.response?.data || error.message);
+            Swal.fire({
+                icon: 'error',
+                text: 'Failed to delete selected employees. Please try again.'
+            });
+        }
+    };
+
     return (
         <>
             <div className='container'>
                 <br />
+                {selectedUsers.length > 0 && (
+                    <BatchEmployeesToolbar
+                        selectedItemsCount={selectedUsers.length}
+                        selectedEmployeeIds={selectedUsers}
+                        onDelete={handleBatchDelete}
+                    />
+                )}
                 <Table bordered hover responsive style={{ borderRadius: '20px', marginBottom: '50px', marginLeft: '110px' }}>
                     <thead>
                         <tr>
-                            <th style={{ width: '5%' }}>ID</th>
+                            <th style={{ width: '5%' }}>
+                                <input
+                                    type="checkbox"
+                                    checked={selectedUsers.length === users.length}
+                                    onChange={handleSelectAll}
+                                />
+                            </th>
                             <th style={{ width: '10%' }}>ID Number</th>
                             <th>Full Name</th>
                             <th style={{ width: '15%' }}>Role</th>
@@ -117,7 +181,13 @@ const EmployeesTable = () => {
                     <tbody>
                         {users.map((user) => (
                             <tr key={user.user_id}>
-                                <td style={{ textAlign: 'center' }}>{user.user_id}</td>
+                                <td style={{ textAlign: 'center' }}>
+                                    <input
+                                        type="checkbox"
+                                        checked={selectedUsers.includes(user.user_id)}
+                                        onChange={() => handleSelectUser(user.user_id)}
+                                    />
+                                </td>
                                 <td>{user.employee_idnumber}</td>
                                 <td>{`${user.first_name} ${user.middle_name} ${user.last_name} ${user.suffix}`}</td>
                                 <td>{getRoleName(user.role_id)}</td>
@@ -128,16 +198,16 @@ const EmployeesTable = () => {
                                         fontWeight: '600',
                                         fontSize: '14px',
                                         borderRadius: '30px',
-                                        padding: '5px 20px', 
-                                        display: 'inline-flex', 
-                                        alignItems: 'center', 
+                                        padding: '5px 20px',
+                                        display: 'inline-flex',
+                                        alignItems: 'center',
                                     }}>
                                         <div style={{
                                             width: '8px',
                                             height: '8px',
                                             borderRadius: '50%',
                                             backgroundColor: user.status === 'active' ? '#30A530' : '#D9534F',
-                                            marginRight: '7px', 
+                                            marginRight: '7px',
                                         }} />
                                         {user.status}
                                     </div>
@@ -165,29 +235,12 @@ const EmployeesTable = () => {
             <Modal show={showReadModal} onHide={handleReadModalClose} dialogClassName="modal-lg">
                 <Modal.Header closeButton>
                     <Modal.Title style={{ marginLeft: '180px' }}>VIEW EMPLOYEE RECORD</Modal.Title>
-                    <button
-                        type="button"
-                        className="close"
-                        onClick={handleReadModalClose}
-                        style={{
-                            color: '#6c757d',
-                            border: 'none',
-                            background: 'transparent',
-                            fontSize: '30px',
-                            position: 'absolute',
-                            top: '2px',
-                            right: '12px',
-                            cursor: 'pointer',
-                        }}
-                    >
-                        &times;
-                    </button>
                 </Modal.Header>
                 <Modal.Body>
                     {selectedUser && (
-                        <ViewEmployeeModal 
-                            user={selectedUser} 
-                            handleClose={handleReadModalClose} 
+                        <ViewEmployeeModal
+                            user={selectedUser}
+                            handleClose={handleReadModalClose}
                             roles={roles}
                         />
                     )}
@@ -198,31 +251,14 @@ const EmployeesTable = () => {
             <Modal show={showUpdateModal} onHide={handleUpdateModalClose} dialogClassName="modal-lg">
                 <Modal.Header closeButton>
                     <Modal.Title style={{ marginLeft: '180px' }}>UPDATE EMPLOYEE RECORD</Modal.Title>
-                    <button
-                        type="button"
-                        className="close"
-                        onClick={handleUpdateModalClose}
-                        style={{
-                            color: '#6c757d',
-                            border: 'none',
-                            background: 'transparent',
-                            fontSize: '30px',
-                            position: 'absolute',
-                            top: '2px',
-                            right: '12px',
-                            cursor: 'pointer',
-                        }}
-                    >
-                        &times;
-                    </button>
                 </Modal.Header>
                 <Modal.Body>
-                    <EditEmployeeModal 
-                        user={selectedUser} 
-                        handleClose={handleUpdateModalClose} 
-                        fetchUsers={fetchUsers} 
-                        headers={headers} 
-                        roles={roles} 
+                    <EditEmployeeModal
+                        user={selectedUser}
+                        handleClose={handleUpdateModalClose}
+                        fetchUsers={fetchUsers}
+                        headers={headers}
+                        roles={roles}
                     />
                 </Modal.Body>
             </Modal>
