@@ -5,8 +5,9 @@ import Swal from 'sweetalert2';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import PersonIcon from '@mui/icons-material/Person';
+import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
+import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 
-// Assuming EmployeeUpdate component is defined in './EmployeeUpdate.js'
 import EditEmployeeModal from '../modals/EditEmployeeModal';
 import ViewEmployeeModal from '../modals/ViewEmployeeModal';
 import BatchEmployeesToolbar from '../toolbars/BatchEmployeesToolbar';
@@ -22,6 +23,7 @@ const EmployeesTable = () => {
     const [deletionStatus, setDeletionStatus] = useState(false);
     const [selectedEmployeeIds, setSelectedEmployeeIds] = useState([]);  
     const [selectAll, setSelectAll] = useState(false);  
+    const [sortConfig, setSortConfig] = useState({ key: 'employee_idnumber', direction: 'asc' }); // Sorting state
 
     const fetchUsers = useCallback(async () => {
         try {
@@ -180,6 +182,21 @@ const EmployeesTable = () => {
       });
   };
 
+  const handleSort = (key) => {
+    let direction = 'asc';
+    if (sortConfig.key === key && sortConfig.direction === 'asc') {
+        direction = 'desc';
+    }
+    setSortConfig({ key, direction });
+
+    const sortedUsers = [...users].sort((a, b) => {
+        if (a[key] < b[key]) return direction === 'asc' ? -1 : 1;
+        if (a[key] > b[key]) return direction === 'asc' ? 1 : -1;
+        return 0;
+    });
+    setUsers(sortedUsers);
+};
+
     return (
         <>
             <div className='container'>
@@ -194,18 +211,23 @@ const EmployeesTable = () => {
                 <Table bordered hover responsive style={{ borderRadius: '20px', marginBottom: '50px', marginLeft: '110px' }}>
                     <thead>
                         <tr>
-                            <th style={{ width: '5%' }}>
+                            <th style={{ width: '3%' }}>
                                 <input
                                     type="checkbox"
                                     checked={selectAll}
                                     onChange={handleSelectAll}
                                 />
                             </th>
-                            <th style={{ width: '10%' }}>ID Number</th>
+                            <th style={{ width: '12%' }} onClick={() => handleSort('employee_idnumber')}>
+                                ID Number{' '}
+                                {sortConfig.key === 'employee_idnumber' && (
+                                    sortConfig.direction === 'asc' ? <ArrowDropUpIcon /> : <ArrowDropDownIcon />
+                                )}
+                            </th>
                             <th>Full Name</th>
-                            <th style={{ width: '15%' }}>Role</th>
-                            <th style={{ width: '15%' }}>Status</th>
-                            <th style={{ width: '15%' }}>Action</th>
+                            <th style={{ width: '17%' }}>Role</th>
+                            <th style={{ width: '13%' }}>Status</th>
+                            <th style={{ width: '13%' }}>Action</th>
                         </tr>
                     </thead>
                     <tbody>

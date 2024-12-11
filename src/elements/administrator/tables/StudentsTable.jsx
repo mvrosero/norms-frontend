@@ -6,6 +6,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import PersonIcon from '@mui/icons-material/Person';
 import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
+
 import BatchStudentsToolbar from '../toolbars/BatchStudentsToolbar';
 import ViewStudentModal from '../modals/ViewStudentModal';
 import EditStudentModal from '../modals/EditStudentModal';
@@ -348,10 +349,7 @@ const renderPagination = () => {
   };
   
   
-  
-  
-  
-  
+
 
   return (
     <div>
