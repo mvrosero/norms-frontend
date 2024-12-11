@@ -190,12 +190,23 @@ const EmployeesTable = () => {
     setSortConfig({ key, direction });
 
     const sortedUsers = [...users].sort((a, b) => {
-        if (a[key] < b[key]) return direction === 'asc' ? -1 : 1;
-        if (a[key] > b[key]) return direction === 'asc' ? 1 : -1;
+        let aValue = a[key];
+        let bValue = b[key];
+
+        // Special handling for full name sorting
+        if (key === 'full_name') {
+            aValue = `${a.first_name} ${a.middle_name || ''} ${a.last_name} ${a.suffix || ''}`.trim().toLowerCase();
+            bValue = `${b.first_name} ${b.middle_name || ''} ${b.last_name} ${b.suffix || ''}`.trim().toLowerCase();
+        }
+
+        if (aValue < bValue) return direction === 'asc' ? -1 : 1;
+        if (aValue > bValue) return direction === 'asc' ? 1 : -1;
         return 0;
     });
     setUsers(sortedUsers);
 };
+
+
 
     return (
         <>
@@ -209,27 +220,44 @@ const EmployeesTable = () => {
                     />
                 )}
                 <Table bordered hover responsive style={{ borderRadius: '20px', marginBottom: '50px', marginLeft: '110px' }}>
-                    <thead>
-                        <tr>
-                            <th style={{ width: '3%' }}>
-                                <input
-                                    type="checkbox"
-                                    checked={selectAll}
-                                    onChange={handleSelectAll}
-                                />
-                            </th>
-                            <th style={{ width: '12%' }} onClick={() => handleSort('employee_idnumber')}>
-                                ID Number{' '}
-                                {sortConfig.key === 'employee_idnumber' && (
-                                    sortConfig.direction === 'asc' ? <ArrowDropUpIcon /> : <ArrowDropDownIcon />
-                                )}
-                            </th>
-                            <th>Full Name</th>
-                            <th style={{ width: '17%' }}>Role</th>
-                            <th style={{ width: '13%' }}>Status</th>
-                            <th style={{ width: '13%' }}>Action</th>
-                        </tr>
-                    </thead>
+                <thead>
+                    <tr>
+                        <th style={{ width: '3%' }}>
+                            <input
+                                type="checkbox"
+                                checked={selectAll}
+                                onChange={handleSelectAll}
+                            />
+                        </th>
+                        <th style={{ width: '12%' }} onClick={() => handleSort('employee_idnumber')}>
+                            ID Number{' '}
+                            {sortConfig.key === 'employee_idnumber' ? (
+                                sortConfig.direction === 'asc' ? (
+                                    <ArrowDropUpIcon/>
+                                ) : (
+                                    <ArrowDropDownIcon/>
+                                )
+                            ) : (
+                                <ArrowDropDownIcon/>
+                            )}
+                        </th>
+                        <th onClick={() => handleSort('full_name')}>
+                            Full Name{' '}
+                            {sortConfig.key === 'full_name' ? (
+                                sortConfig.direction === 'asc' ? (
+                                    <ArrowDropUpIcon/>
+                                ) : (
+                                    <ArrowDropDownIcon/>
+                                )
+                            ) : (
+                                <ArrowDropDownIcon/>
+                            )}
+                        </th>
+                        <th style={{ width: '17%' }}>Role</th>
+                        <th style={{ width: '13%' }}>Status</th>
+                        <th style={{ width: '13%' }}>Action</th>
+                    </tr>
+                </thead>
                     <tbody>
                     {users.map(user => (
                                 <tr key={user.employee_idnumber}>
