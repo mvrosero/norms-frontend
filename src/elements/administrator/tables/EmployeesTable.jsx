@@ -25,6 +25,10 @@ const EmployeesTable = () => {
     const [selectAll, setSelectAll] = useState(false);  
     const [sortConfig, setSortConfig] = useState({ key: 'employee_idnumber', direction: 'asc' }); // Sorting state
 
+    // Pagination state
+    const [currentPage, setCurrentPage] = useState(1);
+    const rowsPerPage = 5;
+    
     const fetchUsers = useCallback(async () => {
         try {
             const response = await axios.get('http://localhost:9000/employees', { headers });
@@ -122,15 +126,15 @@ const EmployeesTable = () => {
     // Handle "Select All" checkbox
     const handleSelectAll = () => {
         if (selectAll) {
-          setSelectedEmployeeIds([]);
+            setSelectedEmployeeIds([]);
         } else {
-          const allIds = users.map(user => user.employee_idnumber);
-          setSelectedEmployeeIds(allIds);
+            const allIds = users.map(user => user.employee_idnumber);
+            setSelectedEmployeeIds(allIds);
         }
         setSelectAll(!selectAll);
-      };
+        };
 
-      const handleBatchDelete = async () => {
+        const handleBatchDelete = async () => {
         const isConfirm = await Swal.fire({
             title: 'Are you sure?',
             text: "You won't be able to revert this!",
@@ -140,9 +144,9 @@ const EmployeesTable = () => {
             cancelButtonColor: '#d33',
             confirmButtonText: 'Yes, Delete them!'
         }).then((result) => result.isConfirmed);
-    
+
         if (!isConfirm) return;
-    
+
         try {
             // Make sure you're passing the correct employee IDs in the request body
             await axios.delete('http://localhost:9000/employees', {
@@ -165,7 +169,7 @@ const EmployeesTable = () => {
     };
     
 
-      // Handle batch update
+  // Handle batch update
   const handleBatchUpdate = (updates) => {
     axios
       .put('http://localhost:9000/employees', {
@@ -207,110 +211,223 @@ const EmployeesTable = () => {
 };
 
 
+    // Calculate paginated users
+    const indexOfLastUser = currentPage * rowsPerPage;
+    const indexOfFirstUser = indexOfLastUser - rowsPerPage;
+    const currentUsers = users.slice(indexOfFirstUser, indexOfLastUser); // Use this instead of `users`
 
+    const totalPages = Math.ceil(users.length / rowsPerPage);
+
+
+    // Handle pagination change
+    const handlePaginationChange = (pageNumber) => {
+        setCurrentPage(pageNumber);
+    };
+
+
+  const renderTable = () => {
     return (
-        <>
-            <div className='container'>
-                <br />
-                {selectedEmployeeIds.length > 0 && (
-                    <BatchEmployeesToolbar
-                    selectedItemsCount={selectedEmployeeIds.length}
-                    selectedEmployeeIds={selectedEmployeeIds}
-                        onDelete={handleBatchDelete}
-                    />
-                )}
-                <Table bordered hover responsive style={{ borderRadius: '20px', marginBottom: '50px', marginLeft: '110px' }}>
-                <thead>
-                    <tr>
-                        <th style={{ width: '3%' }}>
-                            <input
-                                type="checkbox"
-                                checked={selectAll}
-                                onChange={handleSelectAll}
-                            />
-                        </th>
-                        <th style={{ width: '12%' }} onClick={() => handleSort('employee_idnumber')}>
-                            ID Number{' '}
-                            {sortConfig.key === 'employee_idnumber' ? (
-                                sortConfig.direction === 'asc' ? (
-                                    <ArrowDropUpIcon/>
-                                ) : (
-                                    <ArrowDropDownIcon/>
-                                )
-                            ) : (
-                                <ArrowDropDownIcon/>
-                            )}
-                        </th>
-                        <th onClick={() => handleSort('full_name')}>
-                            Full Name{' '}
-                            {sortConfig.key === 'full_name' ? (
-                                sortConfig.direction === 'asc' ? (
-                                    <ArrowDropUpIcon/>
-                                ) : (
-                                    <ArrowDropDownIcon/>
-                                )
-                            ) : (
-                                <ArrowDropDownIcon/>
-                            )}
-                        </th>
-                        <th style={{ width: '17%' }}>Role</th>
-                        <th style={{ width: '13%' }}>Status</th>
-                        <th style={{ width: '13%' }}>Action</th>
-                    </tr>
-                </thead>
-                    <tbody>
-                    {users.map(user => (
-                                <tr key={user.employee_idnumber}>
-                                <td>
-                                    <input
-                                    type="checkbox"
-                                    checked={selectedEmployeeIds.includes(user.employee_idnumber)}
-                                    onChange={() => handleSelectUser(user.employee_idnumber)}
-                                    />
-                                </td>
-                                <td>{user.employee_idnumber}</td>
-                                <td>{`${user.first_name} ${user.middle_name} ${user.last_name} ${user.suffix}`}</td>
-                                <td>{getRoleName(user.role_id)}</td>
-                                <td style={{ textAlign: 'center' }}>
-                                    <div style={{
-                                        backgroundColor: user.status === 'active' ? '#DBF0DC' : '#F0DBDB',
-                                        color: user.status === 'active' ? '#30A530' : '#D9534F',
-                                        fontWeight: '600',
-                                        fontSize: '14px',
-                                        borderRadius: '30px',
-                                        padding: '5px 20px',
-                                        display: 'inline-flex',
-                                        alignItems: 'center',
-                                    }}>
-                                        <div style={{
-                                            width: '8px',
-                                            height: '8px',
-                                            borderRadius: '50%',
-                                            backgroundColor: user.status === 'active' ? '#30A530' : '#D9534F',
-                                            marginRight: '7px',
-                                        }} />
-                                        {user.status}
-                                    </div>
-                                </td>
-                                <td>
-                                    <div className="d-flex justify-content-around">
-                                        <Button className='btn btn-secondary btn-sm' onClick={() => handleReadModalShow(user)}>
-                                            <PersonIcon />
-                                        </Button>
-                                        <Button className='btn btn-success btn-sm' onClick={() => handleUpdateModalShow(user)}>
-                                            <EditIcon />
-                                        </Button>
-                                        <Button className='btn btn-danger btn-sm' onClick={() => deleteUser(user.user_id)}>
-                                            <DeleteIcon />
-                                        </Button>
-                                    </div>
-                                </td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </Table>
-            </div>
+      <Table bordered hover responsive style={{ borderRadius: '20px', marginBottom: '20px', marginLeft: '110px' }}>
+        <thead>
+          <tr>
+            <th style={{ width: '3%' }}>
+              <input
+                type="checkbox"
+                checked={selectAll}
+                onChange={handleSelectAll}
+              />
+            </th>
+            <th style={{ width: '12%' }} onClick={() => handleSort('employee_idnumber')}>
+              ID Number{' '}
+              {sortConfig.key === 'employee_idnumber' ? (
+                sortConfig.direction === 'asc' ? (
+                  <ArrowDropUpIcon />
+                ) : (
+                  <ArrowDropDownIcon />
+                )
+              ) : (
+                <ArrowDropDownIcon />
+              )}
+            </th>
+            <th onClick={() => handleSort('full_name')}>
+              Full Name{' '}
+              {sortConfig.key === 'full_name' ? (
+                sortConfig.direction === 'asc' ? (
+                  <ArrowDropUpIcon />
+                ) : (
+                  <ArrowDropDownIcon />
+                )
+              ) : (
+                <ArrowDropDownIcon />
+              )}
+            </th>
+            <th style={{ width: '17%' }}>Role</th>
+            <th style={{ width: '13%' }}>Status</th>
+            <th style={{ width: '13%' }}>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {/* Loop over currentUsers to display only the users on the current page */}
+          {currentUsers.map(user => (
+            <tr key={user.employee_idnumber}>
+              <td>
+                <input
+                  type="checkbox"
+                  checked={selectedEmployeeIds.includes(user.employee_idnumber)}
+                  onChange={() => handleSelectUser(user.employee_idnumber)}
+                />
+              </td>
+              <td>{user.employee_idnumber}</td>
+              <td>{`${user.first_name} ${user.middle_name} ${user.last_name} ${user.suffix}`}</td>
+              <td>{getRoleName(user.role_id)}</td>
+              <td style={{ textAlign: 'center' }}>
+                <div
+                  style={{
+                    backgroundColor: user.status === 'active' ? '#DBF0DC' : '#F0DBDB',
+                    color: user.status === 'active' ? '#30A530' : '#D9534F',
+                    fontWeight: '600',
+                    fontSize: '14px',
+                    borderRadius: '30px',
+                    padding: '5px 20px',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                  }}
+                >
+                  <div
+                    style={{
+                      width: '8px',
+                      height: '8px',
+                      borderRadius: '50%',
+                      backgroundColor: user.status === 'active' ? '#30A530' : '#D9534F',
+                      marginRight: '7px',
+                    }}
+                  />
+                  {user.status}
+                </div>
+              </td>
+              <td>
+                <div className="d-flex justify-content-around">
+                  <Button className="btn btn-secondary btn-sm" onClick={() => handleReadModalShow(user)}>
+                    <PersonIcon />
+                  </Button>
+                  <Button className="btn btn-success btn-sm" onClick={() => handleUpdateModalShow(user)}>
+                    <EditIcon />
+                  </Button>
+                  <Button className="btn btn-danger btn-sm" onClick={() => deleteUser(user.user_id)}>
+                    <DeleteIcon />
+                  </Button>
+                </div>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </Table>
+    );
+  };
+  
 
+
+// Render Custom Pagination
+const renderPagination = () => {
+    const pageNumbers = Array.from({ length: totalPages }, (_, i) => i + 1);
+  
+    const buttonStyle = {
+      width: '30px', // Fixed width for equal size
+      height: '30px', // Fixed height for equal size
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      border: '1px solid #a0a0a0',
+      backgroundColor: '#ebebeb',
+      color: '#4a4a4a',
+      fontSize: '0.75rem', // Smaller font size
+      cursor: 'pointer',
+    };
+  
+    const activeButtonStyle = {
+      ...buttonStyle,
+      backgroundColor: '#a0a0a0',
+      color: '#f1f1f1',
+    };
+  
+    const disabledButtonStyle = {
+      ...buttonStyle,
+      backgroundColor: '#ebebeb',
+      color: '#a1a1a1',
+      cursor: 'not-allowed',
+    };
+  
+    return (
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'flex-end',
+          marginBottom: '15px',
+        }}
+      >
+        {/* Page Info */}
+        <div style={{ fontSize: '0.875rem', color: '#4a4a4a', marginRight: '10px' }}>
+          Page {currentPage} out of {totalPages}
+        </div>
+  
+        {/* Pagination Buttons */}
+        <div style={{ display: 'flex', marginRight: '20px' }}>
+          <button
+            onClick={() => currentPage > 1 && handlePaginationChange(currentPage - 1)}
+            disabled={currentPage === 1}
+            style={{
+              ...buttonStyle,
+              borderTopLeftRadius: '10px',
+              borderBottomLeftRadius: '10px',
+              ...(currentPage === 1 && disabledButtonStyle),
+            }}
+          >
+            ❮
+          </button>
+          {pageNumbers.map((number) => (
+            <button
+              key={number}
+              onClick={() => handlePaginationChange(number)}
+              style={number === currentPage ? activeButtonStyle : buttonStyle}
+            >
+              {number}
+            </button>
+          ))}
+          <button
+            onClick={() => currentPage < totalPages && handlePaginationChange(currentPage + 1)}
+            disabled={currentPage === totalPages}
+            style={{
+              ...buttonStyle,
+              borderTopRightRadius: '10px',
+              borderBottomRightRadius: '10px',
+              ...(currentPage === totalPages && disabledButtonStyle),
+            }}
+          >
+            ❯
+          </button>
+        </div>
+      </div>
+    );
+  };
+  
+  
+        return (
+            <div>
+                    {selectedEmployeeIds.length > 0 && (
+                <BatchEmployeesToolbar
+                selectedItemsCount={selectedEmployeeIds.length}
+                selectedEmployeeIds={selectedEmployeeIds}
+                    onDelete={handleBatchDelete}
+                />
+            )}
+
+        {renderTable()}
+
+        {/* Custom Pagination */}
+        {renderPagination()}
+
+  
             {/* Read Modal */}
             <Modal show={showReadModal} onHide={handleReadModalClose} dialogClassName="modal-lg">
                 <Modal.Header closeButton>
@@ -342,7 +459,7 @@ const EmployeesTable = () => {
                     />
                 </Modal.Body>
             </Modal>
-        </>
+            </div>
     );
 }
 
