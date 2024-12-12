@@ -148,8 +148,6 @@ const StudentsTable = () => {
     };
     
 
-
-
   // Calculate paginated users
   const indexOfLastUser = currentPage * rowsPerPage;
   const indexOfFirstUser = indexOfLastUser - rowsPerPage;

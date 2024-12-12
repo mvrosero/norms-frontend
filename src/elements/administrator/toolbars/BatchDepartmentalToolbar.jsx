@@ -1,14 +1,116 @@
-import React, { useState } from 'react';
-import '@fortawesome/fontawesome-free/css/all.min.css'; // Ensure you have this import
+import React, { useState, useEffect } from 'react';
+import '@fortawesome/fontawesome-free/css/all.min.css';
+import { Modal, Button, Form } from 'react-bootstrap';
+import axios from 'axios';
+import Swal from 'sweetalert2';
 
-const BatchDepartmentalToolbar = ({ selectedItemsCount, onEdit, onDelete }) => {
+const BatchDepartmentalToolbar = ({ selectedItemsCount, selectedStudentIds }) => {
   const [isVisible, setIsVisible] = useState(true);
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [yearLevel, setYearLevel] = useState('');
+  const [departmentId, setDepartmentId] = useState('');
+  const [programId, setProgramId] = useState('');
+  const [status, setStatus] = useState('');
+  const [departments, setDepartments] = useState([]);
+  const [programs, setPrograms] = useState([]);
+  const [error, setError] = useState('');
+  const [successMessage, setSuccessMessage] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleClose = () => {
     setIsVisible(false);
   };
 
-  if (!isVisible) return null; // Hide the toolbar when closed
+  const handleEdit = () => {
+    setIsModalVisible(true);
+  };
+
+  const handleModalClose = () => {
+    setIsModalVisible(false);
+    resetForm();
+  };
+
+  const resetForm = () => {
+    setYearLevel('');
+    setDepartmentId('');
+    setProgramId('');
+    setStatus('');
+    setError('');
+    setSuccessMessage('');
+  };
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [departmentResponse, programResponse] = await Promise.all([
+          axios.get('http://localhost:9000/departments'),
+          axios.get('http://localhost:9000/programs'),
+        ]);
+        setDepartments(departmentResponse.data);
+        setPrograms(programResponse.data);
+      } catch (error) {
+        console.error('Error fetching departments or programs:', error);
+        setError('Failed to load departments or programs.');
+      }
+    };
+
+    if (isModalVisible) {
+      fetchData();
+    }
+  }, [isModalVisible]);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError('');
+    setSuccessMessage('');
+    setIsSubmitting(true);
+
+    const updates = {
+      ...(yearLevel && { year_level: yearLevel }),
+      ...(departmentId && { department_id: departmentId }),
+      ...(programId && { program_id: programId }),
+      ...(status && { status: status }),
+    };
+
+    if (Object.keys(updates).length === 0) {
+      setError('No fields to update.');
+      setIsSubmitting(false);
+      return;
+    }
+
+    try {
+      const response = await axios.put('http://localhost:9000/students', {
+        student_ids: selectedStudentIds,
+        updates: updates,
+      });
+
+      handleModalClose();
+
+      Swal.fire({
+        icon: 'success',
+        title: 'Success',
+        text: response.data.message,
+        confirmButtonText: 'OK',
+      }).then(() => {
+        window.location.reload();
+      });
+    } catch (error) {
+      console.error('Error updating students:', error.response?.data || error.message);
+
+      handleModalClose();
+
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: error.response?.data?.error || 'Failed to update students. Please try again.',
+        confirmButtonText: 'OK',
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  if (!isVisible) return null;
 
   return (
     <div style={styles.toolbar}>
@@ -25,14 +127,88 @@ const BatchDepartmentalToolbar = ({ selectedItemsCount, onEdit, onDelete }) => {
           </span>
         </div>
         <div style={styles.buttonContainer}>
-          <button style={styles.editButton} onClick={onEdit}>
+          <button style={styles.editButton} onClick={handleEdit}>
             <i className="fas fa-pen" style={styles.icon}></i> Edit
-          </button>
-          <button style={styles.deleteButton} onClick={onDelete}>
-            <i className="fas fa-trash" style={styles.icon}></i> Delete
           </button>
         </div>
       </div>
+
+      <Modal show={isModalVisible} onHide={handleModalClose}>
+        <Modal.Header closeButton>
+          <Modal.Title>BATCH UPDATE STUDENTS</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          {error && <div className="alert alert-danger">{error}</div>}
+          {successMessage && <div className="alert alert-success">{successMessage}</div>}
+          <Form onSubmit={handleSubmit}>
+            <Form.Group controlId="year_level">
+              <Form.Label className="fw-bold">Year Level</Form.Label>
+              <Form.Select
+                name="year_level"
+                value={yearLevel}
+                onChange={(e) => setYearLevel(e.target.value)}
+              >
+                <option value="">Select Year Level</option>
+                <option value="First Year">First Year</option>
+                <option value="Second Year">Second Year</option>
+                <option value="Third Year">Third Year</option>
+                <option value="Fourth Year">Fourth Year</option>
+                <option value="Fifth Year">Fifth Year</option>
+              </Form.Select>
+            </Form.Group>
+
+            <Form.Group controlId="department_id">
+              <Form.Label className="fw-bold">Department</Form.Label>
+              <Form.Select
+                name="department_id"
+                value={departmentId}
+                onChange={(e) => setDepartmentId(e.target.value)}
+              >
+                <option value="">Select Department</option>
+                {departments.map((department) => (
+                  <option key={department.department_id} value={department.department_id}>
+                    {department.department_name}
+                  </option>
+                ))}
+              </Form.Select>
+            </Form.Group>
+
+            <Form.Group controlId="program_id">
+              <Form.Label className="fw-bold">Program</Form.Label>
+              <Form.Select
+                name="program_id"
+                value={programId}
+                onChange={(e) => setProgramId(e.target.value)}
+              >
+                <option value="">Select Program</option>
+                {programs.map((program) => (
+                  <option key={program.program_id} value={program.program_id}>
+                    {program.program_name}
+                  </option>
+                ))}
+              </Form.Select>
+            </Form.Group>
+
+            <Form.Group controlId="status">
+              <Form.Label className="fw-bold">Status</Form.Label>
+              <Form.Select
+                name="status"
+                value={status}
+                onChange={(e) => setStatus(e.target.value)}
+              >
+                <option value="">Select Status</option>
+                <option value="active">Active</option>
+                <option value="inactive">Inactive</option>
+                <option value="archived">Archived</option>
+              </Form.Select>
+            </Form.Group>
+
+            <Button variant="primary" type="submit" disabled={isSubmitting}>
+              {isSubmitting ? 'Updating...' : 'Update'}
+            </Button>
+          </Form>
+        </Modal.Body>
+      </Modal>
     </div>
   );
 };
@@ -56,11 +232,11 @@ const styles = {
   closeButton: {
     background: 'none',
     border: 'none',
-    fontSize: '25px', // Increased size of the 'x'
+    fontSize: '25px',
     cursor: 'pointer',
     color: '#C1C1C1',
-    marginRight: '20px', // Increased space on the right side
-    marginLeft: '10px', // Added space on the left side of 'x'
+    marginRight: '20px',
+    marginLeft: '10px',
   },
   content: {
     flex: 1,
@@ -71,8 +247,8 @@ const styles = {
   itemInfoContainer: {
     display: 'flex',
     alignItems: 'center',
-    gap: '15px', // Increased space between the circle and text
-    marginLeft: '20px', // Added space to the left of the number circle
+    gap: '15px',
+    marginLeft: '20px',
   },
   itemCountContainer: {
     display: 'flex',
@@ -102,24 +278,13 @@ const styles = {
     border: 'none',
     borderRadius: '30px',
     padding: '7px 20px',
+    marginRight: '25px',
     cursor: 'pointer',
     display: 'flex',
     alignItems: 'center',
-  },
-  deleteButton: {
-    backgroundColor: '#F2DFE1',
-    color: '#DC3545',
-    fontWeight: 'bold',
-    border: 'none',
-    borderRadius: '30px',
-    padding: '7px 20px',
-    cursor: 'pointer',
-    display: 'flex',
-    alignItems: 'center',
-    marginRight: '20px',
   },
   icon: {
-    marginRight: '8px',
+    marginRight: '5px',
   },
 };
 

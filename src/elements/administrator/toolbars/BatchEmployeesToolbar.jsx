@@ -46,10 +46,13 @@ const BatchEmployeesToolbar = ({ selectedItemsCount, selectedEmployeeIds, onDele
       }
     };
 
+    
+
     if (isModalVisible) {
       fetchData();
     }
   }, [isModalVisible]);
+  
 
   const handleSubmit = async (e) => {
     e.preventDefault();

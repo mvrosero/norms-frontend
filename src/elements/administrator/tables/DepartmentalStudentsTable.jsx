@@ -6,8 +6,9 @@ import Swal from 'sweetalert2';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import PersonIcon from '@mui/icons-material/Person';
+import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
+import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import { FaPlus } from 'react-icons/fa';
-import Papa from 'papaparse';
 
 import AdminNavigation from "../../../pages/administrator/AdminNavigation";
 import AdminInfo from "../../../pages/administrator/AdminInfo";
@@ -26,8 +27,17 @@ const DepartmentalStudentsTable = () => {
     const [showReadModal, setShowReadModal] = useState(false);
     const [showUpdateModal, setShowUpdateModal] = useState(false);
     const [selectedUser, setSelectedUser] = useState(null);
+    const [selectedStudentIds, setSelectedStudentIds] = useState([]);
+    const [selectAll, setSelectAll] = useState(false);
     const [headers, setHeaders] = useState({});
     const [deletionStatus, setDeletionStatus] = useState(false); // State to track deletion status
+
+    // Pagination state
+    const [currentPage, setCurrentPage] = useState(1);
+    const rowsPerPage = 5;
+
+    // Sorting state for full name
+    const [sortOrder, setSortOrder] = useState('asc'); // 'asc' for ascending, 'desc' for descending
 
     const fetchUsers = useCallback(async () => {
         try {
@@ -142,6 +152,250 @@ const DepartmentalStudentsTable = () => {
         }
     };
 
+
+       // Sort users based on full name
+       const handleSortFullName = () => {
+        const sortedUsers = [...users];
+        sortedUsers.sort((a, b) => {
+          const fullNameA = `${a.first_name} ${a.middle_name || ''} ${a.last_name} ${a.suffix || ''}`.toLowerCase();
+          const fullNameB = `${b.first_name} ${b.middle_name || ''} ${b.last_name} ${b.suffix || ''}`.toLowerCase();
+    
+          if (sortOrder === 'asc') {
+            return fullNameA.localeCompare(fullNameB);
+          } else {
+            return fullNameB.localeCompare(fullNameA);
+          }
+        });
+        setUsers(sortedUsers);
+        setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc'); // Toggle sort order
+      };
+
+
+      // Sort users based on idnumber
+      const handleSortIdNumber = () => {
+        const sortedUsers = [...users];
+        sortedUsers.sort((a, b) => {
+            // Parse student_idnumber as integers to ensure numeric sorting
+            const idNumberA = parseInt(a.student_idnumber, 10);
+            const idNumberB = parseInt(b.student_idnumber, 10);
+    
+            // Check if the parsed values are valid numbers
+            if (isNaN(idNumberA) || isNaN(idNumberB)) {
+                return 0; // If the values are invalid, maintain the order
+            }
+    
+            // Compare numeric values for sorting
+            if (sortOrder === 'asc') {
+                return idNumberA - idNumberB; // Ascending order
+            } else {
+                return idNumberB - idNumberA; // Descending order
+            }
+        });
+        setUsers(sortedUsers);
+        setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc'); // Toggle sort order
+    };
+
+
+    // Calculate paginated users
+    const indexOfLastUser = currentPage * rowsPerPage;
+    const indexOfFirstUser = indexOfLastUser - rowsPerPage;
+    const currentUsers = users.slice(indexOfFirstUser, indexOfLastUser);
+
+    const totalPages = Math.ceil(users.length / rowsPerPage);
+
+    // Handle pagination change
+    const handlePaginationChange = (pageNumber) => {
+        setCurrentPage(pageNumber);
+    };
+
+
+
+    const renderPagination = () => {
+        const pageNumbers = Array.from({ length: totalPages }, (_, i) => i + 1);
+    
+        const buttonStyle = {
+            width: '30px', // Fixed width for equal size
+            height: '30px', // Fixed height for equal size
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            border: '1px solid #a0a0a0',
+            backgroundColor: '#ebebeb',
+            color: '#4a4a4a',
+            fontSize: '0.75rem', // Smaller font size
+            cursor: 'pointer',
+        };
+    
+        const activeButtonStyle = {
+            ...buttonStyle,
+            backgroundColor: '#a0a0a0',
+            color: '#f1f1f1',
+        };
+    
+        const disabledButtonStyle = {
+            ...buttonStyle,
+            backgroundColor: '#ebebeb',
+            color: '#a1a1a1',
+            cursor: 'not-allowed',
+        };
+    
+        return (
+            <div
+                style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'flex-end',
+                    marginBottom: '15px',
+                }}
+            >
+                {/* Page Info */}
+                <div style={{ fontSize: '0.875rem', color: '#4a4a4a', marginRight: '10px' }}>
+                    Page {currentPage} of {totalPages}
+                </div>
+    
+                {/* Pagination Buttons */}
+                <div style={{ display: 'flex', marginRight: '20px' }}>
+                    <button
+                        onClick={() => currentPage > 1 && handlePaginationChange(currentPage - 1)}
+                        disabled={currentPage === 1}
+                        style={{
+                            ...buttonStyle,
+                            borderTopLeftRadius: '10px',
+                            borderBottomLeftRadius: '10px',
+                            ...(currentPage === 1 ? disabledButtonStyle : {}),
+                        }}
+                    >
+                        ❮
+                    </button>
+                    {pageNumbers.map((number) => (
+                        <button
+                            key={number}
+                            onClick={() => handlePaginationChange(number)}
+                            style={number === currentPage ? activeButtonStyle : buttonStyle}
+                        >
+                            {number}
+                        </button>
+                    ))}
+                    <button
+                        onClick={() => currentPage < totalPages && handlePaginationChange(currentPage + 1)}
+                        disabled={currentPage === totalPages}
+                        style={{
+                            ...buttonStyle,
+                            borderTopRightRadius: '10px',
+                            borderBottomRightRadius: '10px',
+                            ...(currentPage === totalPages ? disabledButtonStyle : {}),
+                        }}
+                    >
+                        ❯
+                    </button>
+                </div>
+            </div>
+        );
+    };
+    
+    // Render Table
+    const renderTable = () => {
+        return (
+            <Table bordered hover responsive style={{ borderRadius: '20px', marginBottom: '50px', marginLeft: '110px' }}>
+                <thead>
+                    <tr>
+                        <th style={{ width: '5%' }}>ID</th>
+                        <th style={{ textAlign: 'center', padding: '0', verticalAlign: 'middle', width: '11%' }}>
+                            <button
+                                style={{ border: 'none', background: 'none', cursor: 'pointer', display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center', width: '100%', 
+                                }}
+                                onClick={handleSortIdNumber}
+                            >
+                                <span style={{ textAlign: 'center' }}>ID Number</span>
+                                {sortOrder === 'asc' ? (
+                                <ArrowDropUpIcon style={{ marginLeft: '5px' }} />
+                                ) : (
+                                <ArrowDropDownIcon style={{ marginLeft: '5px' }} />
+                                )}
+                            </button>
+                        </th>
+                        <th style={{ textAlign: 'center', padding: '0', verticalAlign: 'middle' }}>
+                            <button
+                                style={{ border: 'none', background: 'none', cursor: 'pointer', display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center', width: '100%', 
+                                }}
+                                onClick={handleSortFullName}
+                            >
+                                <span style={{ textAlign: 'center' }}>Full Name</span>
+                                {sortOrder === 'asc' ? (
+                                <ArrowDropUpIcon style={{ marginLeft: '5px' }} />
+                                ) : (
+                                <ArrowDropDownIcon style={{ marginLeft: '5px' }} />
+                                )}
+                            </button>
+                        </th>
+                        <th style={{ width: '10%' }}>Year Level</th>
+                        <th>Program</th>
+                        <th style={{ width: '12%' }}>Status</th>
+                        <th style={{ width: '13%' }}>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {currentUsers.map((user, index) => (
+                        <tr key={index}>
+                            <td style={{ textAlign: 'center' }}>{user.user_id}</td>
+                            <td>{user.student_idnumber}</td>
+                            <td>{`${user.first_name} ${user.middle_name} ${user.last_name} ${user.suffix}`}</td>
+                            <td>{user.year_level}</td>
+                            <td>{getProgramName(user.program_id)}</td>
+                            <td style={{ textAlign: 'center' }}>
+                                <div
+                                    style={{
+                                        backgroundColor: user.status === 'active' ? '#DBF0DC' : '#F0DBDB',
+                                        color: user.status === 'active' ? '#30A530' : '#D9534F',
+                                        fontWeight: '600',
+                                        fontSize: '14px',
+                                        borderRadius: '30px',
+                                        padding: '5px 20px',
+                                        display: 'inline-flex',
+                                        alignItems: 'center',
+                                    }}
+                                >
+                                    <div
+                                        style={{
+                                            width: '8px',
+                                            height: '8px',
+                                            borderRadius: '50%',
+                                            backgroundColor: user.status === 'active' ? '#30A530' : '#D9534F',
+                                            marginRight: '7px',
+                                        }}
+                                    />
+                                    {user.status}
+                                </div>
+                            </td>
+                            <td>
+                                <div className="d-flex justify-content-around">
+                                    <Button className="btn btn-secondary btn-sm" onClick={() => handleReadModalShow(user)}>
+                                        <PersonIcon />
+                                    </Button>
+                                    <Button className="btn btn-success btn-sm" onClick={() => handleUpdateModalShow(user)}>
+                                        <EditIcon />
+                                    </Button>
+                                    <Button className="btn btn-danger btn-sm" onClick={() => deleteUser(user.user_id)}>
+                                        <DeleteIcon />
+                                    </Button>
+                                </div>
+                            </td>
+                        </tr>
+                    ))}
+                </tbody>
+            </Table>
+        );
+    };
+    
+  
+  
+
+
+
+
+
+
+
     return (
         <>
             <AdminNavigation />
@@ -186,67 +440,14 @@ const DepartmentalStudentsTable = () => {
                 </ol>
             </nav>
 
-            <div className='container'>
-                <br />
-                <Table bordered hover responsive style={{ borderRadius: '20px', marginBottom: '50px', marginLeft: '110px' }}>
-                    <thead>
-                        <tr>
-                            <th style={{ width: '5%'}} >ID</th>
-                            <th style={{ width: '10%' }}>ID Number</th>
-                            <th>Full Name</th>
-                            <th style={{ width: '10%' }}>Year Level</th>
-                            <th>Program</th>
-                            <th style={{ width: '12%' }}>Status</th>
-                            <th style={{ width: '13%' }}>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {users.map((user, index) => (
-                            <tr key={index}>
-                                <td style={{ textAlign: 'center' }}>{user.user_id}</td>
-                                <td>{user.student_idnumber}</td>
-                                <td>{`${user.first_name} ${user.middle_name} ${user.last_name} ${user.suffix}`}</td>
-                                <td>{user.year_level}</td>
-                                <td>{getProgramName(user.program_id)}</td>
-                                <td style={{ textAlign: 'center' }}>
-                                    <div style={{
-                                        backgroundColor: user.status === 'active' ? '#DBF0DC' : '#F0DBDB',
-                                        color: user.status === 'active' ? '#30A530' : '#D9534F',
-                                        fontWeight: '600',
-                                        fontSize: '14px',
-                                        borderRadius: '30px',
-                                        padding: '5px 20px', 
-                                        display: 'inline-flex', 
-                                        alignItems: 'center', 
-                                    }}>
-                                        <div style={{
-                                            width: '8px',
-                                            height: '8px',
-                                            borderRadius: '50%',
-                                            backgroundColor: user.status === 'active' ? '#30A530' : '#D9534F',
-                                            marginRight: '7px', 
-                                        }} />
-                                        {user.status}
-                                    </div>
-                                </td>
-                                <td>
-                                    <div className="d-flex justify-content-around">
-                                        <Button className='btn btn-secondary btn-sm' onClick={() => handleReadModalShow(user)}>
-                                            <PersonIcon />
-                                        </Button>
-                                        <Button className='btn btn-success btn-sm' onClick={() => handleUpdateModalShow(user)}>
-                                            <EditIcon />
-                                        </Button>
-                                        <Button className='btn btn-danger btn-sm' onClick={() => deleteUser(user.user_id)}>
-                                            <DeleteIcon />
-                                        </Button>
-                                    </div>
-                                </td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </Table>
-            </div>
+
+            {renderTable()}
+
+{/* Custom Pagination */}
+{renderPagination()}
+
+   
+  
  
             {/* Read Modal */}
             <Modal show={showReadModal} onHide={handleReadModalClose}>
