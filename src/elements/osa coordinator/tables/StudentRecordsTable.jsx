@@ -144,7 +144,7 @@ const StudentRecordsTable = ({ searchQuery }) => {
                 <Table bordered hover style={{ borderRadius: '20px', marginLeft: '110px' }}>
                     <thead style={{ backgroundColor: '#f8f9fa' }}> {/* Setting header background color */}
                         <tr>
-                            <th style={{ width: '5%'}}>ID</th>
+                            <th style={{ width: '4%'}}>No.</th>
                             <th style={{ width: '10%'}}>ID Number</th>
                             <th>Full Name</th>
                             <th style={{ width: '10%'}}>Year Level</th>
@@ -156,7 +156,8 @@ const StudentRecordsTable = ({ searchQuery }) => {
                     <tbody>
                         {users.map((user, index) => (
                             <tr key={index}>
-                                <td style={{ textAlign: 'center' }}>{user.user_id}</td>
+                                {/* Display row count based on index */}
+                                <td style={{ textAlign: 'center' }}>{index + 1}</td>
                                 <td>{user.student_idnumber}</td>
                                 <td>
                                     <a

@@ -4,16 +4,15 @@ import Swal from 'sweetalert2';
 import { Form, Button, Row, Col } from 'react-bootstrap';
 import Select from 'react-select';
 
-export default function DepartmentalCreateViolationModal({ handleCloseModal, department_code }) {
+export default function DepartmentalCreateViolationModal({ handleCloseModal }) {
     const [formData, setFormData] = useState({
         description: '',
         category_id: '',
         offense_id: '',
-        users: [], // Store user IDs here
-        sanctions: [], // Store sanction IDs here
+        users: [], // Multi-select field for user IDs
+        sanctions: [], // Multi-select field for sanction IDs
         acadyear_id: '',
         semester_id: '',
-        department_code: department_code,
     });
 
     const [students, setStudents] = useState([]);
@@ -23,121 +22,90 @@ export default function DepartmentalCreateViolationModal({ handleCloseModal, dep
     const [academicYears, setAcademicYears] = useState([]);
     const [semesters, setSemesters] = useState([]);
 
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const [
-                    studentsResponse, 
-                    categoriesResponse, 
-                    offensesResponse, 
-                    sanctionsResponse, 
-                    academicYearsResponse, 
-                    semestersResponse
-                ] = await Promise.all([
-                    axios.get(`http://localhost:9000/students/${department_code}`), // Fetch students
-                    axios.get('http://localhost:9000/categories'),
-                    axios.get('http://localhost:9000/offenses'),
-                    axios.get('http://localhost:9000/sanctions'),
-                    axios.get('http://localhost:9000/academic_years'),
-                    axios.get('http://localhost:9000/semesters'),
-                ]);
+        // Fetching data from backend
+        useEffect(() => {
+            const fetchData = async () => {
+                try {
+                    const [
+                        studentsResponse,
+                        categoriesResponse,
+                        offensesResponse,
+                        sanctionsResponse,
+                        academicYearsResponse,
+                        semestersResponse,
+                    ] = await Promise.all([
+                        axios.get(`http://localhost:9000/students`), // Fetch students
+                        axios.get('http://localhost:9000/categories'),
+                        axios.get('http://localhost:9000/offenses'),
+                        axios.get('http://localhost:9000/sanctions'),
+                        axios.get('http://localhost:9000/academic_years'),
+                        axios.get('http://localhost:9000/semesters'),
+                    ]);
+    
+                    setStudents(studentsResponse.data.filter((student) => student.status === 'active'));
+                    setCategories(categoriesResponse.data);
+                    setOffenses(offensesResponse.data);
+                    setSanctions(sanctionsResponse.data);
+                    setAcademicYears(academicYearsResponse.data);
+                    setSemesters(semestersResponse.data);
+                } catch (error) {
+                    console.error('Error fetching data:', error);
+                }
+            };
+    
+            fetchData();
+        }, []);
 
-                setStudents(studentsResponse.data.filter(student => student.status === 'active'));
-                setCategories(categoriesResponse.data);
-                setOffenses(offensesResponse.data);
-                setSanctions(sanctionsResponse.data);
-                setAcademicYears(academicYearsResponse.data);
-                setSemesters(semestersResponse.data);
-            } catch (error) {
-                console.error('Error fetching data:', error);
-            }
-        };
 
-        fetchData();
-    }, [department_code]);
-
+    // Handling input change for non-select inputs
     const handleChange = (e) => {
         const { name, value } = e.target;
-        setFormData(prevState => ({
+        setFormData((prevState) => ({
             ...prevState,
             [name]: value,
         }));
     };
 
-    const handleSelectChange = (selectedOptions, actionMeta) => {
-        const { name } = actionMeta;
-        setFormData(prevState => ({
+
+    // Handling multi-select field changes
+    const handleSelectChange = (selectedOptions, { name }) => {
+        setFormData((prevState) => ({
             ...prevState,
-            [name]: selectedOptions ? selectedOptions.map(option => option.value) : [],
+            [name]: selectedOptions ? selectedOptions.map((option) => option.value) : [],
         }));
     };
 
+    // Form submission handler
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        if (
-            !formData.description ||
-            !formData.category_id ||
-            !formData.offense_id ||
-            formData.users.length === 0 ||
-            formData.sanctions.length === 0 ||
-            !formData.acadyear_id ||
-            !formData.semester_id
-        ) {
-            Swal.fire({
-                icon: 'warning',
-                title: 'Incomplete Form',
-                text: 'Please fill out all required fields.',
-            });
-            return;
-        }
-
         try {
-            const response = await axios.post('http://localhost:9000/create-violationrecord', formData);
-            console.log('Response:', response.data);
-
-            Swal.fire({
-                icon: 'success',
-                title: 'Record Created Successfully!',
-                text: 'Violation record has been created successfully.',
-            });
-
-            if (typeof handleCloseModal === 'function') {
-                handleCloseModal();
-            }
+            await axios.post('http://localhost:9000/create-violationrecord', formData);
+            Swal.fire('Success', 'Violation record created successfully!', 'success');
+            handleCloseModal();
         } catch (error) {
             console.error('Error creating violation record:', error);
-            Swal.fire({
-                icon: 'error',
-                title: 'Oops...',
-                text: 'An error occurred while creating the violation record. Please try again later!',
-            });
+            Swal.fire('Error', 'Failed to create violation record.', 'error');
         }
     };
 
-    const studentOptions = students.map(student => ({
-        value: student.user_id,
-        label: `${student.first_name} ${student.last_name}`,
-    }));
-
-    const sanctionOptions = sanctions.map(sanction => ({
-        value: sanction.sanction_id,
-        label: sanction.sanction_name,
-    }));
 
     return (
-        <div className="violation-record-form-container">
             <Form onSubmit={handleSubmit}>
-                <Form.Group className="mb-3">
-                    <Form.Label className="fw-bold">Users</Form.Label>
-                    <Select
-                        isMulti
-                        name="users"
-                        options={studentOptions}
-                        onChange={handleSelectChange}
-                        placeholder="Select Students"
-                    />
-                </Form.Group>
+            {/* Users */}
+            <Form.Group className="mb-3">
+                <Form.Label>Users</Form.Label>
+                <Select
+                    isMulti
+                    name="users"
+                    options={students.map((student) => ({
+                        value: student.user_id,
+                        label: `${student.first_name} ${student.last_name}`,
+                    }))}
+                    onChange={handleSelectChange}
+                    required
+                />
+            </Form.Group>
 
                 <Row>
                     <Col>
@@ -217,15 +185,21 @@ export default function DepartmentalCreateViolationModal({ handleCloseModal, dep
                     </Col>
                 </Row>
 
-                <Form.Group className="mb-3">
-                    <Form.Label className="fw-bold">Sanctions</Form.Label>
-                    <Select
-                        isMulti
-                        name="sanctions"
-                        options={sanctionOptions}
-                        onChange={handleSelectChange}
-                    />
-                </Form.Group>
+
+            {/* Sanction */}
+            <Form.Group className="mb-3">
+                <Form.Label>Sanctions</Form.Label>
+                <Select
+                    isMulti
+                    name="sanctions"
+                    options={sanctions.map((sanction) => ({
+                        value: sanction.sanction_id,
+                        label: sanction.sanction_name,
+                    }))}
+                    onChange={handleSelectChange}
+                    required
+                />
+            </Form.Group>
 
                 <Form.Group className="mb-3">
                     <Form.Label className="fw-bold">Description</Form.Label>
@@ -242,6 +216,5 @@ export default function DepartmentalCreateViolationModal({ handleCloseModal, dep
                     Submit
                 </Button>
             </Form>
-        </div>
     );
 }

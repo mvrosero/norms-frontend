@@ -33,12 +33,24 @@ const DepartmentalStudentRecordsTable = () => {
     const fetchUsers = useCallback(async () => {
         try {
             const response = await axios.get(`http://localhost:9000/coordinator-studentrecords/${department_code}`, { headers });
-            setUsers(response.data);
+            
+            // Set users to an empty array if no data is returned
+            if (response.data.length === 0) {
+                setUsers([]);
+            } else {
+                setUsers(response.data);
+            }
         } catch (error) {
-            console.error('Error fetching users:', error);
-            Swal.fire('Error', 'Failed to fetch users.', 'error');
+            // Only show error alert if it's not a 404 (no users found)
+            if (error.response && error.response.status === 404) {
+                setUsers([]); // No users found for the department
+            } else {
+                console.error('Error fetching users:', error);
+                Swal.fire('Error', 'Failed to fetch users.', 'error');
+            }
         }
     }, [headers, department_code, deletionStatus]);
+    
 
     const fetchDepartments = useCallback(async () => {
         try {
@@ -186,7 +198,7 @@ const DepartmentalStudentRecordsTable = () => {
                 <Table bordered hover responsive style={{ borderRadius: '20px', marginBottom: '50px' }}>
                     <thead>
                         <tr>
-                            <th style={{ width: '5%' }}>ID</th>
+                            <th style={{ width: '4%'}}>No.</th>
                             <th style={{ width: '10%' }}>ID Number</th>
                             <th>Full Name</th>
                             <th style={{ width: '10%' }}>Year Level</th>
@@ -197,7 +209,8 @@ const DepartmentalStudentRecordsTable = () => {
                     <tbody>
                         {users.map((user, index) => (
                             <tr key={index}>
-                                <td style={{ textAlign: 'center' }}>{user.user_id}</td>
+                                {/* Display row count based on index */}
+                                <td style={{ textAlign: 'center' }}>{index + 1}</td>
                                 <td>{user.student_idnumber}</td>
                                 <td>
                                     <a
