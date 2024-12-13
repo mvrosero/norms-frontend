@@ -8,12 +8,9 @@ import EditIcon from '@mui/icons-material/Edit';
 import PersonIcon from '@mui/icons-material/Person';
 import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
-import { FaPlus } from 'react-icons/fa';
 
-import AdminNavigation from "../../../pages/administrator/AdminNavigation";
-import AdminInfo from "../../../pages/administrator/AdminInfo";
-import SearchAndFilter from '../../../pages/general/SearchAndFilter';
-import ImportDepartmentalCSV from '../../general/imports/ImportDepartmentalCSV';
+
+import BatchDepartmentalToolbar from '../toolbars/BatchDepartmentalToolbar';
 import ViewStudentModal from '../modals/ViewStudentModal';
 import EditStudentModal from '../modals/EditStudentModal';
 import "../../../styles/Students.css";
@@ -42,13 +39,17 @@ const DepartmentalStudentsTable = () => {
     const fetchUsers = useCallback(async () => {
         try {
             const response = await axios.get(`http://localhost:9000/admin-usermanagement/${department_code}`, { headers });
-            console.log('Fetched users:', response.data); 
-            setUsers(response.data);
+            console.log('Fetched users:', response.data);
+    
+            // Filter out users with 'archived' status
+            const activeUsers = response.data.filter(user => user.status !== 'archived');
+            setUsers(activeUsers); // Set the filtered users
         } catch (error) {
             console.error('Error fetching users:', error);
             Swal.fire('Error', 'Failed to fetch users.', 'error');
         }
     }, [headers, department_code, deletionStatus]);
+    
 
     const fetchDepartments = useCallback(async () => {  
         try {
@@ -84,7 +85,48 @@ const DepartmentalStudentsTable = () => {
         fetchUsers();
         fetchDepartments();
         fetchPrograms();
-    }, [fetchUsers, fetchDepartments, fetchPrograms]);            
+    }, [fetchUsers, fetchDepartments, fetchPrograms]);   
+
+
+    // Handle selecting individual users
+    const handleSelectUser = (userId) => {
+        setSelectedStudentIds((prevSelectedIds) => {
+        if (prevSelectedIds.includes(userId)) {
+            return prevSelectedIds.filter(id => id !== userId);
+        } else {
+            return [...prevSelectedIds, userId];
+        }
+        });
+    };
+
+  // Handle "Select All" checkbox
+  const handleSelectAll = () => {
+    if (selectAll) {
+      setSelectedStudentIds([]);
+    } else {
+      const allIds = users.map(user => user.student_idnumber);
+      setSelectedStudentIds(allIds);
+    }
+    setSelectAll(!selectAll);
+  };
+    
+    // Handle batch update
+  const handleBatchUpdate = (updates) => {
+    axios
+      .put('http://localhost:9000/students', {
+        student_ids: selectedStudentIds,
+        updates,
+      })
+      .then((response) => {
+        Swal.fire('Success', 'Batch update successful', 'success');
+        fetchUsers(); // Re-fetch users after a successful update
+        setShowUpdateModal(false); // Close the update modal
+      })
+      .catch((error) => {
+        Swal.fire('Error', error.response?.data?.error || 'Failed to update students', 'error');
+      });
+  };
+
 
     const handleReadModalShow = (user) => {
         setSelectedUser(user);
@@ -209,7 +251,6 @@ const DepartmentalStudentsTable = () => {
     };
 
 
-
     const renderPagination = () => {
         const pageNumbers = Array.from({ length: totalPages }, (_, i) => i + 1);
     
@@ -292,14 +333,23 @@ const DepartmentalStudentsTable = () => {
             </div>
         );
     };
+
     
     // Render Table
     const renderTable = () => {
+        const activeUsers = users.filter(user => user.status !== 'archived');
+
         return (
-            <Table bordered hover responsive style={{ borderRadius: '20px', marginBottom: '50px', marginLeft: '110px' }}>
-                <thead>
-                    <tr>
-                        <th style={{ width: '5%' }}>ID</th>
+            <Table bordered hover responsive style={{ borderRadius: '20px', marginBottom: '20px', marginLeft: '110px' }}>
+                            <thead>
+                                <tr>
+                                <th style={{ width: '3%' }}>
+                        <input
+                            type="checkbox"
+                            checked={selectAll}
+                            onChange={handleSelectAll}
+                        />
+                        </th>
                         <th style={{ textAlign: 'center', padding: '0', verticalAlign: 'middle', width: '11%' }}>
                             <button
                                 style={{ border: 'none', background: 'none', cursor: 'pointer', display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center', width: '100%', 
@@ -335,9 +385,15 @@ const DepartmentalStudentsTable = () => {
                     </tr>
                 </thead>
                 <tbody>
-                    {currentUsers.map((user, index) => (
-                        <tr key={index}>
-                            <td style={{ textAlign: 'center' }}>{user.user_id}</td>
+                                    {currentUsers.map((user, index) => (
+                                        <tr key={index}>
+                                                        <td>
+                                <input
+                                type="checkbox"
+                                checked={selectedStudentIds.includes(user.student_idnumber)}
+                                onChange={() => handleSelectUser(user.student_idnumber)}
+                                />
+                            </td>
                             <td>{user.student_idnumber}</td>
                             <td>{`${user.first_name} ${user.middle_name} ${user.last_name} ${user.suffix}`}</td>
                             <td>{user.year_level}</td>
@@ -388,66 +444,20 @@ const DepartmentalStudentsTable = () => {
     };
     
   
-  
-
-
-
-
-
-
-
     return (
-        <>
-            <AdminNavigation />
-            <AdminInfo />
-            <h6 className="page-title">{departmentName || department_code || 'USER MANAGEMENT'}</h6>
-            <div style={{ display: 'flex', marginTop: '20px', alignItems: 'center' }}>
-                <div style={{ width: '850px', marginLeft: '70px' }}>
-                    <SearchAndFilter />
-                </div>
-                <button 
-                    onClick={() => window.location.href = "http://localhost:3000/register-student"}  
-                    style={{
-                        backgroundColor: '#FAD32E',
-                        color: 'white',
-                        fontWeight: '900',
-                        padding: '12px 15px',
-                        border: 'none',
-                        borderRadius: '10px',
-                        cursor: 'pointer',
-                        marginLeft: '5px',
-                        display: 'flex',
-                        alignItems: 'center',
-                        boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
-                    }}
-                >
-                    Add Student
-                    <FaPlus style={{ marginLeft: '10px' }} />
-                </button>
-                <ImportDepartmentalCSV />
-            </div>
-            
-            {/* Breadcrumbs */}
-            <nav style={{ marginTop: '20px', marginBottom: '5px', marginLeft: '120px' }}>
-                <ol style={{ backgroundColor: 'transparent', padding: '0', margin: '0', listStyle: 'none', display: 'flex' }}>
-                    <li style={{ marginRight: '5px' }}>
-                        <Link to="http://localhost:3000/admin-usermanagement" style={{ textDecoration: 'none', color: '#0D4809' }}>
-                            Students
-                        </Link>
-                    </li>
-                    <li style={{ margin: '0 5px', color: '#6c757d' }}>{'>'}</li>
-                    <li style={{ marginLeft: '5px', color: '#000' }}>{departmentName}</li>
-                </ol>
-            </nav>
-
-
+        <div>
+            {selectedStudentIds.length > 0 && (
+            <BatchDepartmentalToolbar
+                selectedItemsCount={selectedStudentIds.length}
+                selectedStudentIds={selectedStudentIds}
+            />
+            )}
+              
             {renderTable()}
 
-{/* Custom Pagination */}
-{renderPagination()}
+            {/* Custom Pagination */}
+            {renderPagination()}
 
-   
-  
  
             {/* Read Modal */}
             <Modal show={showReadModal} onHide={handleReadModalClose}>
@@ -516,8 +526,8 @@ const DepartmentalStudentsTable = () => {
                     />
                 </Modal.Body>
             </Modal>
-        </>
+    </div>
     );
-}
+};
 
 export default DepartmentalStudentsTable;
