@@ -2,8 +2,9 @@ import React, { useState, useEffect } from 'react';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import { Modal, Button, Form } from 'react-bootstrap';
 import axios from 'axios';
+import Swal from 'sweetalert2';
 
-const BatchArchivesToolbar = ({ selectedItemsCount, onEdit, onDelete, selectedStudentIds }) => {
+const BatchArchivesToolbar = ({ selectedItemsCount, onDelete, selectedStudentIds }) => {
   const [isVisible, setIsVisible] = useState(true);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [yearLevel, setYearLevel] = useState('');
@@ -14,6 +15,7 @@ const BatchArchivesToolbar = ({ selectedItemsCount, onEdit, onDelete, selectedSt
   const [programs, setPrograms] = useState([]);
   const [error, setError] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleClose = () => {
     setIsVisible(false);
@@ -61,35 +63,50 @@ const BatchArchivesToolbar = ({ selectedItemsCount, onEdit, onDelete, selectedSt
     e.preventDefault();
     setError('');
     setSuccessMessage('');
-  
+    setIsSubmitting(true);
+
+    const updates = {
+      ...(yearLevel && { year_level: yearLevel }),
+      ...(departmentId && { department_id: departmentId }),
+      ...(programId && { program_id: programId }),
+      ...(status && { status: status }),
+    };
+
+    if (Object.keys(updates).length === 0) {
+      setError('No fields to update.');
+      setIsSubmitting(false);
+      return;
+    }
+
     try {
-      const updates = {
-        ...(yearLevel && { year_level: yearLevel }),
-        ...(departmentId && { department_id: departmentId }),
-        ...(programId && { program_id: programId }),
-        ...(status && { status: status }),
-      };
-  
-      if (Object.keys(updates).length === 0) {
-        setError('No fields to update.');
-        return;
-      }
-  
-      console.log('Submitting payload:', {
-        student_ids: selectedStudentIds,
-        updates: updates,
-      });
-  
       const response = await axios.put('http://localhost:9000/students', {
         student_ids: selectedStudentIds,
         updates: updates,
       });
-  
-      setSuccessMessage(response.data.message);
+
       handleModalClose();
+
+      Swal.fire({
+        icon: 'success',
+        title: 'Success',
+        text: response.data.message,
+        confirmButtonText: 'OK',
+      }).then(() => {
+        window.location.reload();
+      });
     } catch (error) {
       console.error('Error updating students:', error.response?.data || error.message);
-      setError(error.response?.data?.error || 'Failed to update students. Please try again.');
+
+      handleModalClose();
+
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: error.response?.data?.error || 'Failed to update students. Please try again.',
+        confirmButtonText: 'OK',
+      });
+    } finally {
+      setIsSubmitting(false);
     }
   };
   
@@ -120,8 +137,7 @@ const BatchArchivesToolbar = ({ selectedItemsCount, onEdit, onDelete, selectedSt
         </div>
       </div>
 
-      {/* Embedded Batch Edit Student Modal */}
-      <Modal show={isModalVisible} onHide={handleModalClose}>
+        <Modal show={isModalVisible} onHide={handleModalClose}>
         <Modal.Header closeButton>
           <Modal.Title>BATCH UPDATE STUDENTS</Modal.Title>
         </Modal.Header>
@@ -187,12 +203,12 @@ const BatchArchivesToolbar = ({ selectedItemsCount, onEdit, onDelete, selectedSt
                 <option value="">Select Status</option>
                 <option value="active">Active</option>
                 <option value="inactive">Inactive</option>
-                <option value="inactive">Archived</option>
+                <option value="archived">Archived</option>
               </Form.Select>
             </Form.Group>
 
-            <Button variant="primary" type="submit">
-              Update
+            <Button variant="primary" type="submit" disabled={isSubmitting}>
+              {isSubmitting ? 'Updating...' : 'Update'}
             </Button>
           </Form>
         </Modal.Body>
@@ -200,6 +216,7 @@ const BatchArchivesToolbar = ({ selectedItemsCount, onEdit, onDelete, selectedSt
     </div>
   );
 };
+
 
 const styles = {
   toolbar: {
