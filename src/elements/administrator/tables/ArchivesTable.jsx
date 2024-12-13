@@ -13,7 +13,6 @@ import ViewStudentModal from '../modals/ViewStudentModal';
 import EditStudentModal from '../modals/EditStudentModal';
 import "../../../styles/Students.css";
 
-
 const ArchivesTable = () => {
     const [users, setUsers] = useState([]);
     const [departments, setDepartments] = useState([]);
