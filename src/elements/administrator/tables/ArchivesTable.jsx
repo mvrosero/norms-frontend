@@ -479,5 +479,4 @@ const renderPagination = () => {
 };
 
 
-
 export default ArchivesTable;

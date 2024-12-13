@@ -24,7 +24,7 @@ const StudentRecordsTable = ({ searchQuery }) => {
         try {
             let response;
             if (searchQuery) {
-                response = await axios.get('http://localhost:9000/students', { headers });
+                response = await axios.get('http://localhost:9000/students-not-archived', { headers });
 
                 // Create a new instance of Fuse with the users data and search options
                 const fuse = new Fuse(response.data, {
@@ -41,7 +41,7 @@ const StudentRecordsTable = ({ searchQuery }) => {
 
                 setUsers(filteredUsers);
             } else {
-                response = await axios.get('http://localhost:9000/students', { headers });
+                response = await axios.get('http://localhost:9000/students-not-archived', { headers });
                 setUsers(response.data);
             }
         } catch (error) {
