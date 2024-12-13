@@ -3,6 +3,7 @@ import axios from 'axios';
 import Swal from 'sweetalert2';
 import { Form, Button, Row, Col } from 'react-bootstrap';
 import Select from 'react-select';
+import { useParams } from 'react-router-dom'; // If using react-router to get params from URL
 
 export default function DepartmentalCreateViolationModal({ handleCloseModal }) {
     const [formData, setFormData] = useState({
@@ -21,41 +22,43 @@ export default function DepartmentalCreateViolationModal({ handleCloseModal }) {
     const [sanctions, setSanctions] = useState([]);
     const [academicYears, setAcademicYears] = useState([]);
     const [semesters, setSemesters] = useState([]);
-
-        // Fetching data from backend
-        useEffect(() => {
-            const fetchData = async () => {
-                try {
-                    const [
-                        studentsResponse,
-                        categoriesResponse,
-                        offensesResponse,
-                        sanctionsResponse,
-                        academicYearsResponse,
-                        semestersResponse,
-                    ] = await Promise.all([
-                        axios.get(`http://localhost:9000/students`), // Fetch students
-                        axios.get('http://localhost:9000/categories'),
-                        axios.get('http://localhost:9000/offenses'),
-                        axios.get('http://localhost:9000/sanctions'),
-                        axios.get('http://localhost:9000/academic_years'),
-                        axios.get('http://localhost:9000/semesters'),
-                    ]);
     
-                    setStudents(studentsResponse.data.filter((student) => student.status === 'active'));
-                    setCategories(categoriesResponse.data);
-                    setOffenses(offensesResponse.data);
-                    setSanctions(sanctionsResponse.data);
-                    setAcademicYears(academicYearsResponse.data);
-                    setSemesters(semestersResponse.data);
-                } catch (error) {
-                    console.error('Error fetching data:', error);
-                }
-            };
-    
-            fetchData();
-        }, []);
+    // Get the department_code from URL parameters 
+    const { department_code } = useParams();
 
+    // Fetching data from backend
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const [
+                    studentsResponse,
+                    categoriesResponse,
+                    offensesResponse,
+                    sanctionsResponse,
+                    academicYearsResponse,
+                    semestersResponse,
+                ] = await Promise.all([
+                    axios.get(`http://localhost:9000/coordinator-studentrecords/${department_code}`), // Fetch students by department_code
+                    axios.get('http://localhost:9000/categories'),
+                    axios.get('http://localhost:9000/offenses'),
+                    axios.get('http://localhost:9000/sanctions'),
+                    axios.get('http://localhost:9000/academic_years'),
+                    axios.get('http://localhost:9000/semesters'),
+                ]);
+
+                setStudents(studentsResponse.data.filter((student) => student.status === 'active'));
+                setCategories(categoriesResponse.data);
+                setOffenses(offensesResponse.data);
+                setSanctions(sanctionsResponse.data);
+                setAcademicYears(academicYearsResponse.data);
+                setSemesters(semestersResponse.data);
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
+        };
+
+        fetchData();
+    }, []);
 
     // Handling input change for non-select inputs
     const handleChange = (e) => {
@@ -66,7 +69,6 @@ export default function DepartmentalCreateViolationModal({ handleCloseModal }) {
         }));
     };
 
-
     // Handling multi-select field changes
     const handleSelectChange = (selectedOptions, { name }) => {
         setFormData((prevState) => ({
@@ -74,6 +76,7 @@ export default function DepartmentalCreateViolationModal({ handleCloseModal }) {
             [name]: selectedOptions ? selectedOptions.map((option) => option.value) : [],
         }));
     };
+    
 
     // Form submission handler
     const handleSubmit = async (e) => {
@@ -89,9 +92,8 @@ export default function DepartmentalCreateViolationModal({ handleCloseModal }) {
         }
     };
 
-
     return (
-            <Form onSubmit={handleSubmit}>
+        <Form onSubmit={handleSubmit}>
             {/* Users */}
             <Form.Group className="mb-3">
                 <Form.Label>Users</Form.Label>
@@ -107,84 +109,83 @@ export default function DepartmentalCreateViolationModal({ handleCloseModal }) {
                 />
             </Form.Group>
 
-                <Row>
-                    <Col>
-                        <Form.Group className="mb-3">
-                            <Form.Label className="fw-bold">Academic Year</Form.Label>
-                            <Form.Select
-                                name="acadyear_id"
-                                value={formData.acadyear_id}
-                                onChange={handleChange}
-                            >
-                                <option value="">Select Year</option>
-                                {academicYears.map(year => (
-                                    <option key={year.acadyear_id} value={year.acadyear_id}>
-                                        {year.start_year} - {year.end_year}
-                                    </option>
-                                ))}
-                            </Form.Select>
-                        </Form.Group>
-                    </Col>
+            <Row>
+                <Col>
+                    <Form.Group className="mb-3">
+                        <Form.Label className="fw-bold">Academic Year</Form.Label>
+                        <Form.Select
+                            name="acadyear_id"
+                            value={formData.acadyear_id}
+                            onChange={handleChange}
+                        >
+                            <option value="">Select Year</option>
+                            {academicYears.map((year) => (
+                                <option key={year.acadyear_id} value={year.acadyear_id}>
+                                    {year.start_year} - {year.end_year}
+                                </option>
+                            ))}
+                        </Form.Select>
+                    </Form.Group>
+                </Col>
 
-                    <Col>
-                        <Form.Group className="mb-3">
-                            <Form.Label className="fw-bold">Semester</Form.Label>
-                            <Form.Select
-                                name="semester_id"
-                                value={formData.semester_id}
-                                onChange={handleChange}
-                            >
-                                <option value="">Select Semester</option>
-                                {semesters.map(sem => (
-                                    <option key={sem.semester_id} value={sem.semester_id}>
-                                        {sem.semester_name}
-                                    </option>
-                                ))}
-                            </Form.Select>
-                        </Form.Group>
-                    </Col>
-                </Row>
+                <Col>
+                    <Form.Group className="mb-3">
+                        <Form.Label className="fw-bold">Semester</Form.Label>
+                        <Form.Select
+                            name="semester_id"
+                            value={formData.semester_id}
+                            onChange={handleChange}
+                        >
+                            <option value="">Select Semester</option>
+                            {semesters.map((sem) => (
+                                <option key={sem.semester_id} value={sem.semester_id}>
+                                    {sem.semester_name}
+                                </option>
+                            ))}
+                        </Form.Select>
+                    </Form.Group>
+                </Col>
+            </Row>
 
-                <Row>
-                    <Col>
-                        <Form.Group className="mb-3">
-                            <Form.Label className="fw-bold">Category</Form.Label>
-                            <Form.Select
-                                name="category_id"
-                                value={formData.category_id}
-                                onChange={handleChange}
-                            >
-                                <option value="">Select Category</option>
-                                {categories.map(cat => (
-                                    <option key={cat.category_id} value={cat.category_id}>
-                                        {cat.category_name}
-                                    </option>
-                                ))}
-                            </Form.Select>
-                        </Form.Group>
-                    </Col>
-                </Row>
+            <Row>
+                <Col>
+                    <Form.Group className="mb-3">
+                        <Form.Label className="fw-bold">Category</Form.Label>
+                        <Form.Select
+                            name="category_id"
+                            value={formData.category_id}
+                            onChange={handleChange}
+                        >
+                            <option value="">Select Category</option>
+                            {categories.map((cat) => (
+                                <option key={cat.category_id} value={cat.category_id}>
+                                    {cat.category_name}
+                                </option>
+                            ))}
+                        </Form.Select>
+                    </Form.Group>
+                </Col>
+            </Row>
 
-                <Row>
-                    <Col>
-                        <Form.Group className="mb-3">
-                            <Form.Label className="fw-bold">Offense</Form.Label>
-                            <Form.Select
-                                name="offense_id"
-                                value={formData.offense_id}
-                                onChange={handleChange}
-                            >
-                                <option value="">Select Offense</option>
-                                {offenses.map(off => (
-                                    <option key={off.offense_id} value={off.offense_id}>
-                                        {off.offense_name}
-                                    </option>
-                                ))}
-                            </Form.Select>
-                        </Form.Group>
-                    </Col>
-                </Row>
-
+            <Row>
+                <Col>
+                    <Form.Group className="mb-3">
+                        <Form.Label className="fw-bold">Offense</Form.Label>
+                        <Form.Select
+                            name="offense_id"
+                            value={formData.offense_id}
+                            onChange={handleChange}
+                        >
+                            <option value="">Select Offense</option>
+                            {offenses.map((off) => (
+                                <option key={off.offense_id} value={off.offense_id}>
+                                    {off.offense_name}
+                                </option>
+                            ))}
+                        </Form.Select>
+                    </Form.Group>
+                </Col>
+            </Row>
 
             {/* Sanction */}
             <Form.Group className="mb-3">
@@ -201,20 +202,20 @@ export default function DepartmentalCreateViolationModal({ handleCloseModal }) {
                 />
             </Form.Group>
 
-                <Form.Group className="mb-3">
-                    <Form.Label className="fw-bold">Description</Form.Label>
-                    <Form.Control
-                        as="textarea"
-                        name="description"
-                        value={formData.description}
-                        onChange={handleChange}
-                        rows={3}
-                    />
-                </Form.Group>
+            <Form.Group className="mb-3">
+                <Form.Label className="fw-bold">Description</Form.Label>
+                <Form.Control
+                    as="textarea"
+                    name="description"
+                    value={formData.description}
+                    onChange={handleChange}
+                    rows={3}
+                />
+            </Form.Group>
 
-                <Button variant="primary" type="submit">
-                    Submit
-                </Button>
-            </Form>
+            <Button variant="primary" type="submit">
+                Submit
+            </Button>
+        </Form>
     );
 }
