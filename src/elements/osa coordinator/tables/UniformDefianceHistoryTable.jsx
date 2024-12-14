@@ -107,11 +107,44 @@ const UniformDefianceHistoryTable = ({ searchQuery }) => {
         setShowModal(false);
     };
 
-    // Function to format date
-    const formatDate = (dateString) => {
-        const options = { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' };
-        const date = new Date(dateString);
-        return date.toLocaleDateString(undefined, options);
+
+    const renderStatus = (status) => {
+        let backgroundColor, textColor;
+        if (status === 'approved') {
+            backgroundColor = '#DBF0DC';
+            textColor = '#30A530';
+        } else if (status === 'rejected') {
+            backgroundColor = '#F0DBDB';
+            textColor = '#D9534F';
+        } else if (status === 'pending') {
+            backgroundColor = '#FFF5DC';
+            textColor = '#FFC107';
+        } else {
+            backgroundColor = '#EDEDED';
+            textColor = '#6C757D'; 
+        }
+
+        return (
+            <div style={{
+                backgroundColor,
+                color: textColor,
+                fontWeight: '600',
+                fontSize: '14px',
+                borderRadius: '30px',
+                padding: '5px 20px',
+                display: 'inline-flex',
+                alignItems: 'center',
+            }}>
+                <div style={{
+                    width: '8px',
+                    height: '8px',
+                    borderRadius: '50%',
+                    backgroundColor: textColor,
+                    marginRight: '7px',
+                }} />
+                {status}
+            </div>
+        );
     };
 
     return (
@@ -121,18 +154,18 @@ const UniformDefianceHistoryTable = ({ searchQuery }) => {
                     <thead>
                         <tr>
                             <th style={{ width: '5%' }}>ID</th>
-                            <th>Date Submitted</th>
+                            <th style={{ width: '20%' }}>Date</th>
                             <th style={{ width: '10%' }}>ID Number</th>
                             <th>Nature of Violation</th>
-                            <th>Details</th>
-                            <th>Status</th>
+                            <th style={{ width: '10%' }}>Details</th>
+                            <th style={{ width: '13%' }}>Status</th>
                         </tr>
                     </thead>
                     <tbody>
                         {defiances.map((defiance, index) => (
                             <tr key={index}>
                                 <td>{defiance.slip_id}</td>
-                                <td>{defiance.created_at}</td>
+                                <td>{new Date(defiance.created_at).toLocaleString()}</td> 
                                 <td>
                                     <Link 
                                         to={`/individualuniformdefiance/${defiance.student_idnumber}`}
@@ -150,7 +183,7 @@ const UniformDefianceHistoryTable = ({ searchQuery }) => {
                                         View
                                     </span>
                                 </td>
-                                <td>{defiance.status}</td>
+                                <td>{renderStatus(defiance.status)}</td>
                             </tr>
                         ))}
                     </tbody>

@@ -14,9 +14,9 @@ const IndividualUniformDefianceTable = ({ defiances, handleShowDetailsModal }) =
             <thead style={{ backgroundColor: '#f8f9fa' }}>
                 <tr>
                     <th style={{ width: '5%' }}>ID</th>
-                    <th>Created At</th>
+                    <th>Date</th>
                     <th>Nature of Violation</th>
-                    <th>File Attached</th>
+                    <th>Details</th>
                     <th>Status</th>
                 </tr>
             </thead>

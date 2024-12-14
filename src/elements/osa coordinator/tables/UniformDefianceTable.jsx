@@ -146,30 +146,25 @@ const UniformDefianceTable = ({ searchQuery }) => {
         };
 
 
-    // Sort defiances based on idnumber
-    const handleSortIdNumber = () => {
-    const sortedDefiances = [...defiances];
-    sortedDefiances.sort((a, b) => {
-            // Parse student_idnumber as integers to ensure numeric sorting
-            const idNumberA = parseInt(a.student_idnumber, 10);
-            const idNumberB = parseInt(b.student_idnumber, 10);
+        const handleSort = (key) => {
+            const sortedDefiances = [...defiances];
+            sortedDefiances.sort((a, b) => {
+              const valueA = a[key];
+              const valueB = b[key];
+          
+              if (typeof valueA === 'string' && typeof valueB === 'string') {
+                return sortOrder === 'asc'
+                  ? valueA.localeCompare(valueB)
+                  : valueB.localeCompare(valueA);
+              } else {
+                return sortOrder === 'asc' ? valueA - valueB : valueB - valueA;
+              }
+            });
+          
+            setDefiances(sortedDefiances);
+            setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
+          };
     
-            // Check if the parsed values are valid numbers
-            if (isNaN(idNumberA) || isNaN(idNumberB)) {
-                return 0; // If the values are invalid, maintain the order
-            }
-    
-            // Compare numeric values for sorting
-            if (sortOrder === 'asc') {
-                return idNumberA - idNumberB; // Ascending order
-            } else {
-                return idNumberB - idNumberA; // Descending order
-            }
-        });
-        setDefiances(sortedDefiances);
-        setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc'); // Toggle sort order
-    };
-
 
     // Calculate paginated defiances
     const indexOfLastDefiance = currentPage * rowsPerPage;
@@ -204,23 +199,16 @@ const UniformDefianceTable = ({ searchQuery }) => {
                                     )}
                                 </button>
                                 </th>
-                            <th style={{ width: '20%' }}>Date Submitted</th>
+                            <th style={{ width: '20%' }}>Date</th>
                             <th style={{ textAlign: 'center', padding: '0', verticalAlign: 'middle', width: '13%' }}>
-                                <button
-                                    style={{ border: 'none', background: 'none', cursor: 'pointer', display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center', width: '100%', 
-                                    }}
-                                    onClick={handleSortIdNumber}
-                                >
-                                    <span style={{ textAlign: 'center' }}>ID Number</span>
-                                    {sortOrder === 'asc' ? (
-                                    <ArrowDropUpIcon style={{ marginLeft: '5px' }} />
-                                    ) : (
-                                    <ArrowDropDownIcon style={{ marginLeft: '5px' }} />
-                                    )}
-                                </button>
+                                   <button onClick={() => handleSort('student_idnumber')}>
+                                        ID Number {sortOrder === 'asc' ? 
+                                        <ArrowDropUpIcon /> : 
+                                        <ArrowDropDownIcon />}
+                                    </button>
                                 </th>
                             <th>Nature of Violation</th>
-                            <th style={{ width: '10%' }}>Actions</th>
+                            <th style={{ width: '10%' }}>Details</th>
                             <th style={{ width: '20%' }}>Status</th>
                         </tr>
                     </thead>
