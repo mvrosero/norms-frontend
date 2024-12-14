@@ -22,6 +22,7 @@ const UniformDefianceTable = ({ searchQuery }) => {
 
     // Sorting state for full name
     const [sortOrder, setSortOrder] = useState('asc'); // 'asc' for ascending, 'desc' for descending
+    const [sortOrderDate, setSortOrderDate] = useState('asc'); // 'asc' for ascending, 'desc' for descending
 
     const headers = useMemo(() => {
         const token = localStorage.getItem('token');
@@ -145,25 +146,40 @@ const UniformDefianceTable = ({ searchQuery }) => {
             setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc'); // Toggle sort order
         };
 
+    // Sort defiances based on id number
+    const handleSort = (key) => {
+        const sortedDefiances = [...defiances];
+        sortedDefiances.sort((a, b) => {
+            const valueA = a[key];
+            const valueB = b[key];
+        
+            if (typeof valueA === 'string' && typeof valueB === 'string') {
+            return sortOrder === 'asc'
+                ? valueA.localeCompare(valueB)
+                : valueB.localeCompare(valueA);
+            } else {
+            return sortOrder === 'asc' ? valueA - valueB : valueB - valueA;
+            }
+        });
+        
+        setDefiances(sortedDefiances);
+        setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
+        };
 
-        const handleSort = (key) => {
-            const sortedDefiances = [...defiances];
-            sortedDefiances.sort((a, b) => {
-              const valueA = a[key];
-              const valueB = b[key];
-          
-              if (typeof valueA === 'string' && typeof valueB === 'string') {
-                return sortOrder === 'asc'
-                  ? valueA.localeCompare(valueB)
-                  : valueB.localeCompare(valueA);
-              } else {
-                return sortOrder === 'asc' ? valueA - valueB : valueB - valueA;
-              }
-            });
-          
-            setDefiances(sortedDefiances);
-            setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
-          };
+    // Sort defiances based on slip_id
+    const handleSortDate = () => {
+        const sortedDefiances = [...defiances];
+        sortedDefiances.sort((a, b) => {
+            const dateA = new Date(a.created_at); 
+            const dateB = new Date(b.created_at);
+    
+            // Compare dates including time
+            return sortOrderDate === 'asc' ? dateA - dateB : dateB - dateA;
+        });
+    
+        setDefiances(sortedDefiances);
+        setSortOrderDate(sortOrderDate === 'asc' ? 'desc' : 'asc');
+    };
     
 
     // Calculate paginated defiances
@@ -199,7 +215,28 @@ const UniformDefianceTable = ({ searchQuery }) => {
                                     )}
                                 </button>
                             </th>
-                            <th style={{ width: '20%' }}>Date</th>
+                            <th style={{ width: '23%' }}>
+                                <button
+                                    style={{
+                                        border: 'none',
+                                        background: 'none',
+                                        cursor: 'pointer',
+                                        display: 'flex',
+                                        flexDirection: 'row',
+                                        justifyContent: 'center',
+                                        alignItems: 'center',
+                                        width: '100%',
+                                    }}
+                                    onClick={handleSortDate}
+                                >
+                                    <span>Date</span>
+                                    {sortOrderDate === 'asc' ? (
+                                        <ArrowDropUpIcon style={{ marginLeft: '5px' }} />
+                                    ) : (
+                                        <ArrowDropDownIcon style={{ marginLeft: '5px' }} />
+                                    )}
+                                </button>
+                            </th>
                             <th style={{ textAlign: 'center', padding: '0', verticalAlign: 'middle', width: '13%' }}>
                                 <button onClick={() => handleSort('student_idnumber')}>
                                     ID Number {sortOrder === 'asc' ? 

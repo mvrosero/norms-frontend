@@ -21,6 +21,7 @@ const UniformDefianceHistoryTable = ({ searchQuery }) => {
 
     // Sorting state for full name
     const [sortOrder, setSortOrder] = useState('asc'); // 'asc' for ascending, 'desc' for descending
+    const [sortOrderDate, setSortOrderDate] = useState('asc'); // 'asc' for ascending, 'desc' for descending
 
     const headers = useMemo(() => {
         const token = localStorage.getItem('token');
@@ -183,25 +184,39 @@ const UniformDefianceHistoryTable = ({ searchQuery }) => {
         };
 
 
-        // Sort defiances based on id_number
-        const handleSort = (key) => {
+    // Sort defiances based on id_number
+    const handleSort = (key) => {
+        const sortedDefiances = [...defiances];
+        sortedDefiances.sort((a, b) => {
+            const valueA = a[key];
+            const valueB = b[key];
+        
+            if (typeof valueA === 'string' && typeof valueB === 'string') {
+            return sortOrder === 'asc'
+                ? valueA.localeCompare(valueB)
+                : valueB.localeCompare(valueA);
+            } else {
+            return sortOrder === 'asc' ? valueA - valueB : valueB - valueA;
+            }
+        });
+        
+        setDefiances(sortedDefiances);
+        setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
+        };
+
+        const handleSortDate = () => {
             const sortedDefiances = [...defiances];
             sortedDefiances.sort((a, b) => {
-              const valueA = a[key];
-              const valueB = b[key];
-          
-              if (typeof valueA === 'string' && typeof valueB === 'string') {
-                return sortOrder === 'asc'
-                  ? valueA.localeCompare(valueB)
-                  : valueB.localeCompare(valueA);
-              } else {
-                return sortOrder === 'asc' ? valueA - valueB : valueB - valueA;
-              }
+                const dateA = new Date(a.updated_at); // Convert to Date object for comparison
+                const dateB = new Date(b.updated_at);
+        
+                // Compare dates including time
+                return sortOrderDate === 'asc' ? dateA - dateB : dateB - dateA;
             });
-          
+        
             setDefiances(sortedDefiances);
-            setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
-          };
+            setSortOrderDate(sortOrderDate === 'asc' ? 'desc' : 'asc');
+        };
 
 
         // Calculate paginated defiances
@@ -237,7 +252,28 @@ const UniformDefianceHistoryTable = ({ searchQuery }) => {
                                     )}
                                 </button>
                             </th>
-                            <th style={{ width: '20%' }}>Date</th>
+                            <th style={{ width: '23%' }}>
+                                <button
+                                    style={{
+                                        border: 'none',
+                                        background: 'none',
+                                        cursor: 'pointer',
+                                        display: 'flex',
+                                        flexDirection: 'row',
+                                        justifyContent: 'center',
+                                        alignItems: 'center',
+                                        width: '100%',
+                                    }}
+                                    onClick={handleSortDate}
+                                >
+                                    <span>Date</span>
+                                    {sortOrderDate === 'asc' ? (
+                                        <ArrowDropUpIcon style={{ marginLeft: '5px' }} />
+                                    ) : (
+                                        <ArrowDropDownIcon style={{ marginLeft: '5px' }} />
+                                    )}
+                                </button>
+                            </th>
                             <th style={{ textAlign: 'center', padding: '0', verticalAlign: 'middle', width: '13%' }}>
                                 <button onClick={() => handleSort('student_idnumber')}>
                                     ID Number {sortOrder === 'asc' ? 
@@ -254,7 +290,7 @@ const UniformDefianceHistoryTable = ({ searchQuery }) => {
                         {currentDefiances.map((defiance, index) => (
                             <tr key={index}>
                                 <td style={{ textAlign: 'center' }}>{defiance.slip_id}</td>
-                                <td>{new Date(defiance.created_at).toLocaleString()}</td> 
+                                <td>{new Date(defiance.updated_at).toLocaleString()}</td> 
                                 <td style={{ textAlign: 'center' }}>
                                     <Link 
                                         to={`/individualuniformdefiance/${defiance.student_idnumber}`}
@@ -281,8 +317,8 @@ const UniformDefianceHistoryTable = ({ searchQuery }) => {
             };
 
 
-            // Render Custom Pagination
-const renderPagination = () => {
+// Render Custom Pagination
+ const renderPagination = () => {
     const pageNumbers = Array.from({ length: totalPages }, (_, i) => i + 1);
   
     const buttonStyle = {

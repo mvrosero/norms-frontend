@@ -110,6 +110,9 @@ const ViewIndividualUniformDefianceModal = ({ show, onHide, selectedRecord }) =>
                         <p style={{ fontWeight: 'bold' }}>Status:</p>
                         <p>{renderStatus(selectedRecord.status)}</p>
 
+                        <p style={{ fontWeight: 'bold' }}>Created At:</p>
+                        <p>{new Date(selectedRecord.created_at).toLocaleString()}</p>
+
                         <p style={{ fontWeight: 'bold' }}>Updated At:</p>
                         <p>{new Date(selectedRecord.updated_at).toLocaleString()}</p>
 
