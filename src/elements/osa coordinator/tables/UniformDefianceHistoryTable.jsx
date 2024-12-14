@@ -4,6 +4,8 @@ import { Table, Button } from 'react-bootstrap';
 import Swal from 'sweetalert2';
 import { useNavigate, Link } from 'react-router-dom';
 import Fuse from 'fuse.js';
+import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
+import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import ViewHistoryModal from '../modals/ViewHistoryModal';
 
 const UniformDefianceHistoryTable = ({ searchQuery }) => {
@@ -12,6 +14,9 @@ const UniformDefianceHistoryTable = ({ searchQuery }) => {
     const [showModal, setShowModal] = useState(false); 
     const [selectedRecord, setSelectedRecord] = useState(null); 
     const navigate = useNavigate();
+
+    // Sorting state for full name
+    const [sortOrder, setSortOrder] = useState('asc'); // 'asc' for ascending, 'desc' for descending
 
     const headers = useMemo(() => {
         const token = localStorage.getItem('token');
@@ -147,15 +152,82 @@ const UniformDefianceHistoryTable = ({ searchQuery }) => {
         );
     };
 
+
+
+    // Sort defiances based on slip_id
+    const handleSortSlipId = () => {
+        const sortedDefiances = [...defiances];
+        sortedDefiances.sort((a, b) => {
+                // Parse defiance_id as integers to ensure numeric sorting
+                const slipIdA = parseInt(a.slip_id, 10);
+                const slipIdB = parseInt(b.slip_id, 10);
+        
+                // Check if the parsed values are valid numbers
+                if (isNaN(slipIdA) || isNaN(slipIdB)) {
+                    return 0; // If the values are invalid, maintain the order
+                }
+        
+                // Compare numeric values for sorting
+                if (sortOrder === 'asc') {
+                    return slipIdA - slipIdB; // Ascending order
+                } else {
+                    return slipIdB - slipIdA; // Descending order
+                }
+            });
+            setDefiances(sortedDefiances);
+            setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc'); // Toggle sort order
+        };
+
+
+        // Sort defiances based on id_number
+        const handleSort = (key) => {
+            const sortedDefiances = [...defiances];
+            sortedDefiances.sort((a, b) => {
+              const valueA = a[key];
+              const valueB = b[key];
+          
+              if (typeof valueA === 'string' && typeof valueB === 'string') {
+                return sortOrder === 'asc'
+                  ? valueA.localeCompare(valueB)
+                  : valueB.localeCompare(valueA);
+              } else {
+                return sortOrder === 'asc' ? valueA - valueB : valueB - valueA;
+              }
+            });
+          
+            setDefiances(sortedDefiances);
+            setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
+          };
+
+
     return (
         <>
             <div className='container'>
                 <Table bordered hover>
                     <thead>
                         <tr>
-                            <th style={{ width: '5%' }}>ID</th>
+                        <th style={{ textAlign: 'center', padding: '0', verticalAlign: 'middle', width: '5%' }}>
+                                <button
+                                    style={{ border: 'none', background: 'none', cursor: 'pointer', display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center', width: '100%', 
+                                    }}
+                                    onClick={handleSortSlipId}
+                                >
+                                    <span style={{ textAlign: 'center' }}>ID</span>
+                                    {sortOrder === 'asc' ? (
+                                    <ArrowDropUpIcon style={{ marginLeft: '5px' }} />
+                                    ) : (
+                                    <ArrowDropDownIcon style={{ marginLeft: '5px' }} />
+                                    )}
+                                </button>
+                            </th>
                             <th style={{ width: '20%' }}>Date</th>
-                            <th style={{ width: '10%' }}>ID Number</th>
+                            <th style={{ textAlign: 'center', padding: '0', verticalAlign: 'middle', width: '13%' }}>
+                                <button onClick={() => handleSort('student_idnumber')}>
+                                    ID Number {sortOrder === 'asc' ? 
+                                    <ArrowDropUpIcon /> : 
+                                    <ArrowDropDownIcon />}
+                                </button>
+                            </th>
                             <th>Nature of Violation</th>
                             <th style={{ width: '10%' }}>Details</th>
                             <th style={{ width: '13%' }}>Status</th>
@@ -164,9 +236,9 @@ const UniformDefianceHistoryTable = ({ searchQuery }) => {
                     <tbody>
                         {defiances.map((defiance, index) => (
                             <tr key={index}>
-                                <td>{defiance.slip_id}</td>
+                                <td style={{ textAlign: 'center' }}>{defiance.slip_id}</td>
                                 <td>{new Date(defiance.created_at).toLocaleString()}</td> 
-                                <td>
+                                <td style={{ textAlign: 'center' }}>
                                     <Link 
                                         to={`/individualuniformdefiance/${defiance.student_idnumber}`}
                                         style={{ textDecoration: 'underline', color: 'black' }}
@@ -175,7 +247,7 @@ const UniformDefianceHistoryTable = ({ searchQuery }) => {
                                     </Link>
                                 </td>
                                 <td>{defiance.nature_name}</td>
-                                <td>
+                                <td style={{ textAlign: 'center' }}>
                                     <span 
                                         onClick={() => handleShowDetailsModal(defiance)} 
                                         style={{ cursor: 'pointer', fontWeight: 'bold', textDecoration: 'underline' }}
@@ -183,7 +255,7 @@ const UniformDefianceHistoryTable = ({ searchQuery }) => {
                                         View
                                     </span>
                                 </td>
-                                <td>{renderStatus(defiance.status)}</td>
+                                <td style={{ textAlign: 'center' }}>{renderStatus(defiance.status)}</td>
                             </tr>
                         ))}
                     </tbody>

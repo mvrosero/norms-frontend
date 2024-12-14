@@ -185,7 +185,7 @@ const UniformDefianceTable = ({ searchQuery }) => {
                 <Table bordered hover style={{ borderRadius: '20px', marginLeft: '110px' }}>
                     <thead style={{ backgroundColor: '#f8f9fa' }}>
                         <tr>
-                        <th style={{ textAlign: 'center', padding: '0', verticalAlign: 'middle', width: '6%' }}>
+                        <th style={{ textAlign: 'center', padding: '0', verticalAlign: 'middle', width: '5%' }}>
                                 <button
                                     style={{ border: 'none', background: 'none', cursor: 'pointer', display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center', width: '100%', 
                                     }}
@@ -198,15 +198,15 @@ const UniformDefianceTable = ({ searchQuery }) => {
                                     <ArrowDropDownIcon style={{ marginLeft: '5px' }} />
                                     )}
                                 </button>
-                                </th>
+                            </th>
                             <th style={{ width: '20%' }}>Date</th>
                             <th style={{ textAlign: 'center', padding: '0', verticalAlign: 'middle', width: '13%' }}>
-                                   <button onClick={() => handleSort('student_idnumber')}>
-                                        ID Number {sortOrder === 'asc' ? 
-                                        <ArrowDropUpIcon /> : 
-                                        <ArrowDropDownIcon />}
-                                    </button>
-                                </th>
+                                <button onClick={() => handleSort('student_idnumber')}>
+                                    ID Number {sortOrder === 'asc' ? 
+                                    <ArrowDropUpIcon /> : 
+                                    <ArrowDropDownIcon />}
+                                </button>
+                            </th>
                             <th>Nature of Violation</th>
                             <th style={{ width: '10%' }}>Details</th>
                             <th style={{ width: '20%' }}>Status</th>
