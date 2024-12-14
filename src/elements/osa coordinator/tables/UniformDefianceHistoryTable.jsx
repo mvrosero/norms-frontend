@@ -146,9 +146,9 @@ const UniformDefianceHistoryTable = ({ searchQuery }) => {
                 <Table bordered hover>
                     <thead>
                         <tr>
-                            <th>ID</th>
+                            <th style={{ width: '5%' }}>ID</th>
                             <th>Date Submitted</th>
-                            <th>ID Number</th>
+                            <th style={{ width: '10%' }}>ID Number</th>
                             <th>Nature of Violation</th>
                             <th>Details</th>
                             <th>Status</th>

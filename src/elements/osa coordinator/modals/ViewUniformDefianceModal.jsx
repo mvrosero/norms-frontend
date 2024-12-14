@@ -35,29 +35,91 @@ const ViewUniformDefianceModal = ({ show, onHide, record }) => {
         return null;
     };
 
+    const renderStatus = (status) => {
+        let backgroundColor, textColor;
+        if (status === 'Active') {
+            backgroundColor = '#DBF0DC';
+            textColor = '#30A530';
+        } else if (status === 'Inactive') {
+            backgroundColor = '#F0DBDB';
+            textColor = '#D9534F';
+        } else if (status === 'Pending') {
+            backgroundColor = '#FFF5DC';
+            textColor = '#FFC107';
+        } else {
+            backgroundColor = '#EDEDED';
+            textColor = '#6C757D'; // Default for unknown status
+        }
+
+        return (
+            <div style={{
+                backgroundColor,
+                color: textColor,
+                fontWeight: '600',
+                fontSize: '14px',
+                borderRadius: '30px',
+                padding: '5px 20px',
+                display: 'inline-flex',
+                alignItems: 'center',
+            }}>
+                <div style={{
+                    width: '8px',
+                    height: '8px',
+                    borderRadius: '50%',
+                    backgroundColor: textColor,
+                    marginRight: '7px',
+                }} />
+                {status}
+            </div>
+        );
+    };
+
     return (
         <Modal show={show} onHide={onHide}>
-            <Modal.Header closeButton>
+            {/* Modal Header */}
+            <Modal.Header>
+                {/* Custom "X" Close Icon */}
+                <Button
+                    variant="link"
+                    onClick={onHide}
+                    style={{
+                        position: 'absolute',
+                        top: '5px',
+                        right: '20px',
+                        textDecoration: 'none',
+                        fontSize: '30px',
+                        color: '#a9a9a9',
+                    }}
+                >
+                    ×
+                </Button>
                 <Modal.Title style={{ marginLeft: '60px' }}>UNIFORM DEFIANCE SLIP</Modal.Title>
             </Modal.Header>
+
+            {/* Modal Body */}
             <Modal.Body>
                 {record && (
-                    <div>
-                        <p><strong>Slip ID:</strong> {record.slip_id}</p>
-                        <p><strong>Nature of Violation:</strong> {record.nature_name}</p>
-                        <p><strong>Files Attached:</strong></p>
-                        {renderFile()}
-                        <p><strong>Status:</strong> {record.status}</p>
-                        <p><strong>Created At:</strong> {new Date(record.created_at).toLocaleString()}</p>
-                        <p><strong>Submitted By:</strong> {record.submitted_by}</p>
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', rowGap: '10px' }}>
+                        <p style={{ fontWeight: 'bold' }}>ID Number:</p>
+                        <p>{record.student_idnumber}</p>
+
+                        <p style={{ fontWeight: 'bold' }}>Violation Nature:</p>
+                        <p>{record.nature_name}</p>
+
+                        <p style={{ fontWeight: 'bold' }}>Files Attached:</p>
+                        <div>{renderFile()}</div>
+
+                        <p style={{ fontWeight: 'bold' }}>Status:</p>
+                        <p>{renderStatus(record.status)}</p>
+
+                        <p style={{ fontWeight: 'bold' }}>Created At:</p>
+                        <p>{new Date(record.created_at).toLocaleString()}</p>
+
+                        <p style={{ fontWeight: 'bold' }}>Submitted By:</p>
+                        <p>{record.submitted_by}</p>
                     </div>
                 )}
             </Modal.Body>
-            <Modal.Footer>
-                <Button variant="secondary" onClick={onHide}>
-                    Close
-                </Button>
-            </Modal.Footer>
         </Modal>
     );
 };
