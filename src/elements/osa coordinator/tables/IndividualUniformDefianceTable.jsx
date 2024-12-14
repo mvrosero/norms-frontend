@@ -2,7 +2,7 @@ import React from 'react';
 import { Table } from 'react-bootstrap';
 import { format } from 'date-fns';
 
-const IndividualUniformDefianceTable = ({ defiances, employees, handleShowDetailsModal }) => {
+const IndividualUniformDefianceTable = ({ defiances, handleShowDetailsModal }) => {
     const formatDate = (dateString) => {
         if (!dateString) return '';
         const date = new Date(dateString);
@@ -21,23 +21,25 @@ const IndividualUniformDefianceTable = ({ defiances, employees, handleShowDetail
                 </tr>
             </thead>
             <tbody>
-                {defiances.map((defiance) => (
-                    <tr key={defiance.slip_id}> {/* Use a unique identifier */}
-                        <td style={{ textAlign: 'center' }}>{defiance.slip_id}</td>
-                        <td>{formatDate(defiance.created_at)}</td>
-                        <td>{defiance.nature_name}</td>
-                        <td>
-                            <div 
-                                className="d-flex align-items-center" 
-                                style={{ cursor: 'pointer', color: '#000000', textDecoration: 'underline', fontWeight: 'bold' }} 
-                                onClick={() => handleShowDetailsModal(defiance)}
-                            >
-                                View
-                            </div>
-                        </td>
-                        <td>{defiance.status}</td>
-                    </tr>
-                ))}
+                {defiances
+                    .filter((defiance) => defiance.status === 'approved') 
+                    .map((defiance) => (
+                        <tr key={defiance.slip_id}>
+                            <td style={{ textAlign: 'center' }}>{defiance.slip_id}</td>
+                            <td>{formatDate(defiance.created_at)}</td>
+                            <td>{defiance.nature_name}</td>
+                            <td>
+                                <div
+                                    className="d-flex align-items-center"
+                                    style={{ cursor: 'pointer', color: '#000000', textDecoration: 'underline', fontWeight: 'bold' }}
+                                    onClick={() => handleShowDetailsModal(defiance)}
+                                >
+                                    View
+                                </div>
+                            </td>
+                            <td>{defiance.status}</td>
+                        </tr>
+                    ))}
             </tbody>
         </Table>
     );

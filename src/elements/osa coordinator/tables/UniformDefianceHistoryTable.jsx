@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import axios from 'axios';
 import { Table, Button } from 'react-bootstrap';
 import Swal from 'sweetalert2';
@@ -11,23 +11,12 @@ const UniformDefianceHistoryTable = ({ searchQuery }) => {
     const [deletionStatus, setDeletionStatus] = useState(false); 
     const [showModal, setShowModal] = useState(false); 
     const [selectedRecord, setSelectedRecord] = useState(null); 
-    const [employeeNames, setEmployeeNames] = useState({});
     const navigate = useNavigate();
 
     const headers = useMemo(() => {
         const token = localStorage.getItem('token');
         return token ? { Authorization: `Bearer ${token}` } : {};
     }, []);
-
-    const fetchEmployeeName = useCallback(async (employee_idnumber) => {
-        try {
-            const response = await axios.get(`http://localhost:9000/employees/${employee_idnumber}`, { headers });
-            const name = response.data.name;
-            setEmployeeNames(prevNames => ({ ...prevNames, [employee_idnumber]: name }));
-        } catch (error) {
-            console.error('Error fetching employee name:', error);
-        }
-    }, [headers]);
 
     const fetchDefiances = useCallback(async () => {
         try {
@@ -42,35 +31,20 @@ const UniformDefianceHistoryTable = ({ searchQuery }) => {
                 });
 
                 const searchResults = fuse.search(searchQuery);
-
                 const filteredDefiances = searchResults
                     .map(result => result.item)
-                    .filter(defiance => defiance.status !== 'Pending');
+                    .filter(defiance => defiance.status !== 'pending');
 
                 setDefiances(filteredDefiances);
-
-                const employeeIds = new Set(filteredDefiances.map(defiance => defiance.submitted_by));
-                employeeIds.forEach(id => {
-                    if (!employeeNames[id]) {
-                        fetchEmployeeName(id);
-                    }
-                });
             } else {
                 response = await axios.get('http://localhost:9000/uniform_defiances', { headers });
                 const nonPendingDefiances = response.data.filter(defiance => defiance.status !== 'pending');
                 setDefiances(nonPendingDefiances);
-
-                const employeeIds = new Set(nonPendingDefiances.map(defiance => defiance.submitted_by));
-                employeeIds.forEach(id => {
-                    if (!employeeNames[id]) {
-                        fetchEmployeeName(id);
-                    }
-                });
             }
         } catch (error) {
             console.error('Error fetching defiances:', error);
         }
-    }, [headers, searchQuery, fetchEmployeeName, employeeNames]);
+    }, [headers, searchQuery]);
 
     useEffect(() => {
         fetchDefiances();

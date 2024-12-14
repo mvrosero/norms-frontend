@@ -75,7 +75,7 @@ const ViewUniformDefianceModal = ({ show, onHide, record }) => {
     };
 
     return (
-        <Modal show={show} onHide={onHide}>
+        <Modal show={show} onHide={onHide} size="lg">
             {/* Modal Header */}
             <Modal.Header>
                 {/* Custom "X" Close Icon */}
@@ -93,17 +93,17 @@ const ViewUniformDefianceModal = ({ show, onHide, record }) => {
                 >
                     ×
                 </Button>
-                <Modal.Title style={{ marginLeft: '60px' }}>UNIFORM DEFIANCE SLIP</Modal.Title>
+                <Modal.Title style={{ fontSize: '40px', marginBottom: '20px', marginLeft: '100px', marginRight: '100px' }}>UNIFORM DEFIANCE SLIP</Modal.Title>
             </Modal.Header>
 
             {/* Modal Body */}
             <Modal.Body>
                 {record && (
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', rowGap: '10px' }}>
-                        <p style={{ fontWeight: 'bold' }}>ID Number:</p>
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', rowGap: '10px', marginLeft: '20px', marginRight: '20px' }}>
+                        <p style={{ fontWeight: 'bold' }}>Student ID Number:</p>
                         <p>{record.student_idnumber}</p>
 
-                        <p style={{ fontWeight: 'bold' }}>Violation Nature:</p>
+                        <p style={{ fontWeight: 'bold' }}>Nature of Violation:</p>
                         <p>{record.nature_name}</p>
 
                         <p style={{ fontWeight: 'bold' }}>Files Attached:</p>
@@ -116,7 +116,7 @@ const ViewUniformDefianceModal = ({ show, onHide, record }) => {
                         <p>{new Date(record.created_at).toLocaleString()}</p>
 
                         <p style={{ fontWeight: 'bold' }}>Submitted By:</p>
-                        <p>{record.submitted_by}</p>
+                        <p>{record.full_name}</p>
                     </div>
                 )}
             </Modal.Body>

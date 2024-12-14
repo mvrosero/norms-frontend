@@ -37,13 +37,13 @@ const ViewHistoryModal = ({ show, onHide, selectedRecord }) => {
 
     const renderStatus = (status) => {
         let backgroundColor, textColor;
-        if (status === 'Approved') {
+        if (status === 'approved') {
             backgroundColor = '#DBF0DC';
             textColor = '#30A530';
-        } else if (status === 'Rejected') {
+        } else if (status === 'rejected') {
             backgroundColor = '#F0DBDB';
             textColor = '#D9534F';
-        } else if (status === 'Pending') {
+        } else if (status === 'pending') {
             backgroundColor = '#FFF5DC';
             textColor = '#FFC107';
         } else {
@@ -76,7 +76,7 @@ const ViewHistoryModal = ({ show, onHide, selectedRecord }) => {
 
 
     return (
-        <Modal show={show} onHide={onHide}>
+        <Modal show={show} onHide={onHide} size="lg">
             {/* Modal Header */}
             <Modal.Header>
                 {/* Custom "X" Close Icon */}
@@ -94,7 +94,7 @@ const ViewHistoryModal = ({ show, onHide, selectedRecord }) => {
                 >
                     ×
                 </Button>
-                <Modal.Title style={{ marginLeft: '60px' }}>UNIFORM DEFIANCE SLIP</Modal.Title>
+                <Modal.Title style={{ fontSize: '40px', marginBottom: '20px', marginLeft: '100px', marginRight: '100px' }}>UNIFORM DEFIANCE SLIP</Modal.Title>
             </Modal.Header>
             {/* Modal Body */}
             <Modal.Body>
@@ -116,7 +116,7 @@ const ViewHistoryModal = ({ show, onHide, selectedRecord }) => {
                         <p>{new Date(selectedRecord.updated_at).toLocaleString()}</p>
 
                         <p style={{ fontWeight: 'bold' }}>Submitted By:</p>
-                        <p>{selectedRecord.submitted_by}</p>
+                        <p>{selectedRecord.full_name}</p>
                     </div>
                 ) : (
                     <p>No record selected.</p>
