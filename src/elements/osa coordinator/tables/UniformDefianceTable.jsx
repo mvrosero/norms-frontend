@@ -221,7 +221,7 @@ const UniformDefianceTable = ({ searchQuery }) => {
                                 </th>
                             <th>Nature of Violation</th>
                             <th style={{ width: '10%' }}>Actions</th>
-                            <th style={{ width: '23%' }}>Status</th>
+                            <th style={{ width: '20%' }}>Status</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -243,7 +243,7 @@ const UniformDefianceTable = ({ searchQuery }) => {
                                 <td>
                                     <div className="d-flex justify-content-around">
                                         <Button
-                                            className='btn btn-success btn-md d-flex align-items-center ms-2'
+                                            className='btn-success btn-md d-flex align-items-center ms-2'
                                             onClick={() => updateStatus(defiance.slip_id, 'approved')}
                                             style={{ 
                                                 backgroundColor: '#28a745', // Bootstrap success color
@@ -257,7 +257,7 @@ const UniformDefianceTable = ({ searchQuery }) => {
                                             Approve
                                         </Button>
                                         <Button
-                                            className='decline-button'
+                                            className='btn-danger btn-md d-flex align-items-center ms-2'
                                             onClick={() => updateStatus(defiance.slip_id, 'rejected')}
                                             style={{ 
                                                 backgroundColor: '#dc3545', // Bootstrap danger color
