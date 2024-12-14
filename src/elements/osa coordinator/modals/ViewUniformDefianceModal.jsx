@@ -37,18 +37,18 @@ const ViewUniformDefianceModal = ({ show, onHide, record }) => {
 
     const renderStatus = (status) => {
         let backgroundColor, textColor;
-        if (status === 'Active') {
+        if (status === 'approved') {
             backgroundColor = '#DBF0DC';
             textColor = '#30A530';
-        } else if (status === 'Inactive') {
+        } else if (status === 'rejected') {
             backgroundColor = '#F0DBDB';
             textColor = '#D9534F';
-        } else if (status === 'Pending') {
+        } else if (status === 'pending') {
             backgroundColor = '#FFF5DC';
             textColor = '#FFC107';
         } else {
             backgroundColor = '#EDEDED';
-            textColor = '#6C757D'; // Default for unknown status
+            textColor = '#6C757D'; 
         }
 
         return (

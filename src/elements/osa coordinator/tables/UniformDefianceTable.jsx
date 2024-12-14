@@ -44,7 +44,7 @@ const UniformDefianceTable = ({ searchQuery }) => {
             let data = response.data;
 
             // Filter data to include only those with status 'Pending'
-            data = data.filter(defiance => defiance.status === 'Pending');
+            data = data.filter(defiance => defiance.status === 'pending');
 
             // Replace submitted_by with full name
             const updatedData = await Promise.all(data.map(async (defiance) => {

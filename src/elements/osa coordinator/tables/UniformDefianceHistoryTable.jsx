@@ -57,7 +57,7 @@ const UniformDefianceHistoryTable = ({ searchQuery }) => {
                 });
             } else {
                 response = await axios.get('http://localhost:9000/uniform_defiances', { headers });
-                const nonPendingDefiances = response.data.filter(defiance => defiance.status !== 'Pending');
+                const nonPendingDefiances = response.data.filter(defiance => defiance.status !== 'pending');
                 setDefiances(nonPendingDefiances);
 
                 const employeeIds = new Set(nonPendingDefiances.map(defiance => defiance.submitted_by));

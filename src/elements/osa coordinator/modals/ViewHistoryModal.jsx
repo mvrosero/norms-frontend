@@ -35,39 +35,93 @@ const ViewHistoryModal = ({ show, onHide, selectedRecord }) => {
         return null;
     };
 
-    // Function to format date
-    const formatDate = (dateString) => {
-        if (!dateString) return 'Invalid date'; // Handle invalid date case
-        const options = { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' };
-        const date = new Date(dateString);
-        return date.toLocaleDateString(undefined, options);
+    const renderStatus = (status) => {
+        let backgroundColor, textColor;
+        if (status === 'Approved') {
+            backgroundColor = '#DBF0DC';
+            textColor = '#30A530';
+        } else if (status === 'Rejected') {
+            backgroundColor = '#F0DBDB';
+            textColor = '#D9534F';
+        } else if (status === 'Pending') {
+            backgroundColor = '#FFF5DC';
+            textColor = '#FFC107';
+        } else {
+            backgroundColor = '#EDEDED';
+            textColor = '#6C757D'; 
+        }
+
+        return (
+            <div style={{
+                backgroundColor,
+                color: textColor,
+                fontWeight: '600',
+                fontSize: '14px',
+                borderRadius: '30px',
+                padding: '5px 20px',
+                display: 'inline-flex',
+                alignItems: 'center',
+            }}>
+                <div style={{
+                    width: '8px',
+                    height: '8px',
+                    borderRadius: '50%',
+                    backgroundColor: textColor,
+                    marginRight: '7px',
+                }} />
+                {status}
+            </div>
+        );
     };
 
+
     return (
-        <Modal show={show} onHide={onHide} centered>
-            <Modal.Header closeButton>
-                <Modal.Title>Uniform Defiance Slip Details</Modal.Title>
+        <Modal show={show} onHide={onHide}>
+            {/* Modal Header */}
+            <Modal.Header>
+                {/* Custom "X" Close Icon */}
+                <Button
+                    variant="link"
+                    onClick={onHide}
+                    style={{
+                        position: 'absolute',
+                        top: '5px',
+                        right: '20px',
+                        textDecoration: 'none',
+                        fontSize: '30px',
+                        color: '#a9a9a9',
+                    }}
+                >
+                    ×
+                </Button>
+                <Modal.Title style={{ marginLeft: '60px' }}>UNIFORM DEFIANCE SLIP</Modal.Title>
             </Modal.Header>
+            {/* Modal Body */}
             <Modal.Body>
                 {selectedRecord ? (
-                    <div>
-                        <p><strong>Slip ID:</strong> {selectedRecord.slip_id}</p>
-                        <p><strong>Student ID:</strong> {selectedRecord.student_idnumber}</p>
-                        <p><strong>Violation Nature:</strong> {selectedRecord.nature_name}</p>
-                        <p><strong>File Preview:</strong></p>
-                        {renderFile()}
-                        <p><strong>Status:</strong> {selectedRecord.status}</p>
-                        <p><strong>Updated At:</strong> {formatDate(selectedRecord.updated_at)}</p>
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', rowGap: '10px' }}>
+                        <p style={{ fontWeight: 'bold' }}>ID Number:</p>
+                        <p>{selectedRecord.student_idnumber}</p>
+
+                        <p style={{ fontWeight: 'bold' }}>Violation Nature:</p>
+                        <p>{selectedRecord.nature_name}</p>
+
+                        <p style={{ fontWeight: 'bold' }}>Files Attached:</p>
+                        <div>{renderFile()}</div>
+
+                        <p style={{ fontWeight: 'bold' }}>Status:</p>
+                        <p>{renderStatus(selectedRecord.status)}</p>
+
+                        <p style={{ fontWeight: 'bold' }}>Updated At:</p>
+                        <p>{new Date(selectedRecord.updated_at).toLocaleString()}</p>
+
+                        <p style={{ fontWeight: 'bold' }}>Submitted By:</p>
+                        <p>{selectedRecord.submitted_by}</p>
                     </div>
                 ) : (
                     <p>No record selected.</p>
                 )}
             </Modal.Body>
-            <Modal.Footer>
-                <Button variant="secondary" onClick={onHide}>
-                    Close
-                </Button>
-            </Modal.Footer>
         </Modal>
     );
 };
