@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { Table } from 'react-bootstrap';
+import { useParams } from 'react-router-dom';
 
 import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 
 const IndividualUniformDefianceTable = ({ handleShowDetailsModal }) => {
+    const { student_idnumber } = useParams();  
     const [defiances, setDefiances] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -20,7 +22,7 @@ const IndividualUniformDefianceTable = ({ handleShowDetailsModal }) => {
     useEffect(() => {
         const fetchDefiances = async () => {
             try {
-                const response = await fetch('http://localhost:9000/uniform_defiances');
+                const response = await fetch(`http://localhost:9000/uniform_defiances/${student_idnumber}`);
                 if (!response.ok) {
                     throw new Error(`HTTP error! Status: ${response.status}`);
                 }
@@ -34,8 +36,10 @@ const IndividualUniformDefianceTable = ({ handleShowDetailsModal }) => {
             }
         };
 
-        fetchDefiances();
-    }, []);
+        if (student_idnumber) {
+            fetchDefiances();
+        }
+    }, [student_idnumber]);
 
     const renderStatus = (status) => {
         let backgroundColor, textColor;
@@ -200,10 +204,10 @@ const IndividualUniformDefianceTable = ({ handleShowDetailsModal }) => {
                         let countColor, countTextColor;
                         if (count === 1) {
                             countColor = '#FFF9C4'; // Light yellow
-                            countTextColor = '#FBC02D'; // Darker yellow
+                            countTextColor = '#dbc907'; // Darker yellow
                         } else if (count === 2) {
-                            countColor = '#FFECB3'; // Light orange
-                            countTextColor = '#FF5722'; // Darker orange
+                            countColor = '#ffdcc4'; // Light orange
+                            countTextColor = '#ff6700'; // Darker orange
                         } else {
                             countColor = '#FFCDD2'; // Light red
                             countTextColor = '#D32F2F'; // Darker red
