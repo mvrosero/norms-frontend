@@ -9,7 +9,7 @@ import CoordinatorNavigation from './CoordinatorNavigation';
 import CoordinatorInfo from './CoordinatorInfo';
 import SearchAndFilter from '../general/SearchAndFilter';
 import AddUniformDefianceModal from '../../elements/osa coordinator/modals/AddUniformDefianceModal';
-import ViewUniformDefianceModal from '../../elements/osa coordinator/modals/ViewUniformDefianceModal';
+import ViewIndividualUniformDefianceModal from '../../elements/osa coordinator/modals/ViewIndividualUniformDefianceModal';
 import IndividualUniformDefianceTable from '../../elements/osa coordinator/tables/IndividualUniformDefianceTable';
 
 const IndividualUniformDefiance = () => {
@@ -155,10 +155,10 @@ const IndividualUniformDefiance = () => {
             />
 
             {selectedRecord && (
-                <ViewUniformDefianceModal
+                <ViewIndividualUniformDefianceModal
                     show={Boolean(selectedRecord)}
                     onHide={() => setSelectedRecord(null)}
-                    record={selectedRecord}
+                    selectedRecord={selectedRecord}
                 />
             )}
         </>

@@ -99,11 +99,11 @@ const ViewHistoryModal = ({ show, onHide, selectedRecord }) => {
             {/* Modal Body */}
             <Modal.Body>
                 {selectedRecord ? (
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', rowGap: '10px' }}>
-                        <p style={{ fontWeight: 'bold' }}>ID Number:</p>
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', rowGap: '10px', marginLeft: '20px', marginRight: '20px' }}>
+                        <p style={{ fontWeight: 'bold' }}>Student ID Number:</p>
                         <p>{selectedRecord.student_idnumber}</p>
 
-                        <p style={{ fontWeight: 'bold' }}>Violation Nature:</p>
+                        <p style={{ fontWeight: 'bold' }}>Nature of Violation:</p>
                         <p>{selectedRecord.nature_name}</p>
 
                         <p style={{ fontWeight: 'bold' }}>Files Attached:</p>
