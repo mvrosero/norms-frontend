@@ -190,7 +190,7 @@ const UniformDefianceTable = ({ searchQuery }) => {
                 <Table bordered hover style={{ borderRadius: '20px', marginLeft: '110px' }}>
                     <thead style={{ backgroundColor: '#f8f9fa' }}>
                         <tr>
-                        <th style={{ textAlign: 'center', padding: '0', verticalAlign: 'middle', width: '5%' }}>
+                        <th style={{ textAlign: 'center', padding: '0', verticalAlign: 'middle', width: '6%' }}>
                                 <button
                                     style={{ border: 'none', background: 'none', cursor: 'pointer', display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center', width: '100%', 
                                     }}
@@ -204,7 +204,7 @@ const UniformDefianceTable = ({ searchQuery }) => {
                                     )}
                                 </button>
                                 </th>
-                            <th>Date Submitted</th>
+                            <th style={{ width: '20%' }}>Date Submitted</th>
                             <th style={{ textAlign: 'center', padding: '0', verticalAlign: 'middle', width: '13%' }}>
                                 <button
                                     style={{ border: 'none', background: 'none', cursor: 'pointer', display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center', width: '100%', 
