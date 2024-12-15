@@ -3,9 +3,8 @@ import axios from 'axios';
 import { Modal, Button, Table } from 'react-bootstrap';
 import { useParams, Link } from 'react-router-dom';
 import Swal from 'sweetalert2';
-import DeleteIcon from '@mui/icons-material/Delete';
-import EditIcon from '@mui/icons-material/Edit';
 import PersonIcon from '@mui/icons-material/Person';
+import EditIcon from '@mui/icons-material/Edit';
 import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 
@@ -156,44 +155,6 @@ const DepartmentalStudentsTable = () => {
         setShowUpdateModal(false);
     };
 
-    const deleteUser = async (userId) => {
-        const isConfirm = await Swal.fire({
-            title: 'Are you sure?',
-            text: "You won't be able to revert this!",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Yes, Delete it!'
-        }).then((result) => {
-            return result.isConfirmed;
-        });
-        
-        if (!isConfirm) {
-            return;
-        }
-    
-        try {
-            const response = await axios.delete(`http://localhost:9000/student/${userId}`);
-            if (response.status === 200) {
-                Swal.fire({
-                    icon: 'success',
-                    text: "Successfully Deleted"
-                });
-                setDeletionStatus(prevStatus => !prevStatus); // Toggle deletionStatus to trigger re-fetch
-                setUsers(prevUsers => prevUsers.filter(user => user.user_id !== userId));
-            } else {
-                throw new Error('Failed to delete');
-            }
-        } catch (error) {
-            console.error('Error deleting user:', error);
-            Swal.fire({
-                icon: 'error',
-                text: 'An error occurred while deleting user. Please try again later.',
-            });
-        }
-    };
-
 
        // Sort users based on full name
        const handleSortFullName = () => {
@@ -341,58 +302,58 @@ const DepartmentalStudentsTable = () => {
 
         return (
             <Table bordered hover responsive style={{ borderRadius: '20px', marginBottom: '20px', marginLeft: '110px' }}>
-                            <thead>
-                                <tr>
+                    <thead>
+                        <tr>
                                 <th style={{ width: '3%' }}>
-                        <input
+                                    <input
+                                        type="checkbox"
+                                        checked={selectAll}
+                                        onChange={handleSelectAll}
+                                    />
+                                    </th>
+                                    <th style={{ textAlign: 'center', padding: '0', verticalAlign: 'middle', width: '11%' }}>
+                                        <button
+                                            style={{ border: 'none', background: 'none', cursor: 'pointer', display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center', width: '100%', 
+                                            }}
+                                            onClick={handleSortIdNumber}
+                                        >
+                                            <span style={{ textAlign: 'center' }}>ID Number</span>
+                                            {sortOrder === 'asc' ? (
+                                            <ArrowDropUpIcon style={{ marginLeft: '5px' }} />
+                                            ) : (
+                                            <ArrowDropDownIcon style={{ marginLeft: '5px' }} />
+                                            )}
+                                        </button>
+                                    </th>
+                                    <th style={{ textAlign: 'center', padding: '0', verticalAlign: 'middle' }}>
+                                        <button
+                                            style={{ border: 'none', background: 'none', cursor: 'pointer', display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center', width: '100%', 
+                                            }}
+                                            onClick={handleSortFullName}
+                                        >
+                                            <span style={{ textAlign: 'center' }}>Full Name</span>
+                                            {sortOrder === 'asc' ? (
+                                            <ArrowDropUpIcon style={{ marginLeft: '5px' }} />
+                                            ) : (
+                                            <ArrowDropDownIcon style={{ marginLeft: '5px' }} />
+                                            )}
+                                        </button>
+                                    </th>
+                                    <th style={{ width: '10%' }}>Year Level</th>
+                                    <th>Program</th>
+                                    <th style={{ width: '12%' }}>Status</th>
+                                    <th style={{ width: '10%' }}>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {currentUsers.map((user, index) => (
+                                    <tr key={index}>
+                                                    <td>
+                            <input
                             type="checkbox"
-                            checked={selectAll}
-                            onChange={handleSelectAll}
-                        />
-                        </th>
-                        <th style={{ textAlign: 'center', padding: '0', verticalAlign: 'middle', width: '11%' }}>
-                            <button
-                                style={{ border: 'none', background: 'none', cursor: 'pointer', display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center', width: '100%', 
-                                }}
-                                onClick={handleSortIdNumber}
-                            >
-                                <span style={{ textAlign: 'center' }}>ID Number</span>
-                                {sortOrder === 'asc' ? (
-                                <ArrowDropUpIcon style={{ marginLeft: '5px' }} />
-                                ) : (
-                                <ArrowDropDownIcon style={{ marginLeft: '5px' }} />
-                                )}
-                            </button>
-                        </th>
-                        <th style={{ textAlign: 'center', padding: '0', verticalAlign: 'middle' }}>
-                            <button
-                                style={{ border: 'none', background: 'none', cursor: 'pointer', display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center', width: '100%', 
-                                }}
-                                onClick={handleSortFullName}
-                            >
-                                <span style={{ textAlign: 'center' }}>Full Name</span>
-                                {sortOrder === 'asc' ? (
-                                <ArrowDropUpIcon style={{ marginLeft: '5px' }} />
-                                ) : (
-                                <ArrowDropDownIcon style={{ marginLeft: '5px' }} />
-                                )}
-                            </button>
-                        </th>
-                        <th style={{ width: '10%' }}>Year Level</th>
-                        <th>Program</th>
-                        <th style={{ width: '12%' }}>Status</th>
-                        <th style={{ width: '13%' }}>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                                    {currentUsers.map((user, index) => (
-                                        <tr key={index}>
-                                                        <td>
-                                <input
-                                type="checkbox"
-                                checked={selectedStudentIds.includes(user.student_idnumber)}
-                                onChange={() => handleSelectUser(user.student_idnumber)}
-                                />
+                            checked={selectedStudentIds.includes(user.student_idnumber)}
+                            onChange={() => handleSelectUser(user.student_idnumber)}
+                            />
                             </td>
                             <td>{user.student_idnumber}</td>
                             <td>{`${user.first_name} ${user.middle_name} ${user.last_name} ${user.suffix}`}</td>
@@ -431,9 +392,6 @@ const DepartmentalStudentsTable = () => {
                                     <Button className="btn btn-success btn-sm" onClick={() => handleUpdateModalShow(user)}>
                                         <EditIcon />
                                     </Button>
-                                    <Button className="btn btn-danger btn-sm" onClick={() => deleteUser(user.user_id)}>
-                                        <DeleteIcon />
-                                    </Button>
                                 </div>
                             </td>
                         </tr>
@@ -459,40 +417,17 @@ const DepartmentalStudentsTable = () => {
             {renderPagination()}
 
  
-            {/* Read Modal */}
-            <Modal show={showReadModal} onHide={handleReadModalClose}>
-                <Modal.Header closeButton>
-                    <Modal.Title style={{ marginLeft: '65px' }}>VIEW STUDENT RECORD</Modal.Title>
-                    <button
-                        type="button"
-                        className="close"
-                        onClick={handleReadModalClose}
-                        style={{
-                            color: '#6c757d',
-                            border: 'none',
-                            background: 'transparent',
-                            fontSize: '30px',
-                            position: 'absolute',
-                            top: '2px',
-                            right: '12px',
-                            cursor: 'pointer',
-                        }}
-                    >
-                        &times;
-                    </button>
-                </Modal.Header>
-                <Modal.Body>
-                    {selectedUser && (
-                        <ViewStudentModal 
-                            user={selectedUser}
-                            handleClose={handleReadModalClose} 
-                            departments={departments}
-                            programs={programs}
-                        />
-                    )}
-                </Modal.Body>
-            </Modal>
+            {/* View Student Modal */}
+            <ViewStudentModal
+                show={showReadModal}
+                onHide={handleReadModalClose}
+                user={selectedUser}
+                departments={departments}
+                programs={programs}
+            />
 
+
+            
             {/* Update Modal */}
             <Modal show={showUpdateModal} onHide={handleUpdateModalClose} dialogClassName="modal-lg">
                 <Modal.Header closeButton>

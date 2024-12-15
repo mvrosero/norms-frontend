@@ -456,14 +456,13 @@ const renderPagination = () => {
             {renderPagination()}
 
       {/* View Student Modal */}
-      <Modal show={showReadModal} onHide={handleReadModalClose}>
-        <Modal.Header closeButton>
-          <Modal.Title style={{ marginLeft: '65px' }}>VIEW STUDENT RECORD</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          {selectedUser && <ViewStudentModal user={selectedUser} departments={departments} programs={programs} />}
-        </Modal.Body>
-      </Modal>
+      <ViewStudentModal
+          show={showReadModal}
+          onHide={handleReadModalClose}
+          user={selectedUser}
+          departments={departments}
+          programs={programs}
+      />
 
       {/* Edit Student Modal */}
       <Modal show={showUpdateModal} onHide={handleUpdateModalClose}>

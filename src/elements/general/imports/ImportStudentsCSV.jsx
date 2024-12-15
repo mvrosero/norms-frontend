@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import Swal from 'sweetalert2';
+import DescriptionIcon from '@mui/icons-material/Description';
 
 const ImportStudentsCSV = () => {
     const [file, setFile] = useState(null);
@@ -57,6 +58,7 @@ const ImportStudentsCSV = () => {
                 }}
             >
                 Import CSV
+                <DescriptionIcon />
             </label>
         </div>
     );

@@ -60,8 +60,8 @@ const ImportDepartmentalCSV = () => {
                 }}
             >
                 Import CSV
+                <DescriptionIcon />
             </label>
-            <DescriptionIcon />
         </div>
     );
 };

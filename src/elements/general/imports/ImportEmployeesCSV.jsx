@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import Swal from 'sweetalert2';
+import DescriptionIcon from '@mui/icons-material/Description';
 
 const ImportEmployeesCSV = () => {
     const [file, setFile] = useState(null);
@@ -40,7 +41,7 @@ const ImportEmployeesCSV = () => {
             <label
                 htmlFor="csv-upload"
                 style={{
-                    backgroundColor: '#3498db',
+                    backgroundColor: '#FAD32E',
                     color: 'white',
                     fontWeight: '900',
                     padding: '5px 15px',
@@ -54,6 +55,7 @@ const ImportEmployeesCSV = () => {
                 }}
             >
                 Import CSV
+                <DescriptionIcon />
             </label>
         </div>
     );
