@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import axios from 'axios';
 import { Modal, Button } from 'react-bootstrap';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation, useParams } from 'react-router-dom';  // Import useParams
 import { FaPlus } from 'react-icons/fa';
 import defaultProfile from '../../components/images/default_profile.jpg';
 
@@ -11,6 +11,7 @@ import SearchAndFilter from '../general/SearchAndFilter';
 import AddUniformDefianceModal from '../../elements/osa coordinator/modals/AddUniformDefianceModal';
 import ViewIndividualUniformDefianceModal from '../../elements/osa coordinator/modals/ViewIndividualUniformDefianceModal';
 import IndividualUniformDefianceTable from '../../elements/osa coordinator/tables/IndividualUniformDefianceTable';
+import ExportIndividualDefianceCSV from '../../elements/general/exports/ExportIndividualDefianceCSV';
 
 const IndividualUniformDefiance = () => {
     const [studentInfo, setStudentInfo] = useState(null);
@@ -21,13 +22,14 @@ const IndividualUniformDefiance = () => {
     const [employees, setEmployees] = useState({});
     const location = useLocation();
     const navigate = useNavigate();
+    const { student_idnumber } = useParams();  // Extract student_idnumber from URL params
 
     const headers = useMemo(() => {
         const token = localStorage.getItem('token');
         return token ? { Authorization: `Bearer ${token}` } : {};
     }, []);
 
-    const fetchStudentInfo = useCallback(async (student_idnumber) => {
+    const fetchStudentInfo = useCallback(async () => {
         try {
             const response = await axios.get(`http://localhost:9000/student/${student_idnumber}`, { headers });
             const studentData = response.data[0];
@@ -47,7 +49,7 @@ const IndividualUniformDefiance = () => {
         } catch (error) {
             console.error('Error fetching student info:', error);
         }
-    }, [headers]);
+    }, [student_idnumber, headers]);
 
     const fetchEmployeeName = useCallback(async (employee_idnumber) => {
         try {
@@ -63,8 +65,7 @@ const IndividualUniformDefiance = () => {
 
     const fetchDefiances = useCallback(async () => {
         try {
-            const student_idnumber = location.pathname.split('/').pop();
-            await fetchStudentInfo(student_idnumber);
+            await fetchStudentInfo();
             const response = await axios.get(`http://localhost:9000/uniform_defiances/${student_idnumber}`, { headers });
 
             const nonPendingDefiances = response.data.filter(defiance => defiance.status !== 'Pending');
@@ -81,7 +82,7 @@ const IndividualUniformDefiance = () => {
         } catch (error) {
             console.error('Error fetching defiances:', error);
         }
-    }, [headers, location.pathname, fetchStudentInfo, fetchEmployeeName]);
+    }, [student_idnumber, fetchStudentInfo, fetchEmployeeName, headers]);
 
     useEffect(() => {
         fetchDefiances();
@@ -136,6 +137,7 @@ const IndividualUniformDefiance = () => {
                         <FaPlus style={{ marginRight: '8px' }} />
                         Add Violation
                     </Button>
+                    <ExportIndividualDefianceCSV student_idnumber={student_idnumber} /> {/* Pass student_idnumber directly */}
                 </div>
 
                 <IndividualUniformDefianceTable 

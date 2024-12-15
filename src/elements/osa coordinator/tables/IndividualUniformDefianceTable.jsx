@@ -204,10 +204,10 @@ const IndividualUniformDefianceTable = ({ handleShowDetailsModal }) => {
                         let countColor, countTextColor;
                         if (count === 1) {
                             countColor = '#FFF9C4'; // Light yellow
-                            countTextColor = '#dbc907'; // Darker yellow
+                            countTextColor = '#DBC907'; // Darker yellow
                         } else if (count === 2) {
-                            countColor = '#ffdcc4'; // Light orange
-                            countTextColor = '#ff6700'; // Darker orange
+                            countColor = '#FFDCC4'; // Light orange
+                            countTextColor = '#FF6700'; // Darker orange
                         } else {
                             countColor = '#FFCDD2'; // Light red
                             countTextColor = '#D32F2F'; // Darker red
