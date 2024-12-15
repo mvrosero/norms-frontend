@@ -362,24 +362,24 @@ const renderPagination = () => {
       {/* Custom Pagination */}
       {renderPagination()}
 
-      {/* View Student Modal */}
-      <ViewStudentModal
-          show={showReadModal}
-          onHide={handleReadModalClose}
-          user={selectedUser}
-          departments={departments}
-          programs={programs}
-      />
+        {/* View Student Modal */}
+          <ViewStudentModal
+              show={showReadModal}
+              onHide={handleReadModalClose}
+              user={selectedUser}
+              departments={departments}
+              programs={programs}
+          />
 
-      {/* Edit Student Modal */}
-      <Modal show={showUpdateModal} onHide={handleUpdateModalClose}>
-        <Modal.Header closeButton>
-          <Modal.Title style={{ marginLeft: '65px' }}>EDIT STUDENT RECORD</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          {selectedUser && <EditStudentModal fetchUsers={fetchUsers} user={selectedUser} departments={departments} programs={programs} handleClose={handleUpdateModalClose} />}
-        </Modal.Body>
-      </Modal>
+        {/* Edit Student Modal */}
+          <EditStudentModal
+              show={showUpdateModal}
+              onHide={handleUpdateModalClose} 
+              user={selectedUser}
+              fetchUsers={fetchUsers}
+              departments={departments} 
+              programs={programs} 
+        />
     </div>
   );
 };
