@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import Swal from 'sweetalert2';
-import { useParams } from 'react-router-dom'; // Import useParams to access URL parameters
+import { useParams } from 'react-router-dom'; 
+import DescriptionIcon from '@mui/icons-material/Description';
 
 const ImportDepartmentalCSV = () => {
     const [file, setFile] = useState(null);
@@ -60,6 +61,7 @@ const ImportDepartmentalCSV = () => {
             >
                 Import CSV
             </label>
+            <DescriptionIcon />
         </div>
     );
 };

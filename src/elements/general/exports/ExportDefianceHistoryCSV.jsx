@@ -2,21 +2,15 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import Swal from 'sweetalert2';
 import FileDownloadRoundedIcon from '@mui/icons-material/FileDownloadRounded';
-import DescriptionIcon from '@mui/icons-material/Description';
 
-const ExportIndividualDefianceCSV = ({ student_idnumber }) => {
+const ExportDefianceHistoryCSV = () => {
     const [loading, setLoading] = useState(false); // To show loading state
 
     const handleExportClick = async () => {
-        if (!student_idnumber) {
-            Swal.fire('Error', 'Student ID number is required', 'error');
-            return;
-        }
-
         setLoading(true); // Start loading
 
         try {
-            const response = await axios.get(`http://localhost:9000/uniform_defiances/export/${student_idnumber}`, {
+            const response = await axios.get('http://localhost:9000/uniform_defiances-history/export', {
                 responseType: 'blob', // Handle the file download
             });
 
@@ -26,7 +20,7 @@ const ExportIndividualDefianceCSV = ({ student_idnumber }) => {
                 const fileURL = URL.createObjectURL(response.data);
                 const link = document.createElement('a');
                 link.href = fileURL;
-                link.download = `individual_uniform_defiances_${student_idnumber}.csv`; // Set the file name
+                link.download = 'uniform_defiances_history.csv'; // Set the file name
                 link.click(); // Trigger the download
 
                 Swal.fire('Success', 'CSV file exported successfully!', 'success');
@@ -59,7 +53,7 @@ const ExportIndividualDefianceCSV = ({ student_idnumber }) => {
                     boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
                     height: '40px',
                     minWidth: '80px',
-                    maxWidth: '150px',
+                    maxWidth: '200px', // Increased width to accommodate icon and text
                     justifyContent: 'center',
                 }}
             >
@@ -75,4 +69,4 @@ const ExportIndividualDefianceCSV = ({ student_idnumber }) => {
     );
 };
 
-export default ExportIndividualDefianceCSV;
+export default ExportDefianceHistoryCSV;

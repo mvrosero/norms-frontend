@@ -5,6 +5,7 @@ import CoordinatorNavigation from './CoordinatorNavigation';
 import CoordinatorInfo from './CoordinatorInfo';
 import SearchAndFilter from '../general/SearchAndFilter';
 import UniformDefianceHistoryTable from '../../elements/osa coordinator/tables/UniformDefianceHistoryTable';
+import ExportDefianceHistoryCSV from '../../elements/general/exports/ExportDefianceHistoryCSV';
 
 export default function UniformDefianceHistory() {
     const [searchQuery, setSearchQuery] = useState('');
@@ -28,6 +29,7 @@ export default function UniformDefianceHistory() {
             <h6 className="page-title">HISTORY</h6>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', marginTop: '30px' }}>
                 <SearchAndFilter setSearchQuery={setSearchQuery} />
+                <ExportDefianceHistoryCSV />
             </div>
             <UniformDefianceHistoryTable searchQuery={searchQuery} />
         </div>
