@@ -414,7 +414,7 @@ const renderPagination = () => {
   
         return (
             <div>
-                    {selectedEmployeeIds.length > 0 && (
+                {selectedEmployeeIds.length > 0 && (
                 <BatchEmployeesToolbar
                 selectedItemsCount={selectedEmployeeIds.length}
                 selectedEmployeeIds={selectedEmployeeIds}
@@ -428,21 +428,13 @@ const renderPagination = () => {
         {renderPagination()}
 
   
-            {/* Read Modal */}
-            <Modal show={showReadModal} onHide={handleReadModalClose} dialogClassName="modal-lg">
-                <Modal.Header closeButton>
-                    <Modal.Title style={{ marginLeft: '180px' }}>VIEW EMPLOYEE RECORD</Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-                    {selectedUser && (
-                        <ViewEmployeeModal
-                            user={selectedUser}
-                            handleClose={handleReadModalClose}
-                            roles={roles}
-                        />
-                    )}
-                </Modal.Body>
-            </Modal>
+        {/* View Employee Modal */}
+        <ViewEmployeeModal
+                show={showReadModal}
+                onHide={handleReadModalClose}
+                user={selectedUser}
+                roles={roles}
+            />
 
             {/* Update Modal */}
             <Modal show={showUpdateModal} onHide={handleUpdateModalClose} dialogClassName="modal-lg">
