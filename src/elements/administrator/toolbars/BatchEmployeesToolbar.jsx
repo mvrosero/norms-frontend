@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import '@fortawesome/fontawesome-free/css/all.min.css';
-import { Modal, Button, Form } from 'react-bootstrap';
+import { Modal, Button, Form, Row, Col } from 'react-bootstrap';
 import axios from 'axios';
 import Swal from 'sweetalert2';
 
@@ -110,6 +110,48 @@ const BatchEmployeesToolbar = ({ selectedItemsCount, selectedEmployeeIds, onDele
     }
   };
 
+  const handleCancel = () => {
+    Swal.fire({
+      title: 'Are you sure?',
+      text: 'Any unsaved changes will be lost. Do you want to close without saving?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#3085d6',
+      confirmButtonText: 'Yes, close it!',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        handleModalClose(); // This will execute when the user confirms the cancel action
+      }
+    });
+  };
+  
+  const buttonStyle = {
+    backgroundColor: '#3B71CA',
+    color: '#FFFFFF',
+    fontWeight: '900',
+    padding: '12px 25px',
+    border: 'none',
+    borderRadius: '10px',
+    cursor: 'pointer',
+    marginLeft: '10px',
+    display: 'flex',
+    alignItems: 'center',
+    boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
+  };
+
+  const cancelButtonStyle = {
+      backgroundColor: '#8C8C8C',
+      color: '#FFFFFF',
+      fontWeight: '900',
+      padding: '12px 25px',
+      border: '1px solid #ced4da',
+      borderRadius: '10px',
+      cursor: 'pointer',
+      display: 'flex',
+      alignItems: 'center',
+  };
+
   if (!isVisible) return null;
 
   return (
@@ -136,45 +178,86 @@ const BatchEmployeesToolbar = ({ selectedItemsCount, selectedEmployeeIds, onDele
         </div>
       </div>
 
-      <Modal show={isModalVisible} onHide={handleModalClose}>
-        <Modal.Header closeButton>
-          <Modal.Title>BATCH UPDATE EMPLOYEES</Modal.Title>
-        </Modal.Header>
+      <Modal show={isModalVisible} onHide={handleModalClose} size="lg">
+      <Modal.Header>
+                <Button
+                    variant="link"
+                    onClick={handleCancel}
+                    style={{
+                        position: 'absolute',
+                        top: '5px',
+                        right: '20px',
+                        textDecoration: 'none',
+                        fontSize: '30px',
+                        color: '#a9a9a9',
+                    }}
+                >
+                    ×
+                </Button>
+                <Modal.Title
+                    style={{
+                        fontSize: '40px',
+                        marginBottom: '10px',
+                        marginLeft: '60px',
+                        marginRight: '60px',
+                    }}
+                >
+                    BATCH UPDATE EMPLOYEES
+                </Modal.Title>
+          </Modal.Header>
         <Modal.Body>
           {error && <div className="alert alert-danger">{error}</div>}
           {successMessage && <div className="alert alert-success">{successMessage}</div>}
           <Form onSubmit={handleSubmit}>
-            <Form.Group controlId="role_id">
-              <Form.Label className="fw-bold">Role</Form.Label>
-              <Form.Select
-                name="role_id"
-                value={roleId}
-                onChange={(e) => setRoleId(e.target.value)}
-              >
-                <option value="">Select Role</option>
-                {roles.map((role) => (
-                  <option key={role.role_id} value={role.role_id}>
-                    {role.role_name}
-                  </option>
-                ))}
-              </Form.Select>
-            </Form.Group>
+                <Row className="gy-4">
+                  <Col md={6}>
+                    <Form.Group controlId="role_id">
+                      <Form.Label className="fw-bold">Role</Form.Label>
+                      <Form.Select
+                        name="role_id"
+                        value={roleId}
+                        onChange={(e) => setRoleId(e.target.value)}
+                      >
+                        <option value="">Select Role</option>
+                        {roles.map((role) => (
+                          <option key={role.role_id} value={role.role_id}>
+                            {role.role_name}
+                          </option>
+                        ))}
+                      </Form.Select>
+                    </Form.Group>
+                  </Col>
 
-            <Form.Group controlId="status">
-              <Form.Label className="fw-bold">Status</Form.Label>
-              <Form.Select
-                name="status"
-                value={status}
-                onChange={(e) => setStatus(e.target.value)}
-              >
-                <option value="">Select Status</option>
-                <option value="Active">Active</option>
-                <option value="Inactive">Inactive</option>
-              </Form.Select>
-            </Form.Group>
-            <Button variant="primary" type="submit" disabled={isSubmitting}>
-              {isSubmitting ? 'Updating...' : 'Update'}
-            </Button>
+                  <Col md={6}>
+                    <Form.Group controlId="status" style={{ marginBottom: '20px' }}>
+                      <Form.Label className="fw-bold">
+                        Status
+                      </Form.Label>
+                      <Form.Select
+                        name="status"
+                        value={status}
+                        onChange={(e) => setStatus(e.target.value)}
+                      >
+                        <option value="">Select Status</option>
+                        <option value="Active">Active</option>
+                        <option value="Inactive">Inactive</option>
+                      </Form.Select>
+                    </Form.Group>
+                  </Col>
+                </Row>      
+                  {/* Buttons */}
+                  <div className="d-flex justify-content-end mt-3">
+                      <button
+                          type="button"
+                          onClick={handleCancel} // Trigger the handleCancel function
+                          style={cancelButtonStyle} // Apply the styles
+                      >
+                          Cancel
+                      </button>
+                      <button type="submit" style={buttonStyle}>
+                          Update
+                      </button>
+                  </div>
           </Form>
         </Modal.Body>
       </Modal>

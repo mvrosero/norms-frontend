@@ -13,6 +13,7 @@ const BatchArchivesToolbar = ({ selectedItemsCount, onDelete, selectedStudentIds
   const [status, setStatus] = useState('');
   const [departments, setDepartments] = useState([]);
   const [programs, setPrograms] = useState([]);
+  const [filteredPrograms, setFilteredPrograms] = useState([]);  // Filtered programs state
   const [error, setError] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -39,6 +40,7 @@ const BatchArchivesToolbar = ({ selectedItemsCount, onDelete, selectedStudentIds
     setSuccessMessage('');
   };
 
+  // Fetch departments and programs when the modal is opened
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -59,25 +61,43 @@ const BatchArchivesToolbar = ({ selectedItemsCount, onDelete, selectedStudentIds
     }
   }, [isModalVisible]);
 
+  // Filter programs based on the selected department
+  useEffect(() => {
+    if (departmentId) {
+      // Fetch programs based on the selected departmentId
+      axios
+        .get(`http://localhost:9000/programs/${departmentId}`)
+        .then((response) => {
+          setFilteredPrograms(response.data);  // Set the filtered programs
+        })
+        .catch((error) => {
+          console.error('Error fetching programs:', error);
+          setFilteredPrograms([]);  // Reset programs on error
+        });
+    } else {
+      setFilteredPrograms([]);  // Reset programs if no department is selected
+    }
+  }, [departmentId]);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
     setSuccessMessage('');
     setIsSubmitting(true);
-  
+
     const updates = {
       ...(yearLevel && { year_level: yearLevel }),
       ...(departmentId && { department_id: departmentId }),
       ...(programId && { program_id: programId }),
       ...(status && { status: status }),
     };
-  
+
     if (Object.keys(updates).length === 0) {
       setError('No fields to update.');
       setIsSubmitting(false);
       return;
     }
-  
+
     try {
       // Confirmation dialog before proceeding with the update
       const result = await Swal.fire({
@@ -89,15 +109,15 @@ const BatchArchivesToolbar = ({ selectedItemsCount, onDelete, selectedStudentIds
         cancelButtonColor: '#d33',
         confirmButtonText: 'Yes, update them!',
       });
-  
+
       if (result.isConfirmed) {
         const response = await axios.put('http://localhost:9000/students', {
           student_ids: selectedStudentIds,
           updates: updates,
         });
-  
+
         handleModalClose();
-  
+
         // Success message after confirmation
         Swal.fire({
           icon: 'success',
@@ -113,9 +133,9 @@ const BatchArchivesToolbar = ({ selectedItemsCount, onDelete, selectedStudentIds
       }
     } catch (error) {
       console.error('Error updating students:', error.response?.data || error.message);
-  
+
       handleModalClose();
-  
+
       Swal.fire({
         icon: 'error',
         title: 'Error',
@@ -126,23 +146,22 @@ const BatchArchivesToolbar = ({ selectedItemsCount, onDelete, selectedStudentIds
       setIsSubmitting(false);
     }
   };
-  
 
   const handleCancel = () => {
     Swal.fire({
-        title: 'Are you sure?',
-        text: 'Any unsaved changes will be lost. Do you want to close without saving?',
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#d33',
-        cancelButtonColor: '#3085d6',
-        confirmButtonText: 'Yes, close it!',
+      title: 'Are you sure?',
+      text: 'Any unsaved changes will be lost. Do you want to close without saving?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#3085d6',
+      confirmButtonText: 'Yes, close it!',
     }).then((result) => {
-        if (result.isConfirmed) {
-          handleModalClose(); // This will execute when the user confirms the cancel action
-        }
+      if (result.isConfirmed) {
+        handleModalClose(); // This will execute when the user confirms the cancel action
+      }
     });
-};
+  };
   
   const buttonStyle = {
     backgroundColor: '#3B71CA',
@@ -264,10 +283,10 @@ const BatchArchivesToolbar = ({ selectedItemsCount, onDelete, selectedStudentIds
               </Row>
 
               <Row className="gy-4">
-                <Form.Group controlId="department_id" >
+                <Form.Group controlId="department_id">
                   <Form.Label className="fw-bold" style={{ marginTop: '20px' }}>Department</Form.Label>
-                  <Form.Select
-                    name="department_id"
+                  <Form.Control
+                    as="select"
                     value={departmentId}
                     onChange={(e) => setDepartmentId(e.target.value)}
                   >
@@ -277,25 +296,26 @@ const BatchArchivesToolbar = ({ selectedItemsCount, onDelete, selectedStudentIds
                         {department.department_name}
                       </option>
                     ))}
-                  </Form.Select>
+                  </Form.Control>
                 </Form.Group>
               </Row>
 
               <Row className="gy-4">
-                <Form.Group controlId="program_id" style={{ marginBottom: '30px' }}>
+              <Form.Group controlId="program_id" style={{ marginBottom: '20px' }} >
                   <Form.Label className="fw-bold" style={{ marginTop: '20px' }}>Program</Form.Label>
-                  <Form.Select
-                    name="program_id"
+                  <Form.Control
+                    as="select"
                     value={programId}
                     onChange={(e) => setProgramId(e.target.value)}
+                    disabled={!departmentId} // Disable if no department is selected
                   >
-                    <option value="">Select Program</option>
-                    {programs.map((program) => (
+                    <option value="" disabled>Select Program</option>
+                    {filteredPrograms.map((program) => (
                       <option key={program.program_id} value={program.program_id}>
                         {program.program_name}
                       </option>
                     ))}
-                  </Form.Select>
+                  </Form.Control>
                 </Form.Group>
                 </Row>
                   {/* Buttons */}
