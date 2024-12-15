@@ -430,28 +430,23 @@ const renderPagination = () => {
   
         {/* View Employee Modal */}
         <ViewEmployeeModal
-                show={showReadModal}
-                onHide={handleReadModalClose}
-                user={selectedUser}
-                roles={roles}
-            />
+              show={showReadModal}
+              onHide={handleReadModalClose}
+              user={selectedUser}
+              roles={roles}
+          />
 
-            {/* Update Modal */}
-            <Modal show={showUpdateModal} onHide={handleUpdateModalClose} dialogClassName="modal-lg">
-                <Modal.Header closeButton>
-                    <Modal.Title style={{ marginLeft: '180px' }}>UPDATE EMPLOYEE RECORD</Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-                    <EditEmployeeModal
-                        user={selectedUser}
-                        handleClose={handleUpdateModalClose}
-                        fetchUsers={fetchUsers}
-                        headers={headers}
-                        roles={roles}
-                    />
-                </Modal.Body>
-            </Modal>
-            </div>
+
+        {/* Edit Employee Modal */}
+        <EditEmployeeModal
+              show={showUpdateModal}
+              onHide={handleUpdateModalClose} 
+              user={selectedUser}
+              fetchUsers={fetchUsers}
+              headers={headers}
+              roles={roles}
+          />
+       </div>
     );
 }
 
