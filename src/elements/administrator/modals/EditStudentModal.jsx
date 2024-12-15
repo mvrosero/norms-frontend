@@ -3,24 +3,59 @@ import axios from 'axios';
 import Swal from 'sweetalert2';
 import { Modal, Button, Form, Row, Col } from 'react-bootstrap';
 
-const EditStudentModal = ({ user, show, onHide, fetchUsers, headers, departments, programs }) => {
-    // Check if 'user' is null or undefined and provide fallback values
-    const initialFormData = user ? {
-        student_idnumber: user.student_idnumber,
-        first_name: user.first_name,
-        middle_name: user.middle_name,
-        last_name: user.last_name,
-        suffix: user.suffix,
-        email: user.email,
-        password: user.password,
-        year_level: user.year_level,
-        batch: user.batch,
-        department_id: user.department_id,
-        program_id: user.program_id,
-        status: user.status || 'active',
-    } : {};
+const EditStudentModal = ({ user, show, onHide, fetchUsers, headers, departments }) => {
+    const [formData, setFormData] = useState({
+        student_idnumber: user ? user.student_idnumber : '',
+        first_name: user ? user.first_name : '',
+        middle_name: user ? user.middle_name : '',
+        last_name: user ? user.last_name : '',
+        suffix: user ? user.suffix : '',
+        birthdate: user ? user.birthdate : '',
+        email: user ? user.email : '',
+        password: user ? user.password : '',
+        year_level: user ? user.year_level : '',
+        batch: user ? user.batch : '',
+        department_id: user ? user.department_id : '',
+        program_id: user ? user.program_id : '',
+        status: user ? user.status : 'active',
+    });
 
-    const [formData, setFormData] = useState(initialFormData);
+    const [filteredPrograms, setFilteredPrograms] = useState([]);
+    
+    useEffect(() => {
+        if (formData.department_id) {
+            // Fetch programs based on selected department_id
+            axios
+                .get(`http://localhost:9000/programs/${formData.department_id}`)
+                .then((response) => {
+                    setFilteredPrograms(response.data); // Set the filtered programs
+                })
+                .catch((error) => {
+                    console.error('Error fetching programs:', error);
+                    setFilteredPrograms([]); // Reset programs on error
+                });
+        }
+    }, [formData.department_id]);
+
+    useEffect(() => {
+        if (user) {
+            setFormData({
+                student_idnumber: user.student_idnumber,
+                first_name: user.first_name,
+                middle_name: user.middle_name,
+                last_name: user.last_name,
+                suffix: user.suffix,
+                birthdate: user.birthdate,
+                email: user.email,
+                password: user.password,
+                year_level: user.year_level,
+                batch: user.batch,
+                department_id: user.department_id,
+                program_id: user.program_id,
+                status: user.status || 'active',
+            });
+        }
+    }, [user]);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -32,33 +67,49 @@ const EditStudentModal = ({ user, show, onHide, fetchUsers, headers, departments
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log('Submitting:', formData);
-        try {
-            const response = await axios.put(
-                `http://localhost:9000/student/${user.user_id}`,
-                formData,
-                { headers }
-            );
-            if (response.status === 200) {
-                Swal.fire({
-                    icon: 'success',
-                    text: 'User updated successfully!',
-                });
-                onHide();
-                fetchUsers();
-            } else {
-                Swal.fire({
-                    icon: 'error',
-                    text: 'Failed to update user. Please try again later.',
-                });
+
+        Swal.fire({
+            title: 'Are you sure?',
+            text: 'You are about to update this student’s details.',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, update it!',
+        }).then(async (result) => {
+            if (result.isConfirmed) {
+                try {
+                    const response = await axios.put(
+                        `http://localhost:9000/student/${user.user_id}`,
+                        formData,
+                        { headers }
+                    );
+
+                    if (response.status === 200) {
+                        Swal.fire({
+                            icon: 'success',
+                            text: 'User updated successfully!',
+                        }).then(() => {
+                            onHide();
+                            fetchUsers();
+                        });
+                    } else {
+                        const errorMessage = response.data.message || 'Failed to update user. Please try again later.';
+                        Swal.fire({
+                            icon: 'error',
+                            text: errorMessage,
+                        });
+                    }
+                } catch (error) {
+                    console.error('Error updating user:', error);
+                    const errorMessage = error.response?.data?.message || 'An error occurred while updating the user. Please try again later.';
+                    Swal.fire({
+                        icon: 'error',
+                        text: errorMessage,
+                    });
+                }
             }
-        } catch (error) {
-            console.error('Error updating user:', error);
-            Swal.fire({
-                icon: 'error',
-                text: 'An error occurred while updating user. Please try again later.',
-            });
-        }
+        });
     };
 
     const handleCancel = () => {
@@ -87,20 +138,21 @@ const EditStudentModal = ({ user, show, onHide, fetchUsers, headers, departments
         const newDate = new Date(date);
         newDate.setMinutes(newDate.getMinutes() - newDate.getTimezoneOffset()); // Adjust for time zone offset
         return newDate.toISOString().split('T')[0]; // Format the date as YYYY-MM-DD
-      };
+    };
 
     const inputStyle = {
         backgroundColor: '#f2f2f2',
         border: '1px solid #ced4da',
         borderRadius: '.25rem',
         height: '40px',
+        paddingLeft: '10px'
     };
 
     const buttonStyle = {
         backgroundColor: '#3B71CA',
-        color: 'white',
+        color: '#FFFFFF',
         fontWeight: '900',
-        padding: '12px 15px',
+        padding: '12px 25px',
         border: 'none',
         borderRadius: '10px',
         cursor: 'pointer',
@@ -122,9 +174,8 @@ const EditStudentModal = ({ user, show, onHide, fetchUsers, headers, departments
         alignItems: 'center',
     };
 
-    // Check if user is null or undefined before rendering the modal content
     if (!user) {
-        return <div>Loading...</div>;
+        return null;
     }
 
     return (
@@ -148,8 +199,8 @@ const EditStudentModal = ({ user, show, onHide, fetchUsers, headers, departments
                     style={{
                         fontSize: '40px',
                         marginBottom: '10px',
-                        marginLeft: '100px',
-                        marginRight: '100px',
+                        marginLeft: '120px',
+                        marginRight: '120px',
                     }}
                 >
                     EDIT STUDENT DETAILS
@@ -157,7 +208,7 @@ const EditStudentModal = ({ user, show, onHide, fetchUsers, headers, departments
             </Modal.Header>
 
             <Modal.Body style={{ paddingLeft: '30px', paddingRight: '30px' }}>
-        <form onSubmit={handleSubmit}>
+            <form onSubmit={handleSubmit}>
             <div>
             <h5 
                 className="fw-bold" style={{ fontSize: '18px', color: '#0D4809', marginTop: '10px', marginBottom: '20px', fontFamily: 'Poppins, sans-serif', fontWeight: 700 }}>
@@ -283,42 +334,44 @@ const EditStudentModal = ({ user, show, onHide, fetchUsers, headers, departments
                         </Form.Select>
                     </Form.Group>
                 </Col>
+
                 <Col md={6}>
-                    <Form.Group controlId="department_id">
-                        <Form.Label className="fw-bold">Department</Form.Label>
-                        <Form.Select
-                            name="department_id"
-                            value={formData.department_id}
-                            onChange={handleChange}
-                            style={inputStyle}
-                        >
-                            <option value="">Select Department</option>
-                            {departments.map((department) => (
-                                <option key={department.department_id} value={department.department_id}>
-                                    {department.department_name}
-                                </option>
-                            ))}
-                        </Form.Select>
-                    </Form.Group>
-                </Col>
-                <Col md={6}>
-                    <Form.Group controlId="program_id">
-                        <Form.Label className="fw-bold">Program</Form.Label>
-                        <Form.Select
-                            name="program_id"
-                            value={formData.program_id}
-                            onChange={handleChange}
-                            style={inputStyle}
-                        >
-                            <option value="">Select Program</option>
-                            {programs.map((program) => (
-                                <option key={program.program_id} value={program.program_id}>
-                                    {program.program_name}
-                                </option>
-                            ))}
-                        </Form.Select>
-                    </Form.Group>
-                </Col>
+                            <Form.Group controlId="department_id">
+                                <Form.Label className="fw-bold">Department</Form.Label>
+                                <Form.Select
+                                    name="department_id"
+                                    value={formData.department_id}
+                                    onChange={handleChange}
+                                    style={inputStyle}
+                                >
+                                    {departments.map((department) => (
+                                        <option key={department.department_id} value={department.department_id}>
+                                            {department.department_name}
+                                        </option>
+                                    ))}
+                                </Form.Select>
+                            </Form.Group>
+                        </Col>
+
+                        <Col md={6}>
+                            <Form.Group controlId="program_id">
+                                <Form.Label className="fw-bold">Program</Form.Label>
+                                <Form.Select
+                                    name="program_id"
+                                    value={formData.program_id}
+                                    onChange={handleChange}
+                                    style={inputStyle}
+                                >
+                                    <option value="">Select Program</option>
+                                    {filteredPrograms.map((program) => (
+                                        <option key={program.program_id} value={program.program_id}>
+                                            {program.program_name}
+                                        </option>
+                                    ))}
+                                </Form.Select>
+                            </Form.Group>
+                        </Col>
+
 
                 <div>
                     <h5 
@@ -330,7 +383,7 @@ const EditStudentModal = ({ user, show, onHide, fetchUsers, headers, departments
                 {/* Email Address, Passowrd, and Status Section */}
                 <Col md={6}>
                     <Form.Group controlId="email">
-                        <Form.Label className="fw-bold">Email</Form.Label>
+                        <Form.Label className="fw-bold">Email Address</Form.Label>
                         <Form.Control
                             type="text"
                             name="email"

@@ -425,42 +425,16 @@ const DepartmentalStudentsTable = () => {
                 departments={departments}
                 programs={programs}
             />
-
-
-            
-            {/* Update Modal */}
-            <Modal show={showUpdateModal} onHide={handleUpdateModalClose} dialogClassName="modal-lg">
-                <Modal.Header closeButton>
-                    <Modal.Title style = {{ marginLeft: '180px'}}>UPDATE STUDENT RECORD</Modal.Title>
-                    <button
-                        type="button"
-                        className="close"
-                        onClick={handleUpdateModalClose}
-                        style={{
-                        color: '#6c757d',
-                        border: 'none',
-                        background: 'transparent',
-                        fontSize: '30px',
-                        position: 'absolute',
-                        top: '2px',
-                        right: '12px',
-                        cursor: 'pointer',
-                        }}
-                    >
-                        &times;
-                    </button>
-                </Modal.Header>
-                <Modal.Body>
-                    <EditStudentModal 
-                        user={selectedUser} 
-                        handleClose={handleUpdateModalClose} 
-                        fetchUsers={fetchUsers} 
-                        headers={headers} 
-                        departments={departments}
-                        programs={programs}
-                    />
-                </Modal.Body>
-            </Modal>
+         
+            {/* Edit Student Modal */}
+            <EditStudentModal
+                show={showUpdateModal}
+                onHide={handleUpdateModalClose} 
+                user={selectedUser}
+                fetchUsers={fetchUsers}
+                departments={departments} 
+                programs={programs} 
+            />
     </div>
     );
 };

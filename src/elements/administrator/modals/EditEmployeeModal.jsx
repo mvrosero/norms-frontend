@@ -277,7 +277,7 @@ const EditEmployeeModal = ({ user, show, onHide, fetchUsers, headers, roles }) =
                         {/* Email Address and Password */}
                         <Col md={6}>
                             <Form.Group controlId="email">
-                                <Form.Label className="fw-bold">Email</Form.Label>
+                                <Form.Label className="fw-bold">Email Address</Form.Label>
                                 <Form.Control
                                     type="text"
                                     name="email"

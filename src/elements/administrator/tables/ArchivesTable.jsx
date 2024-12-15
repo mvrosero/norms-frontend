@@ -247,7 +247,7 @@ const ArchivesTable = () => {
                 <Table bordered hover responsive style={{ borderRadius: '20px', marginBottom: '50px', marginLeft: '110px' }}>
                     <thead>
                         <tr>
-                            <th style={{ width: '5%' }}>
+                            <th style={{ width: '3%' }}>
                                 <input
                                     type="checkbox"
                                     checked={selectAll}
@@ -255,19 +255,19 @@ const ArchivesTable = () => {
                                 />
                             </th>
                             <th style={{ textAlign: 'center', padding: '0', verticalAlign: 'middle', width: '11%' }}>
-                                <button
-                                    style={{ border: 'none', background: 'none', cursor: 'pointer', display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center', width: '100%', 
-                                    }}
-                                    onClick={handleSortIdNumber}
-                                >
-                                    <span style={{ textAlign: 'center' }}>ID Number</span>
-                                    {sortOrder === 'asc' ? (
-                                    <ArrowDropUpIcon style={{ marginLeft: '5px' }} />
-                                    ) : (
-                                    <ArrowDropDownIcon style={{ marginLeft: '5px' }} />
-                                    )}
-                                </button>
-                            </th>
+                              <button
+                                  style={{ border: 'none', background: 'none', cursor: 'pointer', display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center', width: '100%', 
+                                  }}
+                                  onClick={handleSortIdNumber}
+                              >
+                                  <span style={{ textAlign: 'center' }}>ID Number</span>
+                                  {sortOrder === 'asc' ? (
+                                  <ArrowDropUpIcon style={{ marginLeft: '5px' }} />
+                                  ) : (
+                                  <ArrowDropDownIcon style={{ marginLeft: '5px' }} />
+                                  )}
+                              </button>
+                              </th>
                             <th style={{ textAlign: 'center', padding: '0', verticalAlign: 'middle' }}>
                                 <button
                                     style={{ border: 'none', background: 'none', cursor: 'pointer', display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center', width: '100%', 
@@ -291,14 +291,14 @@ const ArchivesTable = () => {
                     </thead>
                     <tbody>
                     {currentUsers.map(user => (
-            <tr key={user.student_idnumber}>
-              <td>
-                <input
-                  type="checkbox"
-                  checked={selectedStudentIds.includes(user.student_idnumber)}
-                  onChange={() => handleSelectUser(user.student_idnumber)}
-                />
-              </td>
+                            <tr key={user.student_idnumber}>
+                              <td>
+                                <input
+                                  type="checkbox"
+                                  checked={selectedStudentIds.includes(user.student_idnumber)}
+                                  onChange={() => handleSelectUser(user.student_idnumber)}
+                                />
+                              </td>
                                 <td>{user.student_idnumber}</td>
                                 <td>{`${user.first_name} ${user.middle_name || ''} ${user.last_name} ${user.suffix || ''}`}</td>
                                 <td>{user.year_level}</td>
@@ -464,15 +464,15 @@ const renderPagination = () => {
           programs={programs}
       />
 
-      {/* Edit Student Modal */}
-      <Modal show={showUpdateModal} onHide={handleUpdateModalClose}>
-        <Modal.Header closeButton>
-          <Modal.Title style={{ marginLeft: '65px' }}>EDIT STUDENT RECORD</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          {selectedUser && <EditStudentModal fetchUsers={fetchUsers} user={selectedUser} departments={departments} programs={programs} handleClose={handleUpdateModalClose} />}
-        </Modal.Body>
-      </Modal>
+        {/* Edit Student Modal */}
+        <EditStudentModal
+              show={showUpdateModal}
+              onHide={handleUpdateModalClose} 
+              user={selectedUser}
+              fetchUsers={fetchUsers}
+              departments={departments} 
+              programs={programs} 
+        />
     </div>
     );
 };

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import '@fortawesome/fontawesome-free/css/all.min.css';
-import { Modal, Button, Form } from 'react-bootstrap';
+import { Modal, Button, Form, Row, Col } from 'react-bootstrap';
 import axios from 'axios';
 import Swal from 'sweetalert2';
 
@@ -64,41 +64,58 @@ const BatchArchivesToolbar = ({ selectedItemsCount, onDelete, selectedStudentIds
     setError('');
     setSuccessMessage('');
     setIsSubmitting(true);
-
+  
     const updates = {
       ...(yearLevel && { year_level: yearLevel }),
       ...(departmentId && { department_id: departmentId }),
       ...(programId && { program_id: programId }),
       ...(status && { status: status }),
     };
-
+  
     if (Object.keys(updates).length === 0) {
       setError('No fields to update.');
       setIsSubmitting(false);
       return;
     }
-
+  
     try {
-      const response = await axios.put('http://localhost:9000/students', {
-        student_ids: selectedStudentIds,
-        updates: updates,
+      // Confirmation dialog before proceeding with the update
+      const result = await Swal.fire({
+        title: 'Are you sure?',
+        text: 'Do you want to update the selected students with these changes?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3B71CA',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, update them!',
       });
-
-      handleModalClose();
-
-      Swal.fire({
-        icon: 'success',
-        title: 'Success',
-        text: response.data.message,
-        confirmButtonText: 'OK',
-      }).then(() => {
-        window.location.reload();
-      });
+  
+      if (result.isConfirmed) {
+        const response = await axios.put('http://localhost:9000/students', {
+          student_ids: selectedStudentIds,
+          updates: updates,
+        });
+  
+        handleModalClose();
+  
+        // Success message after confirmation
+        Swal.fire({
+          icon: 'success',
+          title: 'Success',
+          text: response.data.message,
+          confirmButtonText: 'OK',
+        }).then(() => {
+          window.location.reload();
+        });
+      } else {
+        // If user cancels, reset the form or do nothing
+        handleModalClose();
+      }
     } catch (error) {
       console.error('Error updating students:', error.response?.data || error.message);
-
+  
       handleModalClose();
-
+  
       Swal.fire({
         icon: 'error',
         title: 'Error',
@@ -110,6 +127,48 @@ const BatchArchivesToolbar = ({ selectedItemsCount, onDelete, selectedStudentIds
     }
   };
   
+
+  const handleCancel = () => {
+    Swal.fire({
+        title: 'Are you sure?',
+        text: 'Any unsaved changes will be lost. Do you want to close without saving?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'Yes, close it!',
+    }).then((result) => {
+        if (result.isConfirmed) {
+          handleModalClose(); // This will execute when the user confirms the cancel action
+        }
+    });
+};
+  
+  const buttonStyle = {
+    backgroundColor: '#3B71CA',
+    color: '#FFFFFF',
+    fontWeight: '900',
+    padding: '12px 25px',
+    border: 'none',
+    borderRadius: '10px',
+    cursor: 'pointer',
+    marginLeft: '10px',
+    display: 'flex',
+    alignItems: 'center',
+    boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
+  };
+
+  const cancelButtonStyle = {
+      backgroundColor: '#8C8C8C',
+      color: '#FFFFFF',
+      fontWeight: '900',
+      padding: '12px 25px',
+      border: '1px solid #ced4da',
+      borderRadius: '10px',
+      cursor: 'pointer',
+      display: 'flex',
+      alignItems: 'center',
+  };
 
   if (!isVisible) return null;
 
@@ -137,81 +196,123 @@ const BatchArchivesToolbar = ({ selectedItemsCount, onDelete, selectedStudentIds
         </div>
       </div>
 
-        <Modal show={isModalVisible} onHide={handleModalClose}>
-        <Modal.Header closeButton>
-          <Modal.Title>BATCH UPDATE STUDENTS</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          {error && <div className="alert alert-danger">{error}</div>}
-          {successMessage && <div className="alert alert-success">{successMessage}</div>}
-          <Form onSubmit={handleSubmit}>
-            <Form.Group controlId="year_level">
-              <Form.Label className="fw-bold">Year Level</Form.Label>
-              <Form.Select
-                name="year_level"
-                value={yearLevel}
-                onChange={(e) => setYearLevel(e.target.value)}
-              >
-                <option value="">Select Year Level</option>
-                <option value="First Year">First Year</option>
-                <option value="Second Year">Second Year</option>
-                <option value="Third Year">Third Year</option>
-                <option value="Fourth Year">Fourth Year</option>
-                <option value="Fifth Year">Fifth Year</option>
-              </Form.Select>
-            </Form.Group>
+        <Modal show={isModalVisible} onHide={handleModalClose} size="lg">
+          <Modal.Header>
+                <Button
+                    variant="link"
+                    onClick={handleCancel}
+                    style={{
+                        position: 'absolute',
+                        top: '5px',
+                        right: '20px',
+                        textDecoration: 'none',
+                        fontSize: '30px',
+                        color: '#a9a9a9',
+                    }}
+                >
+                    ×
+                </Button>
+                <Modal.Title
+                    style={{
+                        fontSize: '40px',
+                        marginBottom: '10px',
+                        marginLeft: '80px',
+                        marginRight: '80px',
+                    }}
+                >
+                    BATCH UPDATE STUDENTS
+                </Modal.Title>
+          </Modal.Header>
+            <Modal.Body>
+              {error && <div className="alert alert-danger">{error}</div>}
+              {successMessage && <div className="alert alert-success">{successMessage}</div>}
+              <Form onSubmit={handleSubmit}>
 
-            <Form.Group controlId="department_id">
-              <Form.Label className="fw-bold">Department</Form.Label>
-              <Form.Select
-                name="department_id"
-                value={departmentId}
-                onChange={(e) => setDepartmentId(e.target.value)}
-              >
-                <option value="">Select Department</option>
-                {departments.map((department) => (
-                  <option key={department.department_id} value={department.department_id}>
-                    {department.department_name}
-                  </option>
-                ))}
-              </Form.Select>
-            </Form.Group>
+              <Row className="gy-4">
+                <Col md={6}>
+                  <Form.Group controlId="year_level">
+                    <Form.Label className="fw-bold">Year Level</Form.Label>
+                    <Form.Select
+                      name="year_level"
+                      value={yearLevel}
+                      onChange={(e) => setYearLevel(e.target.value)}
+                    >
+                      <option value="">Select Year Level</option>
+                      <option value="First Year">First Year</option>
+                      <option value="Second Year">Second Year</option>
+                      <option value="Third Year">Third Year</option>
+                      <option value="Fourth Year">Fourth Year</option>
+                      <option value="Fifth Year">Fifth Year</option>
+                    </Form.Select>
+                  </Form.Group>
+                </Col>
+                <Col md={6}>
+                <Form.Group controlId="status">
+                  <Form.Label className="fw-bold">Status</Form.Label>
+                  <Form.Select
+                    name="status"
+                    value={status}
+                    onChange={(e) => setStatus(e.target.value)}
+                  >
+                    <option value="">Select Status</option>
+                    <option value="active">Active</option>
+                    <option value="inactive">Inactive</option>
+                    <option value="archived">Archived</option>
+                  </Form.Select>
+                </Form.Group>
+                </Col>
+              </Row>
 
-            <Form.Group controlId="program_id">
-              <Form.Label className="fw-bold">Program</Form.Label>
-              <Form.Select
-                name="program_id"
-                value={programId}
-                onChange={(e) => setProgramId(e.target.value)}
-              >
-                <option value="">Select Program</option>
-                {programs.map((program) => (
-                  <option key={program.program_id} value={program.program_id}>
-                    {program.program_name}
-                  </option>
-                ))}
-              </Form.Select>
-            </Form.Group>
+              <Row className="gy-4">
+                <Form.Group controlId="department_id" >
+                  <Form.Label className="fw-bold" style={{ marginTop: '20px' }}>Department</Form.Label>
+                  <Form.Select
+                    name="department_id"
+                    value={departmentId}
+                    onChange={(e) => setDepartmentId(e.target.value)}
+                  >
+                    <option value="">Select Department</option>
+                    {departments.map((department) => (
+                      <option key={department.department_id} value={department.department_id}>
+                        {department.department_name}
+                      </option>
+                    ))}
+                  </Form.Select>
+                </Form.Group>
+              </Row>
 
-            <Form.Group controlId="status">
-              <Form.Label className="fw-bold">Status</Form.Label>
-              <Form.Select
-                name="status"
-                value={status}
-                onChange={(e) => setStatus(e.target.value)}
-              >
-                <option value="">Select Status</option>
-                <option value="active">Active</option>
-                <option value="inactive">Inactive</option>
-                <option value="archived">Archived</option>
-              </Form.Select>
-            </Form.Group>
-
-            <Button variant="primary" type="submit" disabled={isSubmitting}>
-              {isSubmitting ? 'Updating...' : 'Update'}
-            </Button>
-          </Form>
-        </Modal.Body>
+              <Row className="gy-4">
+                <Form.Group controlId="program_id" style={{ marginBottom: '30px' }}>
+                  <Form.Label className="fw-bold" style={{ marginTop: '20px' }}>Program</Form.Label>
+                  <Form.Select
+                    name="program_id"
+                    value={programId}
+                    onChange={(e) => setProgramId(e.target.value)}
+                  >
+                    <option value="">Select Program</option>
+                    {programs.map((program) => (
+                      <option key={program.program_id} value={program.program_id}>
+                        {program.program_name}
+                      </option>
+                    ))}
+                  </Form.Select>
+                </Form.Group>
+                </Row>
+                  {/* Buttons */}
+                  <div className="d-flex justify-content-end mt-3">
+                      <button
+                          type="button"
+                          onClick={handleCancel} // Trigger the handleCancel function
+                          style={cancelButtonStyle} // Apply the styles
+                      >
+                          Cancel
+                      </button>
+                      <button type="submit" style={buttonStyle}>
+                          Update
+                      </button>
+                  </div>
+              </Form>
+            </Modal.Body>
       </Modal>
     </div>
   );
