@@ -263,7 +263,7 @@ const EmployeesTable = () => {
             </th>
             <th style={{ width: '17%' }}>Role</th>
             <th style={{ width: '13%' }}>Status</th>
-            <th style={{ width: '13%' }}>Action</th>
+            <th style={{ width: '13%' }}>Actions</th>
           </tr>
         </thead>
         <tbody>

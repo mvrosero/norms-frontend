@@ -4,7 +4,6 @@ import Swal from 'sweetalert2';
 import { Modal, Button, Form, Row, Col } from 'react-bootstrap';
 
 const EditEmployeeModal = ({ user, show, onHide, fetchUsers, headers, roles }) => {
-    // Check if user is null and handle accordingly
     const [formData, setFormData] = useState({
         employee_idnumber: user ? user.employee_idnumber : '',
         first_name: user ? user.first_name : '',
@@ -47,35 +46,69 @@ const EditEmployeeModal = ({ user, show, onHide, fetchUsers, headers, roles }) =
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        try {
-            const response = await axios.put(
-                `http://localhost:9000/employee/${user.user_id}`,
-                formData,
-                { headers }
-            );
-            if (response.status === 200) {
-                Swal.fire({
-                    icon: 'success',
-                    text: 'User updated successfully!',
-                }).then(() => {
-                    onHide(); 
-                    fetchUsers(); 
-                });
-                fetchUsers();
-            } else {
-                Swal.fire({
-                    icon: 'error',
-                    text: 'Failed to update user. Please try again later.',
-                });
+        Swal.fire({
+            title: 'Are you sure?',
+            text: 'You are about to update this employee’s details.',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, update it!',
+        }).then(async (result) => {
+            if (result.isConfirmed) {
+                try {
+                    const response = await axios.put(
+                        `http://localhost:9000/employee/${user.user_id}`,
+                        formData,
+                        { headers }
+                    );
+                    if (response.status === 200) {
+                        Swal.fire({
+                            icon: 'success',
+                            text: 'User updated successfully!',
+                        }).then(() => {
+                            onHide();
+                            fetchUsers();
+                        });
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            text: 'Failed to update user. Please try again later.',
+                        });
+                    }
+                } catch (error) {
+                    console.error('Error updating user:', error);
+                    Swal.fire({
+                        icon: 'error',
+                        text: 'An error occurred while updating the user. Please try again later.',
+                    });
+                }
             }
-        } catch (error) {
-            console.error('Error updating user:', error);
-            Swal.fire({
-                icon: 'error',
-                text: 'An error occurred while updating the user. Please try again later.',
-            });
-        }
+        });
     };
+
+    const handleCancel = () => {
+        Swal.fire({
+            title: 'Are you sure?',
+            text: 'Any unsaved changes will be lost. Do you want to close without saving?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Yes, close it!',
+        }).then((result) => {
+            if (result.isConfirmed) {
+                onHide(); // This will execute when the user confirms the cancel action
+            }
+        });
+    };
+
+
+    const formatDateForInput = (date) => {
+        const newDate = new Date(date);
+        newDate.setMinutes(newDate.getMinutes() - newDate.getTimezoneOffset()); // Adjust for time zone offset
+        return newDate.toISOString().split('T')[0]; // Format the date as YYYY-MM-DD
+      };
     
 
     const inputStyle = {
@@ -83,13 +116,14 @@ const EditEmployeeModal = ({ user, show, onHide, fetchUsers, headers, roles }) =
         border: '1px solid #ced4da',
         borderRadius: '.25rem',
         height: '40px',
+        paddingLeft: '10px'
     };
 
     const buttonStyle = {
         backgroundColor: '#3B71CA',
-        color: 'white',
+        color: '#FFFFFF',
         fontWeight: '900',
-        padding: '12px 15px',
+        padding: '12px 25px',
         border: 'none',
         borderRadius: '10px',
         cursor: 'pointer',
@@ -99,19 +133,28 @@ const EditEmployeeModal = ({ user, show, onHide, fetchUsers, headers, roles }) =
         boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
     };
 
-    // Prevent rendering the modal if user is null
+    const cancelButtonStyle = {
+        backgroundColor: '#8C8C8C',
+        color: '#FFFFFF',
+        fontWeight: '900',
+        padding: '12px 25px',
+        border: '1px solid #ced4da',
+        borderRadius: '10px',
+        cursor: 'pointer',
+        display: 'flex',
+        alignItems: 'center',
+    };
+
     if (!user) {
-        return null; // or return a loading state
+        return null;
     }
 
     return (
-        <Modal show={show} onHide={onHide} size="lg">
-            {/* Modal Header */}
+        <Modal show={show} onHide={handleCancel} size="lg">
             <Modal.Header>
-                {/* Custom "X" Close Icon */}
                 <Button
                     variant="link"
-                    onClick={onHide}
+                    onClick={handleCancel}
                     style={{
                         position: 'absolute',
                         top: '5px',
@@ -123,16 +166,32 @@ const EditEmployeeModal = ({ user, show, onHide, fetchUsers, headers, roles }) =
                 >
                     ×
                 </Button>
-                <Modal.Title style={{ fontSize: '40px', marginBottom: '10px', marginLeft: '100px', marginRight: '100px' }}>EDIT EMPLOYEE DETAILS</Modal.Title>
+                <Modal.Title
+                    style={{
+                        fontSize: '40px',
+                        marginBottom: '10px',
+                        marginLeft: '100px',
+                        marginRight: '100px',
+                    }}
+                >
+                    EDIT EMPLOYEE DETAILS
+                </Modal.Title>
             </Modal.Header>
 
             {/* Modal Body */}
-            <Modal.Body>
+            <Modal.Body style={{ paddingLeft: '30px', paddingRight: '30px' }}>
                 <form onSubmit={handleSubmit}>
-                    <Row>
+                <div>
+                    <h5 
+                        className="fw-bold" style={{ fontSize: '18px', color: '#0D4809', marginTop: '10px', marginBottom: '20px', fontFamily: 'Poppins, sans-serif', fontWeight: 700 }}>
+                        Personal Information
+                    </h5>
+                </div>
+                    <Row className="gy-4">
+                        {/* Employee ID and Birthdate */}
                         <Col md={6}>
                             <Form.Group controlId="employee_idnumber">
-                                <Form.Label className="fw-bold">Employee ID</Form.Label>
+                                <Form.Label className="fw-bold">Employee ID Number</Form.Label>
                                 <Form.Control
                                     type="text"
                                     name="employee_idnumber"
@@ -141,6 +200,23 @@ const EditEmployeeModal = ({ user, show, onHide, fetchUsers, headers, roles }) =
                                     style={inputStyle}
                                 />
                             </Form.Group>
+                        </Col>
+                        <Col md={6}>
+                        <Form.Group controlId="birthdate">
+                            <Form.Label className="fw-bold">Birthdate</Form.Label>
+                            <Form.Control
+                                type="date"
+                                name="birthdate"
+                                value={formData.birthdate ? formatDateForInput(formData.birthdate) : ''}
+                                onChange={handleChange}
+                                placeholder={formData.birthdate ? '' : 'MM/DD/YYYY'}
+                                style={inputStyle}
+                            />
+                        </Form.Group>
+                        </Col>
+
+                        {/* First Name and Middle Name */}
+                        <Col md={6}>
                             <Form.Group controlId="first_name">
                                 <Form.Label className="fw-bold">First Name</Form.Label>
                                 <Form.Control
@@ -151,6 +227,8 @@ const EditEmployeeModal = ({ user, show, onHide, fetchUsers, headers, roles }) =
                                     style={inputStyle}
                                 />
                             </Form.Group>
+                        </Col>
+                        <Col md={6}>
                             <Form.Group controlId="middle_name">
                                 <Form.Label className="fw-bold">Middle Name</Form.Label>
                                 <Form.Control
@@ -161,6 +239,10 @@ const EditEmployeeModal = ({ user, show, onHide, fetchUsers, headers, roles }) =
                                     style={inputStyle}
                                 />
                             </Form.Group>
+                        </Col>
+
+                        {/* Last Name and Suffix */}
+                        <Col md={6}>
                             <Form.Group controlId="last_name">
                                 <Form.Label className="fw-bold">Last Name</Form.Label>
                                 <Form.Control
@@ -171,6 +253,8 @@ const EditEmployeeModal = ({ user, show, onHide, fetchUsers, headers, roles }) =
                                     style={inputStyle}
                                 />
                             </Form.Group>
+                        </Col>
+                        <Col md={6}>
                             <Form.Group controlId="suffix">
                                 <Form.Label className="fw-bold">Suffix</Form.Label>
                                 <Form.Control
@@ -182,6 +266,15 @@ const EditEmployeeModal = ({ user, show, onHide, fetchUsers, headers, roles }) =
                                 />
                             </Form.Group>
                         </Col>
+
+                        <div>
+                            <h5 
+                                className="fw-bold" style={{ fontSize: '18px', color: '#0D4809', marginTop: '20px', fontFamily: 'Poppins, sans-serif', fontWeight: 700 }}>
+                                Account Information
+                            </h5>
+                        </div>
+            
+                        {/* Email Address and Password */}
                         <Col md={6}>
                             <Form.Group controlId="email">
                                 <Form.Label className="fw-bold">Email</Form.Label>
@@ -193,6 +286,8 @@ const EditEmployeeModal = ({ user, show, onHide, fetchUsers, headers, roles }) =
                                     style={inputStyle}
                                 />
                             </Form.Group>
+                        </Col>
+                        <Col md={6}>
                             <Form.Group controlId="password">
                                 <Form.Label className="fw-bold">Password</Form.Label>
                                 <Form.Control
@@ -203,7 +298,11 @@ const EditEmployeeModal = ({ user, show, onHide, fetchUsers, headers, roles }) =
                                     style={inputStyle}
                                 />
                             </Form.Group>
-                            <Form.Group controlId="role_id">
+                        </Col>
+
+                        {/* Role and Status */}
+                        <Col md={6}>
+                            <Form.Group controlId="role_id" style={{ marginBottom: '30px' }}>
                                 <Form.Label className="fw-bold">Role</Form.Label>
                                 <Form.Select
                                     name="role_id"
@@ -211,7 +310,6 @@ const EditEmployeeModal = ({ user, show, onHide, fetchUsers, headers, roles }) =
                                     onChange={handleChange}
                                     style={inputStyle}
                                 >
-                                    <option value="">Select Role</option>
                                     {roles
                                         .filter((role) => role.role_name.toLowerCase() !== 'student')
                                         .map((role) => (
@@ -221,6 +319,8 @@ const EditEmployeeModal = ({ user, show, onHide, fetchUsers, headers, roles }) =
                                         ))}
                                 </Form.Select>
                             </Form.Group>
+                        </Col>
+                        <Col md={6}>
                             <Form.Group controlId="status">
                                 <Form.Label className="fw-bold">Status</Form.Label>
                                 <Form.Select
@@ -235,7 +335,16 @@ const EditEmployeeModal = ({ user, show, onHide, fetchUsers, headers, roles }) =
                             </Form.Group>
                         </Col>
                     </Row>
+
+                    {/* Buttons */}
                     <div className="d-flex justify-content-end mt-3">
+                       <button
+                            type="button"
+                            onClick={handleCancel} // Trigger the handleCancel function
+                            style={cancelButtonStyle} // Apply the styles
+                        >
+                            Cancel
+                        </button>
                         <button type="submit" style={buttonStyle}>
                             Update
                         </button>
