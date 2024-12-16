@@ -33,7 +33,7 @@ export default function AdminUserManagement() {
             <AdminInfo />
             <h6 className="page-title"> USER MANAGEMENT </h6>
             <div style={{ display: 'flex', marginTop: '20px', alignItems: 'center' }}>
-                <div style={{ width: '900px', marginLeft: '80px' }}>
+                <div style={{ width: '750px', marginLeft: '100px' }}>
                     <SearchAndFilter />
                 </div>
                 <UserDropdownButton />

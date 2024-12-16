@@ -31,7 +31,7 @@ const ImportDepartmentalCSV = () => {
     };
 
     return (
-        <div style={{ padding: '20px' }}>
+        <div style={{ padding: '15px' }}>
             <input
                 type="file"
                 accept=".csv"
@@ -45,22 +45,18 @@ const ImportDepartmentalCSV = () => {
                     backgroundColor: '#FAD32E',
                     color: 'white',
                     fontWeight: '900',
-                    padding: '10px 20px', // Increased padding for better sizing
+                    padding: '12px 15px', 
                     border: 'none',
-                    borderRadius: '10px',
+                    borderRadius: '9px',
                     marginLeft: '2px',
                     cursor: 'pointer',
                     display: 'flex',
                     alignItems: 'center',
                     boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
-                    height: '40px', // Set consistent height
-                    minWidth: '80px', // Set minimum width
-                    maxWidth: '150px', // Set maximum width
-                    justifyContent: 'center', // Center the text inside
                 }}
             >
                 Import CSV
-                <DescriptionIcon />
+                <DescriptionIcon style={{ marginLeft: '10px' }} fontSize="small" />
             </label>
         </div>
     );

@@ -69,7 +69,7 @@ export default function AdminDepartmentalStudents() {
             <AdminInfo />
             <h6 className="page-title">{departmentName || department_code || 'USER MANAGEMENT'}</h6>
             <div style={{ display: 'flex', marginTop: '20px', alignItems: 'center' }}>
-                <div style={{ width: '850px', marginLeft: '70px' }}>
+                <div style={{ width: '750px', marginLeft: '70px' }}>
                     <SearchAndFilter />
                 </div>
                 <button
@@ -81,8 +81,8 @@ export default function AdminDepartmentalStudents() {
                         padding: '12px 15px',
                         border: 'none',
                         borderRadius: '10px',
-                        cursor: 'pointer',
                         marginLeft: '5px',
+                        cursor: 'pointer',
                         display: 'flex',
                         alignItems: 'center',
                         boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',

@@ -30,7 +30,7 @@ const ImportEmployeesCSV = () => {
     };
 
     return (
-        <div style={{ padding: '20px' }}>
+        <div style={{ padding: '15px' }}>
             <input
                 type="file"
                 accept=".csv"
@@ -44,8 +44,7 @@ const ImportEmployeesCSV = () => {
                     backgroundColor: '#FAD32E',
                     color: 'white',
                     fontWeight: '900',
-                    padding: '5px 15px',
-                    border: 'none',
+                    padding: '12px 20px', 
                     borderRadius: '10px',
                     marginLeft: '2px',
                     cursor: 'pointer',
@@ -55,7 +54,7 @@ const ImportEmployeesCSV = () => {
                 }}
             >
                 Import CSV
-                <DescriptionIcon />
+                <DescriptionIcon style={{ marginLeft: '10px' }} fontSize="small"/>
             </label>
         </div>
     );

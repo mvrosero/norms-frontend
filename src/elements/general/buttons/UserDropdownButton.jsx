@@ -18,10 +18,10 @@ function UserDropdownButton() {
       <button
         onClick={() => setIsOpen(!isOpen)}
         style={{
-          backgroundColor: '#FAD32E', // White background color
-          color: 'white', // Dark text color
+          backgroundColor: '#FAD32E', 
+          color: 'white', 
           fontWeight: '900',
-          padding: '12px 15px',
+          padding: '12px 20px',
           border: 'none',
           borderRadius: '10px',
           cursor: 'pointer',
@@ -32,7 +32,7 @@ function UserDropdownButton() {
         }}
       >
         Add User
-        <FaAngleDown style={{ marginLeft: '10px', transition: 'transform 0.3s', transform: isOpen ? 'rotate(180deg)' : 'rotate(0deg)' }} />
+        <FaAngleDown style={{ marginLeft: '10px', fontSize: '20px', transition: 'transform 0.3s', transform: isOpen ? 'rotate(180deg)' : 'rotate(0deg)' }} />
       </button>
       {isOpen && (
         <div
