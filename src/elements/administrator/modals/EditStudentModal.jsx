@@ -65,8 +65,118 @@ const EditStudentModal = ({ user, show, onHide, fetchUsers, headers, departments
         }));
     };
 
-    const handleSubmit = async (e) => {
+    const handleSubmit = (e) => {
         e.preventDefault();
+    
+        // Validate student_idnumber format (should follow "00-00000")
+        const idFormat = /^\d{2}-\d{5}$/; // Matches "00-00000" format
+        if (!idFormat.test(formData.student_idnumber)) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Invalid student ID number format',
+                text: 'It should follow the format "00-00000".',
+            });
+            return;
+        }
+    
+        // Validate names to start with a capital letter and allow letters, spaces, dashes, and dots
+        const nameFormat = /^[A-Z][a-zA-Z .-]*$/; // Capital letter followed by letters, spaces, dots, or dashes
+        if (!nameFormat.test(formData.first_name)) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Invalid First Name',
+                text: 'First name must start with a capital letter and can contain only letters, spaces, dots, or dashes.',
+            });
+            return;
+        }
+        if (formData.middle_name && !nameFormat.test(formData.middle_name)) { // Middle name is optional
+            Swal.fire({
+                icon: 'error',
+                title: 'Invalid Middle Name',
+                text: 'Middle name must start with a capital letter and can contain only letters, spaces, dots, or dashes.',
+            });
+            return;
+        }
+        if (!nameFormat.test(formData.last_name)) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Invalid Last Name',
+                text: 'Last name must start with a capital letter and can contain only letters, spaces, dots, or dashes.',
+            });
+            return;
+        }
+        if (formData.suffix && !nameFormat.test(formData.suffix)) { // Suffix is optional
+            Swal.fire({
+                icon: 'error',
+                title: 'Invalid Suffix',
+                text: 'Suffix must start with a capital letter and can contain only letters, spaces, dots, or dashes.',
+            });
+            return;
+        }
+    
+        // Validate email to end with "@gbox.ncf.edu.ph"
+        const emailFormat = /^[a-zA-Z0-9._%+-]+@gbox\.ncf\.edu\.ph$/;
+        if (!emailFormat.test(formData.email)) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Invalid Email',
+                text: 'Email must end with "@gbox.ncf.edu.ph".',
+            });
+            return;
+        }
+    
+        // Validate password length
+        if (formData.password && formData.password.length < 3) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Invalid Password',
+                text: 'Password must be at least 3 characters long.',
+            });
+            return;
+        }
+    
+        // If all validations pass, proceed with form submission
+        // Add your form submission logic here, for example:
+        try {
+            // Simulate a successful submission (e.g., API call or form submission)
+            Swal.fire({
+                icon: 'success',
+                title: 'Form Submitted',
+                text: 'Student details have been successfully updated.',
+            });
+            // You can proceed with sending data to your backend here
+        } catch (error) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Submission Failed',
+                text: 'There was an issue submitting the form.',
+            });
+        }
+    
+    
+    
+     // Basic form validation
+if (!formData.student_idnumber || !formData.first_name || !formData.last_name || !formData.email || !formData.year_level || !formData.batch || !formData.department_id || !formData.program_id) {
+    let missingFields = [];
+
+    // Identify missing fields
+    if (!formData.student_idnumber) missingFields.push("Student ID Number");
+    if (!formData.first_name) missingFields.push("First Name");
+    if (!formData.last_name) missingFields.push("Last Name");
+    if (!formData.email) missingFields.push("Email");
+    if (!formData.year_level) missingFields.push("Year Level");
+    if (!formData.batch) missingFields.push("Batch");
+    if (!formData.department_id) missingFields.push("Department");
+    if (!formData.program_id) missingFields.push("Program");
+
+    // Create a more informative message
+    Swal.fire({
+        icon: 'error',
+        title: 'Missing Required Fields',
+        text: `Please fill in the following required fields: ${missingFields.join(", ")}.`,
+    });
+    return;
+}
 
         Swal.fire({
             title: 'Are you sure?',
@@ -84,7 +194,7 @@ const EditStudentModal = ({ user, show, onHide, fetchUsers, headers, departments
                         formData,
                         { headers }
                     );
-
+    
                     if (response.status === 200) {
                         Swal.fire({
                             icon: 'success',
@@ -111,6 +221,7 @@ const EditStudentModal = ({ user, show, onHide, fetchUsers, headers, departments
             }
         });
     };
+    
 
     const handleCancel = () => {
         Swal.fire({
