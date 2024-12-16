@@ -4,6 +4,7 @@ import Swal from 'sweetalert2';
 import { Modal, Button, Form, Row, Col } from 'react-bootstrap';
 
 const EditStudentModal = ({ user, show, onHide, fetchUsers, headers, departments }) => {
+    const [errors, setErrors] = useState({});
     const [formData, setFormData] = useState({
         student_idnumber: user ? user.student_idnumber : '',
         first_name: user ? user.first_name : '',
@@ -57,27 +58,40 @@ const EditStudentModal = ({ user, show, onHide, fetchUsers, headers, departments
         }
     }, [user]);
 
+
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData((prev) => ({
             ...prev,
-            [name]: value,
+            [name]: value
         }));
+
+        validateField(name, value);
     };
+
+
+    const validateField = (name, value) => {
+        const newErrors = { ...errors };
+
+        if (name === 'student_idnumber') {
+            const idFormat = /^\d{2}-\d{5}$/; // Matches "00-00000" format
+            if (!idFormat.test(value)) {
+                newErrors.student_idnumber = 'Student ID should follow the format "00-00000".';
+            } else {
+                newErrors.student_idnumber = '';
+            }
+        }
+
+        // Add other field validations here...
+
+        setErrors(newErrors);
+    };
+
 
     const handleSubmit = (e) => {
         e.preventDefault();
     
-        // Validate student_idnumber format (should follow "00-00000")
-        const idFormat = /^\d{2}-\d{5}$/; // Matches "00-00000" format
-        if (!idFormat.test(formData.student_idnumber)) {
-            Swal.fire({
-                icon: 'error',
-                title: 'Invalid student ID number format',
-                text: 'It should follow the format "00-00000".',
-            });
-            return;
-        }
+
     
         // Validate names to start with a capital letter and allow letters, spaces, dashes, and dots
         const nameFormat = /^[A-Z][a-zA-Z .-]*$/; // Capital letter followed by letters, spaces, dots, or dashes
@@ -253,11 +267,34 @@ if (!formData.student_idnumber || !formData.first_name || !formData.last_name ||
 
     const inputStyle = {
         backgroundColor: '#f2f2f2',
-        border: '1px solid #ced4da',
+        border: '1px solid #ced4da', // Default border is 1px
         borderRadius: '.25rem',
         height: '40px',
-        paddingLeft: '10px'
+        paddingLeft: '10px',
+        transition: 'border-color 0.3s ease', // Smooth transition for border color change
     };
+    
+    // Function to dynamically get input styles based on validation errors
+    const getInputStyle = (fieldName, formData, errors) => {
+        const baseStyle = {
+            ...inputStyle,
+            borderWidth: '3px', // Set the border width to 3px when validating
+        };
+    
+        if (errors[fieldName]) {
+            return {
+                ...baseStyle,
+                borderColor: 'red', // Error - red border
+            };
+        } else if (formData[fieldName]) {
+            return {
+                ...baseStyle,
+                borderColor: 'green', // Success - green border
+            };
+        }
+        return baseStyle; // Default style with 3px border if no error or input
+    };
+    
 
     const buttonStyle = {
         backgroundColor: '#3B71CA',
@@ -330,13 +367,20 @@ if (!formData.student_idnumber || !formData.first_name || !formData.last_name ||
                 <Col md={6}>
                     <Form.Group controlId="student_idnumber">
                         <Form.Label className="fw-bold">Student ID Number</Form.Label>
-                        <Form.Control
-                            type="text"
-                            name="student_idnumber"
-                            value={formData.student_idnumber}
-                            onChange={handleChange}
-                            style={inputStyle}
-                        />
+
+
+<Form.Control
+    type="text"
+    name="student_idnumber"
+    value={formData.student_idnumber}
+    onChange={handleChange}  // Your change handler to update formData and validation
+    style={getInputStyle('student_idnumber', formData, errors)} // Dynamic style based on validation
+/>
+{errors.student_idnumber && (
+                    <div style={{ color: 'red', fontSize: '12px' }}>
+                        {errors.student_idnumber}
+                    </div>
+                )}
                     </Form.Group>
                 </Col>
                 <Col md={6}>
