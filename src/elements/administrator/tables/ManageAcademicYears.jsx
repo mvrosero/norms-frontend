@@ -134,31 +134,30 @@ export default function ManageAcademicYears() {
         });
     };
 
-    const buttonStyle = {
-        backgroundColor: '#FAD32E',
-        color: 'white',
-        fontWeight: '900',
-        padding: '12px 15px',
-        border: 'none',
-        borderRadius: '10px',
-        cursor: 'pointer',
-        marginLeft: '10px',
-        display: 'flex',
-        alignItems: 'center',
-        boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
-    };
-
     return (
         <div>
             <AdminNavigation />
             <AdminInfo />
             <h6 className="page-title">Manage Academic Years</h6>
-            <SearchAndFilter />
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', marginTop: '30px' }}>
-                <Button onClick={handleOpenModal} style={buttonStyle}>
+            <div style={{ display: 'flex',  alignItems: 'center' }} >
+                <SearchAndFilter />
+                <button 
+                    onClick={handleOpenModal} 
+                    style={{
+                        backgroundColor: '#FAD32E',
+                        color: 'white',
+                        fontWeight: '900',
+                        padding: '12px 20px',
+                        borderRadius: '10px',
+                        cursor: 'pointer',
+                        display: 'flex',
+                        alignItems: 'center',
+                        boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
+                    }}
+                >
                     Add Academic Year
                     <FaPlus style={{ marginLeft: '10px' }} />
-                </Button>
+                </button>
             </div>
             <div style={{ margin: 'auto', marginTop: '20px', marginBottom: '30px', paddingLeft: '20px' }}>
                 <table style={{ width: '90%', borderCollapse: 'collapse', marginLeft: 'auto', marginRight: 'auto' }}>

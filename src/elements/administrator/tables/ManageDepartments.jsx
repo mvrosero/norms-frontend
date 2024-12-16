@@ -12,6 +12,7 @@ import SearchAndFilter from '../../../pages/general/SearchAndFilter';
 import AddDepartmentModal from '../modals/AddDepartmentModal';
 import EditDepartmentModal from '../modals/EditDepartmentModal';
 
+
 export default function ManageDepartments() {
     const navigate = useNavigate();
     const [departments, setDepartments] = useState([]);
@@ -120,88 +121,163 @@ export default function ManageDepartments() {
     if (loading) return <p>Loading...</p>;
     if (error) return <p>{error}</p>;
 
+    const renderStatus = (status) => {
+        let backgroundColor, textColor;
+        if (status === 'active') {
+            backgroundColor = '#DBF0DC';
+            textColor = '#30A530';
+        } else if (status === 'inactive') {
+            backgroundColor = '#F0DBDB';
+            textColor = '#D9534F';
+        } else {
+            backgroundColor = '#EDEDED';
+            textColor = '#6C757D'; 
+        }
+
+        return (
+            <div style={{
+                backgroundColor,
+                color: textColor,
+                fontWeight: '600',
+                fontSize: '14px',
+                borderRadius: '30px',
+                padding: '5px 20px',
+                display: 'inline-flex',
+                alignItems: 'center',
+            }}>
+                <div style={{
+                    width: '8px',
+                    height: '8px',
+                    borderRadius: '50%',
+                    backgroundColor: textColor,
+                    marginRight: '7px',
+                }} />
+                {status}
+            </div>
+        );
+    };
+
+
     return (
         <div>
             <AdminNavigation />
             <AdminInfo />
-            <h6 className="page-title">Manage Departments</h6>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', marginTop: '30px' }}>
-                <SearchAndFilter />
-                <button 
-                    onClick={handleCreateNewDepartment} 
+                {/* Small Rectangle on Top */}
+                <div
                     style={{
-                        backgroundColor: '#FAD32E',
-                        color: 'white',
-                        fontWeight: '900',
-                        padding: '12px 15px',
-                        border: 'none',
-                        borderRadius: '10px',
-                        cursor: 'pointer',
-                        marginLeft: '10px',
-                        display: 'flex',
-                        alignItems: 'center',
-                        boxShadow: '0 2px 8px rgba(0, 0, 0, 0.15)',
+                        backgroundColor: '#e9e9e9', // White background
+                        height: '80px', // Small height
+                        width: '50%', // 3/4 of the large rectangle width
+                        position: 'absolute', // Position it on top of the large rectangle
+                        top: '5%', 
+                        left: '8%', 
+                        borderTopLeftRadius: '20px',
+                        borderTopRightRadius: '80px',
                     }}
                 >
-                    <FaPlus style={{ marginRight: '10px' }} />Add Department
-                </button>
-            </div>
-            <div>
-                {/* Departments Table */}
-                <table className="table table-hover table-bordered" style={{ marginTop: '20px', width: '80%', margin: 'auto' }}>
-                    <thead style={{ backgroundColor: '#FAD32E', textAlign: 'center' }}>
-                        <tr>
-                            <th>ID</th>
-                            <th>Department Code</th>
-                            <th>Department Name</th>
-                            <th>Status</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody style={{ textAlign: 'center' }}>
-                        {departments.map(department => (
-                            <tr key={department.department_id}>
-                                <td>{department.department_id}</td>
-                                <td>{department.department_code}</td>
-                                <td>{department.department_name}</td>
-                                <td>{department.status}</td>
-                                <td>
-                                    <EditIcon 
-                                        onClick={() => handleEditDepartment(department.department_id)} 
-                                        style={{ cursor: 'pointer', marginRight: '15px' }}
-                                    />
-                                    <DeleteIcon 
-                                        onClick={() => handleDeleteDepartment(department.department_id)} 
-                                        style={{ cursor: 'pointer', color: 'red' }}
-                                    />
-                                </td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
-            </div>
-            
-            {/* Add Department Modal */}
-            <AddDepartmentModal 
-                show={showDepartmentModal} 
-                handleClose={handleCloseDepartmentModal} 
-                handleSubmit={handleDepartmentSubmit} 
-                departmentFormData={departmentFormData}
-                handleChange={handleDepartmentChange}
-                inputStyle={{ width: '100%' }} 
-                buttonStyle={{ marginTop: '20px', backgroundColor: '#FAD32E', border: 'none' }} 
-            />
+                    <h6 className="settings-title" style={{ fontFamily: 'Poppins, sans-serif', color: '#1f1f1f', fontSize: '40px', fontWeight: 'bold', marginTop: '20px', marginLeft: '40px' }}>
+                        Manage Departments
+                    </h6>
+                </div>
 
-            {/* Edit Department Modal */}
-            <EditDepartmentModal 
-                show={showEditModal} 
-                handleClose={() => setShowEditModal(false)} 
-                handleSubmit={handleEditSubmit} 
-                departmentFormData={departmentFormData}
-                handleChange={handleDepartmentChange}
-                inputStyle={{ width: '100%' }} 
-                buttonStyle={{ marginTop: '20px', backgroundColor: '#FAD32E', border: 'none' }} 
-            />
+                {/* Main Rectangle */}
+                <div
+                    style={{
+                        backgroundColor: '#e9e9e9', 
+                        paddingTop: '10px',
+                        paddingBottom: '20px',
+                        marginBottom: '80px',
+                        marginRight: '25px',
+                        borderRadius: '10px 20px 10px 10px',
+                        width: '90%',
+                        height: '20%',
+                        margin: 'auto',
+                        position: 'relative', // Keep it relative for positioning the small rectangle
+                        marginTop: '100px', // This ensures no space between the two rectangles
+                        top: '40%'
+                    }}
+                >
+                <div style={{ marginRight: '30px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <div style={{ width: '830px' }}><SearchAndFilter /></div>
+                    <button
+                        onClick={handleCreateNewDepartment}
+                        style={{
+                            backgroundColor: '#FAD32E',
+                            color: 'white',
+                            fontWeight: '900',
+                            padding: '12px 18px',
+                            borderRadius: '10px',
+                            cursor: 'pointer',
+                            display: 'flex',
+                            alignItems: 'center'
+                        }}
+                    >
+                        Add Department
+                        <FaPlus style={{ marginLeft: '10px' }} />
+                    </button>
+                </div>
+                
+
+                {/* Departments Table */}
+                <div>
+                    <table
+                        className="table table-hover table-bordered"
+                        style={{ marginTop: '10px', marginBottom: '20px', marginLeft: '50px', width: '90%' }}
+                    >
+                        <thead style={{ backgroundColor: '#FAD32E', textAlign: 'center' }}>
+                            <tr>
+                                <th style={{ width: '5%' }}>ID</th>
+                                <th style={{ width: '20%' }}>Department Code</th>
+                                <th>Department Name</th>
+                                <th style={{ width: '15%' }}>Status</th>
+                                <th style={{ width: '10%' }}>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody style={{ textAlign: 'center' }}>
+                            {departments.map((department) => (
+                                <tr key={department.department_id}>
+                                    <td style={{ textAlign: 'center' }}>{department.department_id}</td>
+                                    <td>{department.department_code}</td>
+                                    <td>{department.department_name}</td>
+                                    <td style={{ textAlign: 'center' }}>{renderStatus(department.status)}</td>
+                                    <td style={{ textAlign: 'center' }}>
+                                        <EditIcon
+                                            onClick={() => handleEditDepartment(department.department_id)}
+                                            style={{ cursor: 'pointer', color: '#007bff', marginRight: '15px' }}
+                                        />
+                                        <DeleteIcon
+                                            onClick={() => handleDeleteDepartment(department.department_id)}
+                                            style={{ cursor: 'pointer', color: '#dc3545' }}
+                                        />
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
+    
+                {/* Add Department Modal */}
+                <AddDepartmentModal
+                    show={showDepartmentModal}
+                    handleClose={handleCloseDepartmentModal}
+                    handleSubmit={handleDepartmentSubmit}
+                    departmentFormData={departmentFormData}
+                    handleChange={handleDepartmentChange}
+                    inputStyle={{ width: '100%' }}
+                    buttonStyle={{ marginTop: '20px', backgroundColor: '#FAD32E', border: 'none' }}
+                />
+    
+                {/* Edit Department Modal */}
+                <EditDepartmentModal
+                    show={showEditModal}
+                    handleClose={() => setShowEditModal(false)}
+                    handleSubmit={handleEditSubmit}
+                    departmentFormData={departmentFormData}
+                    handleChange={handleDepartmentChange}
+                    inputStyle={{ width: '100%' }}
+                    buttonStyle={{ marginTop: '20px', backgroundColor: '#FAD32E', border: 'none' }}
+                />
+            </div>
         </div>
     );
 }
