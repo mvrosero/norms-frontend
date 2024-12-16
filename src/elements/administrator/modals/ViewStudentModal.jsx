@@ -74,7 +74,7 @@ const ViewStudentModal = ({ show, onHide, user, departments, programs }) => {
             {/* Modal Body */}
             <Modal.Body>
                 {user ? (
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', rowGap: '10px', marginLeft: '20px', marginRight: '20px' }}>
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', rowGap: '10px', marginLeft: '60px', marginRight: '20px' }}>
                         <p style={{ fontWeight: 'bold' }}>Student ID Number:</p>
                         <p>{user.student_idnumber}</p>
 

@@ -68,7 +68,7 @@ const ViewEmployeeModal = ({ show, onHide, user, roles }) => {
             {/* Modal Body */}
             <Modal.Body>
                 {user ? (
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', rowGap: '10px', marginLeft: '20px', marginRight: '20px' }}>
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', rowGap: '10px', marginLeft: '60px', marginRight: '10px' }}>
                         <p style={{ fontWeight: 'bold' }}>Employee ID Number:</p>
                         <p>{user.employee_idnumber}</p>
 

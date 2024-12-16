@@ -255,6 +255,7 @@ const BatchArchivesToolbar = ({ selectedItemsCount, onDelete, selectedStudentIds
                       name="year_level"
                       value={yearLevel}
                       onChange={(e) => setYearLevel(e.target.value)}
+                      style={{ backgroundColor: '#f2f2f2', border: '1px solid #ced4da'}}
                     >
                       <option value="">Select Year Level</option>
                       <option value="First Year">First Year</option>
@@ -272,6 +273,7 @@ const BatchArchivesToolbar = ({ selectedItemsCount, onDelete, selectedStudentIds
                     name="status"
                     value={status}
                     onChange={(e) => setStatus(e.target.value)}
+                    style={{ backgroundColor: '#f2f2f2', border: '1px solid #ced4da'}}
                   >
                     <option value="">Select Status</option>
                     <option value="active">Active</option>
@@ -289,6 +291,7 @@ const BatchArchivesToolbar = ({ selectedItemsCount, onDelete, selectedStudentIds
                     as="select"
                     value={departmentId}
                     onChange={(e) => setDepartmentId(e.target.value)}
+                    style={{ backgroundColor: '#f2f2f2', border: '1px solid #ced4da'}}
                   >
                     <option value="">Select Department</option>
                     {departments.map((department) => (
@@ -307,6 +310,7 @@ const BatchArchivesToolbar = ({ selectedItemsCount, onDelete, selectedStudentIds
                     as="select"
                     value={programId}
                     onChange={(e) => setProgramId(e.target.value)}
+                    style={{ backgroundColor: '#f2f2f2', border: '1px solid #ced4da'}}
                     disabled={!departmentId} // Disable if no department is selected
                   >
                     <option value="" disabled>Select Program</option>
@@ -319,7 +323,7 @@ const BatchArchivesToolbar = ({ selectedItemsCount, onDelete, selectedStudentIds
                 </Form.Group>
                 </Row>
                   {/* Buttons */}
-                  <div className="d-flex justify-content-end mt-3">
+                  <div className="d-flex justify-content-end mt-3" style={{ marginLeft: '30px', marginRight: '30px' }}>
                       <button
                           type="button"
                           onClick={handleCancel} // Trigger the handleCancel function

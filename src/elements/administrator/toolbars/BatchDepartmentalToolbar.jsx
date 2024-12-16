@@ -244,7 +244,7 @@ const BatchDepartmentalToolbar = ({ selectedItemsCount, selectedStudentIds }) =>
               {successMessage && <div className="alert alert-success">{successMessage}</div>}
               <Form onSubmit={handleSubmit}>
 
-              <Row className="gy-4">
+              <Row className="gy-4" style={{ marginLeft: '20px', marginRight: '20px' }}>
                 <Col md={6}>
                   <Form.Group controlId="year_level">
                     <Form.Label className="fw-bold">Year Level</Form.Label>
@@ -252,6 +252,7 @@ const BatchDepartmentalToolbar = ({ selectedItemsCount, selectedStudentIds }) =>
                       name="year_level"
                       value={yearLevel}
                       onChange={(e) => setYearLevel(e.target.value)}
+                      style={{ backgroundColor: '#f2f2f2', border: '1px solid #ced4da'}}
                     >
                       <option value="">Select Year Level</option>
                       <option value="First Year">First Year</option>
@@ -269,6 +270,7 @@ const BatchDepartmentalToolbar = ({ selectedItemsCount, selectedStudentIds }) =>
                     name="status"
                     value={status}
                     onChange={(e) => setStatus(e.target.value)}
+                    style={{ backgroundColor: '#f2f2f2', border: '1px solid #ced4da'}}
                   >
                     <option value="">Select Status</option>
                     <option value="active">Active</option>
@@ -279,13 +281,14 @@ const BatchDepartmentalToolbar = ({ selectedItemsCount, selectedStudentIds }) =>
                 </Col>
               </Row>
 
-              <Row className="gy-4">
+              <Row className="gy-4" style={{ marginLeft: '20px', marginRight: '20px' }}>
                 <Form.Group controlId="department_id">
                   <Form.Label className="fw-bold" style={{ marginTop: '20px' }}>Department</Form.Label>
                   <Form.Control
                     as="select"
                     value={departmentId}
                     onChange={(e) => setDepartmentId(e.target.value)}
+                    style={{ backgroundColor: '#f2f2f2', border: '1px solid #ced4da'}}
                   >
                     <option value="">Select Department</option>
                     {departments.map((department) => (
@@ -297,13 +300,14 @@ const BatchDepartmentalToolbar = ({ selectedItemsCount, selectedStudentIds }) =>
                 </Form.Group>
               </Row>
 
-              <Row className="gy-4">
+              <Row className="gy-4" style={{ marginLeft: '20px', marginRight: '20px' }}>
               <Form.Group controlId="program_id" style={{ marginBottom: '20px' }} >
                   <Form.Label className="fw-bold" style={{ marginTop: '20px' }}>Program</Form.Label>
                   <Form.Control
                     as="select"
                     value={programId}
                     onChange={(e) => setProgramId(e.target.value)}
+                    style={{ backgroundColor: '#f2f2f2', border: '1px solid #ced4da'}}
                     disabled={!departmentId} // Disable if no department is selected
                   >
                     <option value="" disabled>Select Program</option>
@@ -316,7 +320,7 @@ const BatchDepartmentalToolbar = ({ selectedItemsCount, selectedStudentIds }) =>
                 </Form.Group>
                 </Row>
                   {/* Buttons */}
-                  <div className="d-flex justify-content-end mt-3">
+                  <div className="d-flex justify-content-end mt-3" style={{ marginLeft: '30px', marginRight: '30px' }}>
                       <button
                           type="button"
                           onClick={handleCancel} // Trigger the handleCancel function

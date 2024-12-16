@@ -209,7 +209,7 @@ const BatchEmployeesToolbar = ({ selectedItemsCount, selectedEmployeeIds, onDele
           {error && <div className="alert alert-danger">{error}</div>}
           {successMessage && <div className="alert alert-success">{successMessage}</div>}
           <Form onSubmit={handleSubmit}>
-                <Row className="gy-4">
+                <Row className="gy-4" style={{ marginLeft: '20px', marginRight: '20px' }}>
                   <Col md={6}>
                     <Form.Group controlId="role_id">
                       <Form.Label className="fw-bold">Role</Form.Label>
@@ -217,6 +217,7 @@ const BatchEmployeesToolbar = ({ selectedItemsCount, selectedEmployeeIds, onDele
                         name="role_id"
                         value={roleId}
                         onChange={(e) => setRoleId(e.target.value)}
+                        style={{ backgroundColor: '#f2f2f2', border: '1px solid #ced4da'}}
                       >
                         <option value="">Select Role</option>
                         {roles.map((role) => (
@@ -237,6 +238,7 @@ const BatchEmployeesToolbar = ({ selectedItemsCount, selectedEmployeeIds, onDele
                         name="status"
                         value={status}
                         onChange={(e) => setStatus(e.target.value)}
+                        style={{ backgroundColor: '#f2f2f2', border: '1px solid #ced4da'}}
                       >
                         <option value="">Select Status</option>
                         <option value="Active">Active</option>
@@ -246,7 +248,7 @@ const BatchEmployeesToolbar = ({ selectedItemsCount, selectedEmployeeIds, onDele
                   </Col>
                 </Row>      
                   {/* Buttons */}
-                  <div className="d-flex justify-content-end mt-3">
+                  <div className="d-flex justify-content-end mt-3" style={{ marginLeft: '30px', marginRight: '30px' }}>
                       <button
                           type="button"
                           onClick={handleCancel} // Trigger the handleCancel function

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Swal from 'sweetalert2';
 import { Modal, Button, Form, Row, Col } from 'react-bootstrap';
+import { FaEye, FaEyeSlash } from 'react-icons/fa';
 
 const EditStudentModal = ({ user, show, onHide, fetchUsers, headers, departments }) => {
     const [errors, setErrors] = useState({});
@@ -22,6 +23,12 @@ const EditStudentModal = ({ user, show, onHide, fetchUsers, headers, departments
     });
 
     const [filteredPrograms, setFilteredPrograms] = useState([]);
+    const [isPasswordVisible, setIsPasswordVisible] = useState(false);  // State to toggle password visibility
+
+    // Toggle password visibility
+    const togglePasswordVisibility = () => {
+        setIsPasswordVisible(!isPasswordVisible);
+    };
     
     useEffect(() => {
         if (formData.department_id) {
@@ -29,11 +36,11 @@ const EditStudentModal = ({ user, show, onHide, fetchUsers, headers, departments
             axios
                 .get(`http://localhost:9000/programs/${formData.department_id}`)
                 .then((response) => {
-                    setFilteredPrograms(response.data); // Set the filtered programs
+                    setFilteredPrograms(response.data); 
                 })
                 .catch((error) => {
                     console.error('Error fetching programs:', error);
-                    setFilteredPrograms([]); // Reset programs on error
+                    setFilteredPrograms([]); 
                 });
         }
     }, [formData.department_id]);
@@ -76,89 +83,83 @@ const EditStudentModal = ({ user, show, onHide, fetchUsers, headers, departments
         if (name === 'student_idnumber') {
             const idFormat = /^\d{2}-\d{5}$/; // Matches "00-00000" format
             if (!idFormat.test(value)) {
-                newErrors.student_idnumber = 'Student ID should follow the format "00-00000".';
+                newErrors.student_idnumber = 'Student ID format should be "00-00000".     Note: This action cannot proceed if associated records exist.';
             } else {
                 newErrors.student_idnumber = '';
             }
         }
 
-        // Add other field validations here...
+        // Validate First Name
+        if (name === 'first_name') {
+            const nameFormat = /^[A-Z][a-zA-Z .-]*$/; // Capital letter followed by letters, spaces, dots, or dashes
+            if (!nameFormat.test(value)) {
+                newErrors.first_name = 'First name must start with a capital letter and can contain only letters, spaces, dots, or dashes.';
+            } else {
+                newErrors.first_name = '';
+            }
+        }
 
-        setErrors(newErrors);
-    };
+        // Validate Middle Name
+        if (name === 'middle_name' && value) { // Middle name is optional
+            const nameFormat = /^[A-Z][a-zA-Z .-]*$/; // Capital letter followed by letters, spaces, dots, or dashes
+            if (!nameFormat.test(value)) {
+                newErrors.middle_name = 'Middle name must start with a capital letter and can contain only letters, spaces, dots, or dashes.';
+            } else {
+                newErrors.middle_name = '';
+            }
+        }
+
+        // Validate Last Name
+        if (name === 'last_name') {
+            const nameFormat = /^[A-Z][a-zA-Z .-]*$/; // Capital letter followed by letters, spaces, dots, or dashes
+            if (!nameFormat.test(value)) {
+                newErrors.last_name = 'Last name must start with a capital letter and can contain only letters, spaces, dots, or dashes.';
+            } else {
+                newErrors.last_name = '';
+            }
+        }
+
+        // Validate Suffix
+        if (name === 'suffix' && value) { // Suffix is optional
+            const nameFormat = /^[A-Z][a-zA-Z .-]*$/; // Capital letter followed by letters, spaces, dots, or dashes
+            if (!nameFormat.test(value)) {
+                newErrors.suffix = 'Suffix must start with a capital letter and can contain only letters, spaces, dots, or dashes.';
+            } else {
+                newErrors.suffix = '';
+            }
+        }
+
+        // Validate Email
+        if (name === 'email') {
+            const emailFormat = /^[a-zA-Z0-9._%+-]+@gbox\.ncf\.edu\.ph$/; // Must end with "@gbox.ncf.edu.ph"
+            if (!emailFormat.test(value)) {
+                newErrors.email = 'Email must end with "@gbox.ncf.edu.ph".';
+            } else {
+                newErrors.email = '';
+            }
+        }
+
+        // Validate Password Length
+        if (name === 'password' && value) {
+            if (value.length < 3) {
+                newErrors.password = 'Password must be at least 3 characters long.';
+            } else {
+                newErrors.password = '';
+            }
+        }
+
+            setErrors(newErrors);
+        };
 
 
     const handleSubmit = (e) => {
         e.preventDefault();
-    
-
-    
-        // Validate names to start with a capital letter and allow letters, spaces, dashes, and dots
-        const nameFormat = /^[A-Z][a-zA-Z .-]*$/; // Capital letter followed by letters, spaces, dots, or dashes
-        if (!nameFormat.test(formData.first_name)) {
-            Swal.fire({
-                icon: 'error',
-                title: 'Invalid First Name',
-                text: 'First name must start with a capital letter and can contain only letters, spaces, dots, or dashes.',
-            });
-            return;
-        }
-        if (formData.middle_name && !nameFormat.test(formData.middle_name)) { // Middle name is optional
-            Swal.fire({
-                icon: 'error',
-                title: 'Invalid Middle Name',
-                text: 'Middle name must start with a capital letter and can contain only letters, spaces, dots, or dashes.',
-            });
-            return;
-        }
-        if (!nameFormat.test(formData.last_name)) {
-            Swal.fire({
-                icon: 'error',
-                title: 'Invalid Last Name',
-                text: 'Last name must start with a capital letter and can contain only letters, spaces, dots, or dashes.',
-            });
-            return;
-        }
-        if (formData.suffix && !nameFormat.test(formData.suffix)) { // Suffix is optional
-            Swal.fire({
-                icon: 'error',
-                title: 'Invalid Suffix',
-                text: 'Suffix must start with a capital letter and can contain only letters, spaces, dots, or dashes.',
-            });
-            return;
-        }
-    
-        // Validate email to end with "@gbox.ncf.edu.ph"
-        const emailFormat = /^[a-zA-Z0-9._%+-]+@gbox\.ncf\.edu\.ph$/;
-        if (!emailFormat.test(formData.email)) {
-            Swal.fire({
-                icon: 'error',
-                title: 'Invalid Email',
-                text: 'Email must end with "@gbox.ncf.edu.ph".',
-            });
-            return;
-        }
-    
-        // Validate password length
-        if (formData.password && formData.password.length < 3) {
-            Swal.fire({
-                icon: 'error',
-                title: 'Invalid Password',
-                text: 'Password must be at least 3 characters long.',
-            });
-            return;
-        }
-    
-        // If all validations pass, proceed with form submission
-        // Add your form submission logic here, for example:
         try {
-            // Simulate a successful submission (e.g., API call or form submission)
             Swal.fire({
                 icon: 'success',
                 title: 'Form Submitted',
                 text: 'Student details have been successfully updated.',
             });
-            // You can proceed with sending data to your backend here
         } catch (error) {
             Swal.fire({
                 icon: 'error',
@@ -168,8 +169,7 @@ const EditStudentModal = ({ user, show, onHide, fetchUsers, headers, departments
         }
     
     
-    
-     // Basic form validation
+// Basic form validation
 if (!formData.student_idnumber || !formData.first_name || !formData.last_name || !formData.email || !formData.year_level || !formData.batch || !formData.department_id || !formData.program_id) {
     let missingFields = [];
 
@@ -191,7 +191,6 @@ if (!formData.student_idnumber || !formData.first_name || !formData.last_name ||
     });
     return;
 }
-
         Swal.fire({
             title: 'Are you sure?',
             text: 'You are about to update this student’s details.',
@@ -248,17 +247,18 @@ if (!formData.student_idnumber || !formData.first_name || !formData.last_name ||
             confirmButtonText: 'Yes, close it!',
         }).then((result) => {
             if (result.isConfirmed) {
-                onHide(); // This will execute when the user confirms the cancel action
+                onHide(); 
             }
         });
     };
+    
 
     // Generate the batch options from 2018 to 2030
     const batchYears = [];
     for (let year = 2018; year <= 2030; year++) {
         batchYears.push(year);
     }
-
+    // Date and time format
     const formatDateForInput = (date) => {
         const newDate = new Date(date);
         newDate.setMinutes(newDate.getMinutes() - newDate.getTimezoneOffset()); // Adjust for time zone offset
@@ -267,32 +267,31 @@ if (!formData.student_idnumber || !formData.first_name || !formData.last_name ||
 
     const inputStyle = {
         backgroundColor: '#f2f2f2',
-        border: '1px solid #ced4da', // Default border is 1px
+        border: '1px solid #ced4da', 
         borderRadius: '.25rem',
         height: '40px',
         paddingLeft: '10px',
-        transition: 'border-color 0.3s ease', // Smooth transition for border color change
+        transition: 'border-color 0.3s ease', 
     };
     
     // Function to dynamically get input styles based on validation errors
     const getInputStyle = (fieldName, formData, errors) => {
         const baseStyle = {
             ...inputStyle,
-            borderWidth: '3px', // Set the border width to 3px when validating
+            borderWidth: '2px', 
         };
-    
-        if (errors[fieldName]) {
-            return {
-                ...baseStyle,
-                borderColor: 'red', // Error - red border
-            };
-        } else if (formData[fieldName]) {
-            return {
-                ...baseStyle,
-                borderColor: 'green', // Success - green border
-            };
-        }
-        return baseStyle; // Default style with 3px border if no error or input
+            if (errors[fieldName]) {
+                return {
+                    ...baseStyle,
+                    borderColor: 'red', 
+                };
+            } else if (formData[fieldName]) {
+                return {
+                    ...baseStyle,
+                    borderColor: 'green', 
+                };
+            }
+        return baseStyle; 
     };
     
 
@@ -358,31 +357,27 @@ if (!formData.student_idnumber || !formData.first_name || !formData.last_name ||
             <Modal.Body style={{ paddingLeft: '30px', paddingRight: '30px' }}>
             <form onSubmit={handleSubmit}>
             <div>
-            <h5 
-                className="fw-bold" style={{ fontSize: '18px', color: '#0D4809', marginTop: '10px', marginBottom: '20px', fontFamily: 'Poppins, sans-serif', fontWeight: 700 }}>
-                Personal Information
-            </h5>
+                <h5 
+                    className="fw-bold" style={{ fontSize: '18px', color: '#0D4809', marginTop: '10px', marginBottom: '20px', fontFamily: 'Poppins, sans-serif', fontWeight: 700 }}>
+                    Personal Information
+                </h5>
             </div>
+
             <Row className="gy-4">
                 <Col md={6}>
                     <Form.Group controlId="student_idnumber">
                         <Form.Label className="fw-bold">Student ID Number</Form.Label>
-
-
-<Form.Control
-    type="text"
-    name="student_idnumber"
-    value={formData.student_idnumber}
-    onChange={handleChange}  // Your change handler to update formData and validation
-    style={getInputStyle('student_idnumber', formData, errors)} // Dynamic style based on validation
-/>
-{errors.student_idnumber && (
-                    <div style={{ color: 'red', fontSize: '12px' }}>
-                        {errors.student_idnumber}
-                    </div>
-                )}
+                            <Form.Control
+                                type="text"
+                                name="student_idnumber"
+                                value={formData.student_idnumber}
+                                onChange={handleChange}  // Your change handler to update formData and validation
+                                style={getInputStyle('student_idnumber', formData, errors)} // Dynamic style based on validation
+                            />
+                            {errors.student_idnumber && (<div style={{ color: 'red', fontSize: '12px' }}>{errors.student_idnumber}</div>)}
                     </Form.Group>
                 </Col>
+                
                 <Col md={6}>
                 <Form.Group controlId="birthdate">
                     <Form.Label className="fw-bold">Birthdate</Form.Label>
@@ -400,50 +395,54 @@ if (!formData.student_idnumber || !formData.first_name || !formData.last_name ||
                 <Col md={6}>
                     <Form.Group controlId="first_name">
                         <Form.Label className="fw-bold">First Name</Form.Label>
-                        <Form.Control
-                            type="text"
-                            name="first_name"
-                            value={formData.first_name}
-                            onChange={handleChange}
-                            style={inputStyle}
-                        />
+                            <Form.Control
+                                type="text"
+                                name="first_name"
+                                value={formData.first_name}
+                                onChange={handleChange}  
+                                style={getInputStyle('first_name', formData, errors)} 
+                            />
+                            {errors.first_name && (<div style={{ color: 'red', fontSize: '12px' }}>{errors.first_name}</div>)}
                     </Form.Group>
                 </Col>
                 <Col md={6}>
                     <Form.Group controlId="middle_name">
                         <Form.Label className="fw-bold">Middle Name</Form.Label>
-                        <Form.Control
-                            type="text"
-                            name="middle_name"
-                            value={formData.middle_name}
-                            onChange={handleChange}
-                            style={inputStyle}
-                        />
+                            <Form.Control
+                                type="text"
+                                name="middle_name"
+                                value={formData.middle_name}
+                                onChange={handleChange}  
+                                style={getInputStyle('middle_name', formData, errors)} 
+                            />
+                            {errors.middle_name && (<div style={{ color: 'red', fontSize: '12px' }}>{errors.middle_name}</div>)}
                     </Form.Group>
                 </Col>
 
                 <Col md={6}>
                     <Form.Group controlId="last_name">
                         <Form.Label className="fw-bold">Last Name</Form.Label>
-                        <Form.Control
-                            type="text"
-                            name="last_name"
-                            value={formData.last_name}
-                            onChange={handleChange}
-                            style={inputStyle}
-                        />
+                            <Form.Control
+                                type="text"
+                                name="last_name"
+                                value={formData.last_name}
+                                onChange={handleChange}  
+                                style={getInputStyle('last_name', formData, errors)} 
+                            />
+                            {errors.last_name && (<div style={{ color: 'red', fontSize: '12px' }}>{errors.last_name}</div>)}
                     </Form.Group>
                 </Col>
                 <Col md={6}>
                     <Form.Group controlId="suffix">
                         <Form.Label className="fw-bold">Suffix</Form.Label>
-                        <Form.Control
-                            type="text"
-                            name="suffix"
-                            value={formData.suffix}
-                            onChange={handleChange}
-                            style={inputStyle}
-                        />
+                            <Form.Control
+                                type="text"
+                                name="suffix"
+                                value={formData.suffix}
+                                onChange={handleChange}  
+                                style={getInputStyle('suffix', formData, errors)} 
+                            />
+                            {errors.suffix && (<div style={{ color: 'red', fontSize: '12px' }}>{errors.suffix}</div>)}
                     </Form.Group>
                 </Col>
 
@@ -491,44 +490,42 @@ if (!formData.student_idnumber || !formData.first_name || !formData.last_name ||
                 </Col>
 
                 <Col md={6}>
-                            <Form.Group controlId="department_id">
-                                <Form.Label className="fw-bold">Department</Form.Label>
-                                <Form.Select
-                                    name="department_id"
-                                    value={formData.department_id}
-                                    onChange={handleChange}
-                                    style={inputStyle}
-                                >
-                                    {departments.map((department) => (
-                                        <option key={department.department_id} value={department.department_id}>
-                                            {department.department_name}
-                                        </option>
-                                    ))}
-                                </Form.Select>
-                            </Form.Group>
-                        </Col>
+                    <Form.Group controlId="department_id">
+                            <Form.Label className="fw-bold">Department</Form.Label>
+                            <Form.Select
+                                name="department_id"
+                                value={formData.department_id}
+                                onChange={handleChange}
+                                style={inputStyle}
+                            >
+                                {departments.map((department) => (
+                                    <option key={department.department_id} value={department.department_id}>
+                                        {department.department_name}
+                                    </option>
+                                ))}
+                            </Form.Select>
+                        </Form.Group>
+                </Col>
+                <Col md={6}>
+                    <Form.Group controlId="program_id">
+                        <Form.Label className="fw-bold">Program</Form.Label>
+                            <Form.Select
+                                name="program_id"
+                                value={formData.program_id}
+                                onChange={handleChange}
+                                style={inputStyle}
+                            >
+                                <option value="">Select Program</option>
+                                {filteredPrograms.map((program) => (
+                                    <option key={program.program_id} value={program.program_id}>
+                                        {program.program_name}
+                                    </option>
+                                ))}
+                            </Form.Select>
+                    </Form.Group>
+                </Col>
 
-                        <Col md={6}>
-                            <Form.Group controlId="program_id">
-                                <Form.Label className="fw-bold">Program</Form.Label>
-                                <Form.Select
-                                    name="program_id"
-                                    value={formData.program_id}
-                                    onChange={handleChange}
-                                    style={inputStyle}
-                                >
-                                    <option value="">Select Program</option>
-                                    {filteredPrograms.map((program) => (
-                                        <option key={program.program_id} value={program.program_id}>
-                                            {program.program_name}
-                                        </option>
-                                    ))}
-                                </Form.Select>
-                            </Form.Group>
-                        </Col>
-
-
-                <div>
+                 <div>
                     <h5 
                         className="fw-bold" style={{ fontSize: '18px', color: '#0D4809', marginTop: '20px', fontFamily: 'Poppins, sans-serif', fontWeight: 700 }}>
                         Account Information
@@ -539,40 +536,64 @@ if (!formData.student_idnumber || !formData.first_name || !formData.last_name ||
                 <Col md={6}>
                     <Form.Group controlId="email">
                         <Form.Label className="fw-bold">Email Address</Form.Label>
-                        <Form.Control
-                            type="text"
-                            name="email"
-                            value={formData.email}
-                            onChange={handleChange}
-                            style={inputStyle}
-                        />
+                            <Form.Control
+                                type="text"
+                                name="email"
+                                value={formData.email}
+                                onChange={handleChange}  
+                                style={getInputStyle('email', formData, errors)} 
+                            />
+                            {errors.email && (<div style={{ color: 'red', fontSize: '12px' }}>{errors.email}</div>)}
                     </Form.Group>
                 </Col>
                 <Col md={6}>
-                    <Form.Group controlId="password">
-                        <Form.Label className="fw-bold">Password</Form.Label>
-                        <Form.Control
-                            type="password"
-                            name="password"
-                            value={formData.password}
-                            onChange={handleChange}
-                            style={inputStyle}
-                        />
-                    </Form.Group>
-                </Col>
+            <Form.Group controlId="password">
+                <Form.Label className="fw-bold">Password</Form.Label>
+                <div style={{ position: 'relative' }}> {/* Wrapper for field and icon */}
+                    <Form.Control
+                        type={isPasswordVisible ? "text" : "password"} // Toggle between plain text and masked input
+                        name="password"
+                        value={formData.password || ""} // Use formData.password to manage the field's value
+                        onChange={handleChange}
+                        style={{
+                            ...getInputStyle('password', formData, errors),
+                            paddingRight: '2.5rem' // Add space for the eye icon
+                        }}
+                        placeholder="Enter Password"
+                        required
+                    />
+                    <span
+                        onClick={togglePasswordVisibility}
+                        style={{
+                            position: 'absolute',
+                            right: '10px', // Position the icon inside the field, at the rightmost part
+                            top: '50%',
+                            transform: 'translateY(-50%)',
+                            cursor: 'pointer',
+                            color: '#6c757d'
+                        }}
+                    >
+                        {isPasswordVisible ? <FaEyeSlash /> : <FaEye />} {/* Show the appropriate icon */}
+                    </span>
+                </div>
+                {errors.password && (
+                    <div style={{ color: 'red', fontSize: '12px' }}>{errors.password}</div>
+                )}
+            </Form.Group>
+        </Col>
                 <Col md={6}>
                     <Form.Group controlId="status" style={{ marginBottom: '30px' }}>
                         <Form.Label className="fw-bold">Status</Form.Label>
-                        <Form.Select
-                            name="status"
-                            value={formData.status}
-                            onChange={handleChange}
-                            style={inputStyle}
-                        >
-                            <option value="active">Active</option>
-                            <option value="inactive">Inactive</option>
-                            <option value="archived">Archived</option>
-                        </Form.Select>
+                            <Form.Select
+                                name="status"
+                                value={formData.status}
+                                onChange={handleChange}
+                                style={inputStyle}
+                            >
+                                <option value="active">Active</option>
+                                <option value="inactive">Inactive</option>
+                                <option value="archived">Archived</option>
+                            </Form.Select>
                     </Form.Group>
                 </Col>
             </Row>
