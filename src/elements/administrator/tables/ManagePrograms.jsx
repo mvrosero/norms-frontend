@@ -123,41 +123,63 @@ export default function ManagePrograms() {
         }
     };
 
-    const handleEditProgram = (id) => {
-        const program = programs.find(prog => prog.program_id === id);
-        if (program) {
-            setProgramFormData({
-                program_code: program.program_code,
-                program_name: program.program_name,
-                department_id: program.department_id,
-                status: program.status,
-            });
-            setEditProgramId(id);
-            setShowEditModal(true);
-        }
-    };
+    
+const handleEditProgram = (id) => {
+    const program = programs.find(prog => prog.program_id === id);
+    if (program) {
+        setProgramFormData({
+            program_code: program.program_code,
+            program_name: program.program_name,
+            department_name: program.department_name, 
+            status: program.status,
+        });
+        setEditProgramId(id);
+        setShowEditModal(true);
+    }
+};
 
-    const handleEditSubmit = async (e) => {
-        e.preventDefault();
-        try {
-            await axios.put(`http://localhost:9000/program/${editProgramId}`, programFormData, {
-                headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
-            });
-            Swal.fire({
-                icon: 'success',
-                title: 'Program Updated Successfully!',
-                text: 'The program has been updated successfully.',
-            });
-            setShowEditModal(false);
-            fetchPrograms();
-        } catch (error) {
-            Swal.fire({
-                icon: 'error',
-                title: 'Oops...',
-                text: 'An error occurred while updating the program. Please try again later!',
-            });
-        }
-    };
+
+const handleEditSubmit = async (e) => {
+    e.preventDefault();
+
+    try {
+        // Prepare the data to send to the server
+        const payload = {
+            program_code: programFormData.program_code,
+            program_name: programFormData.program_name,
+            department_name: programFormData.department_name,
+            status: programFormData.status,
+        };
+
+        // Make the PUT request
+        await axios.put(`http://localhost:9000/program/${editProgramId}`, payload, {
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                'Content-Type': 'application/json', // Explicitly set content type
+            },
+        });
+
+        // Show success message
+        Swal.fire({
+            icon: 'success',
+            title: 'Program Updated Successfully!',
+            text: 'The program has been updated successfully.',
+        });
+
+        // Close modal and refresh program list
+        setShowEditModal(false);
+        fetchPrograms();
+    } catch (error) {
+        // Log the error and show an error message
+        console.error("Error updating program:", error.response || error.message);
+        Swal.fire({
+            icon: 'error',
+            title: 'Oops...',
+            text: 'An error occurred while updating the program. Please try again later!',
+        });
+    }
+};
+
 
     const handleDeleteProgram = (id) => {
         Swal.fire({
@@ -302,7 +324,7 @@ export default function ManagePrograms() {
                 </div>
 
                 {/* Search and Add Button */}
-                <div style={{  marginLeft: '30px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <div style={{  marginTop: '10px', marginLeft: '30px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                     <div style={{ width: '850px' }}><SearchAndFilter /></div>
                     <button
                         onClick={handleCreateNewProgram}
@@ -327,7 +349,6 @@ export default function ManagePrograms() {
                     <table
                         className="table table-hover table-bordered"
                         style={{
-                            marginTop: '10px',
                             marginBottom: '20px',
                             textAlign: 'center',
                             backgroundColor: 'white',
@@ -442,6 +463,7 @@ export default function ManagePrograms() {
                 handleSubmit={handleEditSubmit} 
                 programFormData={programFormData}
                 handleChange={handleProgramChange} 
+                departments={departments}
             />
         </div>
     );
