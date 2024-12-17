@@ -1,84 +1,185 @@
-// AcademicYearModal.js
-import React from 'react';
-import { Modal, Form, Button } from 'react-bootstrap';
+import React, { useState } from 'react';
+import { Modal, Form, Button, Row } from 'react-bootstrap';
 
-export default function AcademicYearModal({
-    show,
-    handleClose,
-    handleSubmit,
-    formData,
-    handleChange,
-    editMode,
-}) {
-    const inputStyle = {
-        backgroundColor: '#f2f2f2',
-        border: '1px solid #ced4da',
-        borderRadius: '.25rem',
-        height: '40px',
-        width: '100%'
-    };
+const inputStyle = {
+    backgroundColor: '#f2f2f2',
+    border: '1px solid #ced4da',
+    borderRadius: '.25rem',
+    marginBottom: '20px',
+    height: '40px',
+    paddingLeft: '10px',
+    transition: 'border-color 0.3s ease, background-color 0.3s ease',
+};
+
+const activeInputStyle = {
+    ...inputStyle,
+    borderColor: '#FAD32E',
+    border: '2px solid',
+};
+
+const buttonStyle = {
+    backgroundColor: '#FAD32E',
+    color: '#FFFFFF',
+    fontSize: '16px',
+    fontWeight: '900',
+    padding: '8px 34px',
+    border: 'none',
+    borderRadius: '10px',
+    cursor: 'pointer',
+    marginLeft: '10px',
+    display: 'flex',
+    alignItems: 'center',
+    boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
+};
+
+const cancelButtonStyle = {
+    backgroundColor: '#8C8C8C',
+    color: '#FFFFFF',
+    fontSize: '16px',
+    fontWeight: '900',
+    padding: '8px 25px',
+    border: 'none',
+    borderRadius: '10px',
+    cursor: 'pointer',
+    display: 'flex',
+    alignItems: 'center',
+    boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
+};
+
+const AddAcademicYearModal = ({ show, handleClose, handleSubmit, formData, handleChange }) => {
+    const [activeField, setActiveField] = useState(null);
+
+    const handleFocus = (field) => setActiveField(field);
+    const handleBlur = () => setActiveField(null);
 
     return (
-        <Modal show={show} onHide={handleClose}>
-            <Modal.Header closeButton>
-                <Modal.Title>{editMode ? 'Edit Academic Year' : 'Add Academic Year'}</Modal.Title>
+        <Modal show={show} onHide={handleClose} backdrop="static">
+            <Modal.Header>
+                <Button
+                    variant="link"
+                    onClick={handleClose}
+                    style={{
+                        position: 'absolute',
+                        top: '5px',
+                        right: '20px',
+                        textDecoration: 'none',
+                        fontSize: '30px',
+                        color: '#a9a9a9',
+                    }}
+                >
+                    ×
+                </Button>
+                <Modal.Title
+                    style={{
+                        fontSize: '30px',
+                        marginLeft: '40px',
+                        marginRight: '40px',
+                    }}
+                >
+                    ADD ACADEMIC YEAR
+                </Modal.Title>
             </Modal.Header>
             <Modal.Body>
                 <Form onSubmit={handleSubmit}>
-                    <Form.Group className="mb-3">
-                        <Form.Label>Academic Year Code</Form.Label>
-                        <Form.Control
-                            type="text"
-                            name="acadyear_code"
-                            value={formData.acadyear_code}
-                            onChange={handleChange}
-                            placeholder="Enter academic year code"
-                            style={inputStyle}
-                            required
-                        />
-                    </Form.Group>
-                    <Form.Group className="mb-3">
-                        <Form.Label>Start Year</Form.Label>
-                        <Form.Control
-                            type="number"
-                            name="start_year"
-                            value={formData.start_year}
-                            onChange={handleChange}
-                            placeholder="Enter start year"
-                            style={inputStyle}
-                            required
-                        />
-                    </Form.Group>
-                    <Form.Group className="mb-3">
-                        <Form.Label>End Year</Form.Label>
-                        <Form.Control
-                            type="number"
-                            name="end_year"
-                            value={formData.end_year}
-                            onChange={handleChange}
-                            placeholder="Enter end year"
-                            style={inputStyle}
-                            required
-                        />
-                    </Form.Group>
-                    <Form.Group className="mb-3">
-                        <Form.Label>Status</Form.Label>
-                        <Form.Control
-                            as="select"
-                            name="status"
-                            value={formData.status}
-                            onChange={handleChange}
-                            style={inputStyle}
+                    <Row className="gy-4">
+                        <Form.Group controlId="acadyear_code">
+                            <Form.Label className="fw-bold">Academic Year Code</Form.Label>
+                            <Form.Control
+                                type="text"
+                                name="acadyear_code"
+                                value={formData.acadyear_code}
+                                onChange={handleChange}
+                                onFocus={() => handleFocus('acadyear_code')}
+                                onBlur={handleBlur}
+                                style={
+                                    activeField === 'acadyear_code'
+                                        ? activeInputStyle
+                                        : inputStyle
+                                }
+                                required
+                            />
+                        </Form.Group>
+                    </Row>
+                    <Row className="gy-4">
+                        <Form.Group controlId="start_year">
+                            <Form.Label className="fw-bold">Start Year</Form.Label>
+                            <Form.Control
+                                type="number"
+                                name="start_year"
+                                value={formData.start_year}
+                                onChange={handleChange}
+                                onFocus={() => handleFocus('start_year')}
+                                onBlur={handleBlur}
+                                style={
+                                    activeField === 'start_year'
+                                        ? activeInputStyle
+                                        : inputStyle
+                                }
+                                required
+                            />
+                        </Form.Group>
+                    </Row>
+                    <Row className="gy-4">
+                        <Form.Group controlId="end_year">
+                            <Form.Label className="fw-bold">End Year</Form.Label>
+                            <Form.Control
+                                type="number"
+                                name="end_year"
+                                value={formData.end_year}
+                                onChange={handleChange}
+                                onFocus={() => handleFocus('end_year')}
+                                onBlur={handleBlur}
+                                style={
+                                    activeField === 'end_year'
+                                        ? activeInputStyle
+                                        : inputStyle
+                                }
+                                required
+                            />
+                        </Form.Group>
+                    </Row>
+                    <Row className="gy-4">
+                        <Form.Group controlId="status">
+                            <Form.Label className="fw-bold">Status</Form.Label>
+                            <Form.Control
+                                as="select"
+                                name="status"
+                                value={formData.status}
+                                onChange={handleChange}
+                                onFocus={() => handleFocus('status')}
+                                onBlur={handleBlur}
+                                style={
+                                    activeField === 'status'
+                                        ? activeInputStyle
+                                        : inputStyle
+                                }
+                                required
+                            >
+                                <option disabled value="">
+                                    Select Status
+                                </option>
+                                <option value="active">Active</option>
+                                <option value="inactive">Inactive</option>
+                            </Form.Control>
+                        </Form.Group>
+                    </Row>
+                    {/* Buttons */}
+                    <div className="d-flex justify-content-end mt-3">
+                        <Button
+                            type="button"
+                            onClick={handleClose}
+                            style={cancelButtonStyle}
                         >
-                            <option value="active">Active</option>
-                            <option value="inactive">Inactive</option>
-                        </Form.Control>
-                    </Form.Group>
-                    <Button type="submit" variant="primary">
-                        {editMode ? 'Update Academic Year' : 'Add Academic Year'}
-                    </Button>
+                            Cancel
+                        </Button>
+                        <Button type="submit" style={buttonStyle}>
+                            Save
+                        </Button>
+                    </div>
                 </Form>
             </Modal.Body>
         </Modal>
     );
-}
+};
+
+export default AddAcademicYearModal;

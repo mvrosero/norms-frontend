@@ -1,12 +1,11 @@
-// EditAcademicYearModal.jsx
 import React from 'react';
 import { Modal, Button } from 'react-bootstrap';
 
-const EditAcademicYearModal = ({ show, handleClose, handleSubmit, formData, handleChange, editMode }) => {
+const EditAcademicYearModal = ({ show, handleClose, handleSubmit, formData, handleChange }) => {
     return (
         <Modal show={show} onHide={handleClose}>
             <Modal.Header closeButton>
-                <Modal.Title>{editMode ? 'Edit Academic Year' : 'Add Academic Year'}</Modal.Title>
+                <Modal.Title>Edit Academic Year</Modal.Title>
             </Modal.Header>
             <Modal.Body>
                 <form onSubmit={handleSubmit}>
@@ -56,7 +55,7 @@ const EditAcademicYearModal = ({ show, handleClose, handleSubmit, formData, hand
                         </select>
                     </div>
                     <Button type="submit" className="btn btn-primary">
-                        {editMode ? 'Update' : 'Add'} Academic Year
+                        Academic Year
                     </Button>
                 </form>
             </Modal.Body>

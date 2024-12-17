@@ -139,7 +139,7 @@ const ArchivesTable = () => {
       const handleBatchDelete = async () => {
         const isConfirm = await Swal.fire({
             title: 'Are you sure?',
-            text: "You won't be able to revert this!",
+            text: 'Are you sure you want to delete these users? Deleting these users will also affect all associated data.',
             icon: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#3085d6',
@@ -338,11 +338,10 @@ const ArchivesTable = () => {
                                         </Button>
                                         <Button className='btn btn-success btn-sm' onClick={() => handleUpdateModalShow(user)}>
                                             <EditIcon />
+                                        </Button>      
+                                        <Button className="btn btn-danger btn-sm" onClick={() => deleteUser(user.user_id)}>
+                                          <DeleteIcon />
                                         </Button>
-                          
-                  <Button className="btn btn-danger btn-sm" onClick={() => deleteUser(user.user_id)}>
-                    <DeleteIcon />
-                  </Button>
                                     </div>
                                 </td>
                             </tr>

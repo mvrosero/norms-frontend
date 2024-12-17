@@ -183,8 +183,8 @@ const handleEditSubmit = async (e) => {
 
     const handleDeleteProgram = (id) => {
         Swal.fire({
-            title: 'Are you sure?',
-            text: "You won't be able to revert this!",
+            title: 'Confirm Delete',
+            text: 'Are you sure you want to delete this program? Deleting this program will also affect all associated data.',
             icon: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#3085d6',

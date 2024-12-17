@@ -101,17 +101,18 @@ export default function ManageDepartments() {
     const handleDeleteDepartment = (id) => {
         Swal.fire({
             title: 'Confirm Delete',
-            text: 'Are you sure you want to delete this department?',
+            text: 'Are you sure you want to delete this department? Deleting this department will also affect all associated data.',
             icon: 'warning',
             showCancelButton: true,
             confirmButtonText: 'Delete',
+            cancelButtonText: 'Cancel'
         }).then(async (result) => {
             if (result.isConfirmed) {
                 try {
                     await axios.delete(`http://localhost:9000/department/${id}`, {
                         headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
                     });
-                    Swal.fire('Deleted', 'Department has been deleted', 'success');
+                    Swal.fire('Deleted', 'Department has been deleted and associated data is affected', 'success');
                     fetchDepartments();
                 } catch (error) {
                     Swal.fire('Error', 'Failed to delete department', 'error');
@@ -119,6 +120,7 @@ export default function ManageDepartments() {
             }
         });
     };
+    
 
     if (loading) return <p>Loading...</p>;
     if (error) return <p>{error}</p>;
