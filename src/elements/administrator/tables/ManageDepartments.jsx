@@ -221,7 +221,7 @@ return (
                     >
                         <thead style={{ backgroundColor: '#FAD32E', textAlign: 'center' }}>
                             <tr>
-                                <th style={{ width: '5%' }}>ID</th>
+                                <th style={{ width: '5%'}}>No.</th>
                                 <th style={{ width: '20%' }}>Department Code</th>
                                 <th>Department Name</th>
                                 <th style={{ width: '15%' }}>Status</th>
@@ -229,9 +229,9 @@ return (
                             </tr>
                         </thead>
                         <tbody>
-                            {departments.map((department) => (
+                            {departments.map((department, index) => (
                                 <tr key={department.department_id}>
-                                    <td style={{ textAlign: 'center' }}>{department.department_id}</td>
+                                    <td style={{ textAlign: 'center' }}>{index + 1}</td>
                                     <td style={{ textAlign: 'center' }}>{department.department_code}</td>
                                     <td>{department.department_name}</td>
                                     <td style={{ textAlign: 'center' }}>{renderStatus(department.status)}</td>

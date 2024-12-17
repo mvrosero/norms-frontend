@@ -11,13 +11,14 @@ import AdminNavigation from '../../../pages/administrator/AdminNavigation';
 import AdminInfo from '../../../pages/administrator/AdminInfo';
 import SearchAndFilter from '../../../pages/general/SearchAndFilter';
 
-import AddDProgramModal from '../../../elements/administrator/modals/AddProgramModal';
+import AddProgramModal from '../../../elements/administrator/modals/AddProgramModal';
 import EditProgramModal from '../../../elements/administrator/modals/EditProgramModal';
 import folderBackground from '../../../components/images/folder_background.png';
 
 export default function ManagePrograms() {
     const navigate = useNavigate();
     const [programs, setPrograms] = useState([]);
+    const [departments, setDepartments] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [showProgramModal, setShowProgramModal] = useState(false);
@@ -26,6 +27,7 @@ export default function ManagePrograms() {
         program_code: '',
         program_name: '',
         department_id: '',
+        department_name: '',
         status: '',
     });
     const [editProgramId, setEditProgramId] = useState(null);
@@ -39,6 +41,8 @@ export default function ManagePrograms() {
         const roleId = localStorage.getItem('role_id');
         if (!token || roleId !== '1') {
             navigate('/unauthorized');
+        } else {
+            fetchDepartments(); 
         }
     }, [navigate]);
 
@@ -55,6 +59,19 @@ export default function ManagePrograms() {
             setLoading(false);
         } catch (error) {
             setError('Failed to fetch programs');
+            setLoading(false);
+        }
+    };
+
+    const fetchDepartments = async () => {
+        try {
+            const response = await axios.get('http://localhost:9000/departments', {
+                headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+            });
+            setDepartments(response.data);
+            setLoading(false);
+        } catch (error) {
+            setError('Failed to fetch departments');
             setLoading(false);
         }
     };
@@ -318,18 +335,18 @@ export default function ManagePrograms() {
                     >
                     <thead style={{ backgroundColor: '#FAD32E', textAlign: 'center' }}>
                         <tr>
-                            <th style={{ width: '5%'}}>ID</th>
+                            <th style={{ width: '5%'}}>No.</th>
                             <th style={{ width: '10%' }}>Code</th>
                             <th>Program Name</th>
                             <th style={{ width: '25%' }}>Department</th>
                             <th style={{ width: '13%' }}>Status</th>
-                            <th style={{width: '8%'}}>Actions</th>
+                            <th style={{width: '10%'}}>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
                         {currentPrograms.map((program, index) => (
                             <tr key={program.program_id} style={{ backgroundColor: index % 2 === 0 ? 'white' : '#f2f2f2' }}>
-                                <td style={{ textAlign: 'center' }}>{program.program_id}</td>
+                                <td style={{ textAlign: 'center' }}>{ (currentPage - 1) * programsPerPage + (index + 1) }</td>
                                 <td>{program.program_code}</td>
                                 <td>{program.program_name}</td>
                                 <td>{program.department_name}</td>
@@ -337,7 +354,7 @@ export default function ManagePrograms() {
                                 <td style={{ textAlign: 'center' }}>
                                         <EditIcon
                                             onClick={() => handleEditProgram(program.program_id)}
-                                            style={{ cursor: 'pointer', color: '#007bff', marginRight: '15px' }}
+                                            style={{ cursor: 'pointer', color: '#007bff', marginRight: '10px' }}
                                         />
                                         <DeleteIcon
                                             onClick={() => handleDeleteProgram(program.program_id)}
@@ -409,14 +426,13 @@ export default function ManagePrograms() {
         </div>
             
             {/* Add Program Modal */}
-            <AddDProgramModal 
+            <AddProgramModal 
                 show={showProgramModal} 
                 handleClose={handleCloseProgramModal} 
                 handleSubmit={handleProgramSubmit} 
                 programFormData={programFormData}
-                handleChange={handleProgramChange}
-                inputStyle={{ width: '100%' }} 
-                buttonStyle={{ marginTop: '20px', backgroundColor: '#FAD32E', border: 'none' }} 
+                handleChange={handleProgramChange} 
+                departments={departments}
             />
 
             {/* Edit Program Modal */}
@@ -425,9 +441,7 @@ export default function ManagePrograms() {
                 handleClose={() => setShowEditModal(false)} 
                 handleSubmit={handleEditSubmit} 
                 programFormData={programFormData}
-                handleChange={handleProgramChange}
-                inputStyle={{ width: '100%' }} 
-                buttonStyle={{ marginTop: '20px', backgroundColor: '#FAD32E', border: 'none' }} 
+                handleChange={handleProgramChange} 
             />
         </div>
     );
