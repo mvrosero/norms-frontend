@@ -120,7 +120,7 @@ export default function ManageAcademicYears() {
     const handleDelete = async (id) => {
         Swal.fire({
             title: 'Confirm Delete',
-            text: "'Are you sure you want to delete this academic year? Deleting this academic year will also affect all associated data.'",
+            text: "Are you sure you want to delete this academic year? Deleting this academic year will also affect all associated data.",
             icon: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#3085d6',

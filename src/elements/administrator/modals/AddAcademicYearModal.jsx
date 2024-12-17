@@ -87,6 +87,7 @@ const AddAcademicYearModal = ({ show, handleClose, handleSubmit, formData, handl
                             <Form.Control
                                 type="text"
                                 name="acadyear_code"
+                                placeholder="A/Y 00-00"
                                 value={formData.acadyear_code}
                                 onChange={handleChange}
                                 onFocus={() => handleFocus('acadyear_code')}
@@ -106,6 +107,7 @@ const AddAcademicYearModal = ({ show, handleClose, handleSubmit, formData, handl
                             <Form.Control
                                 type="number"
                                 name="start_year"
+                                placeholder="YYYY"
                                 value={formData.start_year}
                                 onChange={handleChange}
                                 onFocus={() => handleFocus('start_year')}
@@ -125,6 +127,7 @@ const AddAcademicYearModal = ({ show, handleClose, handleSubmit, formData, handl
                             <Form.Control
                                 type="number"
                                 name="end_year"
+                                placeholder="YYYY"
                                 value={formData.end_year}
                                 onChange={handleChange}
                                 onFocus={() => handleFocus('end_year')}
