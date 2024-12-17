@@ -46,13 +46,7 @@ const cancelButtonStyle = {
     boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
 };
 
-export default function AddDepartmentModal({
-    show,
-    handleClose,
-    handleSubmit,
-    departmentFormData,
-    handleChange,
-}) {
+export default function AddDepartmentModal({show, handleClose, handleSubmit, departmentFormData, handleChange,}) {
     const [activeField, setActiveField] = useState(null);
 
     const handleFocus = (field) => {

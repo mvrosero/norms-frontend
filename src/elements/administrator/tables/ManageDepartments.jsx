@@ -265,8 +265,6 @@ return (
                     handleSubmit={handleEditSubmit}
                     departmentFormData={departmentFormData}
                     handleChange={handleDepartmentChange}
-                    inputStyle={{ width: '100%' }}
-                    buttonStyle={{ marginTop: '20px', backgroundColor: '#FAD32E', border: 'none' }}
                 />
             </div>
         </div>
