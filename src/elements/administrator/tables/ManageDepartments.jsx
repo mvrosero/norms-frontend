@@ -11,7 +11,7 @@ import SearchAndFilter from '../../../pages/general/SearchAndFilter';
 
 import AddDepartmentModal from '../modals/AddDepartmentModal';
 import EditDepartmentModal from '../modals/EditDepartmentModal';
-
+import folderBackground from '../../../components/images/folder_background.png';
 
 export default function ManageDepartments() {
     const navigate = useNavigate();
@@ -158,47 +158,36 @@ export default function ManageDepartments() {
     };
 
 
-    return (
+return (
         <div>
             <AdminNavigation />
             <AdminInfo />
-                {/* Small Rectangle on Top */}
-                <div
-                    style={{
-                        backgroundColor: '#e9e9e9', // White background
-                        height: '80px', // Small height
-                        width: '50%', // 3/4 of the large rectangle width
-                        position: 'absolute', // Position it on top of the large rectangle
-                        top: '5%', 
-                        left: '8%', 
-                        borderTopLeftRadius: '20px',
-                        borderTopRightRadius: '80px',
-                    }}
-                >
-                    <h6 className="settings-title" style={{ fontFamily: 'Poppins, sans-serif', color: '#1f1f1f', fontSize: '40px', fontWeight: 'bold', marginTop: '20px', marginLeft: '40px' }}>
+            <div
+                style={{
+                    backgroundImage: `url(${folderBackground})`,
+                    backgroundSize: '100% 100%',
+                    backgroundPosition: 'center',
+                    width: '100vw',
+                    minHeight: '100vh',
+                    display: 'flex',
+                    justifyContent: 'flex-start',
+                    alignItems: 'center',
+                    flexDirection: 'column',
+                    color: 'white',
+                    paddingTop: '40px',
+                    marginBottom: '20px'
+                }}
+                 >
+                {/* Title Section */}
+                <div style={{ width: '90%', margin: '0 auto', display: 'flex', justifyContent: 'flex-start' }}>
+                    <h6 className="settings-title" style={{ fontFamily: 'Poppins, sans-serif', color: '#242424', fontSize: '40px', fontWeight: 'bold', marginLeft: '100px' }}>
                         Manage Departments
                     </h6>
                 </div>
-
-                {/* Main Rectangle */}
-                <div
-                    style={{
-                        backgroundColor: '#e9e9e9', 
-                        paddingTop: '10px',
-                        paddingBottom: '20px',
-                        marginBottom: '80px',
-                        marginRight: '25px',
-                        borderRadius: '10px 20px 10px 10px',
-                        width: '90%',
-                        height: '20%',
-                        margin: 'auto',
-                        position: 'relative', // Keep it relative for positioning the small rectangle
-                        marginTop: '100px', // This ensures no space between the two rectangles
-                        top: '40%'
-                    }}
-                >
-                <div style={{ marginRight: '30px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                    <div style={{ width: '830px' }}><SearchAndFilter /></div>
+    
+                {/* Search and Add Button */}
+                <div style={{  marginLeft: '30px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <div style={{ width: '850px' }}><SearchAndFilter /></div>
                     <button
                         onClick={handleCreateNewDepartment}
                         style={{
@@ -216,13 +205,17 @@ export default function ManageDepartments() {
                         <FaPlus style={{ marginLeft: '10px' }} />
                     </button>
                 </div>
-                
-
+    
                 {/* Departments Table */}
-                <div>
+                <div style={{ width: '90%', marginBottom: '40px' }}>
                     <table
                         className="table table-hover table-bordered"
-                        style={{ marginTop: '10px', marginBottom: '20px', marginLeft: '50px', width: '90%' }}
+                        style={{
+                            marginTop: '10px',
+                            marginBottom: '20px',
+                            textAlign: 'center',
+                            backgroundColor: 'white',
+                        }}
                     >
                         <thead style={{ backgroundColor: '#FAD32E', textAlign: 'center' }}>
                             <tr>
@@ -233,11 +226,11 @@ export default function ManageDepartments() {
                                 <th style={{ width: '10%' }}>Actions</th>
                             </tr>
                         </thead>
-                        <tbody style={{ textAlign: 'center' }}>
+                        <tbody>
                             {departments.map((department) => (
                                 <tr key={department.department_id}>
                                     <td style={{ textAlign: 'center' }}>{department.department_id}</td>
-                                    <td>{department.department_code}</td>
+                                    <td style={{ textAlign: 'center' }}>{department.department_code}</td>
                                     <td>{department.department_name}</td>
                                     <td style={{ textAlign: 'center' }}>{renderStatus(department.status)}</td>
                                     <td style={{ textAlign: 'center' }}>
@@ -263,8 +256,6 @@ export default function ManageDepartments() {
                     handleSubmit={handleDepartmentSubmit}
                     departmentFormData={departmentFormData}
                     handleChange={handleDepartmentChange}
-                    inputStyle={{ width: '100%' }}
-                    buttonStyle={{ marginTop: '20px', backgroundColor: '#FAD32E', border: 'none' }}
                 />
     
                 {/* Edit Department Modal */}
@@ -280,4 +271,4 @@ export default function ManageDepartments() {
             </div>
         </div>
     );
-}
+};

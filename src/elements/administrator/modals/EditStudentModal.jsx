@@ -306,7 +306,7 @@ if (!formData.student_idnumber || !formData.first_name || !formData.last_name ||
         marginLeft: '10px',
         display: 'flex',
         alignItems: 'center',
-        boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
+        boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)'
     };
 
     const cancelButtonStyle = {
@@ -314,11 +314,12 @@ if (!formData.student_idnumber || !formData.first_name || !formData.last_name ||
         color: '#FFFFFF',
         fontWeight: '900',
         padding: '12px 25px',
-        border: '1px solid #ced4da',
+        border: 'none',
         borderRadius: '10px',
         cursor: 'pointer',
         display: 'flex',
         alignItems: 'center',
+        boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)'
     };
 
     if (!user) {
