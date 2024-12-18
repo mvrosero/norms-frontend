@@ -6,6 +6,7 @@ import { faUserCog, faBuilding, faBook, faCalendarAlt, faChevronRight, faArchive
 import AdminNavigation from "./AdminNavigation";
 import AdminInfo from "./AdminInfo";
 
+
 export default function AdminSettings() {
     const navigate = useNavigate();
     const user_id = localStorage.getItem('user_id');
@@ -27,8 +28,7 @@ export default function AdminSettings() {
         height: '80px',
         maxWidth: '100%',
         display: 'flex',
-        alignItems: 'center',
-        position: 'relative',
+        alignItems: 'center', 
     };
 
     const containerHoverStyle = {
@@ -36,26 +36,29 @@ export default function AdminSettings() {
         boxShadow: '0 2px 5px rgba(0, 0, 0, 0.1)',
     };
 
-    const iconStyle = {
-        fontSize: '35px',
-        marginLeft: '20px',
-        marginRight: '30px',
+    const iconContainerStyle = {
+        width: '50px', 
+        display: 'flex',
+        justifyContent: 'center', 
+        alignItems: 'center', 
+        marginRight: '20px', 
     };
 
     const textStyle = {
         fontSize: '20px',
         fontWeight: '500',
-        marginLeft: '10px',
-        flex: 1,
+        color: '#1b1c1e',
+        margin: 0,
+        flex: 1, 
     };
 
     const arrowStyle = {
         fontSize: '20px',
         color: '#1b1c1e',
-        position: 'absolute',
-        right: '20px',
-        top: '50%',
-        transform: 'translateY(-50%)',
+    };
+
+    const rowStyle = {
+        marginBottom: '30px', 
     };
 
     return (
@@ -64,58 +67,29 @@ export default function AdminSettings() {
             <AdminInfo />
             <h6 className="page-title"> SETTINGS </h6>
             <div className="container mt-4">
-                <div className="row">
+                <div className="row" style={rowStyle}>
                     <div className="col-md-12">
-                        <div
-                            style={containerStyle}
-                            onClick={() => handleNavigation('/account-settings')}
-                            onMouseEnter={(e) => Object.assign(e.currentTarget.style, containerHoverStyle)}
-                            onMouseLeave={(e) => Object.assign(e.currentTarget.style, containerStyle)}
-                        >
-                            <FontAwesomeIcon icon={faUserCog} style={iconStyle} />
-                            <h5 style={textStyle}>Account Settings</h5>
-                            <FontAwesomeIcon icon={faChevronRight} style={arrowStyle} />
-                        </div>
-                        <div
-                            style={containerStyle}
-                            onClick={() => handleNavigation('/manage-departments')}
-                            onMouseEnter={(e) => Object.assign(e.currentTarget.style, containerHoverStyle)}
-                            onMouseLeave={(e) => Object.assign(e.currentTarget.style, containerStyle)}
-                        >
-                            <FontAwesomeIcon icon={faBuilding} style={iconStyle} />
-                            <h5 style={textStyle}>Manage Departments</h5>
-                            <FontAwesomeIcon icon={faChevronRight} style={arrowStyle} />
-                        </div>
-                        <div
-                            style={containerStyle}
-                            onClick={() => handleNavigation('/manage-programs')}
-                            onMouseEnter={(e) => Object.assign(e.currentTarget.style, containerHoverStyle)}
-                            onMouseLeave={(e) => Object.assign(e.currentTarget.style, containerStyle)}
-                        >
-                            <FontAwesomeIcon icon={faBook} style={iconStyle} />
-                            <h5 style={textStyle}>Manage Programs</h5>
-                            <FontAwesomeIcon icon={faChevronRight} style={arrowStyle} />
-                        </div>
-                        <div
-                            style={containerStyle}
-                            onClick={() => handleNavigation('/manage-academicyears')}
-                            onMouseEnter={(e) => Object.assign(e.currentTarget.style, containerHoverStyle)}
-                            onMouseLeave={(e) => Object.assign(e.currentTarget.style, containerStyle)}
-                        >
-                            <FontAwesomeIcon icon={faCalendarAlt} style={iconStyle} />
-                            <h5 style={textStyle}>Manage Academic Years</h5>
-                            <FontAwesomeIcon icon={faChevronRight} style={arrowStyle} />
-                        </div>
-                        <div
-                            style={{ ...containerStyle, marginBottom: '50px' }} // Added marginBottom here
-                            onClick={() => handleNavigation('/manage-archives')}
-                            onMouseEnter={(e) => Object.assign(e.currentTarget.style, containerHoverStyle)}
-                            onMouseLeave={(e) => Object.assign(e.currentTarget.style, containerStyle)}
-                        >
-                            <FontAwesomeIcon icon={faArchive} style={iconStyle} />
-                            <h5 style={textStyle}>Manage Archives</h5>
-                            <FontAwesomeIcon icon={faChevronRight} style={arrowStyle} />
-                        </div>
+                        {[
+                            { path: '/account-settings', icon: faUserCog, label: 'Account Settings' },
+                            { path: '/manage-departments', icon: faBuilding, label: 'Manage Departments' },
+                            { path: '/manage-programs', icon: faBook, label: 'Manage Programs' },
+                            { path: '/manage-academicyears', icon: faCalendarAlt, label: 'Manage Academic Years' },
+                            { path: '/manage-archives', icon: faArchive, label: 'Manage Archives' },
+                        ].map(({ path, icon, label }, index) => (
+                            <div
+                                key={index}
+                                style={containerStyle}
+                                onClick={() => handleNavigation(path)}
+                                onMouseEnter={(e) => Object.assign(e.currentTarget.style, containerHoverStyle)}
+                                onMouseLeave={(e) => Object.assign(e.currentTarget.style, containerStyle)}
+                            >
+                                <div style={iconContainerStyle}>
+                                    <FontAwesomeIcon icon={icon} style={{ fontSize: '30px', color: '#1b1c1e' }} />
+                                </div>
+                                <h5 style={textStyle}>{label}</h5>
+                                <FontAwesomeIcon icon={faChevronRight} style={arrowStyle} />
+                            </div>
+                        ))}
                     </div>
                 </div>
             </div>

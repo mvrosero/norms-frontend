@@ -208,7 +208,7 @@ export default function ManageAcademicYears() {
                     </h6>
                 </div>
                 {/* Search and Add Button */}
-                <div style={{ marginTop: '20px', marginLeft: '30px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <div style={{ marginTop: '5px', marginLeft: '30px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                     <div style={{ width: '850px' }}><SearchAndFilter /></div>
                     <button 
                         onClick={handleOpenAddModal} 

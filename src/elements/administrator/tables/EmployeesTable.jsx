@@ -136,8 +136,8 @@ const EmployeesTable = () => {
 
         const handleBatchDelete = async () => {
         const isConfirm = await Swal.fire({
-            title: 'Are you sure?',
-            text: "You won't be able to revert this!",
+            title: 'Confirm Delete',
+            text: "Are you sure you want to delete these users? Deleting these users will also affect all associated data.",
             icon: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#3085d6',
