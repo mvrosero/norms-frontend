@@ -11,8 +11,8 @@ import AdminNavigation from '../../../pages/administrator/AdminNavigation';
 import AdminInfo from '../../../pages/administrator/AdminInfo';
 import SearchAndFilter from '../../../pages/general/SearchAndFilter';
 
-import AddAcademicYearModal from '../modals/AddAcademicYearModal'; // Separate Add Modal
-import EditAcademicYearModal from '../modals/EditAcademicYearModal'; // Separate Edit Modal
+import AddAcademicYearModal from '../modals/AddAcademicYearModal'; 
+import EditAcademicYearModal from '../modals/EditAcademicYearModal';
 import folderBackground from '../../../components/images/folder_background.png';
 
 export default function ManageAcademicYears() {
