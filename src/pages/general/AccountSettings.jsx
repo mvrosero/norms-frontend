@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
+import Swal from 'sweetalert2';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import Card from 'react-bootstrap/Card';
+import { IoMdClose } from "react-icons/io";
 
 import AdminNavigation from '../administrator/AdminNavigation';
 import AdminInfo from '../administrator/AdminInfo';
@@ -26,8 +28,14 @@ export default function AccountSettings() {
         new_password: '',
         confirm_new_password: ''
     });
+    const [passwordVisibility, setPasswordVisibility] = useState({
+        current_password: false,
+        new_password: false,
+        confirm_new_password: false
+    });
     const [message, setMessage] = useState('');
-    const [profilePhotoUrl, setProfilePhotoUrl] = useState(''); // State for profile photo URL
+    const [profilePhotoUrl, setProfilePhotoUrl] = useState(''); 
+    
 
     useEffect(() => {
         // Fetch current profile photo URL when the component mounts
@@ -35,9 +43,9 @@ export default function AccountSettings() {
             try {
                 const response = await axios.get(`http://localhost:9000/view-profile-photo/${userId}`, {
                     headers: {
-                        'Authorization': `Bearer ${localStorage.getItem('token')}` // Add token for authentication
+                        'Authorization': `Bearer ${localStorage.getItem('token')}` 
                     },
-                    responseType: 'blob' // Ensure response is in blob format for images
+                    responseType: 'blob' 
                 });
                 
                 // Create a URL for the blob object
@@ -73,164 +81,382 @@ export default function AccountSettings() {
             setProfileFormData({ ...profileFormData, [e.target.name]: e.target.value });
         }
     };
+    
 
     const handlePasswordInputChange = (e) => {
         setPasswordFormData({ ...passwordFormData, [e.target.name]: e.target.value });
     };
 
+    const togglePasswordVisibility = (field) => {
+        setPasswordVisibility(prevState => ({
+            ...prevState,
+            [field]: !prevState[field],
+        }));
+    };
+
     const handleProfileSubmit = async (e) => {
         e.preventDefault();
-
+    
         try {
             const formDataToSend = new FormData();
             formDataToSend.append('profile_photo_filename', profileFormData.profile_photo_filename);
-
+    
             const response = await axios.post(`http://localhost:9000/upload-profile-photo/${userId}`, formDataToSend, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
-                    'Authorization': `Bearer ${localStorage.getItem('token')}` // Add token for authentication
+                    'Authorization': `Bearer ${localStorage.getItem('token')}` 
                 }
             });
-
+    
             console.log('Response:', response);
             setMessage(response.data.message);
             setProfileFormData({
                 profile_photo_filename: null
             });
             // Update profile photo URL after successful upload
-            setProfilePhotoUrl(response.data.updatedProfilePhotoUrl); // Adjust according to your API response
+            setProfilePhotoUrl(response.data.updatedProfilePhotoUrl); 
+    
+            Swal.fire({
+                title: 'Success!',
+                text: 'Profile photo updated successfully.',
+                icon: 'success',
+                timer: 3000,  
+                timerProgressBar: true,  
+                showConfirmButton: false,  
+            }).then(() => {
+                window.location.reload();
+            });
+    
         } catch (error) {
-            console.error('Error submitting form:', error);
-            setMessage('An error occurred. Please try again later.');
+            Swal.fire({
+                title: 'Error!',
+                text: 'There was an issue uploading the profile photo. Please try again.',
+                icon: 'error',
+                showConfirmButton: false,  
+                timer: 2000,  
+            });
         }
     };
+    
 
-    const handlePasswordSubmit = async (e) => {
-        e.preventDefault();
+// Handle delete profile photo
+const handleDeleteProfilePhoto = async () => {
+    try {
+        const response = await axios.delete(`http://localhost:9000/delete-profile-photo/${userId}`, {
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('token')}` // Ensure authentication
+            }
+        });
 
-        // Check if new password and confirmation match
-        if (passwordFormData.new_password !== passwordFormData.confirm_new_password) {
-            setMessage('New password and confirmation do not match.');
-            return;
-        }
+        // On success, remove the profile photo from the state
+        if (response.status === 200) {
+            setProfilePhotoUrl(null);
 
-        try {
-            const response = await axios.put(`http://localhost:9000/password-change/${userId}`, {
-                current_password: passwordFormData.current_password,
-                new_password: passwordFormData.new_password
-            }, {
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${localStorage.getItem('token')}` // Add token for authentication
-                }
+            // SweetAlert for success
+            Swal.fire({
+                icon: 'success',
+                title: 'Success!',
+                text: 'Profile photo deleted successfully.',
+                confirmButtonText: 'OK',
             });
-
-            console.log('Password Change Response:', response);
-            setMessage('Password changed successfully.');
-            setPasswordFormData({
-                current_password: '',
-                new_password: '',
-                confirm_new_password: ''
-            });
-        } catch (error) {
-            console.error('Error changing password:', error);
-            setMessage('An error occurred while changing the password.');
         }
-    };
+    } catch (error) {
+        console.error('Error deleting profile photo:', error);
+
+        // SweetAlert for failure
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'Failed to delete profile photo.',
+            confirmButtonText: 'Try Again',
+        });
+    }
+};
+
+const handlePasswordSubmit = async (e) => {
+    e.preventDefault();
+
+    // Check if new password and confirmation match
+    if (passwordFormData.new_password !== passwordFormData.confirm_new_password) {
+        setMessage('New password and confirmation do not match.');
+        return;
+    }
+
+    try {
+        const response = await axios.put(`http://localhost:9000/password-change/${userId}`, {
+            current_password: passwordFormData.current_password,
+            new_password: passwordFormData.new_password
+        }, {
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem('token')}` 
+            }
+        });
+
+        console.log('Password Change Response:', response);
+        setPasswordFormData({
+            current_password: '',
+            new_password: '',
+            confirm_new_password: ''
+        });
+
+        // Show success alert
+        Swal.fire({
+            title: 'Success!',
+            text: 'Your password has been changed successfully.',
+            icon: 'success',
+            timer: 3000,  
+            timerProgressBar: true,  
+            showConfirmButton: false  
+        });
+
+    } catch (error) {
+        Swal.fire({
+            title: 'Error!',
+            text: 'There was an issue while changing your password. Please try again.',
+            icon: 'error',
+            showConfirmButton: true
+        });
+    }
+};
+
+
 
     const handleCancel = () => {
-        navigate('/account-settings');
+        Swal.fire({
+            title: 'Are you sure you want to cancel?',
+            text: 'All changes will be lost!',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, discard changes',
+            cancelButtonText: 'No, keep changes',
+            reverseButtons: true,
+            confirmButtonColor: '#3085d6', 
+            cancelButtonColor: '#d33'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                window.location.reload(); 
+            }
+        });
     };
+    
+
+
+    const formControlStyles = {
+        padding: '8px 12px',
+        fontSize: '14px',
+        borderRadius: '5px',
+        border: '1px solid #ccc',
+        display: 'block',
+        width: '90%',
+        marginLeft: '20px',
+    };
+    
+    const formLabelStyles = {
+        fontWeight: '600',
+        marginTop: '15px',
+        marginLeft: '20px',
+        fontSize: '15px',
+    };
+
+    const buttonStyle = {
+        backgroundColor: '#4A90E2',
+        color: '#FFFFFF',
+        fontSize: '12px',
+        fontWeight: '900',
+        padding: '8px 25px',
+        border: 'none',
+        borderRadius: '10px',
+        cursor: 'pointer',
+        marginLeft: '10px',
+        display: 'flex',
+        alignItems: 'center',
+        boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
+    };
+
+    const cancelButtonStyle = {
+        backgroundColor: '#8C8C8C',
+        color: '#FFFFFF',
+        fontSize: '12px',
+        fontWeight: '900',
+        padding: '8px 25px',
+        border: 'none',
+        borderRadius: '10px',
+        cursor: 'pointer',
+        display: 'flex',
+        alignItems: 'center',
+        boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
+    };
+
 
     return (
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '20px' }}>
             {renderNavigation()}
-            <h2 className="text-center mb-4">ACCOUNT SETTINGS</h2>
+                {/* Title Section */}
+                <div style={{ width: '90%', margin: '0 auto', display: 'flex', justifyContent: 'flex-start' }}>
+                    <h6
+                        className="settings-title"
+                        style={{
+                            fontFamily: 'Poppins, sans-serif',
+                            color: '#242424',
+                            fontSize: '40px',
+                            fontWeight: 'bold',
+                            marginLeft: '30px',
+                        }}
+                    >
+                        Account Settings
+                    </h6>
+                </div>
+
+                <div style={{
+                display: 'grid',
+                gridTemplateColumns: '1fr 1fr',
+                gap: '20px',
+                width: '95%',
+                paddingTop: '30px',
+                paddingLeft: '75px'
+            }}>
 
             {/* Profile Photo Upload Form */}
-            <Card style={{ width: '100%', maxWidth: '600px', marginBottom: '20px' }}>
+            <Card style={{ boxShadow: '0px 4px 6px rgba(0,0,0,0.1)', marginBottom: '20px', paddingBottom: '30px' }}>
                 <Card.Body>
-                    <Card.Title>Upload Photo/Video</Card.Title>
-                    <Form.Label>Current Profile Photo:</Form.Label>
+                    <Card.Title
+                        style={{
+                            textAlign: 'center',
+                            marginTop: '30px',
+                            marginBottom: '30px',
+                            fontWeight: '600', 
+                            fontFamily: 'Poppins, sans-serif' 
+                        }}
+                    >
+                        Change Profile Picture
+                    </Card.Title>
+                    
+                    {/* Current Profile Photo */}
+                    <Form.Label style={formLabelStyles}>Current Profile Picture:</Form.Label>
+                    
                     {profilePhotoUrl && (
-                        <div style={{ textAlign: 'center', marginBottom: '20px' }}>
-                            <img 
-                                src={profilePhotoUrl} 
-                                alt="Profile" 
-                                style={{ width: '300px', height: '300px', objectFit: 'cover', borderRadius: '50%' }} 
+                                <div
+                                style={{
+                                    display: 'flex',
+                                    justifyContent: 'center', 
+                                    alignItems: 'center', 
+                                    marginLeft: '20px',
+                                    marginBottom: '20px'
+                                }}
+                            >
+                            <img
+                                src={profilePhotoUrl}
+                                alt="Profile"
+                                style={{
+                                    width: '400px',
+                                    height: '400px',
+                                    objectFit: 'cover',
+                                    borderRadius: '0%', 
+                                }}
                             />
+                            <button
+                            onClick={handleDeleteProfilePhoto}
+                            style={{
+                                position: 'relative',
+                                bottom: '180px',
+                                right: '30px',
+                                color: '#dcdcdc',   
+                                fontSize: '20px',
+                                borderRadius: '50%',
+                                cursor: 'pointer',
+                            }}
+                        >
+                            <IoMdClose />
+                        </button>
                         </div>
                     )}
+                    
                     <Form onSubmit={handleProfileSubmit}>
                         <Form.Group controlId="photoVideoFile">
-                            <Form.Label>Upload Photo/Video:</Form.Label>
-                            <Form.Control 
-                                type="file" 
-                                name="profile_photo_filename" 
-                                onChange={handleProfileInputChange} 
-                                accept="image/*, video/*" 
+                            <Form.Label style={formLabelStyles}>Upload New Profile Picture:</Form.Label>
+                            <Form.Control
+                                type="file"
+                                name="profile_photo_filename"
+                                onChange={handleProfileInputChange}
+                                accept="image/*"
+                                style={{
+                                    padding: '8px 12px',
+                                    fontSize: '14px',
+                                    borderRadius: '5px',
+                                    border: '1px solid #ccc',
+                                    display: 'block',
+                                    width: '90%',
+                                    marginLeft: '20px',
+                                }}
                             />
                         </Form.Group>
-
-                        <div className="d-flex justify-content-between mt-3">
-                            <Button variant="secondary" onClick={handleCancel}>
-                                Cancel
-                            </Button>
-                            <Button variant="primary" type="submit">
-                                Submit
-                            </Button>
+                        <div className="d-flex justify-content-end mt-3" style={{ paddingTop: '10px', paddingRight: '30px' }}>
+                            <Button type="button" onClick={handleCancel} style={cancelButtonStyle}> Cancel </Button>
+                            <Button type="submit"style={buttonStyle}> Update </Button>
                         </div>
                     </Form>
                 </Card.Body>
             </Card>
 
+
             {/* Password Change Form */}
-            <Card style={{ width: '100%', maxWidth: '600px' }}>
+            <Card style={{ boxShadow: '0px 4px 6px rgba(0,0,0,0.1)', marginBottom: '20px', paddingBottom: '30px', maxHeight: '430px' }}>
                 <Card.Body>
-                    <Card.Title>Change Password</Card.Title>
+                    <Card.Title
+                        style={{
+                            textAlign: 'center',
+                            marginTop: '30px',
+                            marginBottom: '30px',
+                            fontWeight: '600',
+                            fontFamily: 'Poppins, sans-serif',
+                        }}
+                    >
+                        Change Password
+                    </Card.Title>
                     <Form onSubmit={handlePasswordSubmit}>
                         <Form.Group controlId="currentPassword">
-                            <Form.Label>Current Password:</Form.Label>
+                            <Form.Label style={formLabelStyles}>Current Password:</Form.Label>
                             <Form.Control
                                 type="password"
                                 name="current_password"
                                 value={passwordFormData.current_password}
                                 onChange={handlePasswordInputChange}
                                 required
+                                style={formControlStyles}
                             />
                         </Form.Group>
                         <Form.Group controlId="newPassword">
-                            <Form.Label>New Password:</Form.Label>
+                            <Form.Label style={formLabelStyles}>New Password:</Form.Label>
                             <Form.Control
                                 type="password"
                                 name="new_password"
                                 value={passwordFormData.new_password}
                                 onChange={handlePasswordInputChange}
                                 required
+                                style={formControlStyles}
                             />
                         </Form.Group>
                         <Form.Group controlId="confirmNewPassword">
-                            <Form.Label>Confirm New Password:</Form.Label>
+                            <Form.Label style={formLabelStyles}>Confirm New Password:</Form.Label>
                             <Form.Control
                                 type="password"
                                 name="confirm_new_password"
                                 value={passwordFormData.confirm_new_password}
                                 onChange={handlePasswordInputChange}
                                 required
+                                style={formControlStyles}
                             />
                         </Form.Group>
 
-                        <div className="d-flex justify-content-between mt-3">
-                            <Button variant="secondary" onClick={handleCancel}>
-                                Cancel
-                            </Button>
-                            <Button variant="primary" type="submit">
-                                Change Password
-                            </Button>
+                        <div className="d-flex justify-content-end mt-3" style={{ paddingTop: '10px', paddingRight: '30px' }}>
+                            <Button type="button" onClick={handleCancel} style={cancelButtonStyle}> Cancel </Button>
+                            <Button type="submit"style={buttonStyle}> Update </Button>
                         </div>
                     </Form>
                 </Card.Body>
-            </Card>
+            </Card>;
+            </div>
 
             {message && <p className="mt-3">{message}</p>} {/* Display message */}
         </div>

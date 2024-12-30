@@ -140,9 +140,11 @@ const EmployeesTable = () => {
             text: "Are you sure you want to delete these users? Deleting these users will also affect all associated data.",
             icon: 'warning',
             showCancelButton: true,
-            confirmButtonColor: '#3085d6',
+            confirmButtonText: 'Yes, discard changes',
+            cancelButtonText: 'No, keep changes',
+            reverseButtons: true,
+            confirmButtonColor: '#3085d6', 
             cancelButtonColor: '#d33',
-            confirmButtonText: 'Yes, Delete them!'
         }).then((result) => result.isConfirmed);
 
         if (!isConfirm) return;

@@ -215,7 +215,7 @@ const UniformDefianceTable = ({ searchQuery }) => {
                                     )}
                                 </button>
                             </th>
-                            <th style={{ width: '23%' }}>
+                            <th style={{ width: '20%' }}>
                                 <button
                                     style={{
                                         border: 'none',
@@ -237,14 +237,14 @@ const UniformDefianceTable = ({ searchQuery }) => {
                                     )}
                                 </button>
                             </th>
-                            <th style={{ textAlign: 'center', padding: '0', verticalAlign: 'middle', width: '13%' }}>
+                            <th style={{ textAlign: 'center', padding: '0', verticalAlign: 'middle', width: '12%' }}>
                                 <button onClick={() => handleSort('student_idnumber')}>
                                     ID Number {sortOrder === 'asc' ? 
                                     <ArrowDropUpIcon /> : 
                                     <ArrowDropDownIcon />}
                                 </button>
                             </th>
-                            <th>Nature of Violation</th>
+                            <th style={{ width: '20%' }}>Nature of Violation</th>
                             <th style={{ width: '10%' }}>Details</th>
                             <th style={{ width: '20%' }}>Status</th>
                         </tr>
