@@ -61,8 +61,8 @@ const BatchEmployeesToolbar = ({ selectedItemsCount, selectedEmployeeIds, onDele
     setIsSubmitting(true);
 
     const updates = {
-      ...(roleId && { role_id: roleId }),
-      ...(status && { status: status }),
+        ...(roleId && { role_id: roleId }),
+        ...(status && { status: status }),
     };
 
     // Debugging: log the payload before sending the request
@@ -70,58 +70,77 @@ const BatchEmployeesToolbar = ({ selectedItemsCount, selectedEmployeeIds, onDele
     console.log('Updates:', updates);
 
     if (Object.keys(updates).length === 0) {
-      setError('No fields to update.');
-      setIsSubmitting(false);
-      return;
+        setError('No fields to update.');
+        setIsSubmitting(false);
+        return;
+    }
+
+    // Confirmation before proceeding
+    const result = await Swal.fire({
+        title: 'Are you sure you want to save the changes?',
+        text: 'You are about to update the details of the selected employees. These changes cannot be undone.',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#B0B0B0',
+        confirmButtonText: 'Yes, update them!',
+        cancelButtonText: 'Cancel',
+    });
+
+    if (!result.isConfirmed) {
+        setIsSubmitting(false);
+        return; 
     }
 
     try {
-      const response = await axios.put('http://localhost:9000/employees', {
-        employee_ids: selectedEmployeeIds,
-        updates: updates,
-      });
+        const response = await axios.put('http://localhost:9000/employees', {
+            employee_ids: selectedEmployeeIds,
+            updates: updates,
+        });
 
-      // Debugging: log the response from the server
-      console.log('Response:', response);
+        // Debugging: log the response from the server
+        console.log('Response:', response);
 
-      handleModalClose();
+        handleModalClose();
 
-      Swal.fire({
-        icon: 'success',
-        title: 'Success',
-        text: response.data.message,
-        confirmButtonText: 'OK',
-      }).then(() => {
-        window.location.reload();
-      });
+        Swal.fire({
+            icon: 'success',
+            title: 'Success',
+            text: response.data.message,
+            confirmButtonText: 'OK',
+        }).then(() => {
+            window.location.reload();
+        });
     } catch (error) {
-      console.error('Error updating employees:', error.response?.data || error.message);
+        console.error('Error updating employees:', error.response?.data || error.message);
 
-      handleModalClose();
+        handleModalClose();
 
-      Swal.fire({
-        icon: 'error',
-        title: 'Error',
-        text: error.response?.data?.error || 'Failed to update employees. Please try again.',
-        confirmButtonText: 'OK',
-      });
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: error.response?.data?.error || 'Failed to update employees. Please try again.',
+            confirmButtonText: 'OK',
+        });
     } finally {
-      setIsSubmitting(false);
+        setIsSubmitting(false);
     }
-  };
+};
+
 
   const handleCancel = () => {
     Swal.fire({
-      title: 'Are you sure?',
-      text: 'Any unsaved changes will be lost. Do you want to close without saving?',
+      title: 'Are you sure you want to cancel?',
+      text: 'Any unsaved changes will be lost.',
       icon: 'warning',
       showCancelButton: true,
       confirmButtonColor: '#d33',
-      cancelButtonColor: '#3085d6',
+      cancelButtonColor: '#B0B0B0',
       confirmButtonText: 'Yes, close it!',
+      cancelButtonText: 'No, keep changes'
     }).then((result) => {
       if (result.isConfirmed) {
-        handleModalClose(); // This will execute when the user confirms the cancel action
+        handleModalClose(); 
       }
     });
   };
@@ -339,7 +358,7 @@ const styles = {
   },
   deleteButton: {
     backgroundColor: '#F2DFE1',
-    color: '#FF5C5C',
+    color: '#DC3545',
     fontWeight: 'bold',
     border: 'none',
     borderRadius: '30px',

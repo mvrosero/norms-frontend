@@ -93,13 +93,13 @@ const ArchivesTable = () => {
 // batch delete
     const deleteUser = async (userId) => {
       const isConfirm = await Swal.fire({
-          title: 'Confirm Delete',
-          text: "Are you sure you want to delete this user? Deleting this user will also affect all associated data.",
+          title: 'Are you sure you want to delete this user?',
+          text: "Deleting this user will also affect all associated data.",
           icon: 'warning',
           showCancelButton: true,
-          confirmButtonColor: '#3085d6',
-          cancelButtonColor: '#d33',
-          confirmButtonText: 'Yes, Delete it!'
+          confirmButtonColor: '#d33',
+          cancelButtonColor: '#B0B0B0',
+          confirmButtonText: 'Yes, delete it'
       }).then((result) => {
           return result.isConfirmed;
       });
@@ -138,13 +138,13 @@ const ArchivesTable = () => {
 
       const handleBatchDelete = async () => {
         const isConfirm = await Swal.fire({
-            title: 'Confirm Delete',
-            text: 'Are you sure you want to delete these users? Deleting these users will also affect all associated data.',
+            title: 'Are you sure you want to delete these users?',
+            text: 'Deleting these users will also affect all associated data.',
             icon: 'warning',
             showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Yes, Delete them!'
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#B0B0B0',
+            confirmButtonText: 'Yes, delete it'
         }).then((result) => result.isConfirmed);
     
         if (!isConfirm) return;

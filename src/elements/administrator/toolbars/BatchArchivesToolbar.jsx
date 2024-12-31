@@ -99,15 +99,15 @@ const BatchArchivesToolbar = ({ selectedItemsCount, onDelete, selectedStudentIds
     }
 
     try {
-      // Confirmation dialog before proceeding with the update
       const result = await Swal.fire({
-        title: 'Are you sure?',
-        text: 'Do you want to update the selected students with these changes?',
+        title: 'Are you sure you want to save the changes?',
+        text: 'You are about to update the details of the selected students. These changes cannot be undone.',
         icon: 'warning',
         showCancelButton: true,
-        confirmButtonColor: '#3B71CA',
-        cancelButtonColor: '#d33',
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#B0B0B0',
         confirmButtonText: 'Yes, update them!',
+        cancelButtonText: 'Cancel',
       });
 
       if (result.isConfirmed) {
@@ -118,7 +118,6 @@ const BatchArchivesToolbar = ({ selectedItemsCount, onDelete, selectedStudentIds
 
         handleModalClose();
 
-        // Success message after confirmation
         Swal.fire({
           icon: 'success',
           title: 'Success',
@@ -128,7 +127,6 @@ const BatchArchivesToolbar = ({ selectedItemsCount, onDelete, selectedStudentIds
           window.location.reload();
         });
       } else {
-        // If user cancels, reset the form or do nothing
         handleModalClose();
       }
     } catch (error) {
@@ -149,16 +147,17 @@ const BatchArchivesToolbar = ({ selectedItemsCount, onDelete, selectedStudentIds
 
   const handleCancel = () => {
     Swal.fire({
-      title: 'Are you sure?',
-      text: 'Any unsaved changes will be lost. Do you want to close without saving?',
+      title: 'Are you sure you want to cancel?',
+      text: 'Any unsaved changes will be lost.',
       icon: 'warning',
       showCancelButton: true,
       confirmButtonColor: '#d33',
-      cancelButtonColor: '#3085d6',
+      cancelButtonColor: '#B0B0B0',
       confirmButtonText: 'Yes, close it!',
+      cancelButtonText: 'No, keep changes'
     }).then((result) => {
       if (result.isConfirmed) {
-        handleModalClose(); // This will execute when the user confirms the cancel action
+        handleModalClose(); 
       }
     });
   };

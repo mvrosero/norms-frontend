@@ -167,12 +167,12 @@ if (!formData.employee_idnumber || !formData.first_name || !formData.last_name |
     return;
 }
         Swal.fire({
-            title: 'Are you sure?',
+            title: 'Are you sure you want to save the changes?',
             text: 'You are about to update this employeee’s details.',
             icon: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
+            cancelButtonColor: '#B0B0B0',
             confirmButtonText: 'Yes, update it!',
         }).then(async (result) => {
             if (result.isConfirmed) {
@@ -213,16 +213,17 @@ if (!formData.employee_idnumber || !formData.first_name || !formData.last_name |
     
     const handleCancel = () => {
         Swal.fire({
-            title: 'Are you sure?',
-            text: 'Any unsaved changes will be lost. Do you want to close without saving?',
+            title: 'Are you sure you want to cancel?',
+            text: 'Any unsaved changes will be lost.',
             icon: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#d33',
-            cancelButtonColor: '#3085d6',
+            cancelButtonColor: '#B0B0B0',
             confirmButtonText: 'Yes, close it!',
+            cancelButtonText: 'No, keep changes',
         }).then((result) => {
             if (result.isConfirmed) {
-                onHide(); // This will execute when the user confirms the cancel action
+                onHide(); 
             }
         });
     };

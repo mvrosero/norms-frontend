@@ -230,9 +230,8 @@ const handlePasswordSubmit = async (e) => {
             showCancelButton: true,
             confirmButtonText: 'Yes, discard changes',
             cancelButtonText: 'No, keep changes',
-            reverseButtons: true,
             confirmButtonColor: '#3085d6', 
-            cancelButtonColor: '#d33'
+            cancelButtonColor: '#B0B0B0'
         }).then((result) => {
             if (result.isConfirmed) {
                 window.location.reload(); 
