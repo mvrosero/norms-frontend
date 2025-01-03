@@ -69,7 +69,7 @@ const EditEmployeeModal = ({ user, show, onHide, fetchUsers, headers, roles }) =
 
         // Validate First Name
         if (name === 'first_name') {
-            const nameFormat = /^[A-Z][a-zA-Z .-]*$/; // Capital letter followed by letters, spaces, dots, or dashes
+            const nameFormat = /^[A-Z][a-zA-Z .'-]*$/; // Capital letter followed by letters, spaces, dots, or dashes
             if (!nameFormat.test(value)) {
                 newErrors.first_name = 'First name must start with a capital letter and can contain only letters, spaces, dots, or dashes.';
             } else {
@@ -79,7 +79,7 @@ const EditEmployeeModal = ({ user, show, onHide, fetchUsers, headers, roles }) =
 
         // Validate Middle Name
         if (name === 'middle_name' && value) { // Middle name is optional
-            const nameFormat = /^[A-Z][a-zA-Z .-]*$/; // Capital letter followed by letters, spaces, dots, or dashes
+            const nameFormat = /^[A-Z][a-zA-Z .'-]*$/; // Capital letter followed by letters, spaces, dots, or dashes
             if (!nameFormat.test(value)) {
                 newErrors.middle_name = 'Middle name must start with a capital letter and can contain only letters, spaces, dots, or dashes.';
             } else {
@@ -89,7 +89,7 @@ const EditEmployeeModal = ({ user, show, onHide, fetchUsers, headers, roles }) =
 
         // Validate Last Name
         if (name === 'last_name') {
-            const nameFormat = /^[A-Z][a-zA-Z .-]*$/; // Capital letter followed by letters, spaces, dots, or dashes
+            const nameFormat = /^[A-Z][a-zA-Z .'-]*$/; // Capital letter followed by letters, spaces, dots, or dashes
             if (!nameFormat.test(value)) {
                 newErrors.last_name = 'Last name must start with a capital letter and can contain only letters, spaces, dots, or dashes.';
             } else {

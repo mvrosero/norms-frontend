@@ -28,9 +28,9 @@ const DepartmentalStudentsTable = () => {
     const [headers, setHeaders] = useState({});
     const [deletionStatus, setDeletionStatus] = useState(false); // State to track deletion status
 
-    // Pagination state
+    // Pagination State
     const [currentPage, setCurrentPage] = useState(1);
-    const rowsPerPage = 5;
+    const [rowsPerPage, setRowsPerPage] = useState(5);
 
     // Sorting state for full name
     const [sortOrder, setSortOrder] = useState('asc'); // 'asc' for ascending, 'desc' for descending
@@ -199,17 +199,20 @@ const DepartmentalStudentsTable = () => {
     };
 
 
-    // Calculate paginated users
-    const indexOfLastUser = currentPage * rowsPerPage;
-    const indexOfFirstUser = indexOfLastUser - rowsPerPage;
-    const currentUsers = users.slice(indexOfFirstUser, indexOfLastUser);
+  // Pagination
+  const indexOfLastUser = currentPage * rowsPerPage;
+  const indexOfFirstUser = indexOfLastUser - rowsPerPage;
+  const currentUsers = users.slice(indexOfFirstUser, indexOfLastUser);
+  const totalPages = Math.ceil(users.length / rowsPerPage);
 
-    const totalPages = Math.ceil(users.length / rowsPerPage);
+  const handlePaginationChange = (pageNumber) => {
+    setCurrentPage(pageNumber);
+  };
 
-    // Handle pagination change
-    const handlePaginationChange = (pageNumber) => {
-        setCurrentPage(pageNumber);
-    };
+  const handleRowsPerPageChange = (e) => {
+    setRowsPerPage(Number(e.target.value));
+    setCurrentPage(1);
+  };
 
 
     const renderPagination = () => {
@@ -242,54 +245,72 @@ const DepartmentalStudentsTable = () => {
         };
     
         return (
-            <div
-                style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'flex-end',
-                    marginBottom: '15px',
-                }}
-            >
-                {/* Page Info */}
-                <div style={{ fontSize: '0.875rem', color: '#4a4a4a', marginRight: '10px' }}>
-                    Page {currentPage} of {totalPages}
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '15px', fontSize: '14px', color: '#4a4a4a'}}>
+                {/* Results per Page */}
+                <div>
+                    <label htmlFor="rowsPerPage" style={{ marginLeft: '120px', marginRight: '5px' }}>Results per page:</label>
+                    <select
+                        id="rowsPerPage"
+                        value={rowsPerPage}
+                        onChange={handleRowsPerPageChange}
+                        style={{
+                            fontSize: '14px',
+                            padding: '5px 25px',
+                            border: '1px solid #ccc',
+                            borderRadius: '3px',
+                        }}
+                    >
+                        {Array.from({ length: 10 }, (_, i) => (i + 1) * 10).map((value) => (
+                            <option key={value} value={value}> {value} </option>
+                        ))}
+                    </select>
                 </div>
-    
-                {/* Pagination Buttons */}
-                <div style={{ display: 'flex', marginRight: '20px' }}>
-                    <button
-                        onClick={() => currentPage > 1 && handlePaginationChange(currentPage - 1)}
-                        disabled={currentPage === 1}
-                        style={{
-                            ...buttonStyle,
-                            borderTopLeftRadius: '10px',
-                            borderBottomLeftRadius: '10px',
-                            ...(currentPage === 1 ? disabledButtonStyle : {}),
-                        }}
-                    >
-                        ❮
-                    </button>
-                    {pageNumbers.map((number) => (
+        
+                {/* Pagination Info and Buttons */}
+                <div style={{ display: 'flex', alignItems: 'center', marginRight: '25px' }}>
+                    {/* Page Info */}
+                    <div style={{ marginRight: '10px' }}>Page {currentPage} of {totalPages}</div>
+        
+                    {/* Pagination Buttons */}
+                    <div style={{ display: 'flex' }}>
                         <button
-                            key={number}
-                            onClick={() => handlePaginationChange(number)}
-                            style={number === currentPage ? activeButtonStyle : buttonStyle}
+                            onClick={() =>
+                                currentPage > 1 && handlePaginationChange(currentPage - 1)
+                            }
+                            disabled={currentPage === 1}
+                            style={{
+                                ...buttonStyle,
+                                borderTopLeftRadius: '10px',
+                                borderBottomLeftRadius: '10px',
+                                ...(currentPage === 1 ? disabledButtonStyle : {}),
+                            }}
                         >
-                            {number}
+                            ❮
                         </button>
-                    ))}
-                    <button
-                        onClick={() => currentPage < totalPages && handlePaginationChange(currentPage + 1)}
-                        disabled={currentPage === totalPages}
-                        style={{
-                            ...buttonStyle,
-                            borderTopRightRadius: '10px',
-                            borderBottomRightRadius: '10px',
-                            ...(currentPage === totalPages ? disabledButtonStyle : {}),
-                        }}
-                    >
-                        ❯
-                    </button>
+                        {pageNumbers.map((number) => (
+                            <button
+                                key={number}
+                                onClick={() => handlePaginationChange(number)}
+                                style={number === currentPage ? activeButtonStyle : buttonStyle}
+                            >
+                                {number}
+                            </button>
+                        ))}
+                        <button
+                            onClick={() =>
+                                currentPage < totalPages && handlePaginationChange(currentPage + 1)
+                            }
+                            disabled={currentPage === totalPages}
+                            style={{
+                                ...buttonStyle,
+                                borderTopRightRadius: '10px',
+                                borderBottomRightRadius: '10px',
+                                ...(currentPage === totalPages ? disabledButtonStyle : {}),
+                            }}
+                        >
+                            ❯
+                        </button>
+                    </div>
                 </div>
             </div>
         );
@@ -412,6 +433,7 @@ const DepartmentalStudentsTable = () => {
             )}
               
             {renderTable()}
+
 
             {/* Custom Pagination */}
             {renderPagination()}
