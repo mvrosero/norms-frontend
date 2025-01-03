@@ -287,10 +287,12 @@ const handleEditSubmit = async (e) => {
     };
 
     const handlePaginationChange = (pageNumber) => {
-        if (pageNumber < 1 || pageNumber > totalPages) return;
-        setCurrentPage(pageNumber);
+        if (pageNumber >= 1 && pageNumber <= totalPages) {
+            setCurrentPage(pageNumber);  // Correctly update the page
+        }
     };
-
+    
+    // Pagination buttons rendering
     const pageNumbers = [];
     for (let i = 1; i <= totalPages; i++) {
         pageNumbers.push(i);
