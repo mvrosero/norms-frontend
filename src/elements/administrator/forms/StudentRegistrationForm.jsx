@@ -104,7 +104,7 @@ export default function StudentRegistrationForm() {
         if (name === 'student_idnumber') {
             const idFormat = /^\d{2}-\d{5}$/; // Matches "00-00000" format
             if (!idFormat.test(value)) {
-                newErrors.student_idnumber = 'Student ID format should be "00-00000".';
+                newErrors.student_idnumber = 'Student ID number format should be "00-00000".';
             } else {
                 newErrors.student_idnumber = '';
             }

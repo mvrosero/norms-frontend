@@ -107,7 +107,9 @@ const BatchEmployeesToolbar = ({ selectedItemsCount, selectedEmployeeIds, onDele
             icon: 'success',
             title: 'Success',
             text: response.data.message,
-            confirmButtonText: 'OK',
+            showConfirmButton: false,
+            timer: 2000,
+            timerProgressBar: true,
         }).then(() => {
             window.location.reload();
         });
