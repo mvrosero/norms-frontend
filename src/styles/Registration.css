@@ -10,6 +10,8 @@ h4 {
     color: #7ed321;
 }
 
+
+/*form*/
 .form-section {
     margin-bottom: 25px; 
 }
@@ -22,8 +24,6 @@ h4 {
     margin-bottom: 20px;
 }
 
-
-/*form*/
 input {
     width: 100%;
     padding: 1em;
@@ -33,21 +33,58 @@ input {
 }
 
 
-/*adjust font and font size of select element*/
+/*base input styles*/
+.form-input {
+    width: 100%;
+    padding: 1em;
+    line-height: 1.4;
+    border-radius: 20px;
+    transition: all 0.35s ease-in-out;
+    background-color: #eeeeee;
+    border: 1px solid #e5e5e5;
+}
+
+.form-input.error {
+    border-color: red; 
+}
+
+.error-message {
+    color: red;
+    font-size: 12px;
+}
+
+
+/*dropdown options*/
+.short-select {
+    width: 50%; /* Adjust the width as needed */
+    margin-left: 60px;
+    height: 57px;
+}
+
 select {
-    font-family: 'Inter', sans-serif; /* Set font family */
-    font-size: 16px; /* Set font size */
+    font-family: 'Inter', sans-serif;
+    font-size: 16px;
     color: #6C7484;
-    line-height: 15px; /* Center text vertically */
-    padding: 0; /* Remove padding */
+    line-height: 15px;
+    padding: 0;
 }
 
-/*adjust font and font size of options*/
 select option {
-    font-family: 'Inter', sans-serif; /* Set font family */
-    font-size: 16px; /* Set font size */
+    font-family: 'Inter', sans-serif;
+    font-size: 16px;
 }
 
+select:focus::placeholder {
+    color: #6C7484;
+}
+
+select:valid {
+    color: black;
+}
+
+select:invalid {
+    color: #6C7484;
+}
 
 .option {
     display: inline-block;
@@ -66,46 +103,59 @@ select option {
     border-bottom-right-radius: 3px;
 }
 
+
 /*input group*/
 .input-group {
     display: flex;
     align-items: center;
-    margin-bottom: 10px; /* Reduce vertical margin */
 }
 
 .input-group label {
-    flex: 0 0 165px; /* Set a fixed width for the labels */
-    padding-right: 10px; /* Adjust horizontal spacing between label and input */
+    flex: 0 0 165px; 
+    padding-right: 10px; 
 }
 
 .input-group input[type="text"],
 .input-group input[type="email"],
 .input-group input[type="password"],
 .input-group select {
-    flex: 1; /* Allow input fields to take up remaining space */
+    flex: 1; 
     background-color: #eeeeee;
-    padding: 8px; /* Adjust padding */
-    height: 32px; /* Adjust height */
+    padding: 8px;
+    height: 32px; 
     border: 1px solid #e5e5e5;
     border-radius: 3px;
-    margin-right: 10px; /* Adjust spacing between input fields */
+    margin-right: 10px; 
 }
 
 
+/*birthdate picker*/
 .birthdate-input {
-    width: 30%;
+    width: 31%;
     padding: 8px;
     height: 32px;
     background-color: #eeeeee;
     border: 1px solid #e5e5e5;
     border-radius: 3px;
     margin-right: 10px;
-    font-size: 16px; 
+    font-size: 16px;
+    color: #6C7484;
+}
+
+.birthdate-input::placeholder {
+    color: #6C7484;
+}
+
+.birthdate-input:valid {
+    color: black;
+}
+
+.birthdate-input:invalid {
     color: #6C7484;
 }
 
 
-/* Align the text and input fields */
+/*align the text and input fields*/
 .input-group label,
 .input-group input[type="text"],
 .input-group input[type="email"],
@@ -114,16 +164,68 @@ select option {
 .input-group input[type="department"],
 .input-group input[type="date"],
 .input-group select {
-    margin-bottom: 10px; /* Add vertical margin between label and input */
+    margin-bottom: 10px;
 }
-
-
 
 .label {
     font-size: 15px;
     font-family: 'Inter', sans-serif;
     font-weight: 500;
     color: rgb(43, 43, 43);
+}
+
+
+/*buttons*/
+.custom-button {
+    background-color: #075f24; /* Set background color */
+    color: white; /* Set text color */
+    border: none; /* Remove border */
+    padding: 10px 20px; /* Set padding */
+    border-radius: 5px; /* Add border radius */
+    cursor: pointer; /* Add cursor pointer */
+    transition: background-color 0.3s ease; /* Add transition effect */
+}
+
+.custom-button:hover {
+    background-color: #00b33c; /* Change background color on hover */
+}
+
+.btn-container {
+    display: flex;
+    justify-content: flex-end;
+    margin-right: 15px;
+    margin-bottom: 10px;
+}
+
+.cancel-btn {
+    display: inline-block;
+    border: none;
+    cursor: pointer;
+    text-decoration: none;
+    background-color: #8C8C8C;
+    color: white;
+    padding: 8px 30px;
+    margin-right: 10px;
+    border-radius: 10px;
+    font-weight: 600;
+    font-size: 18px;
+}
+
+.save-btn {
+    display: inline-block;
+    border: none;
+    cursor: pointer;
+    text-decoration: none;
+    background-color: #DAC50C;
+    color: white;
+    padding: 8px 30px;
+    border-radius: 10px;
+    font-weight: 600;
+    font-size: 18px;
+}
+
+.text-center {
+    text-align: center;
 }
 
 
@@ -190,63 +292,3 @@ select option {
     }
 }
 
-
-.short-select {
-    width: 50%; /* Adjust the width as needed */
-    margin-left: 60px;
-    height: 57px;
-}
-
-.custom-button {
-    background-color: #075f24; /* Set background color */
-    color: white; /* Set text color */
-    border: none; /* Remove border */
-    padding: 10px 20px; /* Set padding */
-    border-radius: 5px; /* Add border radius */
-    cursor: pointer; /* Add cursor pointer */
-    transition: background-color 0.3s ease; /* Add transition effect */
-}
-
-.custom-button:hover {
-    background-color: #00b33c; /* Change background color on hover */
-}
-
-
-/*button*/
-.btn-container {
-    display: flex;
-    justify-content: flex-end;
-    margin-right: 15px;
-    margin-bottom: 10px;
-}
-
-.cancel-btn {
-    display: inline-block;
-    border: none;
-    cursor: pointer;
-    text-decoration: none;
-    background-color: #8C8C8C;
-    color: white;
-    padding: 8px 30px;
-    margin-right: 10px;
-    border-radius: 10px;
-    font-weight: 600;
-    font-size: 18px;
-}
-
-.save-btn {
-    display: inline-block;
-    border: none;
-    cursor: pointer;
-    text-decoration: none;
-    background-color: #DAC50C;
-    color: white;
-    padding: 8px 30px;
-    border-radius: 10px;
-    font-weight: 600;
-    font-size: 18px;
-}
-
-.text-center {
-    text-align: center;
-}

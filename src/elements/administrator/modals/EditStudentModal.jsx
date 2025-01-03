@@ -373,8 +373,8 @@ if (!formData.student_idnumber || !formData.first_name || !formData.last_name ||
                                 type="text"
                                 name="student_idnumber"
                                 value={formData.student_idnumber}
-                                onChange={handleChange}  // Your change handler to update formData and validation
-                                style={getInputStyle('student_idnumber', formData, errors)} // Dynamic style based on validation
+                                onChange={handleChange}  
+                                style={getInputStyle('student_idnumber', formData, errors)}
                             />
                             {errors.student_idnumber && (<div style={{ color: 'red', fontSize: '12px' }}>{errors.student_idnumber}</div>)}
                     </Form.Group>

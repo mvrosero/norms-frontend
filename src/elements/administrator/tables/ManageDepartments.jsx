@@ -100,11 +100,13 @@ export default function ManageDepartments() {
 
     const handleDeleteDepartment = (id) => {
         Swal.fire({
-            title: 'Confirm Delete',
-            text: 'Are you sure you want to delete this department? Deleting this department will also affect all associated data.',
+            title: 'Are you sure you want to delete this department?',
+            text: 'Deleting this department will also affect all associated data.',
             icon: 'warning',
             showCancelButton: true,
-            confirmButtonText: 'Delete',
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#B0B0B0',
+            confirmButtonText: 'Yes, delete it',
             cancelButtonText: 'Cancel'
         }).then(async (result) => {
             if (result.isConfirmed) {

@@ -183,13 +183,14 @@ const handleEditSubmit = async (e) => {
 
     const handleDeleteProgram = (id) => {
         Swal.fire({
-            title: 'Confirm Delete',
-            text: 'Are you sure you want to delete this program? Deleting this program will also affect all associated data.',
+            title: 'Are you sure you want to delete this program?',
+            text: 'Deleting this program will also affect all associated data.',
             icon: 'warning',
             showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Yes, delete it!'
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#B0B0B0',
+            confirmButtonText: 'Yes, delete it',
+            cancelButtonText: 'Cancel'
         }).then(async (result) => {
             if (result.isConfirmed) {
                 try {
