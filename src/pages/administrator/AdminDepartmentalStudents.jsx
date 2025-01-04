@@ -1,26 +1,23 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
-import { useParams, Link, useNavigate } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom'; // Combined imports
 import { FaPlus } from 'react-icons/fa';
 
 import AdminNavigation from "../../pages/administrator/AdminNavigation";
 import AdminInfo from "../../pages/administrator/AdminInfo";
-import SFforDepartmentalTable from '../../elements/administrator/searchandfilters/SFforDepartmentalTable'; // Importing SFforDepartmentalTable
+import SFforDepartmentalTable from '../../elements/administrator/searchandfilters/SFforDepartmentalTable';
 import ImportDepartmentalCSV from '../../elements/general/imports/ImportDepartmentalCSV';
 import DepartmentalStudentsTable from '../../elements/administrator/tables/DepartmentalStudentsTable';
 
 export default function AdminDepartmentalStudents() {
     const [departments, setDepartments] = useState([]);
     const [departmentName, setDepartmentName] = useState('');
-    const [users, setUsers] = useState([]);
-    const [filteredUsers, setFilteredUsers] = useState([]); // State for filtered users
-    const [searchQuery, setSearchQuery] = useState(''); // State for search query
-
+    const [users, setUsers] = useState([]); // Users state for fetched data
     const { department_code } = useParams();
     const navigate = useNavigate();
 
-    // Authorization Check
     useEffect(() => {
+        // Authorization check
         const token = localStorage.getItem('token');
         const roleId = localStorage.getItem('role_id');
         if (!token || roleId !== '1') {
@@ -28,32 +25,23 @@ export default function AdminDepartmentalStudents() {
         }
     }, [navigate]);
 
-    // Fetch users based on department code
     const fetchUsers = useCallback(async () => {
         try {
             const token = localStorage.getItem('token');
             const headers = { Authorization: `Bearer ${token}` };
-    
+
             const response = await axios.get(
                 `http://localhost:9000/admin-usermanagement/${department_code}`,
                 { headers }
             );
-    
-            if (response.status === 200) {
-                const activeUsers = response.data.filter(user => user.status !== 'archived');
-                setUsers(activeUsers);
-                setFilteredUsers(activeUsers);
-            } else {
-                console.error('Error fetching users: Unexpected response status');
-                alert('Failed to fetch users.');
-            }
+            const activeUsers = response.data.filter(user => user.status !== 'archived');
+            setUsers(activeUsers);
         } catch (error) {
             console.error('Error fetching users:', error);
             alert('Failed to fetch users.');
         }
     }, [department_code]);
 
-    // Fetch department details
     const fetchDepartments = useCallback(async () => {
         try {
             const token = localStorage.getItem('token');
@@ -70,20 +58,6 @@ export default function AdminDepartmentalStudents() {
         }
     }, [department_code]);
 
-    // Handle filtering of users based on search query
-    const handleFilterChange = (searchQuery) => {
-        setSearchQuery(searchQuery);
-        if (searchQuery) {
-            const filtered = users.filter(user =>
-                (user.name && user.name.toLowerCase().includes(searchQuery.toLowerCase())) || 
-                (user.student_idnumber && user.student_idnumber.toLowerCase().includes(searchQuery.toLowerCase()))
-            );
-            setFilteredUsers(filtered);
-        } else {
-            setFilteredUsers(users);
-        }
-    };
-
     useEffect(() => {
         fetchDepartments();
         fetchUsers();
@@ -94,17 +68,23 @@ export default function AdminDepartmentalStudents() {
             <AdminNavigation />
             <AdminInfo />
 
+            {/* Title Section */}
             <div style={{ width: '90%', margin: '0 auto', display: 'flex', justifyContent: 'flex-start' }}>
-                <h6 className="settings-title" style={{ fontFamily: 'Poppins, sans-serif', color: '#242424', fontSize: '40px', fontWeight: 'bold', marginTop: '20px', marginLeft: '50px' }}>
+                <h6 className="settings-title" style={{ 
+                    fontFamily: 'Poppins, sans-serif', 
+                    color: '#242424', 
+                    fontSize: '40px', 
+                    fontWeight: 'bold', 
+                    marginTop: '20px',
+                    marginLeft: '50px' 
+                }}>
                     {departmentName || department_code || 'USER MANAGEMENT'}
                 </h6>
             </div>
-
-            <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'center', marginTop: '10px', marginLeft: '50px', padding: '0 20px', gap: '2px' }}>
-                {/* SearchAndFilter Section */}
-                <div style={{ flex: '1 1 70%', minWidth: '300px' }}>
-                    <SFforDepartmentalTable onSearch={handleFilterChange} />
-                </div>
+            
+            <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'center', marginTop: '10px', marginLeft: '50px', padding: '0 20px', gap: '2px'}}>
+            {/* SearchAndFilter Section */}
+            <div style={{ flex: '1 1 70%', minWidth: '300px'}}><SFforDepartmentalTable /></div>
 
                 <button
                     onClick={() => window.location.href = "http://localhost:3000/register-student"}
@@ -141,8 +121,7 @@ export default function AdminDepartmentalStudents() {
                 </ol>
             </nav>
 
-            {/* Display filtered users in the table */}
-            <DepartmentalStudentsTable users={filteredUsers} />
+            <DepartmentalStudentsTable />
         </div>
     );
 }

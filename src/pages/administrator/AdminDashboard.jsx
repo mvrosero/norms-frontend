@@ -3,12 +3,11 @@ import Card from 'react-bootstrap/Card';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUser } from '@fortawesome/free-solid-svg-icons';
 import axios from 'axios';
-import { Link } from 'react-router-dom'; // Import Link
+import { Link } from 'react-router-dom';
 
 import AdminNavigation from "./AdminNavigation";
 import AdminInfo from "./AdminInfo";
 
-// Import background images for each department
 import yellowBackgroundImage from "../../components/images/yellow_background.png";
 import cafBackgroundImage from "../../components/images/caf.png";
 import casBackgroundImage from "../../components/images/cas.png";
@@ -19,7 +18,6 @@ import chsBackgroundImage from "../../components/images/chs.png";
 import coeBackgroundImage from "../../components/images/coe.png";
 import ctedBackgroundImage from "../../components/images/cted.png";
 
-// Define department data in the specified order
 const departments = [
   { code: '2', name: 'CAF', fullName: 'College of Accountancy and Finance' },
   { code: '1', name: 'CAS', fullName: 'College of Arts and Sciences' },
@@ -38,24 +36,19 @@ export default function AdminDashboard() {
     const token = localStorage.getItem('token');
     const roleId = localStorage.getItem('role_id');
     if (token && roleId === '1') {
-      // Fetch user counts for each department from the backend
       fetchUserCounts(token);
     } else {
-      // Redirect to login page or handle unauthorized access
       console.error("Token is required for accessing the dashboard or invalid role.");
     }
   }, []);
 
   const fetchUserCounts = async (token) => {
     try {
-      // Fetch user counts from the backend
       const response = await axios.get(`http://localhost:9000/user-counts`, {
         headers: {
           Authorization: `Bearer ${token}`
         }
       });
-
-      // Update state with user counts
       setUserCounts(response.data);
     } catch (error) {
       console.error('Error fetching user counts:', error);
@@ -63,7 +56,7 @@ export default function AdminDashboard() {
   };
 
   if (!localStorage.getItem('token') || localStorage.getItem('role_id') !== '1') {
-    return null; // Do not render anything if token or role_id is invalid
+    return null; 
   }
 
   return (
@@ -89,7 +82,6 @@ export default function AdminDashboard() {
 }
 
 const DepartmentCard = ({ department, userCount }) => {
-  // Get the background image based on the department name
   let backgroundImage;
   switch (department.name) {
     case 'CAS':
@@ -121,26 +113,9 @@ const DepartmentCard = ({ department, userCount }) => {
   }
 
   return (
-    <Card style={{ 
-      width: '250px', 
-      height: '120px', 
-      backgroundImage: `url(${backgroundImage})`, 
-      backgroundRepeat: 'no-repeat',
-      backgroundSize: 'cover', 
-      position: 'relative' 
-    }}>
+    <Card style={{ width: '250px', height: '120px', backgroundImage: `url(${backgroundImage})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover', position: 'relative' }}>
       <Card.Body style={{ position: 'absolute', bottom: 0, left: 0, color: 'black', fontSize: '12px', zIndex: 1 }}>
-        <Card.Title style={{ 
-          fontWeight: 'bold', 
-          fontSize: '14px', 
-          width: '60%', 
-          textAlign: 'start', 
-          whiteSpace: 'normal', 
-          display: 'inline-block', 
-          marginBottom: '5px' 
-        }}>
-          {department.fullName}
-        </Card.Title>
+        <Card.Title style={{ fontWeight: 'bold', fontSize: '14px', width: '60%', textAlign: 'start', whiteSpace: 'normal', display: 'inline-block', marginBottom: '5px' }}> {department.fullName} </Card.Title>
         <Card.Text style={{ textAlign: 'left' }}>
           <FontAwesomeIcon icon={faUser} /> {userCount || 0} Users
         </Card.Text>

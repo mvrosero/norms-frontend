@@ -27,6 +27,7 @@ const DepartmentalStudentsTable = () => {
     const [selectAll, setSelectAll] = useState(false);
     const [headers, setHeaders] = useState({});
     const [deletionStatus, setDeletionStatus] = useState(false); // State to track deletion status
+    
 
     // Pagination State
     const [currentPage, setCurrentPage] = useState(1);
