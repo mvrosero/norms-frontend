@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom'; 
-import axios from 'axios';
 import { FaSearch } from 'react-icons/fa';
 import { IoFilter } from 'react-icons/io5';
+import axios from 'axios';
 import '../../../styles/SearchAndFilter.css';
 
 export default function SFforDepartmentalTable({ onSearch }) {
@@ -12,29 +11,11 @@ export default function SFforDepartmentalTable({ onSearch }) {
     const [batch, setBatch] = useState('');
     const [status, setStatus] = useState('');
     const [isFilterOpen, setIsFilterOpen] = useState(false);
-    const [isFilterActive, setIsFilterActive] = useState(false);
-    const [students, setStudents] = useState([]); // State for storing student data
-    const [programs, setPrograms] = useState([]); // State for storing program options
-
+    const [programs, setPrograms] = useState([]);
+    
     const currentYear = new Date().getFullYear();
     const years = Array.from({ length: 31 }, (_, index) => currentYear - 5 + index);
 
-    // Fetch students
-    useEffect(() => {
-        const fetchStudents = async () => {
-            try {
-                const response = await fetch('/students');
-                const data = await response.json();
-                setStudents(data);
-            } catch (error) {
-                console.error('Error fetching students:', error);
-            }
-        };
-
-        fetchStudents();
-    }, []);
-
-    // Fetch programs dynamically
     useEffect(() => {
         axios
             .get('http://localhost:9000/programs')
@@ -46,12 +27,16 @@ export default function SFforDepartmentalTable({ onSearch }) {
             });
     }, []);
 
-    const handleInputChange = (e) => {
-        setSearchQuery(e.target.value);
-        onSearch(e.target.value, { yearLevel, program, batch, status });
+    const handleSearchChange = (e) => {
+        const value = e.target.value;
+        setSearchQuery(value);
+        // Passing the search query along with current filters
+        onSearch(value, { yearLevel, program, batch, status });
     };
 
     const handleFilterChange = (filter, value) => {
+        const updatedFilters = { yearLevel, program, batch, status, [filter]: value };
+
         switch (filter) {
             case 'yearLevel':
                 setYearLevel(value);
@@ -68,12 +53,15 @@ export default function SFforDepartmentalTable({ onSearch }) {
             default:
                 break;
         }
-        onSearch(searchQuery, { yearLevel, program, batch, status });
+
+        // Passing search query with updated filters
+        if (onSearch) {
+            onSearch(searchQuery, updatedFilters);
+        }
     };
 
     const toggleFilterDropdown = () => {
-        setIsFilterOpen(!isFilterOpen);
-        setIsFilterActive(!isFilterActive);
+        setIsFilterOpen((prevState) => !prevState);
     };
 
     const clearFilters = () => {
@@ -81,25 +69,34 @@ export default function SFforDepartmentalTable({ onSearch }) {
         setProgram('');
         setBatch('');
         setStatus('');
-        onSearch(searchQuery, { yearLevel: '', program: '', batch: '', status: '' });
+        // Clear filters when resetting and maintain the search query
+        if (onSearch) {
+            onSearch(searchQuery, { yearLevel: '', program: '', batch: '', status: '' });
+        }
     };
 
     return (
         <div className="searchAndFilterContainer">
             <div className="searchAndFilterWrapper">
+                {/* Search Input */}
                 <input
                     type="text"
-                    placeholder="Search..."
+                    placeholder="Search users by name or ID"
                     value={searchQuery}
-                    onChange={handleInputChange}
+                    onChange={handleSearchChange}
                     className="searchInput"
+                    style={{
+                        width: '100%',
+                        padding: '10px',
+                        borderRadius: '5px',
+                        border: '1px solid #ddd',
+                    }}
                 />
-                <button
-                    onClick={toggleFilterDropdown}
-                    className={`filterButton ${isFilterActive ? 'active' : ''}`}
-                >
-                    <IoFilter className={`filterIcon ${isFilterActive ? 'active' : ''}`} />
+                {/* Filter Toggle Button */}
+                <button onClick={toggleFilterDropdown} className="filterButton">
+                    <IoFilter className="filterIcon" />
                 </button>
+                {/* Search Button */}
                 <button
                     onClick={() => onSearch(searchQuery, { yearLevel, program, batch, status })}
                     className="searchButton"
@@ -108,8 +105,10 @@ export default function SFforDepartmentalTable({ onSearch }) {
                 </button>
             </div>
 
+            {/* Filter Dropdown */}
             {isFilterOpen && (
                 <div className="filterDropdownWrapper">
+                    {/* Year Level Filter */}
                     <div className="filterOption">
                         <select
                             value={yearLevel}
@@ -124,6 +123,7 @@ export default function SFforDepartmentalTable({ onSearch }) {
                             <option value="Fifth Year">Fifth Year</option>
                         </select>
                     </div>
+                    {/* Program Filter */}
                     <div className="filterOption">
                         <select
                             value={program}
@@ -138,13 +138,13 @@ export default function SFforDepartmentalTable({ onSearch }) {
                             ))}
                         </select>
                     </div>
+                    {/* Batch Filter */}
                     <div className="filterOption">
                         <select
                             id="batch"
                             value={batch}
                             onChange={(e) => handleFilterChange('batch', e.target.value)}
                             className="filterSelect"
-                            required
                         >
                             <option value="">Select Batch</option>
                             {years.map((year) => (
@@ -154,6 +154,7 @@ export default function SFforDepartmentalTable({ onSearch }) {
                             ))}
                         </select>
                     </div>
+                    {/* Status Filter */}
                     <div className="filterOption">
                         <select
                             value={status}
@@ -166,6 +167,7 @@ export default function SFforDepartmentalTable({ onSearch }) {
                         </select>
                     </div>
 
+                    {/* Clear Filters Button */}
                     <button className="clearButton" onClick={clearFilters}>
                         Clear
                     </button>
