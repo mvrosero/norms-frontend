@@ -32,7 +32,7 @@ const DepartmentalStudentRecordsTable = () => {
 
     // Pagination state
     const [currentPage, setCurrentPage] = useState(1);
-    const rowsPerPage = 5;
+    const [rowsPerPage, setRowsPerPage] = useState(10);
 
     // Sorting state for full name
     const [sortOrder, setSortOrder] = useState('asc'); // 'asc' for ascending, 'desc' for descending
@@ -202,24 +202,129 @@ const DepartmentalStudentRecordsTable = () => {
         };
         
     
-      // Calculate paginated users
-      const indexOfLastUser = currentPage * rowsPerPage;
-      const indexOfFirstUser = indexOfLastUser - rowsPerPage;
-      const currentUsers = users.slice(indexOfFirstUser, indexOfLastUser);
+ // Pagination
+ const indexOfLastUser = currentPage * rowsPerPage;
+ const indexOfFirstUser = indexOfLastUser - rowsPerPage;
+ const currentUsers = users.slice(indexOfFirstUser, indexOfLastUser);
+ const totalPages = Math.ceil(users.length / rowsPerPage);
+
+ const handlePaginationChange = (pageNumber) => {
+   setCurrentPage(pageNumber);
+ };
+
+ const handleRowsPerPageChange = (e) => {
+   setRowsPerPage(Number(e.target.value));
+   setCurrentPage(1);
+ };
+
+
+ const renderPagination = () => {
+    const pageNumbers = Array.from({ length: totalPages }, (_, i) => i + 1);
+
+    const buttonStyle = {
+        width: '30px', // Fixed width for equal size
+        height: '30px', // Fixed height for equal size
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        border: '1px solid #a0a0a0',
+        backgroundColor: '#ebebeb',
+        color: '#4a4a4a',
+        fontSize: '0.75rem', // Smaller font size
+        cursor: 'pointer',
+    };
+
+    const activeButtonStyle = {
+        ...buttonStyle,
+        backgroundColor: '#a0a0a0',
+        color: '#f1f1f1',
+    };
+
+    const disabledButtonStyle = {
+        ...buttonStyle,
+        backgroundColor: '#ebebeb',
+        color: '#a1a1a1',
+        cursor: 'not-allowed',
+    };
+
+    return (
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '15px', fontSize: '14px', color: '#4a4a4a'}}>
+            {/* Results per Page */}
+            <div>
+                <label htmlFor="rowsPerPage" style={{ marginLeft: '120px', marginRight: '5px' }}>Results per page:</label>
+                <select
+                    id="rowsPerPage"
+                    value={rowsPerPage}
+                    onChange={handleRowsPerPageChange}
+                    style={{
+                        fontSize: '14px',
+                        padding: '5px 25px',
+                        border: '1px solid #ccc',
+                        borderRadius: '3px',
+                    }}
+                >
+                    {Array.from({ length: 10 }, (_, i) => (i + 1) * 10).map((value) => (
+                        <option key={value} value={value}> {value} </option>
+                    ))}
+                </select>
+            </div>
     
-      const totalPages = Math.ceil(users.length / rowsPerPage);
+            {/* Pagination Info and Buttons */}
+            <div style={{ display: 'flex', alignItems: 'center', marginRight: '25px' }}>
+                {/* Page Info */}
+                <div style={{ marginRight: '10px' }}>Page {currentPage} of {totalPages}</div>
     
-      // Handle pagination change
-      const handlePaginationChange = (pageNumber) => {
-        setCurrentPage(pageNumber);
-      };
+                {/* Pagination Buttons */}
+                <div style={{ display: 'flex' }}>
+                    <button
+                        onClick={() =>
+                            currentPage > 1 && handlePaginationChange(currentPage - 1)
+                        }
+                        disabled={currentPage === 1}
+                        style={{
+                            ...buttonStyle,
+                            borderTopLeftRadius: '10px',
+                            borderBottomLeftRadius: '10px',
+                            ...(currentPage === 1 ? disabledButtonStyle : {}),
+                        }}
+                    >
+                        ❮
+                    </button>
+                    {pageNumbers.map((number) => (
+                        <button
+                            key={number}
+                            onClick={() => handlePaginationChange(number)}
+                            style={number === currentPage ? activeButtonStyle : buttonStyle}
+                        >
+                            {number}
+                        </button>
+                    ))}
+                    <button
+                        onClick={() =>
+                            currentPage < totalPages && handlePaginationChange(currentPage + 1)
+                        }
+                        disabled={currentPage === totalPages}
+                        style={{
+                            ...buttonStyle,
+                            borderTopRightRadius: '10px',
+                            borderBottomRightRadius: '10px',
+                            ...(currentPage === totalPages ? disabledButtonStyle : {}),
+                        }}
+                    >
+                        ❯
+                    </button>
+                </div>
+            </div>
+        </div>
+    );
+};
 
 
 
   // Render Table
   const renderTable = () => {
     return (
-    <Table bordered hover responsive style={{ borderRadius: '20px', marginTop: '10px', marginBottom: '20px' }}>
+        <Table bordered hover responsive style={{ borderRadius: '20px', marginBottom: '20px', marginLeft: '110px' }}>
         <thead>
             <tr>
                 <th style={{ width: '4%'}}>No.</th>
@@ -315,100 +420,19 @@ const DepartmentalStudentRecordsTable = () => {
 };
 
 
-// Render Custom Pagination
-const renderPagination = () => {
-    const pageNumbers = Array.from({ length: totalPages }, (_, i) => i + 1);
-  
-    const buttonStyle = {
-      width: '30px', // Fixed width for equal size
-      height: '30px', // Fixed height for equal size
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      border: '1px solid #a0a0a0',
-      backgroundColor: '#ebebeb',
-      color: '#4a4a4a',
-      fontSize: '0.75rem', // Smaller font size
-      cursor: 'pointer',
-    };
-  
-    const activeButtonStyle = {
-      ...buttonStyle,
-      backgroundColor: '#a0a0a0',
-      color: '#f1f1f1',
-    };
-  
-    const disabledButtonStyle = {
-      ...buttonStyle,
-      backgroundColor: '#ebebeb',
-      color: '#a1a1a1',
-      cursor: 'not-allowed',
-    };
-  
-    return (
-      <div
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'flex-end',
-          marginBottom: '15px',
-        }}
-      >
-        {/* Page Info */}
-        <div style={{ fontSize: '0.875rem', color: '#4a4a4a', marginRight: '10px' }}>
-          Page {currentPage} out of {totalPages}
-        </div>
-  
-        {/* Pagination Buttons */}
-        <div style={{ display: 'flex', marginRight: '20px' }}>
-          <button
-            onClick={() => currentPage > 1 && handlePaginationChange(currentPage - 1)}
-            disabled={currentPage === 1}
-            style={{
-              ...buttonStyle,
-              borderTopLeftRadius: '10px',
-              borderBottomLeftRadius: '10px',
-              ...(currentPage === 1 && disabledButtonStyle),
-            }}
-          >
-            ❮
-          </button>
-          {pageNumbers.map((number) => (
-            <button
-              key={number}
-              onClick={() => handlePaginationChange(number)}
-              style={number === currentPage ? activeButtonStyle : buttonStyle}
-            >
-              {number}
-            </button>
-          ))}
-          <button
-            onClick={() => currentPage < totalPages && handlePaginationChange(currentPage + 1)}
-            disabled={currentPage === totalPages}
-            style={{
-              ...buttonStyle,
-              borderTopRightRadius: '10px',
-              borderBottomRightRadius: '10px',
-              ...(currentPage === totalPages && disabledButtonStyle),
-            }}
-          >
-            ❯
-          </button>
-        </div>
-      </div>
-    );
-  };
-  
 
     return (
         <>
             <CoordinatorNavigation />
             <CoordinatorInfo />
-            <h6 className="page-title">{departmentName || department_code || 'STUDENT RECORDS'}</h6>
-            <div style={{ display: 'flex', marginTop: '20px', alignItems: 'center' }}>
-                <div style={{ width: '900px', marginLeft: '80px' }}>
-                    <SearchAndFilter />
-                </div>
+            {/* Title Section */}
+            <div style={{ width: '90%', margin: '0 auto', display: 'flex', justifyContent: 'flex-start' }}>
+                <h6 className="settings-title" style={{ fontFamily: 'Poppins, sans-serif', color: '#242424', fontSize: '40px', fontWeight: 'bold', marginTop: '20px', marginLeft: '50px' }}> {departmentName || department_code || 'STUDENT RECORDS'} </h6>
+            </div>
+
+            {/* Search And Filter Section */}
+            <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'center', marginTop: '10px', marginLeft: '70px', padding: '0 20px' }}>
+                <div style={{ flex: '1 1 70%', minWidth: '300px' }}> <SearchAndFilter /> </div>
                 <button 
                     onClick={handleCreateViolation} 
                     style={{
@@ -419,7 +443,6 @@ const renderPagination = () => {
                         border: 'none',
                         borderRadius: '10px',
                         cursor: 'pointer',
-                        marginLeft: '10px',
                         display: 'flex',
                         alignItems: 'center',
                         boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
@@ -431,7 +454,7 @@ const renderPagination = () => {
             </div>
 
             {/* Breadcrumbs */}
-            <nav style={{ marginBottom: '5px', marginLeft: '120px' }}>
+            <nav style={{ marginTop: '5px', marginBottom: '20px', marginLeft: '120px' }}>
                 <ol style={{ backgroundColor: 'transparent', padding: '0', margin: '0', listStyle: 'none', display: 'flex' }}>
                     <li style={{ marginRight: '5px' }}>
                         <Link to="http://localhost:3000/coordinator-studentrecords" style={{ textDecoration: 'none', color: '#0D4809' }}>

@@ -70,21 +70,12 @@ export default function AdminDepartmentalStudents() {
 
             {/* Title Section */}
             <div style={{ width: '90%', margin: '0 auto', display: 'flex', justifyContent: 'flex-start' }}>
-                <h6 className="settings-title" style={{ 
-                    fontFamily: 'Poppins, sans-serif', 
-                    color: '#242424', 
-                    fontSize: '40px', 
-                    fontWeight: 'bold', 
-                    marginTop: '20px',
-                    marginLeft: '50px' 
-                }}>
-                    {departmentName || department_code || 'USER MANAGEMENT'}
-                </h6>
+                <h6 className="settings-title" style={{ fontFamily: 'Poppins, sans-serif', color: '#242424', fontSize: '40px', fontWeight: 'bold', marginTop: '20px', marginLeft: '50px' }}> {departmentName || department_code || 'USER MANAGEMENT'} </h6>
             </div>
             
+            {/* Search And Filter Section */}
             <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'center', marginTop: '10px', marginLeft: '50px', padding: '0 20px', gap: '2px'}}>
-            {/* SearchAndFilter Section */}
-            <div style={{ flex: '1 1 70%', minWidth: '300px'}}><SFforDepartmentalTable /></div>
+            <div style={{ flex: '1 1 70%', minWidth: '300px' }}><SFforDepartmentalTable /></div>
 
                 <button
                     onClick={() => window.location.href = "http://localhost:3000/register-student"}
