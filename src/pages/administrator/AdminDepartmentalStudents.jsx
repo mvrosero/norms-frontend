@@ -5,7 +5,7 @@ import { FaPlus } from 'react-icons/fa';
 
 import AdminNavigation from "../../pages/administrator/AdminNavigation";
 import AdminInfo from "../../pages/administrator/AdminInfo";
-import SearchAndFilter from '../../pages/general/SearchAndFilter';
+import SFforDepartmentalTable from '../../elements/administrator/searchandfilters/SFforDepartmentalTable';
 import ImportDepartmentalCSV from '../../elements/general/imports/ImportDepartmentalCSV';
 import DepartmentalStudentsTable from '../../elements/administrator/tables/DepartmentalStudentsTable';
 
@@ -82,10 +82,10 @@ export default function AdminDepartmentalStudents() {
                 </h6>
             </div>
             
-            <div style={{ display: 'flex', marginTop: '10px', alignItems: 'center' }}>
-                <div style={{ width: '750px', marginLeft: '100px' }}>
-                    <SearchAndFilter />
-                </div>
+            <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'center', marginTop: '10px', marginLeft: '50px', padding: '0 20px', gap: '2px'}}>
+            {/* SearchAndFilter Section */}
+            <div style={{ flex: '1 1 70%', minWidth: '300px'}}><SFforDepartmentalTable /></div>
+
                 <button
                     onClick={() => window.location.href = "http://localhost:3000/register-student"}
                     style={{

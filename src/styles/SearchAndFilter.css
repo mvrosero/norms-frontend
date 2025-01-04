@@ -1,0 +1,120 @@
+.searchAndFilterContainer {
+    margin: 20px;
+}
+
+.searchAndFilterWrapper {
+    display: flex;
+    align-items: center;
+    position: relative;
+}
+
+.filterButton {
+    background: none;
+    cursor: pointer;
+    padding: 6.5px 10px;
+    box-shadow: inset 0 1px 5px rgba(0, 0, 0, 0.1), inset 0 -1px 5px rgba(0, 0, 0, 0.1);
+}
+
+.filterIcon {
+    width: 25px;
+    height: 30px;
+    color: #818181; /* Default color */
+}
+
+.filterButton.active .filterIcon {
+    color: #FAD32E; /* Active color */
+}
+
+.searchInput {
+    padding: 12px;
+    width: 750px;
+    background-color: #ffffff;
+    box-shadow: inset 1px 0 5px 1px rgba(0, 0, 0, 0.2);
+    border-radius: 10px 0 0 10px;
+    border: none;
+    outline: none;
+}
+
+.searchButton {
+    padding: 11px 14px;
+    background-color: #FAD32E;
+    color: #fff;
+    border: none;
+    border-radius: 0 10px 10px 0;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.searchIcon {
+    width: 20px;
+    height: 20px;
+}
+
+.filterDropdownWrapper {
+    display: flex;
+    flex-wrap: nowrap; /* Ensures that filters stay in a single row */
+    gap: 20px; /* Space between the filters */
+    margin-top: 20px;
+    margin-left: 20px;
+}
+
+.filterOption {
+    display: flex;
+    flex-direction: column;
+    gap: 5px; /* Space between label and select */
+}
+
+.filterOption label {
+    font-weight: bold;
+    font-size: 14px;
+}
+
+/* Updated: Remove rounded corners */
+.filterSelect {
+    width: 150px; 
+    padding: 8px;
+    font-size: 14px;
+    border-radius: 0; /* Remove rounded corners */
+    border: 1px solid #ccc;
+    color: #000; /* Text color inside the dropdown */
+}
+
+/* Active border color and width */
+.filterSelect:focus {
+    border-color: #FAD32E; /* Active border color */
+    border-width: 2px; /* Active border width */
+}
+
+/* Styling the text inside options */
+.filterSelect option {
+    color: #000; /* Text color inside options */
+    padding: 8px; /* Padding for options */
+}
+
+/* Placeholder text (disabled option) styling */
+.filterSelect option[value=""]:disabled {
+    color: #C1C1C1; /* Placeholder color */
+}
+
+/* Text color when a valid option is selected */
+.filterSelect:not(:placeholder-shown) {
+    color: #000; /* Text color when option is selected */
+}
+
+
+.clearButton {
+    background: none;
+    color: #3B3B3B; 
+    border: none;
+    font-weight: bold;
+    cursor: pointer;
+    align-self: flex-start;
+    padding: 8px 14px;
+    font-size: 14px;
+}
+
+.clearButton:hover {
+    text-decoration: underline;
+}
