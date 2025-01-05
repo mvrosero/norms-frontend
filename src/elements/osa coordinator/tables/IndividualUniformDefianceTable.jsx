@@ -251,6 +251,7 @@ const IndividualUniformDefianceTable = ({ handleShowDetailsModal }) => {
         }
 
         return (
+            <div style={{ paddingTop: '10px' }}>
             <Table bordered hover responsive style={{ borderRadius: '20px', marginBottom: '20px', marginLeft: '110px' }}>
                 <thead>
                     <tr>
@@ -372,6 +373,7 @@ const IndividualUniformDefianceTable = ({ handleShowDetailsModal }) => {
                     })}
                 </tbody>
             </Table>
+        </div>
         );
     };
 

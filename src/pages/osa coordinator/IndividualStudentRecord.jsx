@@ -145,19 +145,15 @@ export default function IndividualStudentRecord() {
 
 
             {/* Table for displaying violation records */}
-            <div style={{ marginTop: '20px', marginLeft: '20px', marginRight: '30px' }}>
                 <IndividualStudentRecordTable records={violationRecords} />
-            </div>
-            {/* AddViolationRecordForm modal */}
-            <Modal show={showAddViolationModal} onHide={handleCloseModal}>
-                <Modal.Header closeButton>
-                    <Modal.Title style={{ marginLeft: '60px' }}>ADD VIOLATION RECORD</Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-                    {/* Pass handleCloseModal function as onClose prop */}
-                    <AddViolationModal handleCloseModal={handleCloseModal} />
-                </Modal.Body>
-            </Modal>
+       
+
+            {/* Add Individual Violation Record Modal */}
+            <AddViolationModal
+                show={showAddViolationModal}
+                onHide={handleCloseModal}
+                handleCloseModal={handleCloseModal}
+            />
         </div>
     );
 }

@@ -144,7 +144,6 @@ export default function CreateViolationModal({ show, onHide, handleCloseModal })
     };
 
 
-
     const handleCancel = () => {
         Swal.fire({
             title: 'Are you sure you want to cancel?',

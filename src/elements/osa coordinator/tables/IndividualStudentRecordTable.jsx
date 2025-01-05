@@ -1,10 +1,15 @@
 import React, { useState, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import Table from 'react-bootstrap/Table';
 import styled from '@emotion/styled';
+import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
+import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import ViewViolationModal from '../modals/ViewViolationModal';
 
-const IndividualStudentRecordTable = ({ records }) => {
+const IndividualStudentRecordTable = () => {
+    const { student_idnumber } = useParams();
+    const [records, setRecords] = useState([]);
     const [categories, setCategories] = useState([]);
     const [offenses, setOffenses] = useState([]);
     const [sanctions, setSanctions] = useState([]);
@@ -13,16 +18,31 @@ const IndividualStudentRecordTable = ({ records }) => {
     const [selectedRecord, setSelectedRecord] = useState(null);
     const [showDetailsModal, setShowDetailsModal] = useState(false);
 
+    // Pagination state
+    const [currentPage, setCurrentPage] = useState(1);
+    const [rowsPerPage, setRowsPerPage] = useState(10);
+
+    // Sorting states
+    const [sortOrderSlipId, setSortOrderSlipId] = useState('asc'); // 'asc' for ascending, 'desc' for descending
+    const [sortOrderDate, setSortOrderDate] = useState('asc'); // 'asc' for ascending, 'desc' for descending
+
+
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const [categoriesResponse, offensesResponse, sanctionsResponse, academicYearsResponse, semestersResponse] = await Promise.all([
-                    axios.get('http://localhost:9000/categories'),
-                    axios.get('http://localhost:9000/offenses'),
-                    axios.get('http://localhost:9000/sanctions'),
-                    axios.get('http://localhost:9000/academic_years'),
-                    axios.get('http://localhost:9000/semesters')
-                ]);
+                const violationResponse = await axios.get(
+                    `http://localhost:9000/individual_violationrecords/${student_idnumber}`
+                );
+                setRecords(violationResponse.data);
+
+                const [categoriesResponse, offensesResponse, sanctionsResponse, academicYearsResponse, semestersResponse] =
+                    await Promise.all([
+                        axios.get('http://localhost:9000/categories'),
+                        axios.get('http://localhost:9000/offenses'),
+                        axios.get('http://localhost:9000/sanctions'),
+                        axios.get('http://localhost:9000/academic_years'),
+                        axios.get('http://localhost:9000/semesters'),
+                    ]);
 
                 setCategories(categoriesResponse.data);
                 setOffenses(offensesResponse.data);
@@ -35,44 +55,39 @@ const IndividualStudentRecordTable = ({ records }) => {
         };
 
         fetchData();
-    }, []);
+    }, [student_idnumber]);
 
     const getCategoryName = (category_id) => {
-        const category = categories.find(cat => cat.category_id === category_id);
+        const category = categories.find((cat) => cat.category_id === category_id);
         return category ? category.category_name : 'Unknown';
     };
 
     const getOffenseName = (offense_id) => {
-        const offense = offenses.find(offense => offense.offense_id === offense_id);
+        const offense = offenses.find((offense) => offense.offense_id === offense_id);
         return offense ? offense.offense_name : 'Unknown';
     };
 
     const getSanctionNames = (sanction_ids) => {
         if (!sanction_ids) return 'Unknown';
-        
-        const ids = sanction_ids.split(',').map(id => id.trim());
-        
-        const sanctionNames = ids.map(id => getSanctionName(id));
 
-        // Log sanction names for debugging
-        console.log('Sanction Names:', sanctionNames);
+        const ids = sanction_ids.split(',').map((id) => id.trim());
+        const sanctionNames = ids.map((id) => getSanctionName(id));
 
-        return sanctionNames.every(name => name === 'Unknown') ? 'Unknown' : sanctionNames.join(', ');
+        return sanctionNames.every((name) => name === 'Unknown') ? 'Unknown' : sanctionNames.join(', ');
     };
 
     const getSanctionName = (sanction_id) => {
-        sanction_id = String(sanction_id);
-        const sanction = sanctions.find(sanction => String(sanction.sanction_id) === sanction_id);
+        const sanction = sanctions.find((sanction) => String(sanction.sanction_id) === String(sanction_id));
         return sanction ? sanction.sanction_name : 'Unknown';
     };
 
     const getAcademicYearName = (acadyear_id) => {
-        const academicYear = academicYears.find(academicYear => academicYear.acadyear_id === acadyear_id);
+        const academicYear = academicYears.find((academicYear) => academicYear.acadyear_id === acadyear_id);
         return academicYear ? `${academicYear.start_year} - ${academicYear.end_year}` : 'Unknown';
     };
 
     const getSemesterName = (semester_id) => {
-        const semester = semesters.find(semester => semester.semester_id === semester_id);
+        const semester = semesters.find((semester) => semester.semester_id === semester_id);
         return semester ? semester.semester_name : 'Unknown';
     };
 
@@ -87,49 +102,202 @@ const IndividualStudentRecordTable = ({ records }) => {
 
     const ViewButton = styled.button`
         border-radius: 20px;
-        background: linear-gradient(45deg, #015901, #006637, #4AA616);
+        background: linear-gradient(45deg, #015901, #006637, #4aa616);
         color: white;
         border: none;
         padding: 5px 30px;
         cursor: pointer;
-        text-align: center;
         &:hover {
-            background: linear-gradient(45deg, #4AA616, #006637, #015901);
+            background: linear-gradient(45deg, #4aa616, #006637, #015901);
         }
     `;
 
+
+
+    const handleSortDate = () => {
+        const sortedRecords = [...records];
+        sortedRecords.sort((a, b) => {
+            const dateA = new Date(a.created_at); 
+            const dateB = new Date(b.created_at);
+
+            // Compare dates including time
+            return sortOrderDate === 'asc' ? dateA - dateB : dateB - dateA;
+        });
+
+        setRecords(sortedRecords);
+        setSortOrderDate(sortOrderDate === 'asc' ? 'desc' : 'asc');
+    };
+
+
+    // Pagination Logic
+    const indexOfLastRecord = currentPage * rowsPerPage;
+    const indexOfFirstRecord = indexOfLastRecord - rowsPerPage;
+    const currentRecords = records.slice(indexOfFirstRecord, indexOfLastRecord);
+    const totalPages = Math.ceil(records.length / rowsPerPage);
+
+    const handlePaginationChange = (pageNumber) => setCurrentPage(pageNumber);
+    const handleRowsPerPageChange = (e) => {
+        setRowsPerPage(Number(e.target.value));
+        setCurrentPage(1);
+    };
+
+    // Render Custom Pagination
+    const renderPagination = () => {
+        const pageNumbers = Array.from({ length: totalPages }, (_, i) => i + 1);
+    
+        const buttonStyle = {
+        width: '30px', // Fixed width for equal size
+        height: '30px', // Fixed height for equal size
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        border: '1px solid #a0a0a0',
+        backgroundColor: '#ebebeb',
+        color: '#4a4a4a',
+        fontSize: '0.75rem', // Smaller font size
+        cursor: 'pointer',
+        };
+    
+        const activeButtonStyle = {
+        ...buttonStyle,
+        backgroundColor: '#a0a0a0',
+        color: '#f1f1f1',
+        };
+    
+        const disabledButtonStyle = {
+        ...buttonStyle,
+        backgroundColor: '#ebebeb',
+        color: '#a1a1a1',
+        cursor: 'not-allowed',
+        };
+    
+        return (
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '15px', fontSize: '14px', color: '#4a4a4a'}}>
+            {/* Results per Page */}
+            <div>
+                <label htmlFor="rowsPerPage" style={{ marginLeft: '120px', marginRight: '5px' }}>Results per page:</label>
+                <select
+                    id="rowsPerPage"
+                    value={rowsPerPage}
+                    onChange={handleRowsPerPageChange}
+                    style={{
+                        fontSize: '14px',
+                        padding: '5px 25px',
+                        border: '1px solid #ccc',
+                        borderRadius: '3px',
+                    }}
+                >
+                    {Array.from({ length: 10 }, (_, i) => (i + 1) * 10).map((value) => (
+                        <option key={value} value={value}> {value} </option>
+                    ))}
+                </select>
+            </div>
+    
+            {/* Pagination Info and Buttons */}
+            <div style={{ display: 'flex', alignItems: 'center', marginRight: '25px' }}>
+                {/* Page Info */}
+                <div style={{ marginRight: '10px' }}>Page {currentPage} of {totalPages}</div>
+    
+                {/* Pagination Buttons */}
+                <div style={{ display: 'flex' }}>
+                    <button
+                        onClick={() =>
+                            currentPage > 1 && handlePaginationChange(currentPage - 1)
+                        }
+                        disabled={currentPage === 1}
+                        style={{
+                            ...buttonStyle,
+                            borderTopLeftRadius: '10px',
+                            borderBottomLeftRadius: '10px',
+                            ...(currentPage === 1 ? disabledButtonStyle : {}),
+                        }}
+                    >
+                        ❮
+                    </button>
+                    {pageNumbers.map((number) => (
+                        <button
+                            key={number}
+                            onClick={() => handlePaginationChange(number)}
+                            style={number === currentPage ? activeButtonStyle : buttonStyle}
+                        >
+                            {number}
+                        </button>
+                    ))}
+                    <button
+                        onClick={() =>
+                            currentPage < totalPages && handlePaginationChange(currentPage + 1)
+                        }
+                        disabled={currentPage === totalPages}
+                        style={{
+                            ...buttonStyle,
+                            borderTopRightRadius: '10px',
+                            borderBottomRightRadius: '10px',
+                            ...(currentPage === totalPages ? disabledButtonStyle : {}),
+                        }}
+                    >
+                        ❯
+                    </button>
+                </div>
+            </div>
+        </div>
+    );
+};
+
+
     return (
-        <>
-            <Table bordered hover style={{ borderRadius: '20px', marginBottom: '50px', marginLeft: '100px' }}>
+        <div style={{ paddingTop: '10px' }}>
+            <Table bordered hover responsive style={{ borderRadius: '20px', marginBottom: '20px', marginLeft: '110px' }}>
                 <thead style={{ backgroundColor: '#f8f9fa' }}>
                     <tr>
-                        <th style={{ width: '5%' }}>ID</th>
+                        <th style={{ width: '5%'}}>No.</th>
+                        <th style={{ width: '20%' }}>
+                            <button
+                                style={{
+                                    border: 'none',
+                                    background: 'none',
+                                    cursor: 'pointer',
+                                    display: 'flex',
+                                    flexDirection: 'row',
+                                    justifyContent: 'center',
+                                    alignItems: 'center',
+                                    width: '100%',
+                                }}
+                                onClick={handleSortDate}
+                            >
+                                <span>Date</span>
+                                {sortOrderDate === 'asc' ? (
+                                    <ArrowDropUpIcon style={{ marginLeft: '5px' }} />
+                                ) : (
+                                    <ArrowDropDownIcon style={{ marginLeft: '5px' }} />
+                                )}
+                            </button>
+                        </th>
                         <th style={{ width: '12%' }}>Category</th>
                         <th>Offense</th>
-                        <th style={{ width: '15%' }}>Sanction</th>
-                        <th style={{ width: '14%' }}>Academic Year</th>
-                        <th style={{ width: '14%' }}>Semester</th>
+                        <th style={{ width: '13%' }}>Academic Year</th>
+                        <th style={{ width: '13%' }}>Semester</th>
                         <th style={{ width: '12%' }}>Action</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {records.map((record, index) => (
+                    {currentRecords.map((record, index) => (
                         <tr key={index}>
-                            <td style={{ textAlign: 'center' }}>{record.record_id}</td>
+                            <td style={{ textAlign: 'center' }}>{ (currentPage - 1) * rowsPerPage + (index + 1) }</td>
+                            <td>{new Date(record.created_at).toLocaleString()}</td>
                             <td>{getCategoryName(record.category_id)}</td>
                             <td>{getOffenseName(record.offense_id)}</td>
-                            <td>{getSanctionNames(record.sanction_ids)}</td>
-                            <td>{getAcademicYearName(record.acadyear_id)}</td>
-                            <td>{getSemesterName(record.semester_id)}</td>
+                            <td style={{ textAlign: 'center' }}>{getAcademicYearName(record.acadyear_id)}</td>
+                            <td style={{ textAlign: 'center' }}>{getSemesterName(record.semester_id)}</td>
                             <td style={{ display: 'flex', justifyContent: 'center' }}>
-                                <ViewButton onClick={() => handleViewDetails(record)}>
-                                    View
-                                </ViewButton>
+                                <ViewButton onClick={() => handleViewDetails(record)}>View</ViewButton>
                             </td>
                         </tr>
                     ))}
                 </tbody>
             </Table>
+
+            {renderPagination()}
+
             <ViewViolationModal
                 show={showDetailsModal}
                 onHide={handleCloseDetailsModal}
@@ -140,7 +308,7 @@ const IndividualStudentRecordTable = ({ records }) => {
                 getAcademicYearName={getAcademicYearName}
                 getSemesterName={getSemesterName}
             />
-        </>
+        </div>
     );
 };
 
