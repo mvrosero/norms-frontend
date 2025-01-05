@@ -119,6 +119,7 @@ const DepartmentalStudentRecordsTable = () => {
     const handleReadModalClose = () => {
         setShowReadModal(false);
     };
+    
 
     const deleteUser = async (userId) => {
         const isConfirm = await Swal.fire({
@@ -473,17 +474,12 @@ const DepartmentalStudentRecordsTable = () => {
 
   
             {/*Create Violation Modal*/}
-            <Modal show={showViolationModal} onHide={handleCloseModal}>
-                <Modal.Header closeButton>
-                    <Modal.Title>Create Violation Record</Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-                    <DepartmentalCreateViolationModal 
-                        department_code={department_code} // Pass the department_code here
-                        handleCloseModal={handleCloseModal} 
-                    />
-                </Modal.Body>
-            </Modal>
+            <DepartmentalCreateViolationModal
+                show={showViolationModal} 
+                onHide={handleCloseModal} 
+                department_code={department_code} 
+                handleCloseModal={handleCloseModal}
+            />
         </>
     );
 };

@@ -269,7 +269,7 @@ if (!formData.student_idnumber || !formData.first_name || !formData.last_name ||
     const inputStyle = {
         backgroundColor: '#f2f2f2',
         border: '1px solid #ced4da', 
-        borderRadius: '.25rem',
+        borderRadius: '4px',
         height: '40px',
         paddingLeft: '10px',
         transition: 'border-color 0.3s ease', 

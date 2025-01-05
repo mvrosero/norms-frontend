@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Swal from 'sweetalert2';
-import { Form, Button, Row, Col } from 'react-bootstrap';
+import { Modal, Form, Button, Row, Col } from 'react-bootstrap';
 import Select from 'react-select';
 import { useParams } from 'react-router-dom'; // If using react-router to get params from URL
 
-export default function DepartmentalCreateViolationModal({ handleCloseModal }) {
+export default function DepartmentalCreateViolationModal({ show, onHide, handleCloseModal}) {
     const [formData, setFormData] = useState({
         description: '',
         category_id: '',
@@ -22,9 +22,25 @@ export default function DepartmentalCreateViolationModal({ handleCloseModal }) {
     const [sanctions, setSanctions] = useState([]);
     const [academicYears, setAcademicYears] = useState([]);
     const [semesters, setSemesters] = useState([]);
+    const [isFocused, setIsFocused] = useState(false);
+    const [focusedElement, setFocusedElement] = useState(null); 
     
     // Get the department_code from URL parameters 
     const { department_code } = useParams();
+
+    // Maximum text area length 
+    const maxLength = 1000;
+    const currentLength = formData.description.length;
+
+
+    // Handling the focus state for both text area and semester select
+    const handleFocus = (element) => {
+        setFocusedElement(element); // Set the focused element
+    };
+
+    const handleBlur = () => {
+        setFocusedElement(null); // Reset when the element loses focus
+    };
 
     // Fetching data from backend
     useEffect(() => {
@@ -78,144 +94,335 @@ export default function DepartmentalCreateViolationModal({ handleCloseModal }) {
     };
     
 
-    // Form submission handler
     const handleSubmit = async (e) => {
         e.preventDefault();
-
+    
         try {
-            await axios.post('http://localhost:9000/create-violationrecord', formData);
-            Swal.fire('Success', 'Violation record created successfully!', 'success');
-            handleCloseModal();
+            const response = await axios.post('http://localhost:9000/create-violationrecord', formData);
+            
+            // If the response status is 200 (OK) or 201 (Created), it's a success
+            if (response.status === 200 || response.status === 201) {
+                Swal.fire('Success', 'Violation record created successfully!', 'success');
+                handleCloseModal();
+            } else {
+                // Handle unexpected response codes (other than 200 or 201)
+                Swal.fire('Error', `Unexpected status: ${response.status} ${response.statusText}`, 'error');
+            }
         } catch (error) {
             console.error('Error creating violation record:', error);
-            Swal.fire('Error', 'Failed to create violation record.', 'error');
+    
+            // Handle Axios error more specifically
+            if (error.response) {
+                // Server responded with an error status code (e.g., 400, 500)
+                Swal.fire('Error', `Server error: ${error.response.data.message || 'Something went wrong.'}`, 'error');
+            } else if (error.request) {
+                // Request was made but no response was received
+                Swal.fire('Error', 'No response from server. Please try again later.', 'error');
+            } else {
+                // Error occurred in setting up the request
+                Swal.fire('Error', `Request error: ${error.message}`, 'error');
+            }
         }
     };
+    
+
+    const handleCancel = () => {
+        Swal.fire({
+            title: 'Are you sure you want to cancel?',
+            text: 'Any unsaved changes will be lost.',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#B0B0B0',
+            confirmButtonText: 'Yes, close it',
+            cancelButtonText: 'No, keep changes',
+        }).then((result) => {
+            if (result.isConfirmed) {
+                onHide(); 
+            }
+        });
+    };
+
+
+    const buttonStyle = {
+        backgroundColor: '#FAD32E',
+        color: '#FFFFFF',
+        fontWeight: '900',
+        padding: '12px 35px',
+        border: 'none',
+        borderRadius: '10px',
+        cursor: 'pointer',
+        marginLeft: '10px',
+        display: 'flex',
+        alignItems: 'center',
+        boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)'
+    };
+
+    const cancelButtonStyle = {
+        backgroundColor: '#8C8C8C',
+        color: '#FFFFFF',
+        fontWeight: '900',
+        padding: '12px 25px',
+        border: 'none',
+        borderRadius: '10px',
+        cursor: 'pointer',
+        display: 'flex',
+        alignItems: 'center',
+        boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)'
+    };
+
+
+    const regularSelectStyles = {
+        backgroundColor: '#f2f2f2',
+        borderRadius: '4px',
+        padding: '6px',
+        outline: 'none',
+    };
+
+    const borderColorStyles = (focusedElement, element) => ({
+        border: `1px solid ${focusedElement === element ? '#FAD32E' : '#ced4da'}`, // Yellow for focused, gray otherwise
+        boxShadow: focusedElement === element ? '0 0 0 2px rgba(250, 211, 46, 1)' : 'none', // Yellow box shadow for focused element
+    });
+    
+    
+    const customSelectStyles = {
+        control: (provided, state) => ({
+            ...provided,
+            backgroundColor: '#f2f2f2',
+            border: `1px solid ${state.isFocused ? '#FAD32E' : '#ced4da'}`, 
+            borderRadius: '4px',
+            boxShadow: state.isFocused ? '0 0 0 2px rgba(250, 211, 46, 1)' : 'none', 
+            outline: 'none', 
+            borderColor: state.isFocused ? '#FAD32E !important' : '#ced4da', 
+        }),
+        option: (provided, state) => ({
+            ...provided,
+            backgroundColor: state.isSelected ? '#FAD32E' : state.isFocused ? '#f0f0f0' : null,
+            color: state.isSelected ? 'white' : 'black',
+            padding: '10px',
+        }),
+        multiValue: (provided) => ({
+            ...provided,
+            backgroundColor: '#CFCFCF', 
+            color: '#fff',
+            borderRadius: '10px',
+        }),
+        multiValueRemove: (provided) => ({
+            ...provided,
+            backgroundColor: 'transparent', 
+            color: '#777777', 
+        }),
+    };
+    
+
 
     return (
-        <Form onSubmit={handleSubmit}>
-            {/* Users */}
-            <Form.Group className="mb-3">
-                <Form.Label>Users</Form.Label>
-                <Select
-                    isMulti
-                    name="users"
-                    options={students.map((student) => ({
-                        value: student.user_id,
-                        label: `${student.first_name} ${student.last_name}`,
-                    }))}
-                    onChange={handleSelectChange}
-                    required
-                />
-            </Form.Group>
+        <Modal show={show} onHide={handleCancel} size="lg">
+            <Modal.Header>
+                <Button
+                    variant="link"
+                    onClick={handleCancel}
+                    style={{
+                        position: 'absolute',
+                        top: '5px',
+                        right: '20px',
+                        textDecoration: 'none',
+                        fontSize: '30px',
+                        color: '#a9a9a9',
+                    }}
+                >
+                    ×
+                </Button>
+                <Modal.Title
+                    style={{
+                        fontSize: '40px',
+                        marginBottom: '10px',
+                        marginLeft: '60px',
+                        marginRight: '60px',
+                    }}
+                >
+                    CREATE VIOLATION RECORD
+                </Modal.Title>
+            </Modal.Header>
 
-            <Row>
-                <Col>
-                    <Form.Group className="mb-3">
-                        <Form.Label className="fw-bold">Academic Year</Form.Label>
-                        <Form.Select
-                            name="acadyear_id"
-                            value={formData.acadyear_id}
-                            onChange={handleChange}
-                        >
-                            <option value="">Select Year</option>
-                            {academicYears.map((year) => (
-                                <option key={year.acadyear_id} value={year.acadyear_id}>
-                                    {year.start_year} - {year.end_year}
-                                </option>
-                            ))}
-                        </Form.Select>
+            <Modal.Body style={{ paddingLeft: '30px', paddingRight: '30px' }}>
+                <form onSubmit={handleSubmit}>
+                    <Row className="gy-4">
+                    <Form.Group className="users mb-3">
+                        <Form.Label className="fw-bold">Names</Form.Label>
+                        <Select
+                            isMulti
+                            name="users"
+                            options={students.map((student) => ({
+                                value: student.user_id,
+                                label: `${student.first_name} ${student.last_name}`,
+                            }))}
+                            onChange={handleSelectChange}
+                            required
+                            styles={customSelectStyles}
+                        />
                     </Form.Group>
-                </Col>
+                    </Row>
 
-                <Col>
-                    <Form.Group className="mb-3">
-                        <Form.Label className="fw-bold">Semester</Form.Label>
-                        <Form.Select
-                            name="semester_id"
-                            value={formData.semester_id}
-                            onChange={handleChange}
-                        >
-                            <option value="">Select Semester</option>
-                            {semesters.map((sem) => (
-                                <option key={sem.semester_id} value={sem.semester_id}>
-                                    {sem.semester_name}
-                                </option>
-                            ))}
-                        </Form.Select>
-                    </Form.Group>
-                </Col>
-            </Row>
+                    <Row className="gy-4">
+                        <Col md={6}>
+                        <Form.Group className="academic_year mb-3">
+                            <Form.Label className="fw-bold">Academic Year</Form.Label>
+                            <Form.Select
+                                name="acadyear_id"
+                                value={formData.acadyear_id}
+                                onChange={handleChange}
+                                required
+                                onFocus={() => handleFocus('academic_year')} 
+                                onBlur={handleBlur} 
+                                style={{
+                                    ...regularSelectStyles,
+                                    ...borderColorStyles(focusedElement, 'academic_year'), 
+                                }}
+                            >
+                                <option disabled value="">Select Academic Year</option>
+                                {academicYears.map((year) => (
+                                    <option key={year.acadyear_id} value={year.acadyear_id}>
+                                        {year.start_year} - {year.end_year}
+                                    </option>
+                                ))}
+                            </Form.Select>
+                        </Form.Group>
+                    </Col>
+                    <Col md={6}>
+                        <Form.Group className="semester mb-3">
+                            <Form.Label className="fw-bold">Select Semester</Form.Label>
+                            <Form.Select
+                                name="semester_id"
+                                value={formData.semester_id}
+                                onChange={handleChange}
+                                required
+                                onFocus={() => handleFocus('semester')} 
+                                onBlur={handleBlur} 
+                                style={{
+                                    ...regularSelectStyles,
+                                    ...borderColorStyles(focusedElement, 'semester'), 
+                                }}
+                            >
+                                <option disabled value="">Select Semester</option>
+                                {semesters.map((sem) => (
+                                    <option key={sem.semester_id} value={sem.semester_id}>
+                                        {sem.semester_name}
+                                    </option>
+                                ))}
+                            </Form.Select>
+                        </Form.Group>
+                    </Col>
+                    </Row>
 
-            <Row>
-                <Col>
-                    <Form.Group className="mb-3">
-                        <Form.Label className="fw-bold">Category</Form.Label>
-                        <Form.Select
-                            name="category_id"
-                            value={formData.category_id}
-                            onChange={handleChange}
-                        >
-                            <option value="">Select Category</option>
-                            {categories.map((cat) => (
-                                <option key={cat.category_id} value={cat.category_id}>
-                                    {cat.category_name}
-                                </option>
-                            ))}
-                        </Form.Select>
-                    </Form.Group>
-                </Col>
-            </Row>
+                    <Row className="gy-4">
+                        <Form.Group className="category mb-3">
+                            <Form.Label className="fw-bold">Category</Form.Label>
+                            <Form.Select
+                                name="category_id"
+                                value={formData.category_id}
+                                onChange={handleChange}
+                                required
+                                onFocus={() => handleFocus('category')} 
+                                onBlur={handleBlur} 
+                                style={{
+                                    ...regularSelectStyles,
+                                    ...borderColorStyles(focusedElement, 'category'), 
+                                }}
+                            >
+                                <option disabled value="">Select Category</option>
+                                {categories.map((cat) => (
+                                    <option key={cat.category_id} value={cat.category_id}>
+                                        {cat.category_name}
+                                    </option>
+                                ))}
+                            </Form.Select>
+                        </Form.Group>  
+                    </Row>
 
-            <Row>
-                <Col>
-                    <Form.Group className="mb-3">
-                        <Form.Label className="fw-bold">Offense</Form.Label>
-                        <Form.Select
-                            name="offense_id"
-                            value={formData.offense_id}
-                            onChange={handleChange}
-                        >
-                            <option value="">Select Offense</option>
-                            {offenses.map((off) => (
-                                <option key={off.offense_id} value={off.offense_id}>
-                                    {off.offense_name}
-                                </option>
-                            ))}
-                        </Form.Select>
-                    </Form.Group>
-                </Col>
-            </Row>
+                    <Row className="gy-4">
+                        <Form.Group className="offense mb-3">
+                            <Form.Label className="fw-bold">Offense</Form.Label>
+                            <Form.Select
+                                name="offense_id"
+                                value={formData.offense_id}
+                                onChange={handleChange}
+                                onFocus={() => handleFocus('offense')} 
+                                onBlur={handleBlur} 
+                                style={{
+                                    ...regularSelectStyles,
+                                    ...borderColorStyles(focusedElement, 'offense'), 
+                                }}
+                            >
+                                <option disabled value="">Select Offense</option>
+                                {offenses.map((off) => (
+                                    <option key={off.offense_id} value={off.offense_id}>
+                                        {off.offense_name}
+                                    </option>
+                                ))}
+                            </Form.Select>
+                        </Form.Group>
+                    </Row>
 
-            {/* Sanction */}
-            <Form.Group className="mb-3">
-                <Form.Label>Sanctions</Form.Label>
-                <Select
-                    isMulti
-                    name="sanctions"
-                    options={sanctions.map((sanction) => ({
-                        value: sanction.sanction_id,
-                        label: sanction.sanction_name,
-                    }))}
-                    onChange={handleSelectChange}
-                    required
-                />
-            </Form.Group>
+                    <Row className="gy-4">
+                        <Form.Group className="sanctions mb-3">
+                            <Form.Label className="fw-bold">Sanctions</Form.Label>
+                            <Select
+                                isMulti
+                                name="sanctions"
+                                options={sanctions.map((sanction) => ({
+                                    value: sanction.sanction_id,
+                                    label: sanction.sanction_name,
+                                }))}
+                                onChange={handleSelectChange}
+                                required
+                                styles={customSelectStyles}
+                            />
+                        </Form.Group>
+                    </Row>
 
-            <Form.Group className="mb-3">
-                <Form.Label className="fw-bold">Description</Form.Label>
-                <Form.Control
-                    as="textarea"
-                    name="description"
-                    value={formData.description}
-                    onChange={handleChange}
-                    rows={3}
-                />
-            </Form.Group>
-
-            <Button variant="primary" type="submit">
-                Submit
-            </Button>
-        </Form>
+                    <Row className="gy-4">
+                        <Form.Group className="description mb-3" style={{ marginBottom: '20px' }}>
+                            <Form.Label className="fw-bold">Description</Form.Label>
+                                <div style={{ position: 'relative' }}>
+                                <Form.Control
+                                    as="textarea"
+                                    name="description"
+                                    value={formData.description}
+                                    onChange={handleChange}
+                                    rows={3}
+                                    maxLength={maxLength}
+                                    onFocus={() => handleFocus('description')} // When focused, set 'description'
+                                    onBlur={handleBlur} // Reset focus when blurred 
+                                    style={{
+                                        width: '100%',
+                                        minHeight: '100px',
+                                        padding: '10px',
+                                        backgroundColor: '#f2f2f2',
+                                        border: `1px solid ${focusedElement === 'description' ? '#FAD32E' : '#ced4da'}`, // Apply focused border for description
+                                        borderRadius: '4px',
+                                        boxShadow: focusedElement === 'description' ? '0 0 0 2px rgba(250, 211, 46, 1)' : 'none',
+                                    }}
+                                />
+                                <div style={{ position: 'absolute', bottom: '10px', right: '10px', fontSize: '12px', color: '#666' }}> {currentLength}/{maxLength} </div>
+                            </div>
+                        </Form.Group>
+                    </Row>
+                        {/* Buttons */}
+                        <div className="d-flex justify-content-end mt-3">
+                            <button
+                                type="button"
+                                onClick={handleCancel} 
+                                style={cancelButtonStyle} 
+                            >
+                                Cancel
+                            </button>
+                            <button type="submit" style={buttonStyle}>
+                                Save
+                            </button>
+                        </div>
+                </form>
+            </Modal.Body>
+        </Modal>
     );
 }
