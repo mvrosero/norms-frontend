@@ -65,15 +65,12 @@ export default function CoordinatorStudentRecords() {
             {/* Table Section */}
             <StudentRecordsTable searchQuery={searchQuery} />
 
-            {/* Create Violation Record */}
-            <Modal show={showModal} onHide={handleCloseModal}>
-                <Modal.Header closeButton>
-                    <Modal.Title style = {{marginLeft: '35px'}}>CREATE VIOLATION RECORD</Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-                    <CreateViolationModal handleCloseModal={handleCloseModal} />
-                </Modal.Body>
-            </Modal>
+            {/*Create Violation Modal*/}
+            <CreateViolationModal
+                show={showModal} 
+                onHide={handleCloseModal} 
+                handleCloseModal={handleCloseModal}
+            />
         </div>
     );
 }
