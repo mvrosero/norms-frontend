@@ -13,7 +13,7 @@ const IndividualUniformDefianceTable = ({ handleShowDetailsModal }) => {
 
     // Pagination state
     const [currentPage, setCurrentPage] = useState(1);
-    const rowsPerPage = 10;
+    const [rowsPerPage, setRowsPerPage] = useState(10);
 
     // Sorting states
     const [sortOrderSlipId, setSortOrderSlipId] = useState('asc'); // 'asc' for ascending, 'desc' for descending
@@ -125,6 +125,117 @@ const IndividualUniformDefianceTable = ({ handleShowDetailsModal }) => {
         setCurrentPage(pageNumber);
     };
 
+
+  const handleRowsPerPageChange = (e) => {
+    setRowsPerPage(Number(e.target.value));
+    setCurrentPage(1);
+  };
+
+
+
+    // Render Custom Pagination
+    const renderPagination = () => {
+        const pageNumbers = Array.from({ length: totalPages }, (_, i) => i + 1);
+    
+        const buttonStyle = {
+        width: '30px', // Fixed width for equal size
+        height: '30px', // Fixed height for equal size
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        border: '1px solid #a0a0a0',
+        backgroundColor: '#ebebeb',
+        color: '#4a4a4a',
+        fontSize: '0.75rem', // Smaller font size
+        cursor: 'pointer',
+        };
+    
+        const activeButtonStyle = {
+        ...buttonStyle,
+        backgroundColor: '#a0a0a0',
+        color: '#f1f1f1',
+        };
+    
+        const disabledButtonStyle = {
+        ...buttonStyle,
+        backgroundColor: '#ebebeb',
+        color: '#a1a1a1',
+        cursor: 'not-allowed',
+        };
+    
+        return (
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '15px', fontSize: '14px', color: '#4a4a4a'}}>
+            {/* Results per Page */}
+            <div>
+                <label htmlFor="rowsPerPage" style={{ marginLeft: '120px', marginRight: '5px' }}>Results per page:</label>
+                <select
+                    id="rowsPerPage"
+                    value={rowsPerPage}
+                    onChange={handleRowsPerPageChange}
+                    style={{
+                        fontSize: '14px',
+                        padding: '5px 25px',
+                        border: '1px solid #ccc',
+                        borderRadius: '3px',
+                    }}
+                >
+                    {Array.from({ length: 10 }, (_, i) => (i + 1) * 10).map((value) => (
+                        <option key={value} value={value}> {value} </option>
+                    ))}
+                </select>
+            </div>
+    
+            {/* Pagination Info and Buttons */}
+            <div style={{ display: 'flex', alignItems: 'center', marginRight: '25px' }}>
+                {/* Page Info */}
+                <div style={{ marginRight: '10px' }}>Page {currentPage} of {totalPages}</div>
+    
+                {/* Pagination Buttons */}
+                <div style={{ display: 'flex' }}>
+                    <button
+                        onClick={() =>
+                            currentPage > 1 && handlePaginationChange(currentPage - 1)
+                        }
+                        disabled={currentPage === 1}
+                        style={{
+                            ...buttonStyle,
+                            borderTopLeftRadius: '10px',
+                            borderBottomLeftRadius: '10px',
+                            ...(currentPage === 1 ? disabledButtonStyle : {}),
+                        }}
+                    >
+                        ❮
+                    </button>
+                    {pageNumbers.map((number) => (
+                        <button
+                            key={number}
+                            onClick={() => handlePaginationChange(number)}
+                            style={number === currentPage ? activeButtonStyle : buttonStyle}
+                        >
+                            {number}
+                        </button>
+                    ))}
+                    <button
+                        onClick={() =>
+                            currentPage < totalPages && handlePaginationChange(currentPage + 1)
+                        }
+                        disabled={currentPage === totalPages}
+                        style={{
+                            ...buttonStyle,
+                            borderTopRightRadius: '10px',
+                            borderBottomRightRadius: '10px',
+                            ...(currentPage === totalPages ? disabledButtonStyle : {}),
+                        }}
+                    >
+                        ❯
+                    </button>
+                </div>
+            </div>
+        </div>
+    );
+    };
+
+
     // Render Table
     const renderTable = () => {
         if (loading) {
@@ -140,10 +251,10 @@ const IndividualUniformDefianceTable = ({ handleShowDetailsModal }) => {
         }
 
         return (
-            <Table bordered hover style={{ borderRadius: '20px', marginTop: '5px' }}>
-                <thead style={{ backgroundColor: '#f8f9fa' }}>
+            <Table bordered hover responsive style={{ borderRadius: '20px', marginBottom: '20px', marginLeft: '110px' }}>
+                <thead>
                     <tr>
-                        <th style={{ textAlign: 'center', padding: '0', verticalAlign: 'middle', width: '5%' }}>
+                        <th style={{ width: '5%' }}>
                             <button
                                 style={{
                                     border: 'none',
@@ -190,27 +301,38 @@ const IndividualUniformDefianceTable = ({ handleShowDetailsModal }) => {
                         <th>Nature of Violation</th>
                         <th style={{ width: '13%' }}>Details</th>
                         <th style={{ width: '16%' }}>Status</th>
-                        <th style={{ width: '8%' }}>Count</th>
+                        <th style={{ width: '12%' }}>Occurrence</th>
                     </tr>
                 </thead>
                 <tbody>
                     {currentDefiances.map((defiance, index) => {
-                        // Get count based on the sorting order of the date
-                        const count = sortOrderDate === 'asc' 
-                            ? currentDefiances.length - index  // Reverse order for ascending (9-1)
-                            : index + 1;  // Normal order for descending (1-9)
+                        // Ordinal to indicate occurrence
+                        const getOrdinalWord = (num) => {
+                            const ordinalWords = [
+                                "first", "second", "third", "fourth", "fifth", "sixth", "seventh", "eighth", "ninth", "tenth", 
+                                "eleventh", "twelfth", "thirteenth", "fourteenth", "fifteenth", "sixteenth", "seventeenth", "eighteenth", "nineteenth",
+                                "twentieth", "twenty-first", "twenty-second", "twenty-third", "twenty-fourth", "twenty-fifth", 
+                                "twenty-sixth", "twenty-seventh", "twenty-eighth", "twenty-ninth", "thirtieth", "thirty-first"
+                            ];
+                            return ordinalWords[num - 1] || num;  
+                        };
 
-                        // Determine background color based on the count
+                        const count = sortOrderDate === 'asc' 
+                            ? currentDefiances.length - index  
+                            : index + 1; 
+
+                        const ordinalCount = getOrdinalWord(count);
+
                         let countColor, countTextColor;
                         if (count === 1) {
-                            countColor = '#FFF9C4'; // Light yellow
-                            countTextColor = '#DBC907'; // Darker yellow
+                            countColor = '#FFF9C4';
+                            countTextColor = '#DBC907'; 
                         } else if (count === 2) {
-                            countColor = '#FFDCC4'; // Light orange
-                            countTextColor = '#FF6700'; // Darker orange
+                            countColor = '#FFDCC4'; 
+                            countTextColor = '#FF6700'; 
                         } else {
-                            countColor = '#FFCDD2'; // Light red
-                            countTextColor = '#D32F2F'; // Darker red
+                            countColor = '#FFCDD2'; 
+                            countTextColor = '#D32F2F'; 
                         }
 
                         return (
@@ -230,20 +352,19 @@ const IndividualUniformDefianceTable = ({ handleShowDetailsModal }) => {
                                 <td style={{ textAlign: 'center' }}>
                                     <div
                                         style={{
-                                            width: '30px',
-                                            height: '30px',
-                                            borderRadius: '50%',
+                                            borderRadius: '30px',
+                                            padding: '5px 20px',
                                             backgroundColor: countColor,
                                             color: countTextColor,
-                                            display: 'flex',
+                                            display: 'inline-flex',
                                             alignItems: 'center',
                                             justifyContent: 'center',
                                             fontSize: '14px',
-                                            fontWeight: 'bold',
-                                            margin: '0 auto'
+                                            fontWeight: '600',
+                                            width: '80px',
                                         }}
                                     >
-                                        {count}
+                                        {ordinalCount}
                                     </div>
                                 </td>
                             </tr>
@@ -254,90 +375,6 @@ const IndividualUniformDefianceTable = ({ handleShowDetailsModal }) => {
         );
     };
 
-    
-  // Render Custom Pagination
- const renderPagination = () => {
-    const pageNumbers = Array.from({ length: totalPages }, (_, i) => i + 1);
-  
-    const buttonStyle = {
-      width: '30px', // Fixed width for equal size
-      height: '30px', // Fixed height for equal size
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      border: '1px solid #a0a0a0',
-      backgroundColor: '#ebebeb',
-      color: '#4a4a4a',
-      fontSize: '0.75rem', // Smaller font size
-      cursor: 'pointer',
-    };
-  
-    const activeButtonStyle = {
-      ...buttonStyle,
-      backgroundColor: '#a0a0a0',
-      color: '#f1f1f1',
-    };
-  
-    const disabledButtonStyle = {
-      ...buttonStyle,
-      backgroundColor: '#ebebeb',
-      color: '#a1a1a1',
-      cursor: 'not-allowed',
-    };
-  
-    return (
-      <div
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'flex-end',
-          marginBottom: '15px',
-        }}
-      >
-        {/* Page Info */}
-        <div style={{ fontSize: '0.875rem', color: '#4a4a4a', marginRight: '10px' }}>
-          Page {currentPage} out of {totalPages}
-        </div>
-  
-        {/* Pagination Buttons */}
-        <div style={{ display: 'flex', marginRight: '20px' }}>
-          <button
-            onClick={() => currentPage > 1 && handlePaginationChange(currentPage - 1)}
-            disabled={currentPage === 1}
-            style={{
-              ...buttonStyle,
-              borderTopLeftRadius: '10px',
-              borderBottomLeftRadius: '10px',
-              ...(currentPage === 1 && disabledButtonStyle),
-            }}
-          >
-            ❮
-          </button>
-          {pageNumbers.map((number) => (
-            <button
-              key={number}
-              onClick={() => handlePaginationChange(number)}
-              style={number === currentPage ? activeButtonStyle : buttonStyle}
-            >
-              {number}
-            </button>
-          ))}
-          <button
-            onClick={() => currentPage < totalPages && handlePaginationChange(currentPage + 1)}
-            disabled={currentPage === totalPages}
-            style={{
-              ...buttonStyle,
-              borderTopRightRadius: '10px',
-              borderBottomRightRadius: '10px',
-              ...(currentPage === totalPages && disabledButtonStyle),
-            }}
-          >
-            ❯
-          </button>
-        </div>
-      </div>
-    );
-  };
 
     return (
         <div>

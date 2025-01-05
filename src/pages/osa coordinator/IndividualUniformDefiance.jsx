@@ -99,55 +99,88 @@ const IndividualUniformDefiance = () => {
 
     return (
         <>
-            <CoordinatorNavigation />
-            <CoordinatorInfo />
+        <CoordinatorNavigation />
+        <CoordinatorInfo />
 
-            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                <div style={{ backgroundColor: 'white', marginTop: '80px', marginBottom: '20px', marginLeft: '100px', marginRight: '50px', borderRadius: '10px', boxShadow: '0 0 10px rgba(0, 0, 0, 0.1)', width: '100%', maxWidth: '1080px', boxSizing: 'border-box' }}>
-                    {studentInfo && (
-                        <div style={{ display: 'flex', alignItems: 'center' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+        {/* Title Section */}
+            <div style={{ width: '90%', margin: '0 auto', display: 'flex', justifyContent: 'flex-start' }}>
+                <h6 className="section-title" style={{ fontFamily: 'Poppins, sans-serif', color: '#242424', fontSize: '40px', fontWeight: 'bold', marginTop: '20px', marginLeft: '50px' }}>Individual Uniform Defiance</h6>
+            </div>
+
+            {/* Student Profile Section */}
+            <div style={{ backgroundColor: 'white', marginTop: '20px', marginBottom: '20px', marginLeft: '100px', marginRight: '20px', borderRadius: '10px', boxShadow: '0 0 10px rgba(0, 0, 0, 0.1)', width: '100%', maxWidth: '1080px', boxSizing: 'border-box' }}>
+                {studentInfo && (
+                    <div style={{ display: 'flex', alignItems: 'center' }}>
+                        <div style={{ width: '130px', height: '130px', borderRadius: '5px', marginTop: '20px', marginBottom: '20px', marginLeft: '20px', marginRight: '20px' }}>
                             <img
                                 src={studentInfo.profilePhoto}
                                 alt="Profile"
-                                style={{ width: '150px', height: '150px', borderRadius: '5px', margin: '20px', objectFit: 'cover' }}
+                                style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '5px' }}
                                 onError={(e) => {
                                     console.error('Error loading image:', e.target.src);
-                                    e.target.src = defaultProfile; // Fallback to default image on error
+                                    e.target.src = defaultProfile; 
                                 }}
                             />
-                            <div style={{ marginLeft: '20px', fontSize: '16px' }}>
-                                <p><strong>Student ID Number:</strong> {studentInfo.student_idnumber}</p>
-                                <p><strong>Name:</strong> {studentInfo.fullName}</p>
-                                <p><strong>Email:</strong> {studentInfo.email}</p>
-                                <p><strong>Department:</strong> {studentInfo.department_name}</p>
-                                <p><strong>Program:</strong> {studentInfo.program_name}</p>
-                                <p><strong>Year Level:</strong> {studentInfo.year_level}</p>
+                        </div>
+
+                        {/* Display student information in two columns */}
+                        <div style={{ marginLeft: '20px', fontSize: '16px' }}>
+                            <div style={{ display: 'flex', flexWrap: 'wrap', marginBottom: '12px' }}>
+                                <div style={{ width: '50%' }}>
+                                    <p><strong>Student ID Number:</strong> {studentInfo.student_idnumber}</p>
+                                </div>
+                                <div style={{ width: '50%', whiteSpace: 'nowrap', }}>
+                                    <p><strong>Department:</strong> {studentInfo.department_name}</p>
+                                </div>
+                            </div>
+                            <div style={{ display: 'flex', flexWrap: 'wrap', marginBottom: '12px' }}>
+                                <div style={{ width: '50%' }}>
+                                    <p><strong>Name:</strong> {`${studentInfo.first_name} ${studentInfo.middle_name} ${studentInfo.last_name} ${studentInfo.suffix}`.trim()}</p>
+                                </div>
+                                <div style={{ width: '50%', whiteSpace: 'nowrap', }}>
+                                    <p><strong>Program:</strong> {studentInfo.program_name}</p>
+                                </div>
+                            </div>
+                            <div style={{ display: 'flex', flexWrap: 'wrap' }}>
+                                <div style={{ width: '50%' }}>
+                                    <div style={{ display: 'flex', alignItems: 'center' }}>
+                                        <p style={{ marginRight: '10px' }}> <strong>Email:</strong> </p>
+                                        <a href={`https://mail.google.com/mail/?view=cm&fs=1&to=${studentInfo.email}`} target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'underline', color: '#4682B4' }}> {studentInfo.email} </a></div>
+                                </div>
+                                <div style={{ width: '50%' }}>
+                                    <p><strong>Year Level:</strong> {studentInfo.year_level}</p>
+                                </div>
                             </div>
                         </div>
-                    )}
-                </div>
+                    </div>
+                )}
+            </div>
 
-                <div style={{ display: 'flex', alignItems: 'center', margin: '20px 0' }}>
-                    <SearchAndFilter setSearchQuery={setSearchQuery} style={{ flex: 1 }} />
-                    <Button
-                        onClick={() => setShowAddViolationModal(true)} // Show modal on click
-                        title="Add Record"
-                        style={{ backgroundColor: '#FAD32E', color: 'white', fontWeight: '900', padding: '12px 20px', border: 'none', borderRadius: '10px', cursor: 'pointer' }}
-                    >
-                        <FaPlus style={{ marginRight: '8px' }} />
-                        Add Violation
-                    </Button>
-                    <ExportIndividualDefianceCSV student_idnumber={student_idnumber} /> {/* Pass student_idnumber directly */}
-                </div>
+            
+            {/* Search And Filter Section */}
+            <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'center', marginLeft: '60px', padding: '0 20px' }}>
+                <div style={{ flex: '1 1 70%', minWidth: '300px' }}> <SearchAndFilter /> </div>
+                <Button
+                    onClick={() => setShowAddViolationModal(true)} // Show modal on click
+                    title="Add Record"
+                    style={{ marginRight: '10px', backgroundColor: '#FAD32E', color: 'white', fontWeight: '900', padding: '12px 15px', border: 'none', borderRadius: '10px', cursor: 'pointer', display: 'flex', alignItems: 'center', boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)' }}>
+                    Add Violation
+                    <FaPlus style={{ marginLeft: '10px' }} />
+                </Button>
+                <ExportIndividualDefianceCSV student_idnumber={student_idnumber} />
+            </div>
 
-                <IndividualUniformDefianceTable 
-                    defiances={defiances.filter(defiance => 
-                        defiance.student_idnumber.includes(searchQuery) || 
-                        defiance.nature_name.toLowerCase().includes(searchQuery.toLowerCase())
-                    )} 
-                    employees={employees}
-                    handleShowDetailsModal={handleShowDetailsModal}
-                />
+
+            {/* Table Section */}
+            <IndividualUniformDefianceTable 
+                defiances={defiances.filter(defiance => 
+                    defiance.student_idnumber.includes(searchQuery) || 
+                    defiance.nature_name.toLowerCase().includes(searchQuery.toLowerCase())
+                )} 
+                employees={employees}
+                handleShowDetailsModal={handleShowDetailsModal}
+            />
             </div>
 
             <AddUniformDefianceModal

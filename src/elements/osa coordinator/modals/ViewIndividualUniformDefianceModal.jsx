@@ -94,7 +94,7 @@ const ViewIndividualUniformDefianceModal = ({ show, onHide, selectedRecord }) =>
                 >
                     ×
                 </Button>
-                <Modal.Title style={{ fontSize: '40px', marginBottom: '20px', marginLeft: '100px', marginRight: '100px' }}>UNIFORM DEFIANCE SLIP</Modal.Title>
+                <Modal.Title style={{ fontSize: '40px', marginBottom: '10px', marginLeft: '90px', marginRight: '90px' }}>VIEW UNIFORM DEFIANCE</Modal.Title>
             </Modal.Header>
             {/* Modal Body */}
             <Modal.Body>

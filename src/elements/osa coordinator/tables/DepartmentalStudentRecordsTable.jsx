@@ -428,7 +428,7 @@ const DepartmentalStudentRecordsTable = () => {
             <CoordinatorInfo />
             {/* Title Section */}
             <div style={{ width: '90%', margin: '0 auto', display: 'flex', justifyContent: 'flex-start' }}>
-                <h6 className="settings-title" style={{ fontFamily: 'Poppins, sans-serif', color: '#242424', fontSize: '40px', fontWeight: 'bold', marginTop: '20px', marginLeft: '50px' }}> {departmentName || department_code || 'STUDENT RECORDS'} </h6>
+                <h6 className="section-title" style={{ fontFamily: 'Poppins, sans-serif', color: '#242424', fontSize: '40px', fontWeight: 'bold', marginTop: '20px', marginLeft: '50px' }}> {departmentName || department_code || 'STUDENT RECORDS'} </h6>
             </div>
 
             {/* Search And Filter Section */}

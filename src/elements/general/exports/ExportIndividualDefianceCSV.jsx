@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import Swal from 'sweetalert2';
+import { Modal, Button } from 'react-bootstrap';
 import FileDownloadRoundedIcon from '@mui/icons-material/FileDownloadRounded';
 
 
@@ -42,35 +43,27 @@ const ExportIndividualDefianceCSV = ({ student_idnumber }) => {
     };
 
     return (
-        <div style={{ padding: '20px' }}>
-            <button
+        <div>
+            <Button
                 onClick={handleExportClick}
                 disabled={loading} // Disable button during loading
                 style={{
                     backgroundColor: '#FAD32E',
                     color: 'white',
                     fontWeight: '900',
-                    padding: '10px 20px',
+                    padding: '12px 15px',
                     border: 'none',
                     borderRadius: '10px',
                     cursor: loading ? 'not-allowed' : 'pointer', // Disable cursor during loading
                     display: 'flex',
                     alignItems: 'center',
-                    boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
-                    height: '40px',
-                    minWidth: '80px',
-                    maxWidth: '150px',
-                    justifyContent: 'center',
+                    boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)', 
+                    transition: 'box-shadow 0.3s ease',
                 }}
             >
                 {loading ? 'Exporting...' : 'Export CSV'}
-                <FileDownloadRoundedIcon
-                    style={{
-                        marginLeft: '10px', // Add some space between text and icon
-                        fontSize: '20px', // Adjust icon size if necessary
-                    }}
-                />
-            </button>
+                <FileDownloadRoundedIcon style={{ marginLeft: '10px', fontSize: '20px' }} />
+            </Button>
         </div>
     );
 };
