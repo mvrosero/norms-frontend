@@ -38,8 +38,9 @@ export default function CoordinatorStudentRecords() {
             <CoordinatorNavigation />
             <CoordinatorInfo />
             <h6 className="page-title"> STUDENT RECORDS </h6>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', marginTop: '30px' }}>
-                <SearchAndFilter setSearchQuery={setSearchQuery} />
+          {/* Search And Filter Section */}
+          <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'center', marginTop: '10px', marginLeft: '70px', padding: '0 20px' }}>
+                <div style={{ flex: '1 1 70%', minWidth: '300px' }}> <SearchAndFilter setSearchQuery={setSearchQuery} /> </div>
                 <button 
                     onClick={handleCreateNewRecord} 
                     style={{
@@ -50,7 +51,6 @@ export default function CoordinatorStudentRecords() {
                         border: 'none',
                         borderRadius: '10px',
                         cursor: 'pointer',
-                        marginLeft: '10px',
                         display: 'flex',
                         alignItems: 'center',
                         boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
@@ -60,15 +60,17 @@ export default function CoordinatorStudentRecords() {
                     <FaPlus style={{ marginLeft: '10px' }} />
                 </button>
             </div>
+
+
+            {/* Table Section */}
             <StudentRecordsTable searchQuery={searchQuery} />
 
-            {/* Modal for creating new record */}
+            {/* Create Violation Record */}
             <Modal show={showModal} onHide={handleCloseModal}>
                 <Modal.Header closeButton>
                     <Modal.Title style = {{marginLeft: '35px'}}>CREATE VIOLATION RECORD</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                    {/* Render ViolationRecordForm component within the modal */}
                     <CreateViolationModal handleCloseModal={handleCloseModal} />
                 </Modal.Body>
             </Modal>

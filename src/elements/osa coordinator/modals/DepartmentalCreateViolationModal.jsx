@@ -113,7 +113,25 @@ export default function DepartmentalCreateViolationModal({ show, onHide, handleC
                 const response = await axios.post('http://localhost:9000/create-violationrecord', formData);
     
                 if (response.status === 200 || response.status === 201) {
-                    Swal.fire('Success', 'Violation record created successfully!', 'success');
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Record Created Successfully!',
+                        text: 'Violation record has been created successfully.',
+                        showConfirmButton: false,
+                        timer: 3000
+                    });
+
+                    // Reset form fields to default values
+                    setFormData({
+                        users: [], 
+                        description: '',
+                        category_id: '',
+                        offense_id: '',
+                        sanctions: [],
+                        acadyear_id: '',
+                        semester_id: '',
+                    });
+
                     handleCloseModal();
                 } else {
                     Swal.fire('Error', `Unexpected status: ${response.status} ${response.statusText}`, 'error');
