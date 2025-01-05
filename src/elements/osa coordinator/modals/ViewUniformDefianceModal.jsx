@@ -112,8 +112,21 @@ const ViewUniformDefianceModal = ({ show, onHide, record }) => {
                         <p style={{ fontWeight: 'bold' }}>Status:</p>
                         <p>{renderStatus(record.status)}</p>
 
-                        <p style={{ fontWeight: 'bold' }}>Created At:</p>
-                        <p>{new Date(record.created_at).toLocaleString()}</p>
+                        <p style={{ fontWeight: 'bold' }}>Date Created:</p>
+                        <p>
+                        {record.created_at
+                            ? `${new Date(record.created_at).toLocaleDateString('en-US', {
+                                year: 'numeric',
+                                month: 'long',
+                                day: 'numeric',
+                            })}, ${new Date(record.created_at).toLocaleTimeString('en-US', {
+                                hour: '2-digit',
+                                minute: '2-digit',
+                                second: '2-digit',
+                                hour12: true,
+                            })}`
+                            : 'N/A'}
+                        </p>
 
                         <p style={{ fontWeight: 'bold' }}>Submitted By:</p>
                         <p>{record.full_name}</p>

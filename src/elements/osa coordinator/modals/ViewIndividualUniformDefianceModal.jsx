@@ -110,11 +110,37 @@ const ViewIndividualUniformDefianceModal = ({ show, onHide, selectedRecord }) =>
                         <p style={{ fontWeight: 'bold' }}>Status:</p>
                         <p>{renderStatus(selectedRecord.status)}</p>
 
-                        <p style={{ fontWeight: 'bold' }}>Created At:</p>
-                        <p>{new Date(selectedRecord.created_at).toLocaleString()}</p>
+                        <p style={{ fontWeight: 'bold' }}>Date Created:</p>
+                        <p>
+                        {selectedRecord.created_at
+                            ? `${new Date(selectedRecord.created_at).toLocaleDateString('en-US', {
+                                year: 'numeric',
+                                month: 'long',
+                                day: 'numeric',
+                            })}, ${new Date(selectedRecord.created_at).toLocaleTimeString('en-US', {
+                                hour: '2-digit',
+                                minute: '2-digit',
+                                second: '2-digit',
+                                hour12: true,
+                            })}`
+                            : 'N/A'}
+                        </p>
 
-                        <p style={{ fontWeight: 'bold' }}>Updated At:</p>
-                        <p>{new Date(selectedRecord.updated_at).toLocaleString()}</p>
+                        <p style={{ fontWeight: 'bold' }}>Date Updated:</p>
+                        <p>
+                        {selectedRecord.created_at
+                            ? `${new Date(selectedRecord.updated_at).toLocaleDateString('en-US', {
+                                year: 'numeric',
+                                month: 'long',
+                                day: 'numeric',
+                            })}, ${new Date(selectedRecord.updated_at).toLocaleTimeString('en-US', {
+                                hour: '2-digit',
+                                minute: '2-digit',
+                                second: '2-digit',
+                                hour12: true,
+                            })}`
+                            : 'N/A'}
+                        </p>
 
                         <p style={{ fontWeight: 'bold' }}>Submitted By:</p>
                         <p>{selectedRecord.full_name}</p>

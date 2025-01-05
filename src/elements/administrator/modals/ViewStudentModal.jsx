@@ -51,9 +51,7 @@ const ViewStudentModal = ({ show, onHide, user, departments, programs }) => {
 
     return (
         <Modal show={show} onHide={onHide} size="lg">
-            {/* Modal Header */}
             <Modal.Header>
-                {/* Custom "X" Close Icon */}
                 <Button
                     variant="link"
                     onClick={onHide}
@@ -71,7 +69,6 @@ const ViewStudentModal = ({ show, onHide, user, departments, programs }) => {
                 <Modal.Title style={{ fontSize: '40px', marginBottom: '10px', marginLeft: '100px', marginRight: '100px' }}>VIEW STUDENT DETAILS</Modal.Title>
             </Modal.Header>
 
-            {/* Modal Body */}
             <Modal.Body>
                 {user ? (
                     <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', rowGap: '10px', marginLeft: '60px', marginRight: '20px' }}>
