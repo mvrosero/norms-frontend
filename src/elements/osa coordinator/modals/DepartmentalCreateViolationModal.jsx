@@ -97,35 +97,40 @@ export default function DepartmentalCreateViolationModal({ show, onHide, handleC
     const handleSubmit = async (e) => {
         e.preventDefault();
     
-        try {
-            const response = await axios.post('http://localhost:9000/create-violationrecord', formData);
-            
-            // If the response status is 200 (OK) or 201 (Created), it's a success
-            if (response.status === 200 || response.status === 201) {
-                Swal.fire('Success', 'Violation record created successfully!', 'success');
-                handleCloseModal();
-            } else {
-                // Handle unexpected response codes (other than 200 or 201)
-                Swal.fire('Error', `Unexpected status: ${response.status} ${response.statusText}`, 'error');
-            }
-        } catch (error) {
-            console.error('Error creating violation record:', error);
+        const result = await Swal.fire({
+            title: 'Are you sure you want to record this violation?',
+            text: 'You are about to create a new violation record.',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#B0B0B0',
+            confirmButtonText: 'Yes, record it',
+            cancelButtonText: 'Cancel',
+        });
     
-            // Handle Axios error more specifically
-            if (error.response) {
-                // Server responded with an error status code (e.g., 400, 500)
-                Swal.fire('Error', `Server error: ${error.response.data.message || 'Something went wrong.'}`, 'error');
-            } else if (error.request) {
-                // Request was made but no response was received
-                Swal.fire('Error', 'No response from server. Please try again later.', 'error');
-            } else {
-                // Error occurred in setting up the request
-                Swal.fire('Error', `Request error: ${error.message}`, 'error');
+        if (result.isConfirmed) {
+            try {
+                const response = await axios.post('http://localhost:9000/create-violationrecord', formData);
+    
+                if (response.status === 200 || response.status === 201) {
+                    Swal.fire('Success', 'Violation record created successfully!', 'success');
+                    handleCloseModal();
+                } else {
+                    Swal.fire('Error', `Unexpected status: ${response.status} ${response.statusText}`, 'error');
+                }
+            } catch (error) {
+                if (error.response) {
+                    Swal.fire('Error', `Server error: ${error.response.data.message || 'Something went wrong.'}`, 'error');
+                } else if (error.request) {
+                    Swal.fire('Error', 'No response from server. Please try again later.', 'error');
+                } else {
+                    Swal.fire('Error', `Request error: ${error.message}`, 'error');
+                }
             }
-        }
+        } 
     };
     
-
+    
     const handleCancel = () => {
         Swal.fire({
             title: 'Are you sure you want to cancel?',
@@ -138,11 +143,22 @@ export default function DepartmentalCreateViolationModal({ show, onHide, handleC
             cancelButtonText: 'No, keep changes',
         }).then((result) => {
             if (result.isConfirmed) {
-                onHide(); 
+                setFormData({
+                    description: '',
+                    category_id: '',
+                    offense_id: '',
+                    users: [], 
+                    sanctions: [], 
+                    acadyear_id: '',
+                    semester_id: '',
+                });
+                setIsFocused(false);
+                setFocusedElement(null);
+                onHide();
             }
         });
     };
-
+    
 
     const buttonStyle = {
         backgroundColor: '#FAD32E',
