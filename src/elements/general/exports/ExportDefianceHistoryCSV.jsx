@@ -39,31 +39,23 @@ const ExportDefianceHistoryCSV = () => {
         <div style={{ padding: '20px' }}>
             <button
                 onClick={handleExportClick}
-                disabled={loading} // Disable button during loading
+                disabled={loading} 
                 style={{
                     backgroundColor: '#FAD32E',
                     color: 'white',
                     fontWeight: '900',
-                    padding: '10px 20px',
+                    padding: '12px 25px',
                     border: 'none',
                     borderRadius: '10px',
-                    cursor: loading ? 'not-allowed' : 'pointer', // Disable cursor during loading
+                    cursor: loading ? 'not-allowed' : 'pointer', 
                     display: 'flex',
                     alignItems: 'center',
-                    boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
-                    height: '40px',
-                    minWidth: '80px',
-                    maxWidth: '200px', // Increased width to accommodate icon and text
-                    justifyContent: 'center',
+                    boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)', 
+                    transition: 'box-shadow 0.3s ease',
                 }}
             >
                 {loading ? 'Exporting...' : 'Export CSV'}
-                <FileDownloadRoundedIcon
-                    style={{
-                        marginLeft: '10px', // Add some space between text and icon
-                        fontSize: '20px', // Adjust icon size if necessary
-                    }}
-                />
+                <FileDownloadRoundedIcon style={{ marginLeft: '10px', fontSize: '20px' }} />
             </button>
         </div>
     );

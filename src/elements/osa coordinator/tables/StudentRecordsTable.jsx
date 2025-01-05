@@ -185,19 +185,19 @@ const StudentRecordsTable = ({ searchQuery }) => {
     
 
    // Pagination
- const indexOfLastUser = currentPage * rowsPerPage;
- const indexOfFirstUser = indexOfLastUser - rowsPerPage;
- const currentUsers = users.slice(indexOfFirstUser, indexOfLastUser);
- const totalPages = Math.ceil(users.length / rowsPerPage);
+    const indexOfLastUser = currentPage * rowsPerPage;
+    const indexOfFirstUser = indexOfLastUser - rowsPerPage;
+    const currentUsers = users.slice(indexOfFirstUser, indexOfLastUser);
+    const totalPages = Math.ceil(users.length / rowsPerPage);
 
- const handlePaginationChange = (pageNumber) => {
-   setCurrentPage(pageNumber);
- };
+    const handlePaginationChange = (pageNumber) => {
+    setCurrentPage(pageNumber);
+    };
 
- const handleRowsPerPageChange = (e) => {
-   setRowsPerPage(Number(e.target.value));
-   setCurrentPage(1);
- };
+    const handleRowsPerPageChange = (e) => {
+    setRowsPerPage(Number(e.target.value));
+    setCurrentPage(1);
+    };
 
 
  const renderPagination = () => {

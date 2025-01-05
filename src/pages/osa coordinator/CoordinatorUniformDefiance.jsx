@@ -31,19 +31,19 @@ export default function CoordinatorUniformDefiance() {
             <CoordinatorNavigation />
             <CoordinatorInfo />
             <h6 className="page-title">UNIFORM DEFIANCE</h6>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', marginTop: '30px' }}>
-                <SearchAndFilter setSearchQuery={setSearchQuery} />
+            {/* Search And Filter Section */}
+            <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'center', marginTop: '10px', marginLeft: '70px', padding: '0 20px' }}>
+                <div style={{ flex: '1 1 70%', minWidth: '300px' }}> <SearchAndFilter setSearchQuery={setSearchQuery} /> </div>
                 <button 
                     onClick={handleViewHistory} 
                     style={{
                         backgroundColor: '#FAD32E',
                         color: 'white',
                         fontWeight: '900',
-                        padding: '12px 15px',
+                        padding: '12px 30px',
                         border: 'none',
                         borderRadius: '10px',
                         cursor: 'pointer',
-                        marginLeft: '10px',
                         display: 'flex',
                         alignItems: 'center',
                         boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',

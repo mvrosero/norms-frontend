@@ -105,7 +105,7 @@ const IndividualUniformDefiance = () => {
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
         {/* Title Section */}
             <div style={{ width: '90%', margin: '0 auto', display: 'flex', justifyContent: 'flex-start' }}>
-                <h6 className="section-title" style={{ fontFamily: 'Poppins, sans-serif', color: '#242424', fontSize: '40px', fontWeight: 'bold', marginTop: '20px', marginLeft: '50px' }}>Individual Uniform Defiance</h6>
+                <h6 className="section-title" style={{ fontFamily: 'Poppins, sans-serif', color: '#242424', fontSize: '40px', fontWeight: 'bold', marginTop: '20px', marginLeft: '50px' }}>Individual Uniform Defiances</h6>
             </div>
 
             {/* Student Profile Section */}

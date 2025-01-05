@@ -46,7 +46,7 @@ const ExportIndividualDefianceCSV = ({ student_idnumber }) => {
         <div>
             <Button
                 onClick={handleExportClick}
-                disabled={loading} // Disable button during loading
+                disabled={loading} 
                 style={{
                     backgroundColor: '#FAD32E',
                     color: 'white',
@@ -54,7 +54,7 @@ const ExportIndividualDefianceCSV = ({ student_idnumber }) => {
                     padding: '12px 15px',
                     border: 'none',
                     borderRadius: '10px',
-                    cursor: loading ? 'not-allowed' : 'pointer', // Disable cursor during loading
+                    cursor: loading ? 'not-allowed' : 'pointer', 
                     display: 'flex',
                     alignItems: 'center',
                     boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)', 
