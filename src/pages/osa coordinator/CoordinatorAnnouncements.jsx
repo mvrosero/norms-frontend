@@ -3,15 +3,20 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Swal from 'sweetalert2';
 import { Modal, Form, Button, Card, Row, Col } from 'react-bootstrap';
+import Dropdown from 'react-bootstrap/Dropdown';
 import { FaPlus } from 'react-icons/fa';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import FileIcon from '@mui/icons-material/InsertDriveFile';
 import { MdClose } from 'react-icons/md';
+import { BsThreeDotsVertical } from "react-icons/bs";
+import { FaThumbtack, FaEye, FaPen, FaTrash } from 'react-icons/fa';
+
 
 import CoordinatorNavigation from './CoordinatorNavigation';
 import CoordinatorInfo from './CoordinatorInfo';
 import SearchAndFilter from '../general/SearchAndFilter';
+import ViewAnnouncementModal from '../../elements/osa coordinator/modals/ViewAnnouncementModal';
 
 export default function CoordinatorAnnouncements() {
     const navigate = useNavigate();
@@ -30,6 +35,10 @@ export default function CoordinatorAnnouncements() {
     const [editing, setEditing] = useState(null);
     const [showViewModal, setShowViewModal] = useState(false);
     const [selectedAnnouncement, setSelectedAnnouncement] = useState(null);
+    const [activeAnnouncement, setActiveAnnouncement] = useState(null);
+    const [hoveredAnnouncement, setHoveredAnnouncement] = useState(null);
+
+
 
     useEffect(() => {
         fetchAnnouncements();
@@ -194,10 +203,14 @@ export default function CoordinatorAnnouncements() {
         return text;
     };
 
+
+
     const handleViewAnnouncement = (announcement) => {
         setSelectedAnnouncement(announcement);
+        setActiveAnnouncement(announcement.announcement_id); 
         setShowViewModal(true);
     };
+    
 
     const handleCloseViewModal = () => {
         setShowViewModal(false);
@@ -225,6 +238,48 @@ export default function CoordinatorAnnouncements() {
             setFiles(prevFiles => prevFiles.filter(f => f.name !== filename));
         }
     };
+
+
+    const renderStatus = (status) => {
+        let backgroundColor, textColor;
+        if (status === 'published') {
+            backgroundColor = '#DBF0DC';
+            textColor = '#30A530';
+        } else if (status === 'unpublished') {
+            backgroundColor = '#F0DBDB';
+            textColor = '#D9534F';
+        } else if (status === 'draft') {
+            backgroundColor = '#FFF5DC';
+            textColor = '#FFC107';
+        } else {
+            backgroundColor = '#E8EBF6';
+            textColor = '#4169E1'; 
+        }     
+
+        return (
+            <div style={{
+                backgroundColor,
+                color: textColor,
+                fontWeight: '600',
+                fontSize: '14px',
+                borderRadius: '30px',
+                padding: '4px 17px',
+                display: 'inline-flex',
+                alignItems: 'center',
+                marginRight: '20px',
+            }}>
+                <div style={{
+                    width: '8px',
+                    height: '8px',
+                    borderRadius: '50%',
+                    backgroundColor: textColor,
+                    marginRight: '7px',
+                }} />
+                {status}
+            </div>
+        );
+    };
+
     
     const renderFileTiles = (filesList, isOriginal = false) => (
         filesList.map((file, index) => (
@@ -274,76 +329,153 @@ export default function CoordinatorAnnouncements() {
         <div>
             <CoordinatorNavigation />
             <CoordinatorInfo />
-            <h6 className="page-title">Announcements</h6>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', marginTop: '30px' }}>
-                <SearchAndFilter />
-                <button
+            {/* Title Section */}
+            <div style={{ width: '90%', margin: '0 auto', display: 'flex', justifyContent: 'flex-start' }}>
+                <h6 className="section-title" style={{ fontFamily: 'Poppins, sans-serif', color: '#242424', fontSize: '40px', fontWeight: 'bold', marginTop: '20px', marginLeft: '50px' }}>Announcements</h6>
+            </div>
+
+
+            {/* Search And Filter Section */}
+            <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px', marginLeft: '60px', padding: '0 20px' }}>
+                <div style={{ flex: '1 1 70%', minWidth: '300px' }}> <SearchAndFilter /> </div>
+                <Button
                     onClick={handleCreateNewAnnouncement}
-                    style={{
-                        backgroundColor: '#FAD32E',
-                        color: 'white',
-                        fontWeight: '900',
-                        padding: '12px 15px',
-                        border: 'none',
-                        borderRadius: '10px',
-                        cursor: 'pointer',
-                        marginLeft: '10px',
-                        display: 'flex',
-                        alignItems: 'center',
-                        boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
-                    }}
-                >
+                    style={{ backgroundColor: '#FAD32E', color: 'white', fontWeight: '900', padding: '12px 15px', border: 'none', borderRadius: '10px', cursor: 'pointer', marginLeft: '10px', display: 'flex', alignItems: 'center', boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)' }}>
                     Add Announcement
                     <FaPlus style={{ marginLeft: '10px' }} />
-                </button>
+                </Button>
             </div>
-            <Row xs={1} md={2} lg={3} className="g-4" style={{ margin: '20px' }}>
-                {announcements.map(a => (
-                    <Col key={a.announcement_id}>
-                        <Card>
-                            <Card.Body>
-                                <Card.Title>{a.title}</Card.Title>
-                                <Card.Subtitle className="mb-2 text-muted">{a.status}</Card.Subtitle>
-                                <Card.Text>
-                                    {truncateText(a.content, 100)}{' '}
-                                    {a.content.length > 100 && (
-                                        <span
-                                            onClick={() => handleViewAnnouncement(a)}
-                                            style={{ color: '#007bff', cursor: 'pointer', textDecoration: 'underline' }}
-                                        >
-                                            See more...
-                                        </span>
-                                    )}
-                                </Card.Text>
-                                {a.filenames && (
-                                    <Card.Img
-                                        variant="top"
-                                        src={`http://localhost:9000/uploads/${a.filenames.split(',')[0]}`}
-                                        alt="Announcement Image"
-                                    />
-                                )}
-                                <Card.Text className="text-muted" style={{ marginTop: '10px' }}>
-                                    {renderDateTime(a.created_at, a.updated_at)}
-                                </Card.Text>
-                                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                                    <Button
-                                        variant="outline-primary"
-                                        onClick={() => handleEditAnnouncement(a.announcement_id)}
-                                    >
-                                        <EditIcon /> Edit
-                                    </Button>
-                                    <Button
-                                        variant="outline-danger"
-                                        onClick={() => handleDeleteAnnouncement(a.announcement_id)}
-                                    >
-                                        <DeleteIcon /> Delete
-                                    </Button>
-                                </div>
-                            </Card.Body>
-                        </Card>
-                    </Col>
-                ))}
-            </Row>
+
+
+
+
+{/* Pinned Announcements Section */}
+<text style={{ fontSize: '20px', fontWeight: '600', marginLeft: '120px' }}>Pinned Announcement</text>
+<Row xs={1} md={1} lg={1} className="g-4" style={{ marginTop: '2px', marginBottom: '40px', marginLeft: '100px', marginRight: '20px' }}>
+    {announcements.filter(a => a.status === 'pinned').map(a => (
+        <Col key={a.announcement_id}>
+            <Card
+                style={{
+                    backgroundColor: (activeAnnouncement === a.announcement_id || hoveredAnnouncement === a.announcement_id) ? '#ebebeb' : '',
+                    cursor: 'pointer',
+                    transition: 'background-color 0.3s ease',
+                }}
+                onMouseOut={() => setActiveAnnouncement(null)}
+                onMouseEnter={() => setHoveredAnnouncement(a.announcement_id)}
+                onMouseLeave={() => setHoveredAnnouncement(null)}
+            >
+                <Card.Body style={{ display: 'flex', justifyContent: 'flex-start', alignItems: 'center' }}>
+                    {/* Image on the left */}
+                    {a.filenames && (
+                        <Card.Img
+                            variant="top"
+                            src={`http://localhost:9000/uploads/${a.filenames.split(',')[0]}`}
+                            alt="Announcement Image"
+                            style={{ maxHeight: '250px', maxWidth: '250px', marginTop: '20px', marginBottom: '20px', marginLeft: '20px', marginRight: '50px' }}
+                        />
+                    )}
+
+                    {/* Text content on the right */}
+                    <div style={{ flex: 1 }}>
+                        <Card.Title style={{ marginTop: '20px', marginBottom: '20px', fontSize: '28px' }}>{a.title}</Card.Title>
+                        <Card.Text style={{ marginRight: '30px', fontSize: '16px' }}>
+                            {truncateText(a.content, 700)}{' '}
+                            {a.content.length > 700 && (
+                                <span
+                                    onClick={() => handleViewAnnouncement(a)}
+                                    style={{ color: '#007bff', cursor: 'pointer', textDecoration: 'underline' }}
+                                >
+                                    See more...
+                                </span>
+                            )}
+                        </Card.Text>
+                        <Card.Text className="text-muted" style={{ marginTop: '20px', marginBottom: '20px', fontSize: '15px' }}>
+                            {renderStatus(a.status)} {renderDateTime(a.created_at, a.updated_at)}
+                        </Card.Text>
+                    </div>
+
+                    {/* Dropdown menu for actions */}
+                    <Dropdown style={{ marginBottom: '180px', marginLeft: '10px' }}>
+                        <Dropdown.Toggle variant="link" id={`dropdown-${a.announcement_id}`} style={{ boxShadow: 'none', color: '#FFFFFF', fontSize: '0px', padding: '0' }}>
+                            <BsThreeDotsVertical style={{ boxShadow: 'none', color: '#A2A3A3', fontSize: '20px', padding: '0', marginBottom: '70px', marginRight: '0px' }} />
+                        </Dropdown.Toggle>
+                        <Dropdown.Menu>
+                            <Dropdown.Item onClick={() => (a.announcement_id)} className="d-flex align-items-center">
+                                <FaThumbtack style={{ marginLeft: '10px', marginRight: '20px' }} /> Pin
+                            </Dropdown.Item>
+                            <hr />
+                            <Dropdown.Item onClick={() => handleViewAnnouncement(a)} className="d-flex align-items-center">
+                                <FaEye style={{ marginLeft: '10px', marginRight: '20px' }} /> View
+                            </Dropdown.Item>
+                            <hr />
+                            <Dropdown.Item onClick={() => handleEditAnnouncement(a.announcement_id)} className="d-flex align-items-center">
+                                <FaPen style={{ marginLeft: '10px', marginRight: '20px' }} /> Edit
+                            </Dropdown.Item>
+                            <hr />
+                            <Dropdown.Item onClick={() => handleDeleteAnnouncement(a.announcement_id)} className="d-flex align-items-center">
+                                <FaTrash style={{ marginLeft: '10px', marginRight: '20px' }} /> Delete
+                            </Dropdown.Item>
+                        </Dropdown.Menu>
+                    </Dropdown>
+                </Card.Body>
+            </Card>
+        </Col>
+    ))}
+</Row>
+
+
+{/* Announcement Containers Section */}
+<text style={{ fontSize: '20px', fontWeight: '600', marginLeft: '120px' }}>Other Announcements</text>
+<Row xs={1} md={1} lg={1} className="g-4" style={{ marginTop: '2px', marginBottom: '40px', marginLeft: '100px', marginRight: '20px' }}>
+    {announcements.filter(a => a.status !== 'pinned').map(a => (
+        <Col key={a.announcement_id}>
+            <Card
+                style={{ backgroundColor: (activeAnnouncement === a.announcement_id || hoveredAnnouncement === a.announcement_id) ? '#ebebeb' : '', cursor: 'pointer',transition: 'background-color 0.3s ease' }}
+                    onMouseOut={() => setActiveAnnouncement(null)} 
+                    onMouseEnter={() => setHoveredAnnouncement(a.announcement_id)} 
+                    onMouseLeave={() => setHoveredAnnouncement(null)} 
+                >
+                <Card.Body style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <div style={{ flex: 1 }}>
+                        <Card.Title style={{ marginTop: '7px', marginLeft: '10px', fontSize: '20px' }}>{a.title}</Card.Title>
+                        <Card.Text style={{ marginLeft: '10px', marginRight: '50px', fontSize: '14px' }}> {truncateText(a.content, 250)}{' '} {a.content.length > 250 && (
+                            <span onClick={() => handleViewAnnouncement(a)} style={{ color: '#007bff', cursor: 'pointer', textDecoration: 'underline' }}> See more... </span>)}
+                        </Card.Text>
+                        <Card.Text className="text-muted" style={{ marginTop: '10px', marginLeft: '10px', fontSize: '13px' }}> {renderStatus(a.status)} {renderDateTime(a.created_at, a.updated_at)} </Card.Text>
+                    </div>
+                    {a.filenames && ( <Card.Img variant="top" src={`http://localhost:9000/uploads/${a.filenames.split(',')[0]}`} alt="Announcement Image" style={{ maxHeight: '100px', maxWidth: '100px' }}/>)}
+
+                    <Dropdown style={{ marginLeft: '10px' }}>
+                        <Dropdown.Toggle variant="link" id={`dropdown-${a.announcement_id}`} style={{ boxShadow: 'none', color: '#FFFFFF', fontSize: '0px', padding: '0' }}>
+                            <BsThreeDotsVertical style={{ boxShadow: 'none', color: '#A2A3A3', fontSize: '20px', padding: '0', marginBottom: '70px', marginRight: '0px' }} />
+                        </Dropdown.Toggle>
+                        <Dropdown.Menu>
+                            <Dropdown.Item onClick={() => (a.announcement_id)} className="d-flex align-items-center">
+                                <FaThumbtack style={{ marginLeft: '10px', marginRight: '20px' }} /> Pin
+                            </Dropdown.Item>
+                            <hr /> {/* Adds a line separator */}
+                            <Dropdown.Item onClick={() => handleViewAnnouncement(a)} className="d-flex align-items-center">
+                                <FaEye style={{  marginLeft: '10px', marginRight: '20px' }} /> View
+                            </Dropdown.Item>
+                            <hr /> {/* Adds a line separator */}
+                            <Dropdown.Item onClick={() => handleEditAnnouncement(a.announcement_id)} className="d-flex align-items-center">
+                                <FaPen style={{ marginLeft: '10px', marginRight: '20px' }} /> Edit
+                            </Dropdown.Item>
+                            <hr /> {/* Adds a line separator */}
+                            <Dropdown.Item onClick={() => handleDeleteAnnouncement(a.announcement_id)} className="d-flex align-items-center">
+                                <FaTrash style={{ marginLeft: '10px', marginRight: '20px' }} /> Delete
+                            </Dropdown.Item>
+                        </Dropdown.Menu>
+                    </Dropdown>
+
+                </Card.Body>
+            </Card>
+        </Col>
+    ))}
+</Row>
+
+
+
 
            {/* Add and Edit Announcement Modal */}
            <Modal show={showAnnouncementModal} onHide={handleCloseAnnouncementModal} size="lg">
@@ -428,45 +560,19 @@ export default function CoordinatorAnnouncements() {
                 </Form>
                 </Modal.Body>
             </Modal>
+            
 
 
              {/* View Announcement Modal */}
-            {selectedAnnouncement && (
-                <Modal show={showViewModal} onHide={() => setShowViewModal(false)} size="lg">
-                    <Modal.Header closeButton>
-                        <Modal.Title>{selectedAnnouncement.title}</Modal.Title>
-                    </Modal.Header>
-                    <Modal.Body>
-                        <h5>{selectedAnnouncement.title}</h5>
-                        <p>{selectedAnnouncement.content}</p>
-                        <p>Status: {selectedAnnouncement.status}</p>
-                        <h6>Attachments:</h6>
-                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px' }}>
-                            {selectedAnnouncement.filenames.split(',').map((filename, index) => (
-                                <div
-                                    key={index}
-                                    style={{ position: 'relative', display: 'inline-block', cursor: 'pointer' }}
-                                    onClick={() => window.open(`http://localhost:9000/uploads/${filename}`, '_blank')}
-                                >
-                                    <Card style={{ width: '100px', height: '100px', border: '1px solid #ddd' }}>
-                                        <Card.Body style={{ padding: '5px', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                                            {filename.match(/\.(jpg|jpeg|png|gif)$/) ? (
-                                                <img
-                                                    src={`http://localhost:9000/uploads/${filename}`}
-                                                    alt="attachment"
-                                                    style={{ width: '100%', height: 'auto', cursor: 'pointer' }}
-                                                />
-                                            ) : (
-                                                <FileIcon style={{ fontSize: '50px', color: '#007bff' }} />
-                                            )}
-                                        </Card.Body>
-                                    </Card>
-                                </div>
-                            ))}
-                        </div>
-                    </Modal.Body>
-                </Modal>
+            {selectedAnnouncement && ( 
+            <ViewAnnouncementModal
+                show={showViewModal} 
+               onHide={() => setShowViewModal(false)} 
+               onClick={() => setShowViewModal(false)} 
+               selectedAnnouncement={selectedAnnouncement}
+            />
             )}
+            
 
         </div>
     );

@@ -76,9 +76,7 @@ const ViewUniformDefianceModal = ({ show, onHide, record }) => {
 
     return (
         <Modal show={show} onHide={onHide} size="lg">
-            {/* Modal Header */}
             <Modal.Header>
-                {/* Custom "X" Close Icon */}
                 <Button
                     variant="link"
                     onClick={onHide}
@@ -96,7 +94,6 @@ const ViewUniformDefianceModal = ({ show, onHide, record }) => {
                 <Modal.Title style={{ fontSize: '40px', marginBottom: '10px', marginLeft: '90px', marginRight: '90px' }}>VIEW UNIFORM DEFIANCE</Modal.Title>
             </Modal.Header>
 
-            {/* Modal Body */}
             <Modal.Body>
                 {record && (
                     <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', rowGap: '10px', marginLeft: '20px', marginRight: '20px' }}>
