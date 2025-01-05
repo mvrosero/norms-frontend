@@ -185,6 +185,7 @@ const IndividualUniformDefiance = () => {
 
             <AddUniformDefianceModal
                 show={showAddViolationModal}
+                onHide={handleCloseAddViolationModal} 
                 handleCloseModal={handleCloseAddViolationModal} // Ensure this function is passed correctly
                 studentInfo={studentInfo} // Pass student info to modal
             />
