@@ -27,12 +27,13 @@ export default function ManageOffenses() {
     const [offenseFormData, setOffenseFormData] = useState({
         offense_code: '',
         offense_name: '',
-        status: 'active',
+        status: '',
         category_id: '',
         category_name: '',
         subcategory_id: '',
         subcategory_name: ''
     });
+
 
     // Pagination state
     const [currentPage, setCurrentPage] = useState(1);
@@ -213,6 +214,8 @@ export default function ManageOffenses() {
         }
     };
 
+
+     // Handle the delete offense
     const handleDeleteOffense = (id) => {
         Swal.fire({
             title: 'Are you sure you want to delete this offense?',
@@ -356,8 +359,8 @@ return (
                 </h6>
             </div>
 
-                {/* Search and Add Button */}
-                <div style={{  marginTop: '10px', marginLeft: '30px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            {/* Search and Add Button */}
+            <div style={{  marginTop: '10px', marginLeft: '30px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 <div style={{ width: '850px' }}><SearchAndFilter /></div>
                 <button
                     onClick={handleCreateNewOffense}
@@ -412,7 +415,6 @@ return (
                         ))}
                     </tbody>
                 </table>
-
                 
                 {/* Pagination */}
                 <div style = {{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', marginBottom: '15px', marginRight: '30px' }}>
@@ -473,26 +475,27 @@ return (
             </div>
         </div>
             
+        {/* Add Offense Modal */}
+        <AddOffenseModal
+            show={showOffenseModal}
+            handleClose={handleCloseOffenseModal}
+            offenseFormData={offenseFormData}
+            handleOffenseChange={handleOffenseChange}
+            handleOffenseSubmit={handleOffenseSubmit}
+            categories={categories}
+            subcategories={subcategories}
+        />
 
-            <AddOffenseModal
-                show={showOffenseModal}
-                handleClose={handleCloseOffenseModal}
-                offenseFormData={offenseFormData}
-                handleOffenseChange={handleOffenseChange}
-                handleOffenseSubmit={handleOffenseSubmit}
-                categories={categories}
-                subcategories={subcategories}
-            />
-
-            <EditOffenseModal
-                show={showEditOffenseModal}
-                handleClose={handleCloseEditOffenseModal}
-                offenseFormData={offenseFormData}
-                handleOffenseChange={handleOffenseChange}
-                handleOffenseSubmit={handleOffenseUpdateSubmit}
-                categories={categories}
-                subcategories={subcategories}
-            />
-        </div>
+        {/* Edit Offense Modal */}
+        <EditOffenseModal
+            show={showEditOffenseModal}
+            handleClose={handleCloseEditOffenseModal}
+            offenseFormData={offenseFormData}
+            handleOffenseChange={handleOffenseChange}
+            handleOffenseSubmit={handleOffenseUpdateSubmit}
+            categories={categories}
+            subcategories={subcategories}
+        />
+    </div>
     );
 }

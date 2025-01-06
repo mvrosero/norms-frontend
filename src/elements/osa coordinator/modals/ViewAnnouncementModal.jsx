@@ -75,7 +75,7 @@ const ViewAnnouncementModal = ({ show, onHide, selectedAnnouncement }) => {
     };
 
     return (
-        <Modal show={show} onHide={onHide} size="lg">
+        <Modal show={show} onHide={onHide} size="lg" backdrop="static">
             <Modal.Header>
                 <Button
                     variant="link"

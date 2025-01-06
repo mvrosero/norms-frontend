@@ -1,118 +1,105 @@
-import React from 'react';
-import { Modal, Form, Button } from 'react-bootstrap';
-import Swal from 'sweetalert2';
-import axios from 'axios';
+import React, { useState } from 'react';
+import { Modal, Form, Button, Row } from 'react-bootstrap';
+import '../../../styles/style.css'
 
-const AddSanctionModal = ({ show, onHide, fetchSanctions }) => {
-    const [sanctionFormData, setSanctionFormData] = React.useState({
-        sanction_code: '',
-        sanction_name: '',
-        status: '', 
-    });
 
-    const handleSanctionChange = (e) => {
-        const { name, value } = e.target;
-        setSanctionFormData(prevState => ({
-            ...prevState,
-            [name]: value,
-        }));
+const inputStyle = {
+    backgroundColor: '#f2f2f2',
+    border: '1px solid #ced4da',
+    borderRadius: '.25rem',
+    marginBottom: '20px',
+    height: '40px',
+    paddingLeft: '10px',
+    transition: 'border-color 0.3s ease, background-color 0.3s ease',
+};
+
+const activeInputStyle = {
+    ...inputStyle,
+    borderColor: '#FAD32E',
+    border: '2px solid'
+};
+
+const AddSanctionModal = ({ show, handleClose, sanctionFormData, handleSanctionChange, handleSanctionSubmit }) => {
+    const [activeField, setActiveField] = useState(null);
+
+    const handleFocus = (field) => {
+        setActiveField(field);
     };
 
-    const handleSanctionSubmit = async (e) => {
-        e.preventDefault();
-        try {
-            await axios.post('http://localhost:9000/register-sanction', sanctionFormData, {
-                headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` },
-            });
-            Swal.fire({
-                icon: 'success',
-                title: 'Sanction Added Successfully!',
-                text: 'The new sanction has been added successfully.',
-            });
-            onHide(); // Close the modal
-            fetchSanctions(); // Fetch updated sanctions list
-        } catch (error) {
-            Swal.fire({
-                icon: 'error',
-                title: 'Oops...',
-                text: 'An error occurred while adding the sanction. Please try again later!',
-            });
-        }
-    };
-
-    // Styles defined
-    const inputStyle = {
-        backgroundColor: '#f2f2f2',
-        border: '1px solid #ced4da',
-        borderRadius: '.25rem',
-        height: '40px',
-        width: '100%',
-    };
-
-    const buttonStyle = {
-        backgroundColor: '#28a745',
-        color: 'white',
-        fontWeight: '600',
-        padding: '12px 15px',
-        border: 'none',
-        borderRadius: '10px',
-        cursor: 'pointer',
-        marginLeft: '10px',
-        display: 'flex',
-        alignItems: 'center',
-        boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
+    const handleBlur = () => {
+        setActiveField(null);
     };
 
     return (
-        <Modal show={show} onHide={onHide}>
-            <Modal.Header closeButton>
-                <Modal.Title>Add New Sanction</Modal.Title>
+        <Modal show={show} onHide={handleClose} backdrop="static">
+            <Modal.Header>
+                <Button variant="link" onClick={handleClose} style={{ position: 'absolute', top: '5px', right: '20px', textDecoration: 'none', fontSize: '30px', color: '#a9a9a9' }}>
+                    ×
+                </Button>
+                <Modal.Title style={{ fontSize: '30px', marginLeft: '85px', marginRight: '85px' }}> ADD SANCTION </Modal.Title>
             </Modal.Header>
             <Modal.Body>
                 <Form onSubmit={handleSanctionSubmit}>
-                    <Form.Group className="mb-3">
-                        <Form.Label>Sanction Code</Form.Label>
+                <Row className="gy-4">
+                    <Form.Group className="formSanctionCode">
+                        <Form.Label className="fw-bold">Sanction Code</Form.Label>
                         <Form.Control
                             type="text"
                             name="sanction_code"
                             value={sanctionFormData.sanction_code}
                             onChange={handleSanctionChange}
+                            onFocus={() => handleFocus('sanction_code')}
+                            onBlur={handleBlur}
+                            style={ activeField === 'sanction_code' ? activeInputStyle : inputStyle }
                             required
-                            style={inputStyle} // Apply input style
                         />
                     </Form.Group>
-                    <Form.Group className="mb-3">
-                        <Form.Label>Sanction Name</Form.Label>
+                </Row>
+
+                <Row className="gy-4">
+                    <Form.Group className="formSanctionName">
+                        <Form.Label className="fw-bold">Sanction Name</Form.Label>
                         <Form.Control
                             type="text"
                             name="sanction_name"
                             value={sanctionFormData.sanction_name}
                             onChange={handleSanctionChange}
+                            onFocus={() => handleFocus('sanction_name')}
+                            onBlur={handleBlur}
+                            style={ activeField === 'sanction_name' ? activeInputStyle : inputStyle }
                             required
-                            style={inputStyle} // Apply input style
                         />
                     </Form.Group>
-                    <Form.Group className="mb-3">
-                        <Form.Label>Status</Form.Label>
-                        <Form.Select
-                            name="status"
-                            value={sanctionFormData.status}
-                            onChange={handleSanctionChange}
-                            required
-                            style={inputStyle}
-                        >
-                            <option value="" disabled>Select Status</option> 
-                            <option value="Active">Active</option>
-                            <option value="Inactive">Inactive</option>
-                        </Form.Select>
-                    </Form.Group>
-                    <Button type="submit" variant="success" style={buttonStyle}> 
-                        Add Sanction
-                    </Button>
-                </Form>
-            </Modal.Body>
-        </Modal>
+                </Row>
+
+                <Row className="gy-4">
+                        <Form.Group controlId="formSanctionStatus">
+                            <Form.Label className="fw-bold">Status</Form.Label>
+                            <Form.Control
+                                as="select"
+                                name="status"
+                                value={sanctionFormData.status}
+                                onChange={handleSanctionChange}
+                                onFocus={() => handleFocus('status')}
+                                onBlur={handleBlur}
+                                style={ activeField === 'status' ? activeInputStyle : inputStyle }
+                                required
+                            >
+                                <option disabled value="">Select Status</option>
+                                <option value="active">Active</option>
+                                <option value="inactive">Inactive</option>
+                            </Form.Control>
+                        </Form.Group>
+                    </Row>
+                        <div className="d-flex justify-content-end mt-3">
+                            <button type="button" onClick={handleClose} className="settings-cancel-button">Cancel</button>
+                            <button type="submit" className="settings-save-button">Save</button>
+                        </div>
+                    </Form>
+                </Modal.Body>
+            </Modal>
     );
 };
+
 
 export default AddSanctionModal;

@@ -636,7 +636,7 @@ return (
 
 
            {/* Add and Edit Announcement Modal */}
-           <Modal show={showAnnouncementModal} onHide={handleCancel} size="lg">
+           <Modal show={showAnnouncementModal} onHide={handleCancel} size="lg" backdrop="static">
            <Modal.Header>
                 <Button
                     variant="link"
