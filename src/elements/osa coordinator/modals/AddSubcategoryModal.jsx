@@ -1,69 +1,105 @@
-// AddSubcategoryModal.js
-import React from 'react';
-import { Modal, Form, Button } from 'react-bootstrap';
+import React, { useState } from 'react';
+import { Modal, Form, Button, Row } from 'react-bootstrap';
+import '../../../styles/style.css'
 
-const AddSubcategoryModal = ({ show, onHide, formData, onChange, onSubmit }) => {
-    const inputStyle = {
-        backgroundColor: '#f2f2f2',
-        border: '1px solid #ced4da',
-        borderRadius: '.25rem',
-        height: '40px',
-        width: '100%'
+
+const inputStyle = {
+    backgroundColor: '#f2f2f2',
+    border: '1px solid #ced4da',
+    borderRadius: '.25rem',
+    marginBottom: '20px',
+    height: '40px',
+    paddingLeft: '10px',
+    transition: 'border-color 0.3s ease, background-color 0.3s ease',
+};
+
+const activeInputStyle = {
+    ...inputStyle,
+    borderColor: '#FAD32E',
+    border: '2px solid'
+};
+
+const AddSubcategoryModal = ({ show, handleClose, subcategoryFormData, handleSubcategoryChange, handleSubcategorySubmit }) => {
+    const [activeField, setActiveField] = useState(null);
+
+    const handleFocus = (field) => {
+        setActiveField(field);
+    };
+
+    const handleBlur = () => {
+        setActiveField(null);
     };
 
     return (
-        <Modal show={show} onHide={onHide}>
-            <Modal.Header closeButton>
-                <Modal.Title>Add Subcategory</Modal.Title>
+        <Modal show={show} onHide={handleClose} backdrop="static">
+            <Modal.Header>
+                <Button variant="link" onClick={handleClose} style={{ position: 'absolute', top: '5px', right: '20px', textDecoration: 'none', fontSize: '30px', color: '#a9a9a9' }}>
+                    ×
+                </Button>
+                <Modal.Title style={{ fontSize: '30px', marginLeft: '50px', marginRight: '50px' }}> ADD SUBCATEGORY </Modal.Title>
             </Modal.Header>
             <Modal.Body>
-                <Form onSubmit={onSubmit}>
-                    <Form.Group controlId="subcategory_code">
-                        <Form.Label>Subcategory Code</Form.Label>
+                <Form onSubmit={handleSubcategorySubmit}>
+                <Row className="gy-4">
+                    <Form.Group className="formSubcategoryCode">
+                        <Form.Label className="fw-bold">Subcategory Code</Form.Label>
                         <Form.Control
                             type="text"
                             name="subcategory_code"
-                            value={formData.subcategory_code}
-                            onChange={onChange}
+                            value={subcategoryFormData.subcategory_code}
+                            onChange={handleSubcategoryChange}
+                            onFocus={() => handleFocus('subcategory_code')}
+                            onBlur={handleBlur}
+                            style={ activeField === 'subcategory_code' ? activeInputStyle : inputStyle }
                             required
-                            style={inputStyle}
                         />
                     </Form.Group>
+                </Row>
 
-                    <Form.Group controlId="subcategory_name" className="mt-3">
-                        <Form.Label>Subcategory Name</Form.Label>
+                <Row className="gy-4">
+                    <Form.Group className="formSubcategoryName">
+                        <Form.Label className="fw-bold">Subcategory Name</Form.Label>
                         <Form.Control
                             type="text"
                             name="subcategory_name"
-                            value={formData.subcategory_name}
-                            onChange={onChange}
+                            value={subcategoryFormData.subcategory_name}
+                            onChange={handleSubcategoryChange}
+                            onFocus={() => handleFocus('subcategory_name')}
+                            onBlur={handleBlur}
+                            style={ activeField === 'subcategory_name' ? activeInputStyle : inputStyle }
                             required
-                            style={inputStyle}
                         />
                     </Form.Group>
+                </Row>
 
-                    <Form.Group controlId="status" className="mt-3">
-                        <Form.Label>Status</Form.Label>
-                        <Form.Select
-                            name="status"
-                            value={formData.status}
-                            onChange={onChange}
-                            required
-                            style={inputStyle}
-                        >
-                            <option value="" disabled>Select Status</option>
-                            <option value="active">Active</option>
-                            <option value="inactive">Inactive</option>
-                        </Form.Select>
-                    </Form.Group>
-
-                    <Button variant="primary" type="submit" style={{ marginTop: '15px' }}>
-                        Add Subcategory
-                    </Button>
-                </Form>
-            </Modal.Body>
-        </Modal>
+                <Row className="gy-4">
+                        <Form.Group controlId="formSubcategoryStatus">
+                            <Form.Label className="fw-bold">Status</Form.Label>
+                            <Form.Control
+                                as="select"
+                                name="status"
+                                value={subcategoryFormData.status}
+                                onChange={handleSubcategoryChange}
+                                onFocus={() => handleFocus('status')}
+                                onBlur={handleBlur}
+                                style={ activeField === 'status' ? activeInputStyle : inputStyle }
+                                required
+                            >
+                                <option disabled value="">Select Status</option>
+                                <option value="active">Active</option>
+                                <option value="inactive">Inactive</option>
+                            </Form.Control>
+                        </Form.Group>
+                    </Row>
+                        <div className="d-flex justify-content-end mt-3">
+                            <button type="button" onClick={handleClose} className="settings-cancel-button">Cancel</button>
+                            <button type="submit" className="settings-save-button">Save</button>
+                        </div>
+                    </Form>
+                </Modal.Body>
+            </Modal>
     );
 };
+
 
 export default AddSubcategoryModal;

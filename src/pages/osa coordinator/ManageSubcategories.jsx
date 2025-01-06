@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Swal from 'sweetalert2';
-import { Modal, Form, Button } from 'react-bootstrap';
+
 import { FaPlus } from 'react-icons/fa';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -10,9 +10,9 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import CoordinatorNavigation from './CoordinatorNavigation';
 import CoordinatorInfo from './CoordinatorInfo';
 import SearchAndFilter from '../general/SearchAndFilter';
-
 import AddSubcategoryModal from '../../elements/osa coordinator/modals/AddSubcategoryModal';
 import EditSubcategoryModal from '../../elements/osa coordinator/modals/EditSubcategoryModal';
+import folderBackground from '../../../src/components/images/folder_background.png';
 
 export default function ManageSubcategories() {
     const navigate = useNavigate();
@@ -21,13 +21,18 @@ export default function ManageSubcategories() {
     const [error, setError] = useState(null);
     const [showSubcategoryModal, setShowSubcategoryModal] = useState(false);
     const [showEditModal, setShowEditModal] = useState(false);
+    const [editSubcategoryId, setEditSubcategoryId] = useState(null);
     const [subcategoryFormData, setSubcategoryFormData] = useState({
         subcategory_code: '',
         subcategory_name: '',
-        status: '', 
-        category_id: ''
+        status: ''
     });
-    const [editSubcategoryId, setEditSubcategoryId] = useState(null);
+
+
+    // Pagination state
+    const [currentPage, setCurrentPage] = useState(1);
+    const [subcategoriesPerPage] = useState(10);
+
 
     useEffect(() => {
         const token = localStorage.getItem('token');
@@ -66,8 +71,7 @@ export default function ManageSubcategories() {
         setSubcategoryFormData({
             subcategory_code: '',
             subcategory_name: '',
-            status: 'active', // Reset to default
-            category_id: ''
+            status: '', 
         });
     };
 
@@ -107,8 +111,7 @@ export default function ManageSubcategories() {
             setSubcategoryFormData({
                 subcategory_code: subcategory.subcategory_code,
                 subcategory_name: subcategory.subcategory_name,
-                status: subcategory.status,
-                category_id: subcategory.category_id
+                status: subcategory.status
             });
             setEditSubcategoryId(id);
             setShowEditModal(true);
@@ -139,13 +142,14 @@ export default function ManageSubcategories() {
 
     const handleDeleteSubcategory = (id) => {
         Swal.fire({
-            title: 'Are you sure?',
-            text: "You won't be able to revert this!",
+            title: 'Are you sure you want to delete this subcategory?',
+            text: "Deleting this subcategory will also affect all associated data.",
             icon: 'warning',
             showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Yes, delete it!'
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#B0B0B0',
+            confirmButtonText: 'Yes, delete it',
+            cancelButtonText: 'Cancel'
         }).then(async (result) => {
             if (result.isConfirmed) {
                 try {
@@ -169,91 +173,252 @@ export default function ManageSubcategories() {
         });
     };
 
-    const inputStyle = {
-        backgroundColor: '#f2f2f2',
-        border: '1px solid #ced4da',
-        borderRadius: '.25rem',
-        height: '40px',
-        width: '100%'
+
+        // Set the styles for the status
+        const renderStatus = (status) => {
+            let backgroundColor, textColor;
+            if (status === 'active') {
+                backgroundColor = '#DBF0DC';
+                textColor = '#30A530';
+            } else if (status === 'inactive') {
+                backgroundColor = '#F0DBDB';
+                textColor = '#D9534F';
+            } else {
+                backgroundColor = '#EDEDED';
+                textColor = '#6C757D'; 
+            }
+    
+            return (
+                <div style={{
+                    backgroundColor,
+                    color: textColor,
+                    fontWeight: '600',
+                    fontSize: '14px',
+                    borderRadius: '30px',
+                    padding: '5px 20px',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                }}>
+                    <div style={{
+                        width: '8px',
+                        height: '8px',
+                        borderRadius: '50%',
+                        backgroundColor: textColor,
+                        marginRight: '7px',
+                    }} />
+                    {status}
+                </div>
+            );
+        };
+
+
+
+    // Pagination logic
+    const indexOfLastSubcategory = currentPage * subcategoriesPerPage;
+    const indexOfFirstSubcategory = indexOfLastSubcategory - subcategoriesPerPage;
+    const currentSubcategories = subcategories.slice(indexOfFirstSubcategory, indexOfLastSubcategory);
+
+    const paginate = (pageNumber) => setCurrentPage(pageNumber);
+
+    const totalPages = Math.ceil(subcategories.length / subcategoriesPerPage);
+
+    const buttonStyle = {
+        width: '30px', 
+        height: '30px', 
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        border: '1px solid #a0a0a0',
+        backgroundColor: '#ebebeb',
+        color: '#4a4a4a',
+        fontSize: '0.75rem',
+        cursor: 'pointer',
     };
 
-    return (
-        <div>
-            <CoordinatorNavigation />
-            <CoordinatorInfo />
-            <h6 className="page-title">Manage Subcategories</h6>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', marginTop: '30px' }}>
-                <SearchAndFilter />
-                <button 
-                    onClick={handleCreateNewSubcategory} 
+    const activeButtonStyle = {
+        ...buttonStyle,
+        backgroundColor: '#a0a0a0',
+        color: '#f1f1f1',
+    };
+
+    const disabledButtonStyle = {
+        ...buttonStyle,
+        backgroundColor: '#ebebeb',
+        color: '#a1a1a1',
+        cursor: 'not-allowed',
+    };
+
+    const handlePaginationChange = (pageNumber) => {
+        if (pageNumber >= 1 && pageNumber <= totalPages) {
+            setCurrentPage(pageNumber);  
+        }
+    };
+    
+    const pageNumbers = [];
+    for (let i = 1; i <= totalPages; i++) {
+        pageNumbers.push(i);
+    }
+
+
+return (
+    <div>
+        <CoordinatorNavigation />
+        <CoordinatorInfo />
+        <div
+                style={{
+                    backgroundImage: `url(${folderBackground})`,
+                    backgroundSize: '100% 100%',
+                    backgroundPosition: 'center',
+                    width: '100vw',
+                    minHeight: '100vh',
+                    display: 'flex',
+                    justifyContent: 'flex-start',
+                    alignItems: 'center',
+                    flexDirection: 'column',
+                    color: 'white',
+                    paddingTop: '40px',
+                    marginBottom: '20px'
+                }}
+            >
+                
+            {/* Title Section */}
+            <div style={{ width: '90%', margin: '0 auto', display: 'flex', justifyContent: 'flex-start' }}>
+                <h6 className="settings-title" style={{ fontFamily: 'Poppins, sans-serif', color: '#242424', fontSize: '40px', fontWeight: 'bold', marginLeft: '100px' }}>
+                    Manage Subcategories
+                </h6>
+            </div>
+
+            {/* Search and Add Button */}
+            <div style={{  marginTop: '10px', marginLeft: '30px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <div style={{ width: '850px' }}><SearchAndFilter /></div>
+                <button
+                    onClick={handleCreateNewSubcategory}
                     style={{
                         backgroundColor: '#FAD32E',
                         color: 'white',
                         fontWeight: '900',
-                        padding: '12px 15px',
-                        border: 'none',
+                        padding: '12px 18px',
                         borderRadius: '10px',
                         cursor: 'pointer',
-                        marginLeft: '10px',
                         display: 'flex',
-                        alignItems: 'center',
-                        boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
+                        alignItems: 'center'
                     }}
                 >
                     Add Subcategory
                     <FaPlus style={{ marginLeft: '10px' }} />
                 </button>
             </div>
-            <div style={{ margin: 'auto', marginTop: '20px', marginBottom: '30px', marginLeft: '20px', paddingLeft: '20px' }}>
-                <table style={{ width: '90%', borderCollapse: 'collapse', marginLeft: '90px', paddingLeft: '50px' }}>
+
+            {/* Subcategory Table */}
+            <div style={{ width: '90%', marginBottom: '40px' }}>
+                <table className="table table-hover table-bordered" style={{ marginBottom: '20px', textAlign: 'center', backgroundColor: 'white' }}>
                     <thead>
                         <tr>
-                            <th style={{ textAlign: 'center', border: '1px solid #ddd', padding: '8px', backgroundColor: '#a8a8a8', color: 'white' }}>ID</th>
-                            <th style={{ textAlign: 'center', border: '1px solid #ddd', padding: '8px', backgroundColor: '#a8a8a8', color: 'white' }}>Subcategory Name</th>
-                            <th style={{ textAlign: 'center', border: '1px solid #ddd', padding: '8px', backgroundColor: '#a8a8a8', color: 'white' }}>Subcategory Code</th>
-                            <th style={{ textAlign: 'center', border: '1px solid #ddd', padding: '8px', backgroundColor: '#a8a8a8', color: 'white' }}>Status</th>
-                            <th style={{ textAlign: 'center', border: '1px solid #ddd', padding: '8px', backgroundColor: '#a8a8a8', color: 'white' }}>Actions</th>
+                        <th style={{ width: '4%' }}>No.</th>
+                            <th style={{ width: '14%' }}>Subcategory Code</th>
+                            <th style={{ width: '37%' }}>Subcategory Name</th>
+                            <th style={{ width: '13%' }}>Status</th>
+                            <th style={{ width: '10%' }}>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {subcategories.map((subcategory, index) => (
+                        {currentSubcategories.map((subcategory, index) => (
                             <tr key={subcategory.subcategory_id}>
-                                <td style={{ textAlign: 'center', border: '1px solid #ddd', padding: '8px' }}>{subcategory.subcategory_id}</td>
-                                <td style={{ textAlign: 'center', border: '1px solid #ddd', padding: '8px' }}>{subcategory.subcategory_name}</td>
-                                <td style={{ textAlign: 'center', border: '1px solid #ddd', padding: '8px' }}>{subcategory.subcategory_code}</td>
-                                <td style={{ textAlign: 'center', border: '1px solid #ddd', padding: '8px' }}>{subcategory.status}</td>
-                                <td style={{ textAlign: 'center', border: '1px solid #ddd', padding: '8px' }}>
+                                <td style={{ textAlign: 'center' }}>{ (currentPage - 1) * subcategoriesPerPage + (index + 1) }</td>
+                                <td>{subcategory.subcategory_code}</td>
+                                <td>{subcategory.subcategory_name}</td>
+                                <td style={{ textAlign: 'center' }}>{renderStatus(subcategory.status)}</td>
+                                <td style={{ textAlign: 'center' }}>
                                     <EditIcon 
                                         onClick={() => handleEditSubcategory(subcategory.subcategory_id)} 
-                                        style={{ cursor: 'pointer', marginRight: '10px', color: 'blue' }} 
+                                        style={{ cursor: 'pointer', color: '#007bff', marginRight: '10px' }}
                                     />
                                     <DeleteIcon 
                                         onClick={() => handleDeleteSubcategory(subcategory.subcategory_id)} 
-                                        style={{ cursor: 'pointer', color: 'red' }} 
+                                        style={{ cursor: 'pointer', color: '#dc3545' }}
                                     />
                                 </td>
                             </tr>
                         ))}
                     </tbody>
                 </table>
+
+                               {/* Pagination */}
+                               <div style = {{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', marginBottom: '15px', marginRight: '30px' }}>
+                    {/* Page Info */}
+                    <div style={{ fontSize: '0.875rem', color: '#4a4a4a', marginRight: '10px' }}>
+                        Page {currentPage} out of {totalPages}
+                    </div>
+
+                    {/* Previous Page Button with left rounded corners */}
+                    <button
+                        onClick={() => handlePaginationChange(currentPage - 1)}
+                        style={{
+                            ...buttonStyle,
+                            borderTopLeftRadius: '8px',  // left rounded corner
+                            borderBottomLeftRadius: '8px',
+                            ...(currentPage === 1 ? disabledButtonStyle : {}),
+                        }}
+                        disabled={currentPage === 1}
+                    >
+                        ❮
+                    </button>
+
+                    {/* Page Numbers (only 3 visible) */}
+                    {(() => {
+                        let pageStart = currentPage - 1 > 0 ? currentPage - 1 : 1;
+                        let pageEnd = pageStart + 2 <= totalPages ? pageStart + 2 : totalPages;
+
+                        const pageTiles = [];
+                        for (let i = pageStart; i <= pageEnd; i++) {
+                            pageTiles.push(i);
+                        }
+
+                        return pageTiles.map(number => (
+                            <button
+                                key={number}
+                                onClick={() => paginate(number)}
+                                style={currentPage === number ? activeButtonStyle : buttonStyle}
+                            >
+                                {number}
+                            </button>
+                        ));
+                    })()}
+
+                    {/* Next Page Button with right rounded corners */}
+                    <button
+                        onClick={() => handlePaginationChange(currentPage + 1)}
+                        style={{
+                            ...buttonStyle,
+                            borderTopRightRadius: '8px',  // right rounded corner
+                            borderBottomRightRadius: '8px',
+                            ...(currentPage === totalPages ? disabledButtonStyle : {}),
+                        }}
+                        disabled={currentPage === totalPages}
+                    >
+                        ❯
+                    </button>
+                </div>
             </div>
+            </div>
+
 
             {/* Add Subcategory Modal */}
             <AddSubcategoryModal
                 show={showSubcategoryModal}
-                onHide={handleCloseSubcategoryModal}
-                formData={subcategoryFormData}
-                onChange={handleSubcategoryChange}
-                onSubmit={handleSubcategorySubmit}
+                handleClose={handleCloseSubcategoryModal}
+                subcategoryFormData={subcategoryFormData}
+                handleSubcategoryChange={handleSubcategoryChange}
+                handleSubcategorySubmit={handleSubcategorySubmit}
             />
 
             {/* Edit Subcategory Modal */}
             <EditSubcategoryModal 
                 show={showEditModal} 
-                onHide={() => setShowEditModal(false)} 
-                formData={subcategoryFormData} 
-                onChange={handleSubcategoryChange} 
-                onSubmit={handleEditSubmit} 
+                handleClose={() => setShowEditModal(false)} 
+                handleSubmit={handleEditSubmit} 
+                subcategoryFormData={subcategoryFormData}
+                handleSubcategoryChange={handleSubcategoryChange}
             />
         </div>
     );

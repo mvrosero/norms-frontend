@@ -267,7 +267,6 @@ export default function ManageSanctions() {
     }
 
 
-
 return (
     <div>
         <CoordinatorNavigation />
@@ -319,7 +318,7 @@ return (
 
             {/* Sanction Table */}
             <div style={{ width: '90%', marginBottom: '40px' }}>
-            <table className="table table-hover table-bordered" style={{ marginBottom: '20px', textAlign: 'center', backgroundColor: 'white' }}>
+                <table className="table table-hover table-bordered" style={{ marginBottom: '20px', textAlign: 'center', backgroundColor: 'white' }}>
                     <thead>
                         <tr>
                             <th style={{ width: '4%' }}>No.</th>
