@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Swal from 'sweetalert2';
-import { Modal, Form, Button } from 'react-bootstrap';
+
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { FaPlus } from 'react-icons/fa';
@@ -12,6 +12,7 @@ import CoordinatorInfo from './CoordinatorInfo';
 import SearchAndFilter from '../general/SearchAndFilter';
 import AddCategoryModal from '../../elements/osa coordinator/modals/AddCategoryModal';
 import EditCategoryModal from '../../elements/osa coordinator/modals/EditCategoryModal';
+import folderBackground from '../../../src/components/images/folder_background.png';
 
 export default function ManageCategories() {
     const navigate = useNavigate();
@@ -20,11 +21,12 @@ export default function ManageCategories() {
     const [error, setError] = useState(null);
     const [showCategoryModal, setShowCategoryModal] = useState(false);
     const [showEditModal, setShowEditModal] = useState(false);
+    const [editCategoryId, setEditCategoryId] = useState(null);
     const [categoryFormData, setCategoryFormData] = useState({
         category_name: '',
         status: ''
     });
-    const [editCategoryId, setEditCategoryId] = useState(null);
+
 
     useEffect(() => {
         const token = localStorage.getItem('token');
@@ -39,6 +41,7 @@ export default function ManageCategories() {
         fetchCategories();
     }, []);
 
+    // Fetch categories
     const fetchCategories = async () => {
         try {
             const response = await axios.get('http://localhost:9000/categories', {
@@ -67,27 +70,91 @@ export default function ManageCategories() {
         });
     };
 
-    const handleEditCategory = (id) => {
-        const category = categories.find(cat => cat.category_id === id);
+    const handleCategoryChange = (e) => {
+        const { name, value } = e.target;
+        setCategoryFormData(prevState => ({
+            ...prevState,
+            [name]: value
+        }));
+    };
+    
+
+    // Handle the create category
+    const handleCategorySubmit = async (e) => {
+        e.preventDefault();
+        try {
+            await axios.post('http://localhost:9000/register-category', categoryFormData, {
+                headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+            });
+
+            // Show success alert
+            Swal.fire({
+                icon: 'success',
+                title: 'Category Added Successfully!',
+                text: 'The new category has been added successfully.',
+            });
+            // Close modal and refresh categories
+            handleCloseCategoryModal();
+            fetchCategories();
+        } catch (error) {
+            // Show error alert
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: 'An error occurred while adding the category. Please try again later!',
+            });
+        }
+    };
+
+
+     // Handle the edit sanction
+     const handleEditCategory = (id) => {
+        const category = categories.find(cate => cate.category_id === id);
         if (category) {
             setCategoryFormData({
+                category_code: category.category_code,
                 category_name: category.category_name,
-                status: category.status
+                status: category.status 
             });
             setEditCategoryId(id);
             setShowEditModal(true);
         }
     };
 
+    const handleEditSubmit = async (e) => {
+        e.preventDefault();
+        try {
+            await axios.put(`http://localhost:9000/category/${editCategoryId}`, categoryFormData, {
+                headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` },
+            });
+            Swal.fire({
+                icon: 'success',
+                title: 'Sanction Updated Successfully!',
+                text: 'The sanction has been updated successfully.',
+            });
+            setShowEditModal(false);
+            fetchCategories();
+        } catch (error) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: 'An error occurred while updating the sanction. Please try again later!',
+            });
+        } 
+    };
+
+
+    // Handle the delete sanction
     const handleDeleteCategory = (id) => {
         Swal.fire({
-            title: 'Are you sure?',
-            text: "You won't be able to revert this!",
+            title: 'Are you sure you want to delete this category?',
+            text: "Deleting this category will also affect all associated data.",
             icon: 'warning',
             showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Yes, delete it!'
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#B0B0B0',
+            confirmButtonText: 'Yes, delete it',
+            cancelButtonText: 'Cancel'
         }).then(async (result) => {
             if (result.isConfirmed) {
                 try {
@@ -111,27 +178,87 @@ export default function ManageCategories() {
         });
     };
 
-    return (
-        <div>
-            <CoordinatorNavigation />
-            <CoordinatorInfo />
-            <h6 className="page-title">Manage Categories</h6>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', marginTop: '30px' }}>
-                <SearchAndFilter />
-                <button 
-                    onClick={handleCreateNewCategory} 
+    
+    // Set the styles for the status
+    const renderStatus = (status) => {
+        let backgroundColor, textColor;
+        if (status === 'active') {
+            backgroundColor = '#DBF0DC';
+            textColor = '#30A530';
+        } else if (status === 'inactive') {
+            backgroundColor = '#F0DBDB';
+            textColor = '#D9534F';
+        } else {
+            backgroundColor = '#EDEDED';
+            textColor = '#6C757D'; 
+        }
+
+        return (
+            <div style={{
+                backgroundColor,
+                color: textColor,
+                fontWeight: '600',
+                fontSize: '14px',
+                borderRadius: '30px',
+                padding: '5px 20px',
+                display: 'inline-flex',
+                alignItems: 'center',
+            }}>
+                <div style={{
+                    width: '8px',
+                    height: '8px',
+                    borderRadius: '50%',
+                    backgroundColor: textColor,
+                    marginRight: '7px',
+                }} />
+                {status}
+            </div>
+        );
+    };
+
+
+return (
+    <div>
+        <CoordinatorNavigation />
+        <CoordinatorInfo />
+            <div
+                style={{
+                    backgroundImage: `url(${folderBackground})`,
+                    backgroundSize: '100% 100%',
+                    backgroundPosition: 'center',
+                    width: '100vw',
+                    minHeight: '100vh',
+                    display: 'flex',
+                    justifyContent: 'flex-start',
+                    alignItems: 'center',
+                    flexDirection: 'column',
+                    color: 'white',
+                    paddingTop: '40px',
+                    marginBottom: '20px'
+                }}
+            >
+                
+            {/* Title Section */}
+            <div style={{ width: '90%', margin: '0 auto', display: 'flex', justifyContent: 'flex-start' }}>
+                <h6 className="settings-title" style={{ fontFamily: 'Poppins, sans-serif', color: '#242424', fontSize: '40px', fontWeight: 'bold', marginLeft: '100px' }}>
+                    Manage Categories
+                </h6>
+            </div>
+
+            {/* Search and Add Button */}
+            <div style={{  marginTop: '10px', marginLeft: '30px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <div style={{ width: '850px' }}><SearchAndFilter /></div>
+                <button
+                    onClick={handleCreateNewCategory}
                     style={{
                         backgroundColor: '#FAD32E',
                         color: 'white',
                         fontWeight: '900',
-                        padding: '12px 15px',
-                        border: 'none',
+                        padding: '12px 18px',
                         borderRadius: '10px',
                         cursor: 'pointer',
-                        marginLeft: '10px',
                         display: 'flex',
-                        alignItems: 'center',
-                        boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
+                        alignItems: 'center'
                     }}
                 >
                     Add Category
@@ -139,45 +266,57 @@ export default function ManageCategories() {
                 </button>
             </div>
 
-            <table style={{ width: '90%', borderCollapse: 'collapse', marginLeft: '90px', paddingLeft: '50px', marginBottom: '50px' }}>
+            {/* Category Table */}
+            <div style={{ width: '90%', marginBottom: '40px' }}>
+                <table className="table table-hover table-bordered" style={{ marginBottom: '20px', textAlign: 'center', backgroundColor: 'white' }}>
                     <thead>
                         <tr>
-                            <th style={{ textAlign: 'center', border: '1px solid #ddd', padding: '8px', backgroundColor: '#a8a8a8', color: 'white' }}>ID</th>
-                            <th style={{ textAlign: 'center', border: '1px solid #ddd', padding: '8px', backgroundColor: '#a8a8a8', color: 'white' }}>Category Name</th>
-                            <th style={{ textAlign: 'center', border: '1px solid #ddd', padding: '8px', backgroundColor: '#a8a8a8', color: 'white' }}>Status</th> {/* Added Status Column */}
-                            <th style={{ textAlign: 'center', border: '1px solid #ddd', padding: '8px', backgroundColor: '#a8a8a8', color: 'white' }}>Actions</th>
+                            <th style={{ width: '4%' }}>No.</th>
+                            <th style={{ width: '37%' }}>Category Name</th>
+                            <th style={{ width: '13%' }}>Status</th>
+                            <th style={{ width: '10%' }}>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
                         {categories.map((category, index) => (
-                            <tr key={category.category_id} style={{ backgroundColor: index % 2 === 0 ? 'white' : '#f2f2f2' }}>
-                                <td style={{ textAlign: 'center', border: '1px solid #ddd', padding: '8px' }}>{category.category_id}</td>
-                                <td style={{ textAlign: 'center', border: '1px solid #ddd', padding: '8px' }}>{category.category_name}</td>
-                                <td style={{ textAlign: 'center', border: '1px solid #ddd', padding: '8px' }}>{category.status}</td> {/* Display Status */}
-                                <td style={{ textAlign: 'center', border: '1px solid #ddd', padding: '8px' }}>
-                                    <EditIcon onClick={() => handleEditCategory(category.category_id)} style={{ cursor: 'pointer', color: 'blue' }} />
-                                    <DeleteIcon onClick={() => handleDeleteCategory(category.category_id)} style={{ cursor: 'pointer', color: 'red', marginLeft: '10px' }} />
+                            <tr key={category.category_id}>
+                                <td style={{ textAlign: 'center'}}>{(index + 1)}</td>
+                                <td style={{ paddingLeft: '20px'}}>{category.category_name}</td>
+                                <td style={{ textAlign: 'center' }}>{renderStatus(category.status)}</td> 
+                                <td style={{ textAlign: 'center' }}>
+                                    <EditIcon 
+                                        onClick={() => handleEditCategory(category.category_id)} 
+                                        style={{ cursor: 'pointer', color: '#007bff', marginRight: '10px' }} 
+                                    />
+                                    <DeleteIcon 
+                                        onClick={() => handleDeleteCategory(category.category_id)} 
+                                        style={{ cursor: 'pointer', color: '#dc3545' }} 
+                                    />
                                 </td>
                             </tr>
                         ))}
                     </tbody>
                 </table>
-
-            <AddCategoryModal 
-                show={showCategoryModal} 
-                handleClose={handleCloseCategoryModal} 
-                categoryFormData={categoryFormData} 
-                setCategoryFormData={setCategoryFormData} 
-                fetchCategories={fetchCategories} 
-            />
-            <EditCategoryModal 
-                show={showEditModal} 
-                handleClose={() => setShowEditModal(false)} 
-                categoryFormData={categoryFormData} 
-                setCategoryFormData={setCategoryFormData} 
-                fetchCategories={fetchCategories} 
-                editCategoryId={editCategoryId} 
-            />
+            </div>
         </div>
+
+        {/* Add Category Modal */}
+        <AddCategoryModal 
+            show={showCategoryModal} 
+            handleClose={handleCloseCategoryModal} 
+            categoryFormData={categoryFormData} 
+            handleCategoryChange={handleCategoryChange}
+            handleCategorySubmit={handleCategorySubmit}
+        />
+
+        {/* Edit Category Modal */}
+        <EditCategoryModal 
+            show={showEditModal} 
+            handleClose={() => setShowEditModal(false)} 
+            handleSubmit={handleEditSubmit} 
+            categoryFormData={categoryFormData}
+            handleCategoryChange={handleCategoryChange} 
+        />
+    </div>
     );
 }

@@ -1,116 +1,89 @@
-import React from 'react';
-import { Modal, Form, Button } from 'react-bootstrap';
-import { FaPlus } from 'react-icons/fa';
-import Swal from 'sweetalert2';
-import axios from 'axios';
+import React, { useState } from 'react';
+import { Modal, Form, Button, Row } from 'react-bootstrap';
+import '../../../styles/style.css'
 
-const AddCategoryModal = ({ show, handleClose, categoryFormData, setCategoryFormData, fetchCategories }) => {
-    // Define initial state for the form data
-    const initialFormData = { category_name: '', status: '' };
 
-    // Handle form field changes
-    const handleCategoryChange = (e) => {
-        const { name, value } = e.target;
-        setCategoryFormData(prevState => ({
-            ...prevState,
-            [name]: value
-        }));
+const inputStyle = {
+    backgroundColor: '#f2f2f2',
+    border: '1px solid #ced4da',
+    borderRadius: '.25rem',
+    marginBottom: '20px',
+    height: '40px',
+    paddingLeft: '10px',
+    transition: 'border-color 0.3s ease, background-color 0.3s ease',
+};
+
+const activeInputStyle = {
+    ...inputStyle,
+    borderColor: '#FAD32E',
+    border: '2px solid'
+};
+
+const AddCategoryModal = ({ show, handleClose, categoryFormData, handleCategoryChange, handleCategorySubmit }) => {
+    const [activeField, setActiveField] = useState(null);
+
+    const handleFocus = (field) => {
+        setActiveField(field);
     };
 
-    // Handle form submission
-    const handleCategorySubmit = async (e) => {
-        e.preventDefault();
-        try {
-            await axios.post('http://localhost:9000/register-category', categoryFormData, {
-                headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
-            });
-
-            // Show success alert
-            Swal.fire({
-                icon: 'success',
-                title: 'Category Added Successfully!',
-                text: 'The new category has been added successfully.',
-            });
-
-            // Clear form fields
-            setCategoryFormData(initialFormData);
-
-            // Close modal and refresh categories
-            handleClose();
-            fetchCategories();
-        } catch (error) {
-            // Show error alert
-            Swal.fire({
-                icon: 'error',
-                title: 'Oops...',
-                text: 'An error occurred while adding the category. Please try again later!',
-            });
-        }
-    };
-
-    // Input styles
-    const inputStyle = {
-        backgroundColor: '#f2f2f2',
-        border: '1px solid #ced4da',
-        borderRadius: '.25rem',
-        height: '40px',
-        width: '100%',
-    };
-
-    // Button styles
-    const buttonStyle = {
-        backgroundColor: '#28a745',
-        color: 'white',
-        fontWeight: '600',
-        padding: '12px 15px',
-        border: 'none',
-        borderRadius: '10px',
-        cursor: 'pointer',
-        marginLeft: '10px',
-        display: 'flex',
-        alignItems: 'center',
-        boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
+    const handleBlur = () => {
+        setActiveField(null);
     };
 
     return (
-        <Modal show={show} onHide={handleClose}>
-            <Modal.Header closeButton>
-                <Modal.Title>Add Category</Modal.Title>
+        <Modal show={show} onHide={handleClose} backdrop="static">
+            <Modal.Header>
+                <Button variant="link" onClick={handleClose} style={{ position: 'absolute', top: '5px', right: '20px', textDecoration: 'none', fontSize: '30px', color: '#a9a9a9' }}>
+                    ×
+                </Button>
+                <Modal.Title style={{ fontSize: '30px', marginLeft: '80px', marginRight: '80px' }}> ADD CATEGORY </Modal.Title>
             </Modal.Header>
             <Modal.Body>
                 <Form onSubmit={handleCategorySubmit}>
-                    <Form.Group controlId="formCategoryName">
-                        <Form.Label>Category Name</Form.Label>
-                        <Form.Control 
-                            type="text" 
-                            name="category_name" 
-                            value={categoryFormData.category_name} 
-                            onChange={handleCategoryChange} 
-                            required 
-                            style={inputStyle} 
+                <Row className="gy-4">
+                    <Form.Group className="formCategoryName">
+                        <Form.Label className="fw-bold">Category Name</Form.Label>
+                        <Form.Control
+                            type="text"
+                            name="category_name"
+                            value={categoryFormData.category_name}
+                            onChange={handleCategoryChange}
+                            onFocus={() => handleFocus('category_name')}
+                            onBlur={handleBlur}
+                            style={ activeField === 'category_name' ? activeInputStyle : inputStyle }
+                            required
                         />
                     </Form.Group>
+                </Row>
+
+                <Row className="gy-4">
                     <Form.Group controlId="formCategoryStatus">
-                        <Form.Label>Status</Form.Label>
-                        <Form.Select 
-                            name="status" 
-                            value={categoryFormData.status} 
-                            onChange={handleCategoryChange} 
-                            required 
-                            style={inputStyle}
+                        <Form.Label className="fw-bold">Status</Form.Label>
+                        <Form.Control
+                            as="select"
+                            name="status"
+                            value={categoryFormData.status}
+                            onChange={handleCategoryChange}
+                            onFocus={() => handleFocus('status')}
+                            onBlur={handleBlur}
+                            style={ activeField === 'status' ? activeInputStyle : inputStyle }
+                            required
                         >
-                            <option value="" disabled>Select Status</option>
-                            <option value="Active">Active</option>
-                            <option value="Inactive">Inactive</option>
-                        </Form.Select>
+                            <option disabled value="">Select Status</option>
+                            <option value="active">Active</option>
+                            <option value="inactive">Inactive</option>
+                        </Form.Control>
                     </Form.Group>
-                    <Button type="submit" style={buttonStyle}>
-                        Add Category <FaPlus style={{ marginLeft: '10px' }} />
-                    </Button>
+                </Row>
+                    <div className="d-flex justify-content-end mt-3">
+                        <button type="button" onClick={handleClose} className="settings-cancel-button">Cancel</button>
+                        <button type="submit" className="settings-save-button">Save</button>
+                    </div>
                 </Form>
             </Modal.Body>
         </Modal>
     );
 };
+
 
 export default AddCategoryModal;

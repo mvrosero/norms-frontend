@@ -56,7 +56,7 @@ const EditSanctionModal = ({ show, handleClose, handleSubmit, sanctionFormData, 
                 </Row>
 
                 <Row className="gy-4">
-                    <Form.Group controlId="editFormSanctioName">
+                    <Form.Group controlId="editFormSanctionName">
                         <Form.Label className="fw-bold">Sanction Name</Form.Label>
                         <Form.Control
                             type="text"
@@ -91,9 +91,9 @@ const EditSanctionModal = ({ show, handleClose, handleSubmit, sanctionFormData, 
                     </Form.Group>
                 </Row>
                     <div className="d-flex justify-content-end mt-3">
-                            <button type="button" onClick={handleClose} className="settings-cancel-button">Cancel</button>
-                            <button type="submit" className="settings-update-button">Update</button>
-                        </div>
+                        <button type="button" onClick={handleClose} className="settings-cancel-button">Cancel</button>
+                        <button type="submit" className="settings-update-button">Update</button>
+                    </div>
                 </Form>
             </Modal.Body>
         </Modal>

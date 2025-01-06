@@ -1,98 +1,88 @@
-import React from 'react';
-import { Modal, Form, Button } from 'react-bootstrap';
-import Swal from 'sweetalert2';
-import axios from 'axios';
+import React, { useState } from 'react';
+import { Modal, Form, Button, Row } from 'react-bootstrap';
 
-const EditCategoryModal = ({ show, handleClose, categoryFormData, setCategoryFormData, fetchCategories, editCategoryId }) => {
-    const handleCategoryChange = (e) => {
-        const { name, value } = e.target;
-        setCategoryFormData(prevState => ({
-            ...prevState,
-            [name]: value
-        }));
+
+const inputStyle = {
+    backgroundColor: '#f2f2f2',
+    border: '1px solid #ced4da',
+    borderRadius: '.25rem',
+    marginBottom: '20px',
+    height: '40px',
+    paddingLeft: '10px',
+    transition: 'border-color 0.3s ease, background-color 0.3s ease',
+};
+
+const activeInputStyle = {
+    ...inputStyle,
+    borderColor: '#3B71CA',
+    border: '2px solid'
+};
+
+const EditCategoryModal = ({ show, handleClose, handleSubmit, categoryFormData, handleCategoryChange }) => {
+    const [activeField, setActiveField] = useState(null);
+
+    const handleFocus = (field) => {
+        setActiveField(field);
     };
 
-    const handleEditSubmit = async (e) => {
-        e.preventDefault();
-        try {
-            await axios.put(`http://localhost:9000/category/${editCategoryId}`, categoryFormData, {
-                headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
-            });
-
-            Swal.fire({
-                icon: 'success',
-                title: 'Category Updated Successfully!',
-                text: 'The category has been updated successfully.',
-            });
-            handleClose(); // Close modal after success
-            fetchCategories(); // Refresh categories
-        } catch (error) {
-            console.error("Error updating category:", error); // Log error for debugging
-            Swal.fire({
-                icon: 'error',
-                title: 'Oops...',
-                text: error.response?.data?.message || 'An error occurred while updating the category. Please try again later!',
-            });
-        }
-    };
-
-    const inputStyle = {
-        backgroundColor: '#f2f2f2',
-        border: '1px solid #ced4da',
-        borderRadius: '.25rem',
-        height: '40px',
-        width: '100%'
-    };
-
-    const buttonStyle = {
-        backgroundColor: '#007bff',
-        color: 'white',
-        fontWeight: '600',
-        padding: '12px 15px',
-        border: 'none',
-        borderRadius: '10px',
-        cursor: 'pointer',
-        marginLeft: '10px',
+    const handleBlur = () => {
+        setActiveField(null);
     };
 
     return (
-        <Modal show={show} onHide={handleClose}>
-            <Modal.Header closeButton>
-                <Modal.Title>Edit Category</Modal.Title>
+        <Modal show={show} onHide={handleClose} backdrop="static">
+            <Modal.Header>
+                <Button variant="link" onClick={handleClose} style={{ position: 'absolute', top: '5px', right: '20px', textDecoration: 'none', fontSize: '30px', color: '#a9a9a9' }}>
+                    ×
+                </Button>
+                <Modal.Title style={{ fontSize: '30px', marginLeft: '80px', marginRight: '80px' }}> EDIT CATEGORY </Modal.Title>
             </Modal.Header>
             <Modal.Body>
-                <Form onSubmit={handleEditSubmit}>
-                    <Form.Group controlId="formCategoryName">
-                        <Form.Label>Category Name</Form.Label>
-                        <Form.Control 
-                            type="text" 
-                            name="category_name" 
-                            value={categoryFormData.category_name} 
-                            onChange={handleCategoryChange} 
-                            required 
-                            style={inputStyle} 
+                <Form onSubmit={handleSubmit}>
+                <Row className="gy-4">
+                    <Form.Group controlId="editFormCategoryCode">
+                        <Form.Label className="fw-bold">Category Nme</Form.Label>
+                        <Form.Control
+                            type="text"
+                            name="category_name"
+                            value={categoryFormData.category_name}
+                            onChange={handleCategoryChange}
+                            onFocus={() => handleFocus('category_name')}
+                            onBlur={handleBlur}
+                            style={ activeField === 'category_name' ? activeInputStyle : inputStyle }
+                            required
                         />
                     </Form.Group>
+                </Row>
+
+                <Row className="gy-4">
                     <Form.Group controlId="formCategoryStatus">
-                        <Form.Label>Status</Form.Label>
-                        <Form.Select 
-                            name="status" 
-                            value={categoryFormData.status} // Default to current status
-                            onChange={handleCategoryChange} // Handle changes
+                        <Form.Label className="fw-bold">Status</Form.Label>
+                        <Form.Control
+                            as="select"
+                            name="status"
+                            value={categoryFormData.status || ''}
+                            onChange={handleCategoryChange}
+                            onFocus={() => handleFocus('status')}
+                            onBlur={handleBlur}
+                            style={ activeField === 'status' ? activeInputStyle : inputStyle }
                             required
-                            style={inputStyle} 
                         >
+                            <option disabled value="">Select Status</option>
                             <option value="active">Active</option>
                             <option value="inactive">Inactive</option>
-                        </Form.Select>
+                        </Form.Control>
                     </Form.Group>
-                    <Button type="submit" style={buttonStyle}>
-                        Update Category
-                    </Button>
+                </Row>
+                    <div className="d-flex justify-content-end mt-3">
+                        <button type="button" onClick={handleClose} className="settings-cancel-button">Cancel</button>
+                        <button type="submit" className="settings-update-button">Update</button>
+                    </div>
                 </Form>
             </Modal.Body>
         </Modal>
     );
 };
+
 
 export default EditCategoryModal;
