@@ -8,7 +8,7 @@ import Dropdown from 'react-bootstrap/Dropdown';
 import FileIcon from '@mui/icons-material/InsertDriveFile';
 import { MdClose } from 'react-icons/md';
 import { BsThreeDotsVertical } from "react-icons/bs";
-import { FaPlus, FaRegClock, FaSortAlphaDown, FaThumbtack, FaEye, FaPen, FaTrash } from 'react-icons/fa';
+import { FaPlus, FaRegClock, FaThumbtack, FaEye, FaPen, FaTrash } from 'react-icons/fa';
 import { RiUnpinFill } from "react-icons/ri";
 
 import '../../styles/style.css';
@@ -38,8 +38,7 @@ export default function CoordinatorAnnouncements() {
     const [hoveredAnnouncement, setHoveredAnnouncement] = useState(null);
     const [isFocused, setIsFocused] = useState(false);
     const [focusedElement, setFocusedElement] = useState(null); 
-    const [sortDateOrder, setSortDateOrder] = useState('asc');
-    const [sortTitleOrder, setSortTitleOrder] = useState('asc');
+    const [sortOrder, setSortOrder] = useState('asc');
 
 
     // Maximum text area length 
@@ -300,38 +299,20 @@ export default function CoordinatorAnnouncements() {
     };
 
 
-    // Handle the sort announcement by date
-    const sortAnnouncementsByDate = (announcements) => {
+    // Handle the sort announcement
+    const sortAnnouncements = (announcements) => {
         return announcements.sort((a, b) => {
-            // Ensure that updated_at is properly parsed as a Date object
             const dateA = new Date(a.updated_at);
             const dateB = new Date(b.updated_at);
     
-            // Check if the date parsing is successful
-            if (isNaN(dateA) || isNaN(dateB)) {
-                console.warn("Invalid date:", a.updated_at, b.updated_at);
-                return 0; // If date is invalid, do not alter the order
+            if (sortOrder === 'asc') {
+                return dateA - dateB; 
+            } else {
+                return dateB - dateA; 
             }
+        });
+    };
     
-            // Sort based on 'asc' or 'desc' order (including time)
-            if (sortDateOrder === 'asc') {
-                return dateA - dateB;  // Ascending order (earliest first)
-            } else {
-                return dateB - dateA;  // Descending order (latest first)
-            }
-        });
-    };
-
-    // Handle the sort announcement by title (alphabetically)
-    const sortAnnouncementsByTitle = (announcements) => {
-        return announcements.sort((a, b) => {
-            if (sortTitleOrder === 'asc') {
-                return a.title.localeCompare(b.title);
-            } else {
-                return b.title.localeCompare(a.title);
-            }
-        });
-    };
 
 
     const handleViewAnnouncement = (announcement) => {
@@ -530,12 +511,7 @@ return (
             <Row xs={1} md={1} lg={1} className="g-4" style={{ marginTop: '2px', marginBottom: '40px', marginLeft: '100px', marginRight: '20px' }}>
                 {announcements.filter(a => a.status === 'pinned').map(a => (
                     <Col key={a.announcement_id}>
-                        <Card
-                            style={{
-                                backgroundColor: (activeAnnouncement === a.announcement_id || hoveredAnnouncement === a.announcement_id) ? '#ebebeb' : '',
-                                cursor: 'pointer',
-                                transition: 'background-color 0.3s ease',
-                            }}
+                        <Card style={{ backgroundColor: (activeAnnouncement === a.announcement_id || hoveredAnnouncement === a.announcement_id) ? '#ebebeb' : '', cursor: 'pointer', transition: 'background-color 0.3s ease' }}
                             onMouseOut={() => setActiveAnnouncement(null)}
                             onMouseEnter={() => setHoveredAnnouncement(a.announcement_id)}
                             onMouseLeave={() => setHoveredAnnouncement(null)}
@@ -607,19 +583,12 @@ return (
             {/* Announcement Containers Section */}
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginLeft: '120px', marginRight: '20px' }}>
                 <text style={{ fontSize: '20px', fontWeight: '600' }}>Other Announcements</text>
-                <button onClick={() => setSortDateOrder(sortDateOrder === 'asc' ? 'desc' : 'asc')} style={{ marginRight: '20px', background: 'none', border: 'none', cursor: 'pointer' }}>
-                    <FaRegClock style={{ fontSize: '25px', color: sortDateOrder === 'asc' ? '#8C8C8C' : '#134E0F' }}/>
+                <button onClick={() => setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')} style={{ marginRight: '20px', background: 'none', border: 'none', cursor: 'pointer' }}>
+                    <FaRegClock style={{ fontSize: '25px', color: sortOrder === 'asc' ? '#8C8C8C' : '#134E0F' }}/>
                 </button>
-                <button onClick={() => setSortTitleOrder(sortTitleOrder === 'asc' ? 'desc' : 'asc')} style={{ background: 'none', border: 'none', cursor: 'pointer' }}>
-        <FaSortAlphaDown style={{ fontSize: '25px', color: sortTitleOrder === 'asc' ? '#8C8C8C' : '#134E0F' }} />
-    </button>
             </div>
             <Row xs={1} md={1} lg={1} className="g-4" style={{ marginTop: '2px', marginBottom: '40px', marginLeft: '100px', marginRight: '20px' }}>
-            {sortAnnouncementsByTitle(
-    sortAnnouncementsByDate(
-        announcements.filter(a => a.status !== 'pinned')
-    )
-    ).map(a => (
+                {sortAnnouncements(announcements.filter(a => a.status !== 'pinned')).map(a => (
                     <Col key={a.announcement_id}>
                         <Card
                             style={{ backgroundColor: (activeAnnouncement === a.announcement_id || hoveredAnnouncement === a.announcement_id) ? '#ebebeb' : '', cursor: 'pointer',transition: 'background-color 0.3s ease' }}
