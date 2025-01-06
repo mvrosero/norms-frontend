@@ -24,3 +24,52 @@
     margin-bottom: 10px;
   }
  
+
+
+
+  /* Button Styles */
+.custom-create-button {
+  background-color: #FAD32E;
+  color: #FFFFFF;
+  font-weight: 900;
+  padding: 12px 30px;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  margin-left: 10px;
+  display: flex;
+  align-items: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.custom-cancel-button {
+  background-color: #8C8C8C;
+  color: #FFFFFF;
+  font-weight: 900;
+  padding: 12px 25px;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Select Styles */
+.custom-regular-select {
+  background-color: #f2f2f2;
+  border-radius: 4px;
+  padding: 6px;
+  outline: none;
+}
+
+/* Border Color Styles (focused state) */
+.custom-focused-select {
+  border: 1px solid #FAD32E; /* Yellow for focused */
+  box-shadow: 0 0 0 2px rgba(250, 211, 46, 1); /* Yellow box shadow for focused element */
+}
+
+.custom-default-select {
+  border: 1px solid #ced4da; /* Gray border for un-focused */
+  box-shadow: none;
+}

@@ -4,15 +4,14 @@ import axios from 'axios';
 import Swal from 'sweetalert2';
 import { Modal, Form, Button, Card, Row, Col } from 'react-bootstrap';
 import Dropdown from 'react-bootstrap/Dropdown';
-import { FaPlus } from 'react-icons/fa';
-import EditIcon from '@mui/icons-material/Edit';
-import DeleteIcon from '@mui/icons-material/Delete';
+
 import FileIcon from '@mui/icons-material/InsertDriveFile';
 import { MdClose } from 'react-icons/md';
 import { BsThreeDotsVertical } from "react-icons/bs";
-import { FaThumbtack, FaEye, FaPen, FaTrash } from 'react-icons/fa';
+import { FaPlus, FaRegClock, FaSortAlphaDown, FaThumbtack, FaEye, FaPen, FaTrash } from 'react-icons/fa';
+import { RiUnpinFill } from "react-icons/ri";
 
-
+import '../../styles/style.css';
 import CoordinatorNavigation from './CoordinatorNavigation';
 import CoordinatorInfo from './CoordinatorInfo';
 import SearchAndFilter from '../general/SearchAndFilter';
@@ -28,16 +27,34 @@ export default function CoordinatorAnnouncements() {
     const [announcementFormData, setAnnouncementFormData] = useState({
         title: '',
         content: '',
-        status: 'Draft'
+        status: ''
     });
     const [files, setFiles] = useState([]);
-    const [originalFiles, setOriginalFiles] = useState([]); // Track original files
+    const [originalFiles, setOriginalFiles] = useState([]); 
     const [editing, setEditing] = useState(null);
     const [showViewModal, setShowViewModal] = useState(false);
     const [selectedAnnouncement, setSelectedAnnouncement] = useState(null);
     const [activeAnnouncement, setActiveAnnouncement] = useState(null);
     const [hoveredAnnouncement, setHoveredAnnouncement] = useState(null);
+    const [isFocused, setIsFocused] = useState(false);
+    const [focusedElement, setFocusedElement] = useState(null); 
+    const [sortDateOrder, setSortDateOrder] = useState('asc');
+    const [sortTitleOrder, setSortTitleOrder] = useState('asc');
 
+
+    // Maximum text area length 
+    const maxLength = 1000;
+    const currentLength = announcementFormData.content.length;
+
+
+    // Handle the focus state for both text area and select
+    const handleFocus = (element) => {
+        setFocusedElement(element); 
+    };
+
+    const handleBlur = () => {
+        setFocusedElement(null); 
+    };
 
 
     useEffect(() => {
@@ -85,6 +102,7 @@ export default function CoordinatorAnnouncements() {
         setFiles(prevFiles => [...prevFiles, ...Array.from(e.target.files)]);
     };
 
+    // Handle the submit announcement
     const handleAnnouncementSubmit = async (e) => {
         e.preventDefault();
         const url = editing ? `http://localhost:9000/announcement/${editing}` : 'http://localhost:9000/create-announcement';
@@ -119,7 +137,7 @@ export default function CoordinatorAnnouncements() {
             setAnnouncementFormData({
                 title: '',
                 content: '',
-                status: 'Draft'
+                status: ''
             });
             setFiles([]);
             setEditing(null);
@@ -133,6 +151,109 @@ export default function CoordinatorAnnouncements() {
         }
     };
 
+
+    // Handle the cancellation of submit announcement 
+    const handleCancel = () => {
+        Swal.fire({
+            title: 'Are you sure you want to cancel?',
+            text: 'Any unsaved changes will be lost.',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#B0B0B0',
+            confirmButtonText: 'Yes, close it',
+            cancelButtonText: 'No, keep changes',
+        }).then((result) => {
+            if (result.isConfirmed) {
+                setIsFocused(false);
+                setFocusedElement(null);
+                handleCloseAnnouncementModal(); 
+            }
+        });
+    };
+
+
+    // Handle the pin announcement 
+    const handlePinAnnouncement = async (announcement_id) => {
+        try {
+            const response = await fetch(`http://localhost:9000/announcement/${announcement_id}/pin`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
+    
+            if (!response.ok) {
+                const errorData = await response.json();
+                const errorMessage = errorData?.message || `Failed with status: ${response.status}`;
+                throw new Error(errorMessage);
+            }
+    
+            const data = await response.json();
+    
+            Swal.fire({
+                title: 'Pinned!',
+                text: data.message,
+                icon: 'success',
+                timer: 2000,  
+                showConfirmButton: false,  
+            }).then(() => {
+                window.location.reload(); 
+            });
+            
+        } catch (error) {
+            Swal.fire({
+                title: 'Error',
+                text: `There was an issue pinning the announcement: ${error.message}`,
+                icon: 'error',
+            });
+    
+            console.error('Error pinning announcement:', error); 
+        }
+    };
+
+
+    // Handle the unpin announcement
+    const handleUnpinAnnouncement = async (announcement_id) => {
+        try {
+            const response = await fetch(`http://localhost:9000/announcement/${announcement_id}/unpin`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
+    
+            if (!response.ok) {
+                const errorData = await response.json();
+                const errorMessage = errorData?.message || `Failed with status: ${response.status}`;
+                throw new Error(errorMessage);
+            }
+    
+            const data = await response.json();
+    
+            Swal.fire({
+                title: 'Unpinned!',
+                text: data.message,
+                icon: 'success',
+                timer: 2000,  
+                showConfirmButton: false,  
+            }).then(() => {
+                window.location.reload(); 
+            });
+            
+        } catch (error) {
+            Swal.fire({
+                title: 'Error',
+                text: `There was an issue unpinning the announcement: ${error.message}`,
+                icon: 'error',
+            });
+    
+            console.error('Error unpinning announcement:', error); 
+        }
+    };    
+    
+
+    // Handle the edit announcement
     const handleEditAnnouncement = (id) => {
         const announcement = announcements.find(ann => ann.announcement_id === id);
         if (announcement) {
@@ -141,22 +262,24 @@ export default function CoordinatorAnnouncements() {
                 content: announcement.content,
                 status: announcement.status
             });
-            setOriginalFiles(announcement.filenames.split(',').map(filename => ({ name: filename }))); // Set original files
+            setOriginalFiles(announcement.filenames.split(',').map(filename => ({ name: filename }))); 
             setFiles([]);
             setEditing(id);
             setShowAnnouncementModal(true);
         }
     };
 
+
+    // Handle the delete announcement
     const handleDeleteAnnouncement = (id) => {
         Swal.fire({
-            title: 'Are you sure?',
+            title: 'Are you sure you want to delete this announcement?',
             text: "You won't be able to revert this!",
             icon: 'warning',
             showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Yes, delete it!'
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#B0B0B0',
+            confirmButtonText: 'Yes, delete it'
         }).then(async (result) => {
             if (result.isConfirmed) {
                 try {
@@ -176,33 +299,39 @@ export default function CoordinatorAnnouncements() {
         });
     };
 
-    const formatDateTime = (dateTimeString) => {
-        const date = new Date(dateTimeString);
-        const options = {
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit',
-            second: '2-digit',
-        };
-        return date.toLocaleString(undefined, options);
+
+    // Handle the sort announcement by date
+    const sortAnnouncementsByDate = (announcements) => {
+        return announcements.sort((a, b) => {
+            // Ensure that updated_at is properly parsed as a Date object
+            const dateA = new Date(a.updated_at);
+            const dateB = new Date(b.updated_at);
+    
+            // Check if the date parsing is successful
+            if (isNaN(dateA) || isNaN(dateB)) {
+                console.warn("Invalid date:", a.updated_at, b.updated_at);
+                return 0; // If date is invalid, do not alter the order
+            }
+    
+            // Sort based on 'asc' or 'desc' order (including time)
+            if (sortDateOrder === 'asc') {
+                return dateA - dateB;  // Ascending order (earliest first)
+            } else {
+                return dateB - dateA;  // Descending order (latest first)
+            }
+        });
     };
 
-    const renderDateTime = (createdAt, updatedAt) => {
-        if (updatedAt) {
-            return `Updated on: ${formatDateTime(updatedAt)}`;
-        }
-        return `Posted on: ${formatDateTime(createdAt)}`;
+    // Handle the sort announcement by title (alphabetically)
+    const sortAnnouncementsByTitle = (announcements) => {
+        return announcements.sort((a, b) => {
+            if (sortTitleOrder === 'asc') {
+                return a.title.localeCompare(b.title);
+            } else {
+                return b.title.localeCompare(a.title);
+            }
+        });
     };
-
-    const truncateText = (text, maxLength) => {
-        if (text.length > maxLength) {
-            return text.substring(0, maxLength) + '...';
-        }
-        return text;
-    };
-
 
 
     const handleViewAnnouncement = (announcement) => {
@@ -218,69 +347,7 @@ export default function CoordinatorAnnouncements() {
     };
 
 
-    const handleRemoveFile = (file, isOriginal = false) => {
-        const filename = isOriginal ? file.name : file.name;
-    
-        // For original files, remove from the backend and update the state
-        if (isOriginal) {
-            axios.delete(`http://localhost:9000/announcement/${editing}/file/${filename}`, {
-                headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
-            })
-            .then(() => {
-                setOriginalFiles(prevFiles => prevFiles.filter(f => f.name !== filename));
-                fetchAnnouncements(); // Optionally refetch to update the list
-            })
-            .catch(error => {
-                console.error('Error removing file:', error.response?.data?.error || 'An error occurred');
-            });
-        } else {
-            // For new files, just update the state
-            setFiles(prevFiles => prevFiles.filter(f => f.name !== filename));
-        }
-    };
-
-
-    const renderStatus = (status) => {
-        let backgroundColor, textColor;
-        if (status === 'published') {
-            backgroundColor = '#DBF0DC';
-            textColor = '#30A530';
-        } else if (status === 'unpublished') {
-            backgroundColor = '#F0DBDB';
-            textColor = '#D9534F';
-        } else if (status === 'draft') {
-            backgroundColor = '#FFF5DC';
-            textColor = '#FFC107';
-        } else {
-            backgroundColor = '#E8EBF6';
-            textColor = '#4169E1'; 
-        }     
-
-        return (
-            <div style={{
-                backgroundColor,
-                color: textColor,
-                fontWeight: '600',
-                fontSize: '14px',
-                borderRadius: '30px',
-                padding: '4px 17px',
-                display: 'inline-flex',
-                alignItems: 'center',
-                marginRight: '20px',
-            }}>
-                <div style={{
-                    width: '8px',
-                    height: '8px',
-                    borderRadius: '50%',
-                    backgroundColor: textColor,
-                    marginRight: '7px',
-                }} />
-                {status}
-            </div>
-        );
-    };
-
-    
+    // Handle file attachment
     const renderFileTiles = (filesList, isOriginal = false) => (
         filesList.map((file, index) => (
             <Card
@@ -325,10 +392,121 @@ export default function CoordinatorAnnouncements() {
         ))
     );
 
-    return (
-        <div>
-            <CoordinatorNavigation />
-            <CoordinatorInfo />
+
+    // Handle file removal
+    const handleRemoveFile = (file, isOriginal = false) => {
+        const filename = isOriginal ? file.name : file.name;
+    
+        if (isOriginal) {
+            axios.delete(`http://localhost:9000/announcement/${editing}/file/${filename}`, {
+                headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+            })
+            .then(() => {
+                setOriginalFiles(prevFiles => prevFiles.filter(f => f.name !== filename));
+                fetchAnnouncements(); // Optionally refetch to update the list
+            })
+            .catch(error => {
+                console.error('Error removing file:', error.response?.data?.error || 'An error occurred');
+            });
+        } else {
+            // For new files, just update the state
+            setFiles(prevFiles => prevFiles.filter(f => f.name !== filename));
+        }
+    };
+
+
+
+    // Set the proper format for date and time
+    const formatDateTime = (dateTimeString) => {
+        const date = new Date(dateTimeString);
+        const options = {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit',
+        };
+        return date.toLocaleString(undefined, options);
+    };
+
+    const renderDateTime = (createdAt, updatedAt) => {
+        if (updatedAt) {
+            return `Updated on: ${formatDateTime(updatedAt)}`;
+        }
+        return `Posted on: ${formatDateTime(createdAt)}`;
+    };
+
+    const truncateText = (text, maxLength) => {
+        if (text.length > maxLength) {
+            return text.substring(0, maxLength) + '...';
+        }
+        return text;
+    };
+
+
+    // Set the styles for the status
+    const renderStatus = (status) => {
+        let backgroundColor, textColor;
+        if (status === 'published') {
+            backgroundColor = '#DBF0DC';
+            textColor = '#30A530';
+        } else if (status === 'unpublished') {
+            backgroundColor = '#F0DBDB';
+            textColor = '#D9534F';
+        } else if (status === 'draft') {
+            backgroundColor = '#FFF5DC';
+            textColor = '#FFC107';
+        } else {
+            backgroundColor = '#E8EBF6';
+            textColor = '#4169E1'; 
+        }     
+        return (
+            <div style={{
+                backgroundColor,
+                color: textColor,
+                fontWeight: '600',
+                fontSize: '14px',
+                borderRadius: '30px',
+                padding: '4px 17px',
+                display: 'inline-flex',
+                alignItems: 'center',
+                marginRight: '20px',
+            }}>
+                <div style={{
+                    width: '8px',
+                    height: '8px',
+                    borderRadius: '50%',
+                    backgroundColor: textColor,
+                    marginRight: '7px',
+                }} />
+                {status}
+            </div>
+        );
+    };
+
+
+    
+    // Set the styles for the input fields and select fields
+    const regularSelectStyles = {
+        backgroundColor: '#f2f2f2',
+        borderRadius: '4px',
+        padding: '6px',
+        outline: 'none',
+    };
+
+    const borderColorStyles = (focusedElement, element) => ({
+        border: `1px solid ${focusedElement === element ? '#FAD32E' : '#ced4da'}`, 
+        boxShadow: focusedElement === element ? '0 0 0 2px rgba(250, 211, 46, 1)' : 'none', 
+    });
+    
+
+
+return (
+    <div>
+        <CoordinatorNavigation />
+        <CoordinatorInfo />
+
             {/* Title Section */}
             <div style={{ width: '90%', margin: '0 auto', display: 'flex', justifyContent: 'flex-start' }}>
                 <h6 className="section-title" style={{ fontFamily: 'Poppins, sans-serif', color: '#242424', fontSize: '40px', fontWeight: 'bold', marginTop: '20px', marginLeft: '50px' }}>Announcements</h6>
@@ -347,180 +525,255 @@ export default function CoordinatorAnnouncements() {
             </div>
 
 
+            {/* Pinned Announcements Section */}
+            <text style={{ fontSize: '20px', fontWeight: '600', marginLeft: '120px' }}>Pinned Announcements</text>
+            <Row xs={1} md={1} lg={1} className="g-4" style={{ marginTop: '2px', marginBottom: '40px', marginLeft: '100px', marginRight: '20px' }}>
+                {announcements.filter(a => a.status === 'pinned').map(a => (
+                    <Col key={a.announcement_id}>
+                        <Card
+                            style={{
+                                backgroundColor: (activeAnnouncement === a.announcement_id || hoveredAnnouncement === a.announcement_id) ? '#ebebeb' : '',
+                                cursor: 'pointer',
+                                transition: 'background-color 0.3s ease',
+                            }}
+                            onMouseOut={() => setActiveAnnouncement(null)}
+                            onMouseEnter={() => setHoveredAnnouncement(a.announcement_id)}
+                            onMouseLeave={() => setHoveredAnnouncement(null)}
+                        >
+                            <Card.Body style={{ display: 'flex', justifyContent: 'flex-start', alignItems: 'center' }}>
+                                {/* Image on the left */}
+                                {a.filenames && (
+                                    <Card.Img
+                                        variant="top"
+                                        src={`http://localhost:9000/uploads/${a.filenames.split(',')[0]}`}
+                                        alt="Announcement Image"
+                                        style={{ maxHeight: '250px', maxWidth: '250px', marginTop: '20px', marginBottom: '20px', marginLeft: '20px', marginRight: '50px' }}
+                                    />
+                                )}
+
+                                {/* Text content on the right */}
+                                <div style={{ flex: 1 }}>
+                                    <Card.Title style={{ marginTop: '20px', marginBottom: '20px', fontSize: '28px' }}>{a.title}</Card.Title>
+                                    <Card.Text style={{ marginRight: '30px', fontSize: '16px' }}>
+                                        {truncateText(a.content, 700)}{' '}
+                                        {a.content.length > 700 && (
+                                            <span
+                                                onClick={() => handleViewAnnouncement(a)}
+                                                style={{ color: '#007bff', cursor: 'pointer', textDecoration: 'underline' }}
+                                            >
+                                                See more...
+                                            </span>
+                                        )}
+                                    </Card.Text>
+                                    <Card.Text className="text-muted" style={{ marginTop: '20px', marginBottom: '20px', fontSize: '15px' }}>
+                                        {renderStatus(a.status)} {renderDateTime(a.created_at, a.updated_at)}
+                                    </Card.Text>
+                                </div>
+
+                                {/* Dropdown menu for actions */}
+                                <Dropdown style={{ marginBottom: '180px', marginLeft: '10px' }}>
+                                    <Dropdown.Toggle variant="link" id={`dropdown-${a.announcement_id}`} style={{ boxShadow: 'none', color: '#FFFFFF', fontSize: '0px', padding: '0' }}>
+                                        <BsThreeDotsVertical style={{ boxShadow: 'none', color: '#A2A3A3', fontSize: '20px', padding: '0', marginBottom: '70px', marginRight: '0px' }} />
+                                    </Dropdown.Toggle>
+                                    <Dropdown.Menu>
+                                        <Dropdown.Item onClick={() => handleUnpinAnnouncement(a.announcement_id)} className="d-flex align-items-center">
+                                            <RiUnpinFill style={{ marginLeft: '10px', marginRight: '20px' }} /> Unpin
+                                        </Dropdown.Item>
+                                        <hr />
+                                        <Dropdown.Item onClick={() => handleViewAnnouncement(a)} className="d-flex align-items-center">
+                                            <FaEye style={{ marginLeft: '10px', marginRight: '20px' }} /> View
+                                        </Dropdown.Item>
+                                        <hr />
+                                        <Dropdown.Item onClick={() => handleEditAnnouncement(a.announcement_id)} className="d-flex align-items-center">
+                                            <FaPen style={{ marginLeft: '10px', marginRight: '20px' }} /> Edit
+                                        </Dropdown.Item>
+                                        <hr />
+                                        <Dropdown.Item onClick={() => handleDeleteAnnouncement(a.announcement_id)} className="d-flex align-items-center">
+                                            <FaTrash style={{ marginLeft: '10px', marginRight: '20px' }} /> Delete
+                                        </Dropdown.Item>
+                                    </Dropdown.Menu>
+                                </Dropdown>
+                            </Card.Body>
+                        </Card>
+                    </Col>
+                ))}
+            </Row>
 
 
-{/* Pinned Announcements Section */}
-<text style={{ fontSize: '20px', fontWeight: '600', marginLeft: '120px' }}>Pinned Announcement</text>
-<Row xs={1} md={1} lg={1} className="g-4" style={{ marginTop: '2px', marginBottom: '40px', marginLeft: '100px', marginRight: '20px' }}>
-    {announcements.filter(a => a.status === 'pinned').map(a => (
-        <Col key={a.announcement_id}>
-            <Card
-                style={{
-                    backgroundColor: (activeAnnouncement === a.announcement_id || hoveredAnnouncement === a.announcement_id) ? '#ebebeb' : '',
-                    cursor: 'pointer',
-                    transition: 'background-color 0.3s ease',
-                }}
-                onMouseOut={() => setActiveAnnouncement(null)}
-                onMouseEnter={() => setHoveredAnnouncement(a.announcement_id)}
-                onMouseLeave={() => setHoveredAnnouncement(null)}
-            >
-                <Card.Body style={{ display: 'flex', justifyContent: 'flex-start', alignItems: 'center' }}>
-                    {/* Image on the left */}
-                    {a.filenames && (
-                        <Card.Img
-                            variant="top"
-                            src={`http://localhost:9000/uploads/${a.filenames.split(',')[0]}`}
-                            alt="Announcement Image"
-                            style={{ maxHeight: '250px', maxWidth: '250px', marginTop: '20px', marginBottom: '20px', marginLeft: '20px', marginRight: '50px' }}
-                        />
-                    )}
 
-                    {/* Text content on the right */}
-                    <div style={{ flex: 1 }}>
-                        <Card.Title style={{ marginTop: '20px', marginBottom: '20px', fontSize: '28px' }}>{a.title}</Card.Title>
-                        <Card.Text style={{ marginRight: '30px', fontSize: '16px' }}>
-                            {truncateText(a.content, 700)}{' '}
-                            {a.content.length > 700 && (
-                                <span
-                                    onClick={() => handleViewAnnouncement(a)}
-                                    style={{ color: '#007bff', cursor: 'pointer', textDecoration: 'underline' }}
-                                >
-                                    See more...
-                                </span>
-                            )}
-                        </Card.Text>
-                        <Card.Text className="text-muted" style={{ marginTop: '20px', marginBottom: '20px', fontSize: '15px' }}>
-                            {renderStatus(a.status)} {renderDateTime(a.created_at, a.updated_at)}
-                        </Card.Text>
-                    </div>
-
-                    {/* Dropdown menu for actions */}
-                    <Dropdown style={{ marginBottom: '180px', marginLeft: '10px' }}>
-                        <Dropdown.Toggle variant="link" id={`dropdown-${a.announcement_id}`} style={{ boxShadow: 'none', color: '#FFFFFF', fontSize: '0px', padding: '0' }}>
-                            <BsThreeDotsVertical style={{ boxShadow: 'none', color: '#A2A3A3', fontSize: '20px', padding: '0', marginBottom: '70px', marginRight: '0px' }} />
-                        </Dropdown.Toggle>
-                        <Dropdown.Menu>
-                            <Dropdown.Item onClick={() => (a.announcement_id)} className="d-flex align-items-center">
-                                <FaThumbtack style={{ marginLeft: '10px', marginRight: '20px' }} /> Pin
-                            </Dropdown.Item>
-                            <hr />
-                            <Dropdown.Item onClick={() => handleViewAnnouncement(a)} className="d-flex align-items-center">
-                                <FaEye style={{ marginLeft: '10px', marginRight: '20px' }} /> View
-                            </Dropdown.Item>
-                            <hr />
-                            <Dropdown.Item onClick={() => handleEditAnnouncement(a.announcement_id)} className="d-flex align-items-center">
-                                <FaPen style={{ marginLeft: '10px', marginRight: '20px' }} /> Edit
-                            </Dropdown.Item>
-                            <hr />
-                            <Dropdown.Item onClick={() => handleDeleteAnnouncement(a.announcement_id)} className="d-flex align-items-center">
-                                <FaTrash style={{ marginLeft: '10px', marginRight: '20px' }} /> Delete
-                            </Dropdown.Item>
-                        </Dropdown.Menu>
-                    </Dropdown>
-                </Card.Body>
-            </Card>
-        </Col>
-    ))}
-</Row>
+          
 
 
-{/* Announcement Containers Section */}
-<text style={{ fontSize: '20px', fontWeight: '600', marginLeft: '120px' }}>Other Announcements</text>
-<Row xs={1} md={1} lg={1} className="g-4" style={{ marginTop: '2px', marginBottom: '40px', marginLeft: '100px', marginRight: '20px' }}>
-    {announcements.filter(a => a.status !== 'pinned').map(a => (
-        <Col key={a.announcement_id}>
-            <Card
-                style={{ backgroundColor: (activeAnnouncement === a.announcement_id || hoveredAnnouncement === a.announcement_id) ? '#ebebeb' : '', cursor: 'pointer',transition: 'background-color 0.3s ease' }}
-                    onMouseOut={() => setActiveAnnouncement(null)} 
-                    onMouseEnter={() => setHoveredAnnouncement(a.announcement_id)} 
-                    onMouseLeave={() => setHoveredAnnouncement(null)} 
-                >
-                <Card.Body style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <div style={{ flex: 1 }}>
-                        <Card.Title style={{ marginTop: '7px', marginLeft: '10px', fontSize: '20px' }}>{a.title}</Card.Title>
-                        <Card.Text style={{ marginLeft: '10px', marginRight: '50px', fontSize: '14px' }}> {truncateText(a.content, 250)}{' '} {a.content.length > 250 && (
-                            <span onClick={() => handleViewAnnouncement(a)} style={{ color: '#007bff', cursor: 'pointer', textDecoration: 'underline' }}> See more... </span>)}
-                        </Card.Text>
-                        <Card.Text className="text-muted" style={{ marginTop: '10px', marginLeft: '10px', fontSize: '13px' }}> {renderStatus(a.status)} {renderDateTime(a.created_at, a.updated_at)} </Card.Text>
-                    </div>
-                    {a.filenames && ( <Card.Img variant="top" src={`http://localhost:9000/uploads/${a.filenames.split(',')[0]}`} alt="Announcement Image" style={{ maxHeight: '100px', maxWidth: '100px' }}/>)}
+            {/* Announcement Containers Section */}
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginLeft: '120px', marginRight: '20px' }}>
+                <text style={{ fontSize: '20px', fontWeight: '600' }}>Other Announcements</text>
+                <button onClick={() => setSortDateOrder(sortDateOrder === 'asc' ? 'desc' : 'asc')} style={{ marginRight: '20px', background: 'none', border: 'none', cursor: 'pointer' }}>
+                    <FaRegClock style={{ fontSize: '25px', color: sortDateOrder === 'asc' ? '#8C8C8C' : '#134E0F' }}/>
+                </button>
+                <button onClick={() => setSortTitleOrder(sortTitleOrder === 'asc' ? 'desc' : 'asc')} style={{ background: 'none', border: 'none', cursor: 'pointer' }}>
+        <FaSortAlphaDown style={{ fontSize: '25px', color: sortTitleOrder === 'asc' ? '#8C8C8C' : '#134E0F' }} />
+    </button>
+            </div>
+            <Row xs={1} md={1} lg={1} className="g-4" style={{ marginTop: '2px', marginBottom: '40px', marginLeft: '100px', marginRight: '20px' }}>
+            {sortAnnouncementsByTitle(
+    sortAnnouncementsByDate(
+        announcements.filter(a => a.status !== 'pinned')
+    )
+    ).map(a => (
+                    <Col key={a.announcement_id}>
+                        <Card
+                            style={{ backgroundColor: (activeAnnouncement === a.announcement_id || hoveredAnnouncement === a.announcement_id) ? '#ebebeb' : '', cursor: 'pointer',transition: 'background-color 0.3s ease' }}
+                                onMouseOut={() => setActiveAnnouncement(null)} 
+                                onMouseEnter={() => setHoveredAnnouncement(a.announcement_id)} 
+                                onMouseLeave={() => setHoveredAnnouncement(null)} 
+                            >
+                            <Card.Body style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                <div style={{ flex: 1 }}>
+                                    <Card.Title style={{ marginTop: '7px', marginLeft: '10px', fontSize: '20px' }}>{a.title}</Card.Title>
+                                    <Card.Text style={{ marginLeft: '10px', marginRight: '50px', fontSize: '14px' }}> {truncateText(a.content, 250)}{' '} {a.content.length > 250 && (
+                                        <span onClick={() => handleViewAnnouncement(a)} style={{ color: '#007bff', cursor: 'pointer', textDecoration: 'underline' }}> See more... </span>)}
+                                    </Card.Text>
+                                    <Card.Text className="text-muted" style={{ marginTop: '10px', marginLeft: '10px', fontSize: '13px' }}> {renderStatus(a.status)} {renderDateTime(a.created_at, a.updated_at)} </Card.Text>
+                                </div>
+                                {a.filenames && ( <Card.Img variant="top" src={`http://localhost:9000/uploads/${a.filenames.split(',')[0]}`} alt="Announcement Image" style={{ maxHeight: '100px', maxWidth: '100px' }}/>)}
 
-                    <Dropdown style={{ marginLeft: '10px' }}>
-                        <Dropdown.Toggle variant="link" id={`dropdown-${a.announcement_id}`} style={{ boxShadow: 'none', color: '#FFFFFF', fontSize: '0px', padding: '0' }}>
-                            <BsThreeDotsVertical style={{ boxShadow: 'none', color: '#A2A3A3', fontSize: '20px', padding: '0', marginBottom: '70px', marginRight: '0px' }} />
-                        </Dropdown.Toggle>
-                        <Dropdown.Menu>
-                            <Dropdown.Item onClick={() => (a.announcement_id)} className="d-flex align-items-center">
-                                <FaThumbtack style={{ marginLeft: '10px', marginRight: '20px' }} /> Pin
-                            </Dropdown.Item>
-                            <hr /> {/* Adds a line separator */}
-                            <Dropdown.Item onClick={() => handleViewAnnouncement(a)} className="d-flex align-items-center">
-                                <FaEye style={{  marginLeft: '10px', marginRight: '20px' }} /> View
-                            </Dropdown.Item>
-                            <hr /> {/* Adds a line separator */}
-                            <Dropdown.Item onClick={() => handleEditAnnouncement(a.announcement_id)} className="d-flex align-items-center">
-                                <FaPen style={{ marginLeft: '10px', marginRight: '20px' }} /> Edit
-                            </Dropdown.Item>
-                            <hr /> {/* Adds a line separator */}
-                            <Dropdown.Item onClick={() => handleDeleteAnnouncement(a.announcement_id)} className="d-flex align-items-center">
-                                <FaTrash style={{ marginLeft: '10px', marginRight: '20px' }} /> Delete
-                            </Dropdown.Item>
-                        </Dropdown.Menu>
-                    </Dropdown>
-
-                </Card.Body>
-            </Card>
-        </Col>
-    ))}
-</Row>
-
-
+                                <Dropdown style={{ marginLeft: '10px' }}>
+                                    <Dropdown.Toggle variant="link" id={`dropdown-${a.announcement_id}`} style={{ boxShadow: 'none', color: '#FFFFFF', fontSize: '0px', padding: '0' }}>
+                                        <BsThreeDotsVertical style={{ boxShadow: 'none', color: '#A2A3A3', fontSize: '20px', padding: '0', marginBottom: '70px', marginRight: '0px' }} />
+                                    </Dropdown.Toggle>
+                                    <Dropdown.Menu>
+                                        <Dropdown.Item onClick={() => handlePinAnnouncement(a.announcement_id)} className="d-flex align-items-center">
+                                            <FaThumbtack style={{ marginLeft: '10px', marginRight: '20px' }} /> Pin
+                                        </Dropdown.Item>
+                                        <hr /> {/* Adds a line separator */}
+                                        <Dropdown.Item onClick={() => handleViewAnnouncement(a)} className="d-flex align-items-center">
+                                            <FaEye style={{  marginLeft: '10px', marginRight: '20px' }} /> View
+                                        </Dropdown.Item>
+                                        <hr /> {/* Adds a line separator */}
+                                        <Dropdown.Item onClick={() => handleEditAnnouncement(a.announcement_id)} className="d-flex align-items-center">
+                                            <FaPen style={{ marginLeft: '10px', marginRight: '20px' }} /> Edit
+                                        </Dropdown.Item>
+                                        <hr /> {/* Adds a line separator */}
+                                        <Dropdown.Item onClick={() => handleDeleteAnnouncement(a.announcement_id)} className="d-flex align-items-center">
+                                            <FaTrash style={{ marginLeft: '10px', marginRight: '20px' }} /> Delete
+                                        </Dropdown.Item>
+                                    </Dropdown.Menu>
+                                </Dropdown>
+                            </Card.Body>
+                        </Card>
+                    </Col>
+                ))}
+            </Row>
 
 
            {/* Add and Edit Announcement Modal */}
            <Modal show={showAnnouncementModal} onHide={handleCloseAnnouncementModal} size="lg">
-                <Modal.Header closeButton>
-                    <Modal.Title>{editing ? 'Edit Announcement' : 'Add Announcement'}</Modal.Title>
-                </Modal.Header>
+           <Modal.Header>
+                <Button
+                    variant="link"
+                    onClick={handleCloseAnnouncementModal}
+                    style={{
+                        position: 'absolute',
+                        top: '5px',
+                        right: '20px',
+                        textDecoration: 'none',
+                        fontSize: '30px',
+                        color: '#a9a9a9',
+                    }}
+                >
+                    ×
+                </Button>
+                <Modal.Title
+                    style={{
+                        fontSize: '40px',
+                        marginBottom: '10px',
+                        marginLeft: '90px',
+                        marginRight: '90px',
+                    }}
+                >
+                    {editing ? 'EDIT ANNOUNCEMENT' : 'CREATE ANNOUNCEMENT'}
+                </Modal.Title>
+            </Modal.Header>
+
                 <Modal.Body>
                     <Form onSubmit={handleAnnouncementSubmit}>
-                        <Form.Group controlId="formTitle">
-                            <Form.Label>Title</Form.Label>
+                    <Row className="gy-4">
+                        <Form.Group className="title mb-3">
+                            <Form.Label className="fw-bold">Title</Form.Label>
                             <Form.Control
                                 type="text"
                                 name="title"
                                 value={announcementFormData.title}
                                 onChange={handleChange}
                                 required
+                                onFocus={() => handleFocus('title')} 
+                                onBlur={handleBlur} 
+                                style={{
+                                    width: '100%',
+                                    padding: '10px',
+                                    backgroundColor: '#f2f2f2',
+                                    border: `1px solid ${focusedElement === 'title' ? '#FAD32E' : '#ced4da'}`, 
+                                    borderRadius: '4px',
+                                    boxShadow: focusedElement === 'title' ? '0 0 0 2px rgba(250, 211, 46, 1)' : 'none',
+                                }}
                             />
                         </Form.Group>
-                        <Form.Group controlId="formContent">
-                            <Form.Label>Content</Form.Label>
-                            <Form.Control
-                                as="textarea"
-                                rows={5}
-                                name="content"
-                                value={announcementFormData.content}
-                                onChange={handleChange}
-                                required
-                            />
+                    </Row>
+
+                    <Row className="gy-4">
+                        <Form.Group className="content mb-3" style={{ marginBottom: '20px' }}>
+                            <Form.Label className="fw-bold">Content</Form.Label>
+                                <div style={{ position: 'relative' }}>
+                                <Form.Control
+                                    as="textarea"
+                                    name="content"
+                                    value={announcementFormData.content}
+                                    onChange={handleChange}
+                                    rows={3}
+                                    maxLength={maxLength}
+                                    onFocus={() => handleFocus('description')} 
+                                    onBlur={handleBlur} 
+                                    style={{
+                                        width: '100%',
+                                        minHeight: '100px',
+                                        padding: '10px',
+                                        backgroundColor: '#f2f2f2',
+                                        border: `1px solid ${focusedElement === 'description' ? '#FAD32E' : '#ced4da'}`, // Apply focused border for description
+                                        borderRadius: '4px',
+                                        boxShadow: focusedElement === 'description' ? '0 0 0 2px rgba(250, 211, 46, 1)' : 'none',
+                                    }}
+                                />
+                                <div style={{ position: 'absolute', bottom: '10px', right: '10px', fontSize: '12px', color: '#666' }}> {currentLength}/{maxLength} </div>
+                            </div>
                         </Form.Group>
-                        <Form.Group controlId="formStatus">
-                            <Form.Label>Status</Form.Label>
-                            <Form.Control
+                    </Row>
+
+                    <Row className="gy-4">
+                    <Form.Group className="status mb-3">
+                            <Form.Label className="fw-bold">Status</Form.Label>
+                            <Form.Select
                                 as="select"
                                 name="status"
-                                value={announcementFormData.status}
+                                value={announcementFormData.status || ""} 
                                 onChange={handleChange}
-                                required
+                                onFocus={() => handleFocus('status')} 
+                                onBlur={handleBlur} 
+                                style={{
+                                    ...regularSelectStyles,
+                                    ...borderColorStyles(focusedElement, 'status'), 
+                                }}
                             >
                                 <option>Draft</option>
                                 <option>Published</option>
                                 <option>Unpublished</option>
-                            </Form.Control>
+                                <option>Pinned</option>
+                            </Form.Select>
                         </Form.Group>
+                    </Row>
+
+                    <Row className="gy-4">
                         <Form.Group className="mb-3">
-                            <Form.Label>Attachments</Form.Label>
+                            <Form.Label className="fw-bold">Attachments</Form.Label>
                             <input
                                 type="file"
                                 multiple
@@ -535,45 +788,42 @@ export default function CoordinatorAnnouncements() {
                                 {/* Render Original Files (Already uploaded files) */}
                                 {renderFileTiles(originalFiles, true)}
 
-                                {/* Add New File Button */}
-                                <Card
-                                    style={{
-                                        width: '100px',
-                                        height: '100px',
-                                        margin: '10px',
-                                        border: '2px dashed #007bff',
-                                        backgroundColor: '#f9f9f9',
-                                        cursor: 'pointer',
-                                        display: 'flex',
-                                        justifyContent: 'center',
-                                        alignItems: 'center',
-                                    }}
-                                    onClick={() => fileInputRef.current.click()}
-                                >
-                                    <FaPlus style={{ fontSize: '30px', color: '#007bff' }} />
-                                </Card>
+                                    {/* Add New File Button */}
+                                    <Card
+                                        style={{ width: '120px', height: '120px', margin: '10px', border: '2px dashed #888', backgroundColor: '#f4f4f4', cursor: 'pointer', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', borderRadius: '10px', transition: 'all 0.3s ease', boxShadow: '0px 4px 6px rgba(0, 0, 0, 0.1)' }}
+                                        onClick={() => fileInputRef.current.click()}
+                                        onMouseEnter={(e) => e.target.style.boxShadow = '0px 6px 12px rgba(0, 0, 0, 0.2)'}
+                                        onMouseLeave={(e) => e.target.style.boxShadow = '0px 4px 6px rgba(0, 0, 0, 0.1)'}
+                                    >
+                                        <FaPlus style={{ fontSize: '35px', color: '#888' }} />
+                                        <span style={{ marginTop: '8px', fontSize: '14px', color: '#888' }}>Add File</span>
+                                    </Card>
                             </div>
                         </Form.Group>
-                    <Button variant="primary" type="submit">
-                        {editing ? 'Update' : 'Create'}
-                    </Button>
+                        </Row>
+                        {/* Buttons */}
+                        <div className="d-flex justify-content-end mt-3">
+                            <button type="button" onClick={handleCancel} className='custom-cancel-button'>
+                                Cancel
+                            </button>
+                            <button type="submit" className='custom-create-button'>
+                                {editing ? 'Update' : 'Create'}
+                            </button>
+                        </div>
                 </Form>
                 </Modal.Body>
             </Modal>
             
 
-
-             {/* View Announcement Modal */}
+            {/* View Announcement Modal */}
             {selectedAnnouncement && ( 
-            <ViewAnnouncementModal
+                <ViewAnnouncementModal
                 show={showViewModal} 
-               onHide={() => setShowViewModal(false)} 
-               onClick={() => setShowViewModal(false)} 
-               selectedAnnouncement={selectedAnnouncement}
-            />
+                onHide={() => setShowViewModal(false)} 
+                onClick={() => setShowViewModal(false)} 
+                selectedAnnouncement={selectedAnnouncement}
+                />
             )}
-            
-
         </div>
     );
 }
