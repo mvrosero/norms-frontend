@@ -46,6 +46,7 @@ export default function ManageSubcategories() {
         fetchSubcategories();
     }, []);
 
+    // Fetch subcategories
     const fetchSubcategories = async () => {
         try {
             const response = await axios.get('http://localhost:9000/subcategories', {
@@ -83,6 +84,8 @@ export default function ManageSubcategories() {
         }));
     };
 
+
+    // Handle the create subcategory
     const handleSubcategorySubmit = async (e) => {
         e.preventDefault();
         try {
@@ -105,6 +108,8 @@ export default function ManageSubcategories() {
         }
     };
 
+
+     // Handle the edit subcategory
     const handleEditSubcategory = (id) => {
         const subcategory = subcategories.find(sub => sub.subcategory_id === id);
         if (subcategory) {
@@ -140,6 +145,8 @@ export default function ManageSubcategories() {
         }
     };
 
+
+     // Handle the delete subcategory
     const handleDeleteSubcategory = (id) => {
         Swal.fire({
             title: 'Are you sure you want to delete this subcategory?',
@@ -174,43 +181,42 @@ export default function ManageSubcategories() {
     };
 
 
-        // Set the styles for the status
-        const renderStatus = (status) => {
-            let backgroundColor, textColor;
-            if (status === 'active') {
-                backgroundColor = '#DBF0DC';
-                textColor = '#30A530';
-            } else if (status === 'inactive') {
-                backgroundColor = '#F0DBDB';
-                textColor = '#D9534F';
-            } else {
-                backgroundColor = '#EDEDED';
-                textColor = '#6C757D'; 
-            }
-    
-            return (
-                <div style={{
-                    backgroundColor,
-                    color: textColor,
-                    fontWeight: '600',
-                    fontSize: '14px',
-                    borderRadius: '30px',
-                    padding: '5px 20px',
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                }}>
-                    <div style={{
-                        width: '8px',
-                        height: '8px',
-                        borderRadius: '50%',
-                        backgroundColor: textColor,
-                        marginRight: '7px',
-                    }} />
-                    {status}
-                </div>
-            );
-        };
+    // Set the styles for the status
+    const renderStatus = (status) => {
+        let backgroundColor, textColor;
+        if (status === 'active') {
+            backgroundColor = '#DBF0DC';
+            textColor = '#30A530';
+        } else if (status === 'inactive') {
+            backgroundColor = '#F0DBDB';
+            textColor = '#D9534F';
+        } else {
+            backgroundColor = '#EDEDED';
+            textColor = '#6C757D'; 
+        }
 
+        return (
+            <div style={{
+                backgroundColor,
+                color: textColor,
+                fontWeight: '600',
+                fontSize: '14px',
+                borderRadius: '30px',
+                padding: '5px 20px',
+                display: 'inline-flex',
+                alignItems: 'center',
+            }}>
+                <div style={{
+                    width: '8px',
+                    height: '8px',
+                    borderRadius: '50%',
+                    backgroundColor: textColor,
+                    marginRight: '7px',
+                }} />
+                {status}
+            </div>
+        );
+    };
 
 
     // Pagination logic
@@ -264,7 +270,7 @@ return (
     <div>
         <CoordinatorNavigation />
         <CoordinatorInfo />
-        <div
+            <div
                 style={{
                     backgroundImage: `url(${folderBackground})`,
                     backgroundSize: '100% 100%',
@@ -343,19 +349,19 @@ return (
                     </tbody>
                 </table>
 
-                               {/* Pagination */}
-                               <div style = {{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', marginBottom: '15px', marginRight: '30px' }}>
+                {/* Pagination */}
+                <div style = {{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', marginBottom: '15px', marginRight: '30px' }}>
                     {/* Page Info */}
                     <div style={{ fontSize: '0.875rem', color: '#4a4a4a', marginRight: '10px' }}>
                         Page {currentPage} out of {totalPages}
                     </div>
 
-                    {/* Previous Page Button with left rounded corners */}
+                    {/* Previous Page Button */}
                     <button
                         onClick={() => handlePaginationChange(currentPage - 1)}
                         style={{
                             ...buttonStyle,
-                            borderTopLeftRadius: '8px',  // left rounded corner
+                            borderTopLeftRadius: '8px',  
                             borderBottomLeftRadius: '8px',
                             ...(currentPage === 1 ? disabledButtonStyle : {}),
                         }}
@@ -364,7 +370,7 @@ return (
                         ❮
                     </button>
 
-                    {/* Page Numbers (only 3 visible) */}
+                    {/* Page Numbers */}
                     {(() => {
                         let pageStart = currentPage - 1 > 0 ? currentPage - 1 : 1;
                         let pageEnd = pageStart + 2 <= totalPages ? pageStart + 2 : totalPages;
@@ -385,12 +391,12 @@ return (
                         ));
                     })()}
 
-                    {/* Next Page Button with right rounded corners */}
+                    {/* Next Page Button */}
                     <button
                         onClick={() => handlePaginationChange(currentPage + 1)}
                         style={{
                             ...buttonStyle,
-                            borderTopRightRadius: '8px',  // right rounded corner
+                            borderTopRightRadius: '8px',  
                             borderBottomRightRadius: '8px',
                             ...(currentPage === totalPages ? disabledButtonStyle : {}),
                         }}
@@ -400,7 +406,7 @@ return (
                     </button>
                 </div>
             </div>
-            </div>
+        </div>
 
 
             {/* Add Subcategory Modal */}

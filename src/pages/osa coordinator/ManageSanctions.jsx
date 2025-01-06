@@ -357,12 +357,12 @@ return (
                         Page {currentPage} out of {totalPages}
                     </div>
 
-                    {/* Previous Page Button with left rounded corners */}
+                    {/* Previous Page Button */}
                     <button
                         onClick={() => handlePaginationChange(currentPage - 1)}
                         style={{
                             ...buttonStyle,
-                            borderTopLeftRadius: '8px',  // left rounded corner
+                            borderTopLeftRadius: '8px',  
                             borderBottomLeftRadius: '8px',
                             ...(currentPage === 1 ? disabledButtonStyle : {}),
                         }}
@@ -371,7 +371,7 @@ return (
                         ❮
                     </button>
 
-                    {/* Page Numbers (only 3 visible) */}
+                    {/* Page Numbers */}
                     {(() => {
                         let pageStart = currentPage - 1 > 0 ? currentPage - 1 : 1;
                         let pageEnd = pageStart + 2 <= totalPages ? pageStart + 2 : totalPages;
@@ -392,12 +392,12 @@ return (
                         ));
                     })()}
 
-                    {/* Next Page Button with right rounded corners */}
+                    {/* Next Page Button */}
                     <button
                         onClick={() => handlePaginationChange(currentPage + 1)}
                         style={{
                             ...buttonStyle,
-                            borderTopRightRadius: '8px',  // right rounded corner
+                            borderTopRightRadius: '8px',  
                             borderBottomRightRadius: '8px',
                             ...(currentPage === totalPages ? disabledButtonStyle : {}),
                         }}
@@ -409,23 +409,23 @@ return (
             </div>
         </div>
 
-        {/* Add Sanction Modal */}
-        <AddSanctionModal 
-            show={showSanctionModal} 
-            handleClose={handleCloseSanctionModal}
-            sanctionFormData={sanctionFormData} 
-            handleSanctionChange={handleSanctionChange}
-            handleSanctionSubmit={handleSanctionSubmit}
-        />
+            {/* Add Sanction Modal */}
+            <AddSanctionModal 
+                show={showSanctionModal} 
+                handleClose={handleCloseSanctionModal}
+                sanctionFormData={sanctionFormData} 
+                handleSanctionChange={handleSanctionChange}
+                handleSanctionSubmit={handleSanctionSubmit}
+            />
 
-        {/* Edit Sanction Modal */}
-        <EditSanctionModal 
-            show={showEditModal} 
-            handleClose={() => setShowEditModal(false)} 
-            handleSubmit={handleEditSubmit} 
-            sanctionFormData={sanctionFormData} 
-            handleSanctionChange={handleSanctionChange} 
-        />
-    </div>
+            {/* Edit Sanction Modal */}
+            <EditSanctionModal 
+                show={showEditModal} 
+                handleClose={() => setShowEditModal(false)} 
+                handleSubmit={handleEditSubmit} 
+                sanctionFormData={sanctionFormData} 
+                handleSanctionChange={handleSanctionChange} 
+            />
+        </div>
     );
 }
