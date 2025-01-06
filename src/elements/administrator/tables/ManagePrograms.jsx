@@ -255,7 +255,6 @@ const handleEditSubmit = async (e) => {
     const indexOfFirstProgram = indexOfLastProgram - programsPerPage;
     const currentPrograms = programs.slice(indexOfFirstProgram, indexOfLastProgram);
 
-    // Change page
     const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
     const totalPages = Math.ceil(programs.length / programsPerPage);
@@ -288,11 +287,10 @@ const handleEditSubmit = async (e) => {
 
     const handlePaginationChange = (pageNumber) => {
         if (pageNumber >= 1 && pageNumber <= totalPages) {
-            setCurrentPage(pageNumber);  // Correctly update the page
+            setCurrentPage(pageNumber);  
         }
     };
     
-    // Pagination buttons rendering
     const pageNumbers = [];
     for (let i = 1; i <= totalPages; i++) {
         pageNumbers.push(i);
@@ -349,14 +347,7 @@ const handleEditSubmit = async (e) => {
 
                 {/* Program Table */}
                 <div style={{ width: '90%', marginBottom: '40px' }}>
-                    <table
-                        className="table table-hover table-bordered"
-                        style={{
-                            marginBottom: '20px',
-                            textAlign: 'center',
-                            backgroundColor: 'white',
-                        }}
-                    >
+                    <table className="table table-hover table-bordered" style={{ marginBottom: '20px', textAlign: 'center', backgroundColor: 'white' }}>
                     <thead style={{ backgroundColor: '#FAD32E', textAlign: 'center' }}>
                         <tr>
                             <th style={{ width: '5%'}}>No.</th>
