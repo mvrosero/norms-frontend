@@ -636,11 +636,11 @@ return (
 
 
            {/* Add and Edit Announcement Modal */}
-           <Modal show={showAnnouncementModal} onHide={handleCloseAnnouncementModal} size="lg">
+           <Modal show={showAnnouncementModal} onHide={handleCancel} size="lg">
            <Modal.Header>
                 <Button
                     variant="link"
-                    onClick={handleCloseAnnouncementModal}
+                    onClick={handleCancel}
                     style={{
                         position: 'absolute',
                         top: '5px',
@@ -656,8 +656,8 @@ return (
                     style={{
                         fontSize: '40px',
                         marginBottom: '10px',
-                        marginLeft: '90px',
-                        marginRight: '90px',
+                        marginLeft: editing ? '130px' : '90px',
+                        marginRight: editing ? '130px' : '90px',
                     }}
                 >
                     {editing ? 'EDIT ANNOUNCEMENT' : 'CREATE ANNOUNCEMENT'}

@@ -40,7 +40,8 @@ export default function AdminSettings() {
         width: '50px', 
         display: 'flex',
         justifyContent: 'center', 
-        alignItems: 'center', 
+        alignItems: 'center',
+        marginLeft: '20px',   
         marginRight: '20px', 
     };
 
@@ -48,7 +49,7 @@ export default function AdminSettings() {
         fontSize: '20px',
         fontWeight: '500',
         color: '#1b1c1e',
-        margin: 0,
+        marginLeft: '10px',  
         flex: 1, 
     };
 
