@@ -2,17 +2,13 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import Form from 'react-bootstrap/Form';
-import Button from 'react-bootstrap/Button';
-import Container from 'react-bootstrap/Container';
-import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Col';
 import Select from 'react-select';
 import { FaPlus, FaTimes } from 'react-icons/fa';
 import Swal from 'sweetalert2';
+import '../../styles/style.css';
 
 const SecurityCreateSlip = () => {
     const navigate = useNavigate();
-
     const [formData, setFormData] = useState({
         student_idnumber: '',
         nature_id: '',
@@ -22,8 +18,10 @@ const SecurityCreateSlip = () => {
     const [message, setMessage] = useState('');
     const [filePreviews, setFilePreviews] = useState([]);
     const [violationOptions, setViolationOptions] = useState([]);
+    const [isFocused, setIsFocused] = useState(false);
 
-    // Fetch students and violation options on component mount
+
+    // Fetch students and violation options
     useEffect(() => {
         const fetchStudents = async () => {
             try {
@@ -39,6 +37,8 @@ const SecurityCreateSlip = () => {
             }
         };
 
+
+        // Fetch nature of violation
         const fetchViolationOptions = async () => {
             try {
                 const response = await axios.get('http://localhost:9000/violation-natures');
@@ -56,6 +56,7 @@ const SecurityCreateSlip = () => {
         fetchViolationOptions();
     }, []);
 
+
     const handleInputChange = (e) => {
         if (e.target.name === 'photo_video_files') {
             const newFiles = Array.from(e.target.files);
@@ -71,6 +72,8 @@ const SecurityCreateSlip = () => {
         setFormData({ ...formData, [actionMeta.name]: selectedOption.value });
     };
 
+
+    // Handle file removal
     const handleRemoveFile = (index) => {
         const updatedFiles = [...formData.photo_video_files];
         updatedFiles.splice(index, 1);
@@ -78,41 +81,37 @@ const SecurityCreateSlip = () => {
         setFilePreviews(updatedFiles.map(file => URL.createObjectURL(file)));
     };
 
+
+    // Handle the submit uniform defiance slip
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        // Confirmation before submission
         const result = await Swal.fire({
-            title: 'Confirm Submission',
-            text: "Are you sure you want to submit this slip?",
+            title: 'Are you sure you want to create this uniform defiance?',
+            text: "You are about to create a new uniform defiance slip.",
             icon: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Yes, submit it!',
-            cancelButtonText: 'Cancel'
+            cancelButtonColor: '#B0B0B0',
+            confirmButtonText: 'Yes, create it',
+            cancelButtonText: 'Cancel',
         });
-
         if (result.isConfirmed) {
             try {
                 const formDataToSend = new FormData();
                 formDataToSend.append('student_idnumber', formData.student_idnumber);
                 formDataToSend.append('nature_id', formData.nature_id);
-
                 formData.photo_video_files.forEach(file => {
                     formDataToSend.append('photo_video_files', file);
                 });
-
                 const employee_idnumber = localStorage.getItem('employee_idnumber');
                 formDataToSend.append('submitted_by', employee_idnumber);
-
                 const response = await axios.post('http://localhost:9000/create-uniformdefiance', formDataToSend, {
                     headers: {
                         'Content-Type': 'multipart/form-data',
                         'Authorization': `Bearer ${localStorage.getItem('token')}`
                     }
                 });
-
                 setMessage(response.data.message);
 
                 Swal.fire({
@@ -123,7 +122,6 @@ const SecurityCreateSlip = () => {
                 }).then(() => {
                     navigate('/defiance-selection');
                 });
-
                 setFormData({
                     student_idnumber: '',
                     nature_id: '',
@@ -132,27 +130,76 @@ const SecurityCreateSlip = () => {
                 setFilePreviews([]);
             } catch (error) {
                 console.error('Error submitting form:', error);
-                setMessage('An error occurred. Please try again later.');
+            
+                if (error.response) {
+                    setMessage(`Error: ${error.response.data.error || error.response.statusText}`);
+                } else if (error.message) {
+                    setMessage(`Error: ${error.message}`);
+                } else {
+                    setMessage('An unexpected error occurred. Please try again later.');
+                }
+            
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Submission Failed',
+                    text: 'There was an error submitting the form. Please try again.',
+                    confirmButtonText: 'OK'
+                });
             }
         }
     };
 
+
+    // Handle the cancel uniform defiance slip
     const handleCancel = async () => {
-        // Confirmation before canceling
         const result = await Swal.fire({
-            title: 'Confirm Cancel',
-            text: "Are you sure you want to cancel?",
+            title: 'Are you sure you want to cancel?',
+            text: 'Any unsaved changes will be lost.',
             icon: 'warning',
             showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Yes, cancel it!',
-            cancelButtonText: 'No, go back'
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#B0B0B0',
+            confirmButtonText: 'Yes, close it!',
+            cancelButtonText: 'No, keep changes',
         });
 
         if (result.isConfirmed) {
             navigate('/defiance-selection');
         }
+    };
+
+
+    // Set the styles for the file tile
+    const customStyles = {
+    control: (provided, state) => ({
+        ...provided,
+        border: state.isFocused ? '1px solid #0D4809' : '1px solid #ced4da', 
+        boxShadow: state.isFocused ? '0 0 0 1px #0D4809' : 'none', 
+        '&:hover': {
+        borderColor: state.isFocused ? '#0D4809' : '#ced4da', 
+        },
+    }),
+    menu: (provided) => ({
+        ...provided,
+        backgroundColor: '#fff', 
+        zIndex: 9999, 
+    }),
+    option: (provided, state) => ({
+        ...provided,
+        backgroundColor: state.isSelected ? '#0D4809' : '#fff', 
+        color: state.isSelected ? '#fff' : '#333', 
+        '&:hover': {
+        backgroundColor: '#f4f4f4', 
+        },
+    }),
+    dropdownIndicator: (provided) => ({
+        ...provided,
+        color: '#333',
+    }),
+    indicatorSeparator: (provided) => ({
+        ...provided,
+        display: 'none',
+      }),
     };
 
     const fileTileStyle = {
@@ -185,75 +232,88 @@ const SecurityCreateSlip = () => {
         backgroundColor: '#f8f9fa'
     };
 
-    return (
-        <Container>
-            <Row className="justify-content-md-center">
-                <Col md="6">
-                    <h2 className="text-center">Upload Uniform Defiance</h2>
-                    <Form onSubmit={handleSubmit}>
-                        <Form.Group controlId="studentId">
-                            <Form.Label>Student ID Number:</Form.Label>
-                            <Select
-                                options={students}
-                                onChange={(option) => handleSelectChange(option, { name: 'student_idnumber' })}
-                                placeholder="Select Student"
-                                isSearchable
-                                value={students.find(option => option.value === formData.student_idnumber)}
-                                required
-                            />
-                        </Form.Group>
 
-                        <Form.Group controlId="natureId">
-                            <Form.Label>Nature of Violation:</Form.Label>
-                            <Select
-                                options={violationOptions}
-                                onChange={(option) => handleSelectChange(option, { name: 'nature_id' })}
-                                placeholder="Select Nature of Violation"
-                                isSearchable
-                                value={violationOptions.find(option => option.value === formData.nature_id)}
-                                required
-                            />
-                        </Form.Group>
+return (
+    <div className="create-slip-group">
+        <div className="create-slip-container1">
+            <h1>Uniform Defiance Slip</h1>
+        </div>
 
-                        <Form.Group controlId="photoVideoFiles">
-                            <Form.Label>Upload Photos/Videos:</Form.Label>
-                            <div style={{ display: 'flex', flexWrap: 'wrap' }}>
-                                {filePreviews.map((preview, index) => (
+        <div className="create-slip-container2">
+            <Form onSubmit={handleSubmit}>
+                <Form.Group controlId="studentId">
+                    <div className="row align-items-center" style={{ marginBottom: '30px' }}>
+                        <div className="col-4"> <Form.Label className="fw-bold">Student ID Number:</Form.Label> </div>
+                            <div className="col-8">
+                                <Select
+                                    options={students}
+                                    onChange={(option) => handleSelectChange(option, { name: 'student_idnumber' })}
+                                    placeholder="Select Student"
+                                    isSearchable
+                                    value={students.find((option) => option.value === formData.student_idnumber)}
+                                    required
+                                    onFocus={() => setIsFocused(true)}
+                                    onBlur={() => setIsFocused(false)}
+                                    styles={customStyles} 
+                                    className={`${isFocused ? 'create-slip-focused-select' : 'create-slip-default-select'} create-slip-regular-select`}
+                                />
+                            </div>
+                    </div>
+                </Form.Group>
+
+                <Form.Group controlId="natureId">
+                    <div className="row align-items-center" style={{ marginBottom: '30px' }}>
+                        <div className="col-4"> <Form.Label className="fw-bold">Nature of Violation:</Form.Label> </div>
+                            <div className="col-8">
+                                <Select
+                                    options={violationOptions}
+                                    onChange={(option) => handleSelectChange(option, { name: 'nature_id' })}
+                                    placeholder="Select Nature of Violation"
+                                    isSearchable
+                                    value={violationOptions.find((option) => option.value === formData.nature_id)}
+                                    required
+                                    onFocus={() => setIsFocused(true)}
+                                    onBlur={() => setIsFocused(false)}
+                                    styles={customStyles} 
+                                    className={`${isFocused ? 'create-slip-focused-select' : 'create-slip-default-select'} create-slip-regular-select`}
+                                />
+                            </div>
+                    </div>
+                </Form.Group>
+
+                <Form.Group controlId="photoVideoFiles">
+                    <div className="row align-items-center" style={{ marginBottom: '30px' }}>
+                        <div className="col-4"> <Form.Label className="fw-bold">Proof of Defiance:</Form.Label> </div>
+                            <div className="col-8">
+                                <div style={{ display: 'flex', flexWrap: 'wrap' }}>
+                                    {filePreviews.map((preview, index) => (
                                     <div key={index} style={fileTileStyle}>
                                         <img src={preview} alt={`preview-${index}`} style={filePreviewStyle} />
-                                        <FaTimes
-                                            onClick={() => handleRemoveFile(index)}
-                                            style={{
-                                                position: 'absolute',
-                                                top: '5px',
-                                                right: '5px',
-                                                cursor: 'pointer',
-                                                color: 'gray' // Changed to gray
-                                            }}
-                                        />
+                                        <FaTimes onClick={() => handleRemoveFile(index)}
+                                        style={{ position: 'absolute', top: '5px', right: '5px', cursor: 'pointer', color: 'gray' }}/>
                                     </div>
                                 ))}
                                 <label htmlFor="file-upload" style={addFileTileStyle}>
-                                    <FaPlus size={30} />
+                                    <FaPlus style={{ fontSize: '30px', color: 'gray' }} />
                                 </label>
-                                <input
-                                    id="file-upload"
-                                    type="file"
-                                    name="photo_video_files"
-                                    onChange={handleInputChange}
-                                    multiple
-                                    style={{ display: 'none' }}
-                                />
+                                <input id="file-upload" type="file" name="photo_video_files" onChange={handleInputChange} multiple style={{ display: 'none' }}/>
                             </div>
-                        </Form.Group>
-                        <Button variant="secondary" onClick={handleCancel} style={{ marginLeft: '10px' }}>Cancel</Button>
-                        <Button variant="primary" type="submit" style={{ marginLeft: '10px' }}>Submit Slip</Button>
-                    </Form>
-                    {message && <p className="mt-3 text-center">{message}</p>}
-                </Col>
-            </Row>
-        </Container>
+                                <small className="text-muted mt-1 d-block">
+                                    Only photo and video attachments are allowed. File size should not exceed 10 MB.
+                                </small>
+                        </div>
+                    </div>
+                </Form.Group>
+                    {/* Buttons */}
+                    <div style={{ display: 'flex', justifyContent: 'flex-end', width: '100%' }} className="mt-3">
+                        <button type="button" className="create-slip-cancel-button" onClick={handleCancel}>Cancel</button>
+                        <button type="submit" className="create-slip-submit-button">Save</button>
+                    </div>
+            </Form>
+        </div>
+    </div>
     );
 };
+
 
 export default SecurityCreateSlip;
