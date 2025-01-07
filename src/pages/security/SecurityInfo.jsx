@@ -7,21 +7,21 @@ import user_icon from '../../components/images/default_profile.jpg';
 
 const SecurityInfo = ({ role }) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const [profilePhoto, setProfilePhoto] = useState(user_icon); // Default to user_icon initially
-  const [userName, setUserName] = useState(''); // State to hold the user's name
+  const [profilePhoto, setProfilePhoto] = useState(user_icon); 
+  const [userName, setUserName] = useState(''); 
   const navigate = useNavigate();
-  const userId = localStorage.getItem('user_id'); // Get user ID from local storage
+  const userId = localStorage.getItem('user_id'); 
+
 
   useEffect(() => {
     const fetchProfileData = async () => {
       try {
         const response = await axios.get(`http://localhost:9000/employee/${userId}`, {
           headers: {
-            'Authorization': `Bearer ${localStorage.getItem('token')}` // Add token for authentication
+            'Authorization': `Bearer ${localStorage.getItem('token')}` 
           }
         });
-
-        const userData = response.data[0]; // Assuming the response is an array with the user data
+        const userData = response.data[0];
         if (userData) {
           const fullName = `${userData.first_name} ${userData.last_name}`.trim();
           setUserName(fullName);
@@ -36,7 +36,6 @@ const SecurityInfo = ({ role }) => {
         console.error('Error fetching profile data:', error);
       }
     };
-
     if (userId) {
       fetchProfileData();
     }
@@ -45,6 +44,7 @@ const SecurityInfo = ({ role }) => {
   const toggleDropdown = () => {
     setIsDropdownOpen(!isDropdownOpen);
   };
+
 
   const handleLogout = () => {
     localStorage.removeItem('token');
@@ -56,10 +56,11 @@ const SecurityInfo = ({ role }) => {
   };
 
   const handleSettings = () => {
-    navigate('/security-settings'); // Adjust path as needed
+    navigate('/security-settings'); 
   };
 
-  return (
+
+return (
     <div className="profile-container">
       <div className="profileInfo">
         <img
@@ -68,7 +69,7 @@ const SecurityInfo = ({ role }) => {
           className="profilePhoto"
           onError={(e) => {
             console.error('Error loading image:', e.target.src);
-            e.target.src = user_icon; // Fallback to default image on error
+            e.target.src = user_icon; 
           }}
         />
         <div className="userInfo">
@@ -95,6 +96,7 @@ const SecurityInfo = ({ role }) => {
   );
 };
 
+
 SecurityInfo.propTypes = {
   role: PropTypes.string.isRequired,
 };
@@ -102,5 +104,6 @@ SecurityInfo.propTypes = {
 SecurityInfo.defaultProps = {
   role: 'Security',
 };
+
 
 export default SecurityInfo;

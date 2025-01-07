@@ -34,7 +34,7 @@ const SecurityLandingPage = () => {
     >
       <h5 style={{ fontFamily: 'Inter', marginBottom: '40px', fontSize: '50px', fontWeight: '900', marginTop: '10px', color: 'white' }}>Select Transaction</h5>
       <div style={{ display: 'flex', flexDirection: 'row', gap: '20px' }}>
-        {/* First card */}
+        {/* View Slips Card */}
         <div
           onClick={handleFirstCardClick}
           style={{
@@ -55,7 +55,8 @@ const SecurityLandingPage = () => {
           <img src={firstCardImage} alt="First Page" style={{ width: '160px', height: '160px', marginBottom: '20px' }} />
           <span style={{ fontSize: '20px', fontFamily: 'Poppins', textAlign: 'center', color: '#DAC50C' }}>View Slips</span>
         </div>
-        {/* Second card */}
+
+        {/* Create Slip Card */}
         <div
           onClick={handleSecondCardClick}
           style={{
@@ -81,5 +82,6 @@ const SecurityLandingPage = () => {
     </div>
   );
 };
+
 
 export default SecurityLandingPage;
