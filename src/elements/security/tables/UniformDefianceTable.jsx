@@ -6,6 +6,7 @@ import Button from 'react-bootstrap/Button';
 import styled from '@emotion/styled';
 import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
+import '../../../styles/General.css';
 
 const UniformDefianceTable = ({}) => {
     const [records, setRecords] = useState([]);
@@ -338,65 +339,96 @@ const UniformDefianceTable = ({}) => {
 // Render uniform defiance history table
 const renderTable = () => {
     return (
+        <div>
+            {/* Table for larger screens */}
+            <div style={{ overflowX: 'auto' }}>
+                <Table bordered hover style={{ borderRadius: '20px', marginLeft: '75px', marginTop: '10px' }}>
+                        <thead style={{ backgroundColor: '#f8f9fa' }}>
+                            <tr>
+                                <th style={{ textAlign: 'center', padding: '0', verticalAlign: 'middle', width: '5%' }}>
+                                    <button style={{ border: 'none', background: 'none', cursor: 'pointer', display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center', width: '100%' }}
+                                        onClick={handleSortSlipId}
+                                        >
+                                        <span style={{ textAlign: 'center' }}>ID</span>
+                                        {sortOrder === 'asc' ? (
+                                        <ArrowDropUpIcon style={{ marginLeft: '5px' }} />
+                                        ) : (
+                                        <ArrowDropDownIcon style={{ marginLeft: '5px' }} />
+                                        )}
+                                    </button>
+                                </th>
+                                <th style={{ width: '23%' }}>
+                                    <button style={{ border: 'none', background: 'none', cursor: 'pointer', display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center', width: '100%' }}
+                                        onClick={handleSortDate}
+                                        >
+                                        <span>Date</span>
+                                        {sortOrderDate === 'asc' ? (
+                                            <ArrowDropUpIcon style={{ marginLeft: '5px' }} />
+                                        ) : (
+                                            <ArrowDropDownIcon style={{ marginLeft: '5px' }} />
+                                        )}
+                                    </button>
+                                </th>
+                                <th style={{ textAlign: 'center', padding: '0', verticalAlign: 'middle', width: '13%' }}>
+                                    <button onClick={() => handleSort('student_idnumber')}>
+                                        ID Number {sortOrder === 'asc' ? 
+                                        <ArrowDropUpIcon /> : 
+                                        <ArrowDropDownIcon />}
+                                    </button>
+                                </th>
+                                <th>Nature of Violation</th>
+                                <th style={{ width: '14%' }}>Status</th>
+                                <th style={{ width: '14%' }}>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {currentRecords.map((record, index) => (
+                                <tr key={index}>
+                                    <td style={{ textAlign: 'center' }}>{record.slip_id}</td>
+                                    <td>{new Date(record.created_at).toLocaleString()}</td>
+                                    <td>{record.student_idnumber}</td>
+                                    <td>{record.nature_name}</td> 
+                                    <td style={{ textAlign: 'center' }}>{renderStatus(record.status)}</td>
+                                    <td style={{ display: 'flex', justifyContent: 'center' }}>
+                                        <ViewButton onClick={() => handleViewDetails(record)}>
+                                            View
+                                        </ViewButton>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </Table>
+            </div>
 
-        <Table bordered hover style={{ borderRadius: '20px', marginLeft: '75px', marginTop: '10px' }}>
-                <thead style={{ backgroundColor: '#f8f9fa' }}>
-                    <tr>
-                        <th style={{ textAlign: 'center', padding: '0', verticalAlign: 'middle', width: '5%' }}>
-                            <button style={{ border: 'none', background: 'none', cursor: 'pointer', display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center', width: '100%' }}
-                                onClick={handleSortSlipId}
-                                >
-                                <span style={{ textAlign: 'center' }}>ID</span>
-                                {sortOrder === 'asc' ? (
-                                <ArrowDropUpIcon style={{ marginLeft: '5px' }} />
-                                ) : (
-                                <ArrowDropDownIcon style={{ marginLeft: '5px' }} />
-                                )}
-                            </button>
-                        </th>
-                        <th style={{ width: '23%' }}>
-                            <button style={{ border: 'none', background: 'none', cursor: 'pointer', display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center', width: '100%' }}
-                                onClick={handleSortDate}
-                                >
-                                <span>Date</span>
-                                {sortOrderDate === 'asc' ? (
-                                    <ArrowDropUpIcon style={{ marginLeft: '5px' }} />
-                                ) : (
-                                    <ArrowDropDownIcon style={{ marginLeft: '5px' }} />
-                                )}
-                            </button>
-                        </th>
-                        <th style={{ textAlign: 'center', padding: '0', verticalAlign: 'middle', width: '13%' }}>
-                            <button onClick={() => handleSort('student_idnumber')}>
-                                ID Number {sortOrder === 'asc' ? 
-                                <ArrowDropUpIcon /> : 
-                                <ArrowDropDownIcon />}
-                            </button>
-                        </th>
-                        <th>Nature of Violation</th>
-                        <th style={{ width: '14%' }}>Status</th>
-                        <th style={{ width: '14%' }}>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {currentRecords.map((record, index) => (
-                        <tr key={index}>
-                            <td style={{ textAlign: 'center' }}>{record.slip_id}</td>
-                            <td>{new Date(record.created_at).toLocaleString()}</td>
-                            <td>{record.student_idnumber}</td>
-                            <td>{record.nature_name}</td> 
-                            <td style={{ textAlign: 'center' }}>{renderStatus(record.status)}</td>
-                            <td style={{ display: 'flex', justifyContent: 'center' }}>
-                                <ViewButton onClick={() => handleViewDetails(record)}>
-                                    View
-                                </ViewButton>
-                            </td>
-                        </tr>
-                    ))}
-                </tbody>
-            </Table>
-            );
-        };
+            {/* Cards for smaller screens */}
+            <div className="card-container">
+                {currentRecords.map((record, index) => (
+                    <div className="card-row" key={index}>
+                        <p>
+                            <strong>ID:</strong> {record.slip_id}
+                        </p>
+                        <p>
+                            <strong>Date:</strong> {new Date(record.created_at).toLocaleString()}
+                        </p>
+                        <p>
+                            <strong>ID Number:</strong> {record.student_idnumber}
+                        </p>
+                        <p>
+                            <strong>Nature of Violation:</strong> {record.nature_name}
+                        </p>
+                        <p>
+                            <strong>Status:</strong> {renderStatus(record.status)}
+                        </p>
+                        <div style={{ display: 'flex', justifyContent: 'center' }}>
+                            <ViewButton onClick={() => handleViewDetails(record)}>View</ViewButton>
+                        </div>
+                    </div>
+                ))}
+            </div>
+        </div>
+        );
+    };
+    
             
 
 return (

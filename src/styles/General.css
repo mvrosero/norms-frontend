@@ -128,3 +128,191 @@ body {
   text-align: center; 
   letter-spacing: 2px;
 }
+
+
+
+/*SECURITY VIEW SLIP*/
+/* Page Title */
+
+
+/* Adjust the title for smaller screens */
+@media (max-width: 768px) {
+  .page-title {
+    font-size: 28px; /* Smaller font size for tablets and small screens */
+  }
+}
+
+@media (max-width: 300px) {
+  .page-title {
+    font-size: 22px; /* Further reduce font size for mobile devices */
+    margin-bottom: 15px; /* Adjust bottom margin for small screens */
+  }
+}
+
+
+/* Search and Filter Section */
+.search-filter-section {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 30px;
+  flex-wrap: wrap; /* Allow wrapping of elements on smaller screens */
+}
+
+/* Style the Create Slip Button */
+.create-slip-button {
+  background-color: #FAD32E;
+  color: white;
+  font-weight: 900;
+  padding: 12px 30px;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  margin-left: 20px; /* Space between search and button */
+}
+
+/* Icon inside the button */
+.create-slip-button svg {
+  margin-left: 10px;
+}
+
+/* Adjustments for smaller screens */
+@media (max-width: 768px) {
+  .search-filter-section {
+    flex-direction: column; /* Stack elements vertically on tablets and below */
+    align-items: flex-start; /* Align to the left */
+  }
+
+  .create-slip-button {
+    width: 100%; /* Make the button full-width on smaller screens */
+    margin-top: 20px; /* Add space above the button */
+  }
+}
+
+@media (max-width: 576px) {
+  .search-filter-section {
+    margin-top: 15px; /* Less margin for mobile screens */
+  }
+
+  .create-slip-button {
+    font-size: 14px; /* Smaller text size for mobile */
+    padding: 10px 20px; /* Adjust button padding */
+  }
+}
+
+
+
+
+/*SECURITY INFO PROFILE*/
+
+
+
+/*SECURITY UD TABLE*/
+@media (max-width: 768px) {
+  table {
+    font-size: 12px; 
+  }
+
+  th, td {
+    padding: 5px;
+  }
+
+  .pagination-info {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .pagination-buttons button {
+    width: 12px; 
+    height: 12px;
+    font-size: 6px;
+  }
+
+
+
+    /* view ud modal */
+  .modal-content {
+    width: 90%; 
+    margin: auto;
+  }
+
+  .modal-content {
+    width: 90%; 
+    margin: auto;
+  }
+
+  .status-badge {
+    font-size: 12px; 
+    padding: 3px 10px;
+  }
+
+  /* Modal title */
+  .modal-title {
+    font-size: 12px; 
+    text-align: center;
+    margin-left: 0;
+    margin-right: 0;
+  }
+
+  /* Modal body */
+  .modal-body {
+    padding: 10px;
+  }
+
+  .modal-body > div {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .modal-body > div p {
+    margin: 5px 0;
+    font-size: 12px; /* Adjust text size for smaller screens */
+  }
+
+  /* Grid layout adjustments for smaller screens */
+  .modal-body > div {
+    grid-template-columns: 1fr; /* Single column for mobile */
+  }
+
+  /* Adjust padding on smaller screens */
+  .modal-body {
+    padding: 10px;
+  }
+}
+
+
+/* Hide the table and show the cards for screens smaller than 576px */
+@media (max-width: 576px) {
+  table {
+    display: none !important; 
+  }
+
+  .card-container {
+    display: block !important; 
+  }
+
+  .card-row {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 10px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    background-color: #fff;
+  }
+
+  .card-row p {
+    margin: 5px 0;
+  }
+}
+
+/* For larger screens, show the table and hide the cards */
+@media (min-width: 430px) {
+  .card-container {
+    display: none; 
+  }
+}

@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import SecurityInfo from '../security/SecurityInfo';
 import UniformDefianceTable from '../../elements/security/tables/UniformDefianceTable';
 import SearchAndFilter from '../general/SearchAndFilter';
+import '../../styles/General.css';
 
 export default function SecurityViewSlips() {
     const [searchQuery, setSearchQuery] = useState('');
