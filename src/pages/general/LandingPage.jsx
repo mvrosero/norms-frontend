@@ -25,15 +25,15 @@ const LandingPage = () => {
         flexDirection: 'column',
       }}
     >
-      {/* Using FiArrowRightCircle icon */}
+
       <FiArrowRightCircle
         onClick={handleLoginClick}
         style={{
           position: 'absolute',
-          bottom: '0', // Positioned at the bottom
-          right: '0', // Positioned at the right
-          marginBottom: '80px', // Added space to align with the line on the background image
-          marginRight: '100px', // Added space to align with the line on the background image
+          bottom: '0', 
+          right: '0', 
+          marginBottom: '80px', 
+          marginRight: '100px', 
           color: 'white',
           fontSize: '3em',
           cursor: 'pointer',

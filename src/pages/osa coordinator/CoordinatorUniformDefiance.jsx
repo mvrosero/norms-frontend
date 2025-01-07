@@ -12,44 +12,32 @@ export default function CoordinatorUniformDefiance() {
     const navigate = useNavigate();
 
     useEffect(() => {
-        // Check if token and role_id exist in localStorage
         const token = localStorage.getItem('token');
         const roleId = localStorage.getItem('role_id');
 
-        // If token or role_id is invalid, redirect to unauthorized page
         if (!token || roleId !== '2') {
             navigate('/unauthorized');
         }
     }, [navigate]);
 
     const handleViewHistory = () => {
-        navigate('/uniformdefiance-history'); // Redirect to uniform defiance history page
+        navigate('/uniformdefiance-history'); 
     };
 
-    return (
-        <div>
-            <CoordinatorNavigation />
-            <CoordinatorInfo />
+
+return (
+    <div>
+        <CoordinatorNavigation />
+        <CoordinatorInfo />
             <h6 className="page-title">UNIFORM DEFIANCE</h6>
+
             {/* Search And Filter Section */}
             <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'center', marginTop: '10px', marginLeft: '70px', padding: '0 20px' }}>
                 <div style={{ flex: '1 1 70%', minWidth: '300px' }}> <SearchAndFilter setSearchQuery={setSearchQuery} /> </div>
                 <button 
                     onClick={handleViewHistory} 
-                    style={{
-                        backgroundColor: '#FAD32E',
-                        color: 'white',
-                        fontWeight: '900',
-                        padding: '12px 30px',
-                        border: 'none',
-                        borderRadius: '10px',
-                        cursor: 'pointer',
-                        display: 'flex',
-                        alignItems: 'center',
-                        boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
-                    }}
-                >
-                     View History
+                    style={{ backgroundColor: '#FAD32E', color: 'white', fontWeight: '900', padding: '12px 30px', border: 'none', borderRadius: '10px', cursor: 'pointer', display: 'flex', alignItems: 'center', boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)' }}>
+                        View History
                     <FaEye style={{ marginLeft: '10px' }} />
                 </button>
             </div>

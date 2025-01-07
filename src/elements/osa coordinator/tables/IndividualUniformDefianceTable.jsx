@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Table } from 'react-bootstrap';
 import { useParams } from 'react-router-dom';
-
 import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 
@@ -16,9 +15,11 @@ const IndividualUniformDefianceTable = ({ handleShowDetailsModal }) => {
     const [rowsPerPage, setRowsPerPage] = useState(10);
 
     // Sorting states
-    const [sortOrderSlipId, setSortOrderSlipId] = useState('asc'); // 'asc' for ascending, 'desc' for descending
-    const [sortOrderDate, setSortOrderDate] = useState('asc'); // 'asc' for ascending, 'desc' for descending
+    const [sortOrderSlipId, setSortOrderSlipId] = useState('asc'); 
+    const [sortOrderDate, setSortOrderDate] = useState('asc'); 
 
+
+    // Fetch the uniform defiances
     useEffect(() => {
         const fetchDefiances = async () => {
             try {
@@ -41,6 +42,8 @@ const IndividualUniformDefianceTable = ({ handleShowDetailsModal }) => {
         }
     }, [student_idnumber]);
 
+
+    // Set the styles for the status
     const renderStatus = (status) => {
         let backgroundColor, textColor;
         if (status === 'approved') {
@@ -56,7 +59,6 @@ const IndividualUniformDefianceTable = ({ handleShowDetailsModal }) => {
             backgroundColor = '#EDEDED';
             textColor = '#6C757D';
         }
-
         return (
             <div style={{
                 backgroundColor,
@@ -83,6 +85,7 @@ const IndividualUniformDefianceTable = ({ handleShowDetailsModal }) => {
     // Filter for active status
     const approvedDefiances = defiances.filter(defiance => defiance.status === 'approved');
 
+
     // Sort defiances based on slip_id
     const handleSortSlipId = () => {
         const sortedDefiances = [...approvedDefiances];
@@ -94,7 +97,6 @@ const IndividualUniformDefianceTable = ({ handleShowDetailsModal }) => {
 
             return sortOrderSlipId === 'asc' ? slipIdA - slipIdB : slipIdB - slipIdA;
         });
-
         setDefiances(sortedDefiances);
         setSortOrderSlipId(sortOrderSlipId === 'asc' ? 'desc' : 'asc');
     };
@@ -102,51 +104,44 @@ const IndividualUniformDefianceTable = ({ handleShowDetailsModal }) => {
     const handleSortDate = () => {
         const sortedDefiances = [...approvedDefiances];
         sortedDefiances.sort((a, b) => {
-            const dateA = new Date(a.updated_at); // Convert to Date object for comparison
+            const dateA = new Date(a.updated_at); 
             const dateB = new Date(b.updated_at);
 
-            // Compare dates including time
             return sortOrderDate === 'asc' ? dateA - dateB : dateB - dateA;
         });
-
         setDefiances(sortedDefiances);
         setSortOrderDate(sortOrderDate === 'asc' ? 'desc' : 'asc');
     };
 
-    // Calculate paginated defiances
+
+    // Pagination Logic
     const indexOfLastDefiance = currentPage * rowsPerPage;
     const indexOfFirstDefiance = indexOfLastDefiance - rowsPerPage;
     const currentDefiances = approvedDefiances.slice(indexOfFirstDefiance, indexOfLastDefiance);
-
     const totalPages = Math.ceil(approvedDefiances.length / rowsPerPage);
 
-    // Handle pagination change
     const handlePaginationChange = (pageNumber) => {
         setCurrentPage(pageNumber);
     };
 
-
-  const handleRowsPerPageChange = (e) => {
+    const handleRowsPerPageChange = (e) => {
     setRowsPerPage(Number(e.target.value));
     setCurrentPage(1);
-  };
+    };
 
-
-
-    // Render Custom Pagination
     const renderPagination = () => {
         const pageNumbers = Array.from({ length: totalPages }, (_, i) => i + 1);
     
         const buttonStyle = {
-        width: '30px', // Fixed width for equal size
-        height: '30px', // Fixed height for equal size
+        width: '30px', 
+        height: '30px', 
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
         border: '1px solid #a0a0a0',
         backgroundColor: '#ebebeb',
         color: '#4a4a4a',
-        fontSize: '0.75rem', // Smaller font size
+        fontSize: '0.75rem', 
         cursor: 'pointer',
         };
     
@@ -163,7 +158,7 @@ const IndividualUniformDefianceTable = ({ handleShowDetailsModal }) => {
         cursor: 'not-allowed',
         };
     
-        return (
+    return (
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '15px', fontSize: '14px', color: '#4a4a4a'}}>
             {/* Results per Page */}
             <div>
@@ -172,13 +167,7 @@ const IndividualUniformDefianceTable = ({ handleShowDetailsModal }) => {
                     id="rowsPerPage"
                     value={rowsPerPage}
                     onChange={handleRowsPerPageChange}
-                    style={{
-                        fontSize: '14px',
-                        padding: '5px 25px',
-                        border: '1px solid #ccc',
-                        borderRadius: '3px',
-                    }}
-                >
+                    style={{ fontSize: '14px', padding: '5px 25px', border: '1px solid #ccc', borderRadius: '3px' }}>
                     {Array.from({ length: 10 }, (_, i) => (i + 1) * 10).map((value) => (
                         <option key={value} value={value}> {value} </option>
                     ))}
@@ -233,10 +222,10 @@ const IndividualUniformDefianceTable = ({ handleShowDetailsModal }) => {
             </div>
         </div>
     );
-    };
+};
 
 
-    // Render Table
+// Render the individual uniform defiances table
     const renderTable = () => {
         if (loading) {
             return <div>Loading...</div>;
@@ -257,18 +246,9 @@ const IndividualUniformDefianceTable = ({ handleShowDetailsModal }) => {
                     <tr>
                         <th style={{ width: '5%' }}>
                             <button
-                                style={{
-                                    border: 'none',
-                                    background: 'none',
-                                    cursor: 'pointer',
-                                    display: 'flex',
-                                    flexDirection: 'row',
-                                    justifyContent: 'center',
-                                    alignItems: 'center',
-                                    width: '100%',
-                                }}
+                                style={{ border: 'none', background: 'none', cursor: 'pointer', display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center', width: '100%' }}
                                 onClick={handleSortSlipId}
-                            >
+                                >
                                 <span style={{ textAlign: 'center' }}>ID</span>
                                 {sortOrderSlipId === 'asc' ? (
                                     <ArrowDropUpIcon style={{ marginLeft: '5px' }} />
@@ -278,19 +258,9 @@ const IndividualUniformDefianceTable = ({ handleShowDetailsModal }) => {
                             </button>
                         </th>
                         <th style={{ width: '23%' }}>
-                            <button
-                                style={{
-                                    border: 'none',
-                                    background: 'none',
-                                    cursor: 'pointer',
-                                    display: 'flex',
-                                    flexDirection: 'row',
-                                    justifyContent: 'center',
-                                    alignItems: 'center',
-                                    width: '100%',
-                                }}
+                            <button style={{ border: 'none', background: 'none', cursor: 'pointer', display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center', width: '100%' }}
                                 onClick={handleSortDate}
-                            >
+                                >
                                 <span>Date</span>
                                 {sortOrderDate === 'asc' ? (
                                     <ArrowDropUpIcon style={{ marginLeft: '5px' }} />
@@ -307,7 +277,6 @@ const IndividualUniformDefianceTable = ({ handleShowDetailsModal }) => {
                 </thead>
                 <tbody>
                     {currentDefiances.map((defiance, index) => {
-                        // Ordinal to indicate occurrence
                         const getOrdinalWord = (num) => {
                             const ordinalWords = [
                                 "first", "second", "third", "fourth", "fifth", "sixth", "seventh", "eighth", "ninth", "tenth", 
@@ -342,29 +311,13 @@ const IndividualUniformDefianceTable = ({ handleShowDetailsModal }) => {
                                 <td>{new Date(defiance.updated_at).toLocaleString()}</td>
                                 <td>{defiance.nature_name}</td>
                                 <td style={{ textAlign: 'center' }}>
-                                    <div
-                                        onClick={() => handleShowDetailsModal(defiance)}
-                                        style={{ cursor: 'pointer', color: '#000000', textDecoration: 'underline', fontWeight: 'bold' }}
-                                    >
+                                    <div onClick={() => handleShowDetailsModal(defiance)} style={{ cursor: 'pointer', color: '#000000', textDecoration: 'underline', fontWeight: 'bold' }}>
                                         View
                                     </div>
                                 </td>
                                 <td style={{ textAlign: 'center' }}>{renderStatus(defiance.status)}</td>
                                 <td style={{ textAlign: 'center' }}>
-                                    <div
-                                        style={{
-                                            borderRadius: '30px',
-                                            padding: '5px 20px',
-                                            backgroundColor: countColor,
-                                            color: countTextColor,
-                                            display: 'inline-flex',
-                                            alignItems: 'center',
-                                            justifyContent: 'center',
-                                            fontSize: '14px',
-                                            fontWeight: '600',
-                                            width: '80px',
-                                        }}
-                                    >
+                                    <div style={{ borderRadius: '30px', padding: '5px 20px', backgroundColor: countColor, color: countTextColor, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontSize: '14px', fontWeight: '600', width: '80px' }}>
                                         {ordinalCount}
                                     </div>
                                 </td>
@@ -378,6 +331,7 @@ const IndividualUniformDefianceTable = ({ handleShowDetailsModal }) => {
     };
 
 
+    // Render the individual uniform defiances table
     return (
         <div>
             {renderTable()}
@@ -385,5 +339,6 @@ const IndividualUniformDefianceTable = ({ handleShowDetailsModal }) => {
         </div>
     );
 };
+
 
 export default IndividualUniformDefianceTable;

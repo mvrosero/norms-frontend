@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
-import { Modal, Button, Table } from 'react-bootstrap';
+import { Button, Table } from 'react-bootstrap';
 import Swal from 'sweetalert2';
+
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import PersonIcon from '@mui/icons-material/Person';
@@ -25,13 +26,16 @@ const ArchivesTable = () => {
     const [selectedStudentIds, setSelectedStudentIds] = useState([]);
     const [selectAll, setSelectAll] = useState(false);
 
+
     // Pagination State
     const [currentPage, setCurrentPage] = useState(1);
     const [rowsPerPage, setRowsPerPage] = useState(10);
 
     // Sorting state for full name
-    const [sortOrder, setSortOrder] = useState('asc'); // 'asc' for ascending, 'desc' for descending
+    const [sortOrder, setSortOrder] = useState('asc'); 
 
+
+    // Fetch the students
     const fetchUsers = useCallback(async () => {
         try {
             const response = await axios.get('http://localhost:9000/students-archived', { headers });
@@ -43,6 +47,7 @@ const ArchivesTable = () => {
     }, [headers]);
 
 
+    // Fetch the departments
     const fetchDepartments = useCallback(async () => {
         try {
             const response = await axios.get('http://localhost:9000/departments', { headers });
@@ -54,6 +59,7 @@ const ArchivesTable = () => {
     }, [headers]);
 
 
+    // Fetch the programs
     const fetchPrograms = useCallback(async () => {
         try {
             const response = await axios.get('http://localhost:9000/programs', { headers });
@@ -63,7 +69,6 @@ const ArchivesTable = () => {
             Swal.fire('Error', 'Failed to fetch programs.', 'error');
         }
     }, [headers]);
-
 
     useEffect(() => {
         fetchUsers();
@@ -77,20 +82,17 @@ const ArchivesTable = () => {
         setShowReadModal(true);
     };
 
-
     const handleReadModalClose = () => setShowReadModal(false);
-
 
     const handleUpdateModalShow = (user) => {
         setSelectedUser(user);
         setShowUpdateModal(true);
     };
 
-
     const handleUpdateModalClose = () => setShowUpdateModal(false);
 
 
-// batch delete
+    // Handle the delete student
     const deleteUser = async (userId) => {
       const isConfirm = await Swal.fire({
           title: 'Are you sure you want to delete this user?',
@@ -106,7 +108,6 @@ const ArchivesTable = () => {
       if (!isConfirm) {
           return;
       }
-
         try {
             await axios.delete(`http://localhost:9000/student/${userId}`, { headers });
             Swal.fire({
@@ -125,6 +126,18 @@ const ArchivesTable = () => {
     };
 
 
+    // Handle selecting individual users
+    const handleSelectUser = (userId) => {
+        setSelectedStudentIds((prevSelectedIds) => {
+        if (prevSelectedIds.includes(userId)) {
+            return prevSelectedIds.filter(id => id !== userId);
+        } else {
+            return [...prevSelectedIds, userId];
+        }
+        });
+    };
+
+
     // Handle "Select All" checkbox
     const handleSelectAll = () => {
       if (selectAll) {
@@ -136,6 +149,8 @@ const ArchivesTable = () => {
       setSelectAll(!selectAll);
       };
 
+
+    // Handle the batch delete students
       const handleBatchDelete = async () => {
         const isConfirm = await Swal.fire({
             title: 'Are you sure you want to delete these users?',
@@ -158,11 +173,9 @@ const ArchivesTable = () => {
                 icon: 'success',
                 text: 'Successfully deleted selected students.'
             });
-    
-            // Trigger window reload
             window.location.reload();
-    
-            setSelectedStudentIds([]);  // Clear the selection after deletion
+
+            setSelectedStudentIds([]);  
         } catch (error) {
             console.error('Error deleting students:', error.response?.data || error.message);
             Swal.fire({
@@ -173,18 +186,6 @@ const ArchivesTable = () => {
     };
     
     
-  // Handle selecting individual users
-  const handleSelectUser = (userId) => {
-    setSelectedStudentIds((prevSelectedIds) => {
-      if (prevSelectedIds.includes(userId)) {
-        return prevSelectedIds.filter(id => id !== userId);
-      } else {
-        return [...prevSelectedIds, userId];
-      }
-    });
-  };
-
-
     // Sort users based on full name
     const handleSortFullName = () => {
         const sortedUsers = [...users];
@@ -199,36 +200,32 @@ const ArchivesTable = () => {
           }
         });
         setUsers(sortedUsers);
-        setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc'); // Toggle sort order
+        setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc'); 
       };
 
+    // Sort users based on idnumber
+    const handleSortIdNumber = () => {
+    const sortedUsers = [...users];
+    sortedUsers.sort((a, b) => {
+        const idNumberA = parseInt(a.student_idnumber, 10);
+        const idNumberB = parseInt(b.student_idnumber, 10);
 
-      // Sort users based on idnumber
-      const handleSortIdNumber = () => {
-        const sortedUsers = [...users];
-        sortedUsers.sort((a, b) => {
-            // Parse student_idnumber as integers to ensure numeric sorting
-            const idNumberA = parseInt(a.student_idnumber, 10);
-            const idNumberB = parseInt(b.student_idnumber, 10);
-    
-            // Check if the parsed values are valid numbers
-            if (isNaN(idNumberA) || isNaN(idNumberB)) {
-                return 0; // If the values are invalid, maintain the order
-            }
-    
-            // Compare numeric values for sorting
-            if (sortOrder === 'asc') {
-                return idNumberA - idNumberB; // Ascending order
-            } else {
-                return idNumberB - idNumberA; // Descending order
-            }
-        });
-        setUsers(sortedUsers);
-        setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc'); // Toggle sort order
-    };
+        if (isNaN(idNumberA) || isNaN(idNumberB)) {
+            return 0; 
+        }
+
+        if (sortOrder === 'asc') {
+            return idNumberA - idNumberB; 
+        } else {
+            return idNumberB - idNumberA; 
+        }
+    });
+    setUsers(sortedUsers);
+    setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc'); 
+};
     
 
-  // Pagination
+  // Pagination logic
   const indexOfLastUser = currentPage * rowsPerPage;
   const indexOfFirstUser = indexOfLastUser - rowsPerPage;
   const currentUsers = users.slice(indexOfFirstUser, indexOfLastUser);
@@ -243,21 +240,19 @@ const ArchivesTable = () => {
     setCurrentPage(1);
   };
 
-
-  // Render Custom Pagination
 const renderPagination = () => {
   const pageNumbers = Array.from({ length: totalPages }, (_, i) => i + 1);
 
   const buttonStyle = {
-    width: '30px', // Fixed width for equal size
-    height: '30px', // Fixed height for equal size
+    width: '30px', 
+    height: '30px', 
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
     border: '1px solid #a0a0a0',
     backgroundColor: '#ebebeb',
     color: '#4a4a4a',
-    fontSize: '0.75rem', // Smaller font size
+    fontSize: '0.75rem', 
     cursor: 'pointer',
   };
 
@@ -283,16 +278,9 @@ const renderPagination = () => {
                 id="rowsPerPage"
                 value={rowsPerPage}
                 onChange={handleRowsPerPageChange}
-                style={{
-                    fontSize: '14px',
-                    padding: '5px 25px',
-                    border: '1px solid #ccc',
-                    borderRadius: '3px',
-                }}
-            >
+                style={{ fontSize: '14px', padding: '5px 25px', border: '1px solid #ccc', borderRadius: '3px' }}>
                 {Array.from({ length: 10 }, (_, i) => (i + 1) * 10).map((value) => (
-                    <option key={value} value={value}> {value} </option>
-                ))}
+                    <option key={value} value={value}> {value} </option>))}
             </select>
         </div>
 
@@ -347,25 +335,18 @@ const renderPagination = () => {
 };
 
 
-    // Render Table
-    const renderTable = () => {
+// Render the archives table
+const renderTable = () => {
         return (
                 <Table bordered hover responsive style={{ borderRadius: '20px', marginBottom: '20px', marginLeft: '110px' }}>
                     <thead>
                         <tr>
-                            <th style={{ width: '3%' }}>
-                                <input
-                                    type="checkbox"
-                                    checked={selectAll}
-                                    onChange={handleSelectAll}
-                                />
-                            </th>
+                            <th style={{ width: '3%' }}> <input type="checkbox" checked={selectAll} onChange={handleSelectAll}/> </th>
                             <th style={{ textAlign: 'center', padding: '0', verticalAlign: 'middle', width: '11%' }}>
                               <button
-                                  style={{ border: 'none', background: 'none', cursor: 'pointer', display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center', width: '100%', 
-                                  }}
+                                  style={{ border: 'none', background: 'none', cursor: 'pointer', display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center', width: '100%' }}
                                   onClick={handleSortIdNumber}
-                              >
+                                  >
                                   <span style={{ textAlign: 'center' }}>ID Number</span>
                                   {sortOrder === 'asc' ? (
                                   <ArrowDropUpIcon style={{ marginLeft: '5px' }} />
@@ -373,13 +354,12 @@ const renderPagination = () => {
                                   <ArrowDropDownIcon style={{ marginLeft: '5px' }} />
                                   )}
                               </button>
-                              </th>
+                            </th>
                             <th style={{ textAlign: 'center', padding: '0', verticalAlign: 'middle' }}>
                                 <button
-                                    style={{ border: 'none', background: 'none', cursor: 'pointer', display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center', width: '100%', 
-                                    }}
+                                    style={{ border: 'none', background: 'none', cursor: 'pointer', display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center', width: '100%' }}
                                     onClick={handleSortFullName}
-                                >
+                                    >
                                     <span style={{ textAlign: 'center' }}>Full Name</span>
                                     {sortOrder === 'asc' ? (
                                     <ArrowDropUpIcon style={{ marginLeft: '5px' }} />
@@ -397,60 +377,54 @@ const renderPagination = () => {
                     </thead>
                     <tbody>
                     {currentUsers.map(user => (
-                            <tr key={user.student_idnumber}>
-                              <td>
-                                <input
-                                  type="checkbox"
-                                  checked={selectedStudentIds.includes(user.student_idnumber)}
-                                  onChange={() => handleSelectUser(user.student_idnumber)}
-                                />
-                              </td>
-                                <td>{user.student_idnumber}</td>
-                                <td>{`${user.first_name} ${user.middle_name || ''} ${user.last_name} ${user.suffix || ''}`}</td>
-                                <td>{user.year_level}</td>
-                                <td>{departments.find(department => department.department_id === user.department_id)?.department_name || ''}</td>
-                                <td>{programs.find(program => program.program_id === user.program_id)?.program_name || ''}</td>
-                                <td style={{ textAlign: 'center' }}>
+                        <tr key={user.student_idnumber}>
+                            <td> <input type="checkbox" checked={selectedStudentIds.includes(user.student_idnumber)} onChange={() => handleSelectUser(user.student_idnumber)}/> </td>
+                            <td>{user.student_idnumber}</td>
+                            <td>{`${user.first_name} ${user.middle_name || ''} ${user.last_name} ${user.suffix || ''}`}</td>
+                            <td>{user.year_level}</td>
+                            <td>{departments.find(department => department.department_id === user.department_id)?.department_name || ''}</td>
+                            <td>{programs.find(program => program.program_id === user.program_id)?.program_name || ''}</td>
+                            <td style={{ textAlign: 'center' }}>
+                                <div style={{
+                                    backgroundColor: 
+                                        user.status === 'active' ? '#DBF0DC' :
+                                        user.status === 'archived' ? '#E0E0E0' : '#F0DBDB',
+                                    color: 
+                                        user.status === 'active' ? '#30A530' :
+                                        user.status === 'archived' ? '#6C757D' : '#D9534F',
+                                    fontWeight: '600',
+                                    fontSize: '14px',
+                                    borderRadius: '30px',
+                                    padding: '5px 20px',
+                                    display: 'inline-flex',
+                                    alignItems: 'center',
+                                }}>
                                     <div style={{
+                                        width: '8px',
+                                        height: '8px',
+                                        borderRadius: '50%',
                                         backgroundColor: 
-                                            user.status === 'active' ? '#DBF0DC' :
-                                            user.status === 'archived' ? '#E0E0E0' : '#F0DBDB',
-                                        color: 
                                             user.status === 'active' ? '#30A530' :
                                             user.status === 'archived' ? '#6C757D' : '#D9534F',
-                                        fontWeight: '600',
-                                        fontSize: '14px',
-                                        borderRadius: '30px',
-                                        padding: '5px 20px',
-                                        display: 'inline-flex',
-                                        alignItems: 'center',
-                                    }}>
-                                        <div style={{
-                                            width: '8px',
-                                            height: '8px',
-                                            borderRadius: '50%',
-                                            backgroundColor: 
-                                                user.status === 'active' ? '#30A530' :
-                                                user.status === 'archived' ? '#6C757D' : '#D9534F',
-                                            marginRight: '7px',
-                                        }} />
-                                        {user.status}
-                                    </div>
-                                </td>
-                                <td>
-                                    <div className="d-flex justify-content-around">
-                                        <Button className='btn btn-secondary btn-sm' onClick={() => handleReadModalShow(user)}>
-                                            <PersonIcon />
-                                        </Button>
-                                        <Button className='btn btn-success btn-sm' onClick={() => handleUpdateModalShow(user)}>
-                                            <EditIcon />
-                                        </Button>      
-                                        <Button className="btn btn-danger btn-sm" onClick={() => deleteUser(user.user_id)}>
-                                          <DeleteIcon />
-                                        </Button>
-                                    </div>
-                                </td>
-                            </tr>
+                                        marginRight: '7px',
+                                    }} />
+                                    {user.status}
+                                </div>
+                            </td>
+                            <td>
+                                <div className="d-flex justify-content-around">
+                                    <Button className='btn btn-secondary btn-sm' onClick={() => handleReadModalShow(user)}>
+                                        <PersonIcon />
+                                    </Button>
+                                    <Button className='btn btn-success btn-sm' onClick={() => handleUpdateModalShow(user)}>
+                                        <EditIcon />
+                                    </Button>      
+                                    <Button className="btn btn-danger btn-sm" onClick={() => deleteUser(user.user_id)}>
+                                        <DeleteIcon />
+                                    </Button>
+                                </div>
+                            </td>
+                        </tr>
                         ))}
                     </tbody>
                 </Table>
@@ -465,13 +439,11 @@ const renderPagination = () => {
                 selectedItemsCount={selectedStudentIds.length}
                 selectedStudentIds={selectedStudentIds}
                 onDelete={handleBatchDelete}
-
                 />
             )}  
 
             {renderTable()}
 
-            {/* Custom Pagination */}
             {renderPagination()}
 
             {/* View Student Modal */}
@@ -483,15 +455,15 @@ const renderPagination = () => {
                 programs={programs}
             />
 
-              {/* Edit Student Modal */}
-              <EditStudentModal
-                    show={showUpdateModal}
-                    onHide={handleUpdateModalClose} 
-                    user={selectedUser}
-                    fetchUsers={fetchUsers}
-                    departments={departments} 
-                    programs={programs} 
-              />
+            {/* Edit Student Modal */}
+            <EditStudentModal
+                show={showUpdateModal}
+                onHide={handleUpdateModalClose} 
+                user={selectedUser}
+                fetchUsers={fetchUsers}
+                departments={departments} 
+                programs={programs} 
+            />
         </div>
     );
 };

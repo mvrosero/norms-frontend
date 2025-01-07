@@ -35,6 +35,7 @@ const ViewIndividualUniformDefianceModal = ({ show, onHide, selectedRecord }) =>
         return null;
     };
 
+
     const renderStatus = (status) => {
         let backgroundColor, textColor;
         if (status === 'approved') {
@@ -50,7 +51,6 @@ const ViewIndividualUniformDefianceModal = ({ show, onHide, selectedRecord }) =>
             backgroundColor = '#EDEDED';
             textColor = '#6C757D'; 
         }
-
         return (
             <div style={{
                 backgroundColor,
@@ -77,26 +77,12 @@ const ViewIndividualUniformDefianceModal = ({ show, onHide, selectedRecord }) =>
 
     return (
         <Modal show={show} onHide={onHide} size="lg">
-            {/* Modal Header */}
             <Modal.Header>
-                {/* Custom "X" Close Icon */}
-                <Button
-                    variant="link"
-                    onClick={onHide}
-                    style={{
-                        position: 'absolute',
-                        top: '5px',
-                        right: '20px',
-                        textDecoration: 'none',
-                        fontSize: '30px',
-                        color: '#a9a9a9',
-                    }}
-                >
+                <Button variant="link" onClick={onHide} style={{ position: 'absolute', top: '5px', right: '20px', textDecoration: 'none', fontSize: '30px', color: '#a9a9a9' }}>
                     ×
                 </Button>
                 <Modal.Title style={{ fontSize: '40px', marginBottom: '10px', marginLeft: '90px', marginRight: '90px' }}>VIEW UNIFORM DEFIANCE</Modal.Title>
             </Modal.Header>
-            {/* Modal Body */}
             <Modal.Body>
                 {selectedRecord ? (
                     <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', rowGap: '10px', marginLeft: '20px', marginRight: '20px' }}>
@@ -152,5 +138,6 @@ const ViewIndividualUniformDefianceModal = ({ show, onHide, selectedRecord }) =>
         </Modal>
     );
 };
+
 
 export default ViewIndividualUniformDefianceModal;

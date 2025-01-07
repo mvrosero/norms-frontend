@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import axios from 'axios';
-import { Modal, Button, Table } from 'react-bootstrap';
+import { Table } from 'react-bootstrap';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
+
 import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import { FaPlus } from 'react-icons/fa';
@@ -13,8 +14,8 @@ import SearchAndFilter from '../../../pages/general/SearchAndFilter';
 import DepartmentalCreateViolationModal from '../modals/DepartmentalCreateViolationModal';
 
 const DepartmentalStudentRecordsTable = () => {
-    const { department_code } = useParams(); // Get department_code from URL
-    const navigate = useNavigate(); // Add useNavigate hook
+    const { department_code } = useParams(); 
+    const navigate = useNavigate(); 
     const [users, setUsers] = useState([]);
     const [departments, setDepartments] = useState([]);
     const [programs, setPrograms] = useState([]);
@@ -22,7 +23,7 @@ const DepartmentalStudentRecordsTable = () => {
     const [showReadModal, setShowReadModal] = useState(false);
     const [selectedUser, setSelectedUser] = useState(null);
     const [deletionStatus, setDeletionStatus] = useState(false);
-    const [showViolationModal, setShowViolationModal] = useState(false); // New state for violation modal
+    const [showViolationModal, setShowViolationModal] = useState(false); 
 
     const headers = useMemo(() => {
         const token = localStorage.getItem('token');
@@ -35,23 +36,22 @@ const DepartmentalStudentRecordsTable = () => {
     const [rowsPerPage, setRowsPerPage] = useState(10);
 
     // Sorting state for full name
-    const [sortOrder, setSortOrder] = useState('asc'); // 'asc' for ascending, 'desc' for descending
+    const [sortOrder, setSortOrder] = useState('asc'); 
 
 
+    // Fetch the students
     const fetchUsers = useCallback(async () => {
         try {
             const response = await axios.get(`http://localhost:9000/coordinator-studentrecords/${department_code}`, { headers });
             
-            // Set users to an empty array if no data is returned
             if (response.data.length === 0) {
                 setUsers([]);
             } else {
                 setUsers(response.data);
             }
         } catch (error) {
-            // Only show error alert if it's not a 404 (no users found)
             if (error.response && error.response.status === 404) {
-                setUsers([]); // No users found for the department
+                setUsers([]); 
             } else {
                 console.error('Error fetching users:', error);
                 Swal.fire('Error', 'Failed to fetch users.', 'error');
@@ -60,6 +60,7 @@ const DepartmentalStudentRecordsTable = () => {
     }, [headers, department_code, deletionStatus]);
     
 
+    // Fetch the departments
     const fetchDepartments = useCallback(async () => {
         try {
             const response = await axios.get('http://localhost:9000/departments', { headers });
@@ -77,6 +78,8 @@ const DepartmentalStudentRecordsTable = () => {
         }
     }, [headers, department_code]);
 
+
+    // Fetch the student programs
     const fetchPrograms = useCallback(async () => {
         try {
             const response = await axios.get('http://localhost:9000/programs', { headers });
@@ -97,11 +100,13 @@ const DepartmentalStudentRecordsTable = () => {
         return program ? program.program_name : '';
     };
 
+
+    // Handle redirect to selected student
     const handleRedirect = async (student_idnumber) => {
         try {
             const response = await axios.get(`http://localhost:9000/student/${student_idnumber}`);
             const student = response.data;
-            localStorage.setItem('selectedStudent', JSON.stringify(student)); // Store selected student data in localStorage
+            localStorage.setItem('selectedStudent', JSON.stringify(student)); 
             navigate(`/individualstudentrecord/${student_idnumber}`);
         } catch (error) {
             console.error('Error fetching student:', error);
@@ -112,141 +117,107 @@ const DepartmentalStudentRecordsTable = () => {
         }
     };
 
+
     const handleReadModalShow = (user) => {
-        handleRedirect(user.student_idnumber); // Use handleRedirect instead
+        handleRedirect(user.student_idnumber); 
     };
 
     const handleReadModalClose = () => {
         setShowReadModal(false);
     };
     
-
-    const deleteUser = async (userId) => {
-        const isConfirm = await Swal.fire({
-            title: 'Are you sure?',
-            text: "You won't be able to revert this!",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Yes, Delete it!'
-        }).then(result => result.isConfirmed);
-
-        if (!isConfirm) {
-            return;
-        }
-
-        try {
-            const response = await axios.delete(`http://localhost:9000/student/${userId}`);
-            if (response.status === 200) {
-                Swal.fire('Success', 'Successfully Deleted', 'success');
-                setDeletionStatus(prevStatus => !prevStatus);
-                setUsers(prevUsers => prevUsers.filter(user => user.user_id !== userId));
-            } else {
-                throw new Error('Failed to delete');
-            }
-        } catch (error) {
-            console.error('Error deleting user:', error);
-            Swal.fire('Error', 'An error occurred while deleting user.', 'error');
-        }
-    };
-
     const handleCreateViolation = () => {
-        setShowViolationModal(true); // Show the modal for creating a violation record
+        setShowViolationModal(true); 
     };
 
     const handleCloseModal = () => {
-        setShowViolationModal(false); // Hide the modal
+        setShowViolationModal(false); 
     };
 
 
-        // Sort users based on full name
-        const handleSortFullName = () => {
-            const sortedUsers = [...users];
-            sortedUsers.sort((a, b) => {
-              const fullNameA = `${a.first_name} ${a.middle_name || ''} ${a.last_name} ${a.suffix || ''}`.toLowerCase();
-              const fullNameB = `${b.first_name} ${b.middle_name || ''} ${b.last_name} ${b.suffix || ''}`.toLowerCase();
-        
-              if (sortOrder === 'asc') {
-                return fullNameA.localeCompare(fullNameB);
-              } else {
-                return fullNameB.localeCompare(fullNameA);
-              }
-            });
-            setUsers(sortedUsers);
-            setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc'); // Toggle sort order
-          };
+    // Sort users based on full name
+    const handleSortFullName = () => {
+        const sortedUsers = [...users];
+        sortedUsers.sort((a, b) => {
+            const fullNameA = `${a.first_name} ${a.middle_name || ''} ${a.last_name} ${a.suffix || ''}`.toLowerCase();
+            const fullNameB = `${b.first_name} ${b.middle_name || ''} ${b.last_name} ${b.suffix || ''}`.toLowerCase();
     
-    
-          // Sort users based on idnumber
-          const handleSortIdNumber = () => {
-            const sortedUsers = [...users];
-            sortedUsers.sort((a, b) => {
-                // Parse student_idnumber as integers to ensure numeric sorting
-                const idNumberA = parseInt(a.student_idnumber, 10);
-                const idNumberB = parseInt(b.student_idnumber, 10);
-        
-                // Check if the parsed values are valid numbers
-                if (isNaN(idNumberA) || isNaN(idNumberB)) {
-                    return 0; // If the values are invalid, maintain the order
-                }
-        
-                // Compare numeric values for sorting
-                if (sortOrder === 'asc') {
-                    return idNumberA - idNumberB; // Ascending order
-                } else {
-                    return idNumberB - idNumberA; // Descending order
-                }
-            });
-            setUsers(sortedUsers);
-            setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc'); // Toggle sort order
+            if (sortOrder === 'asc') {
+            return fullNameA.localeCompare(fullNameB);
+            } else {
+            return fullNameB.localeCompare(fullNameA);
+            }
+        });
+        setUsers(sortedUsers);
+        setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc'); 
         };
+
+    // Sort users based on idnumber
+    const handleSortIdNumber = () => {
+    const sortedUsers = [...users];
+    sortedUsers.sort((a, b) => {
+        const idNumberA = parseInt(a.student_idnumber, 10);
+        const idNumberB = parseInt(b.student_idnumber, 10);
+
+        if (isNaN(idNumberA) || isNaN(idNumberB)) {
+            return 0; 
+        }
+
+        if (sortOrder === 'asc') {
+            return idNumberA - idNumberB; 
+        } else {
+            return idNumberB - idNumberA; 
+        }
+    });
+    setUsers(sortedUsers);
+    setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc'); 
+    };
         
     
- // Pagination
- const indexOfLastUser = currentPage * rowsPerPage;
- const indexOfFirstUser = indexOfLastUser - rowsPerPage;
- const currentUsers = users.slice(indexOfFirstUser, indexOfLastUser);
- const totalPages = Math.ceil(users.length / rowsPerPage);
+    // Pagination logic
+    const indexOfLastUser = currentPage * rowsPerPage;
+    const indexOfFirstUser = indexOfLastUser - rowsPerPage;
+    const currentUsers = users.slice(indexOfFirstUser, indexOfLastUser);
+    const totalPages = Math.ceil(users.length / rowsPerPage);
 
- const handlePaginationChange = (pageNumber) => {
-   setCurrentPage(pageNumber);
- };
-
- const handleRowsPerPageChange = (e) => {
-   setRowsPerPage(Number(e.target.value));
-   setCurrentPage(1);
- };
-
-
- const renderPagination = () => {
-    const pageNumbers = Array.from({ length: totalPages }, (_, i) => i + 1);
-
-    const buttonStyle = {
-        width: '30px', // Fixed width for equal size
-        height: '30px', // Fixed height for equal size
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        border: '1px solid #a0a0a0',
-        backgroundColor: '#ebebeb',
-        color: '#4a4a4a',
-        fontSize: '0.75rem', // Smaller font size
-        cursor: 'pointer',
+    const handlePaginationChange = (pageNumber) => {
+    setCurrentPage(pageNumber);
     };
 
-    const activeButtonStyle = {
-        ...buttonStyle,
-        backgroundColor: '#a0a0a0',
-        color: '#f1f1f1',
+    const handleRowsPerPageChange = (e) => {
+    setRowsPerPage(Number(e.target.value));
+    setCurrentPage(1);
     };
 
-    const disabledButtonStyle = {
-        ...buttonStyle,
-        backgroundColor: '#ebebeb',
-        color: '#a1a1a1',
-        cursor: 'not-allowed',
-    };
+
+    const renderPagination = () => {
+        const pageNumbers = Array.from({ length: totalPages }, (_, i) => i + 1);
+
+        const buttonStyle = {
+            width: '30px', 
+            height: '30px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            border: '1px solid #a0a0a0',
+            backgroundColor: '#ebebeb',
+            color: '#4a4a4a',
+            fontSize: '0.75rem', 
+            cursor: 'pointer',
+        };
+
+        const activeButtonStyle = {
+            ...buttonStyle,
+            backgroundColor: '#a0a0a0',
+            color: '#f1f1f1',
+        };
+
+        const disabledButtonStyle = {
+            ...buttonStyle,
+            backgroundColor: '#ebebeb',
+            color: '#a1a1a1',
+            cursor: 'not-allowed',
+        };
 
     return (
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '15px', fontSize: '14px', color: '#4a4a4a'}}>
@@ -257,16 +228,9 @@ const DepartmentalStudentRecordsTable = () => {
                     id="rowsPerPage"
                     value={rowsPerPage}
                     onChange={handleRowsPerPageChange}
-                    style={{
-                        fontSize: '14px',
-                        padding: '5px 25px',
-                        border: '1px solid #ccc',
-                        borderRadius: '3px',
-                    }}
-                >
+                    style={{ fontSize: '14px', padding: '5px 25px', border: '1px solid #ccc', borderRadius: '3px' }}>
                     {Array.from({ length: 10 }, (_, i) => (i + 1) * 10).map((value) => (
-                        <option key={value} value={value}> {value} </option>
-                    ))}
+                        <option key={value} value={value}> {value} </option> ))}
                 </select>
             </div>
     
@@ -301,9 +265,7 @@ const DepartmentalStudentRecordsTable = () => {
                         </button>
                     ))}
                     <button
-                        onClick={() =>
-                            currentPage < totalPages && handlePaginationChange(currentPage + 1)
-                        }
+                        onClick={() => currentPage < totalPages && handlePaginationChange(currentPage + 1)}
                         disabled={currentPage === totalPages}
                         style={{
                             ...buttonStyle,
@@ -321,42 +283,37 @@ const DepartmentalStudentRecordsTable = () => {
 };
 
 
-
-  // Render Table
-  const renderTable = () => {
+// Render the student records table
+const renderTable = () => {
     return (
         <Table bordered hover responsive style={{ borderRadius: '20px', marginBottom: '20px', marginLeft: '110px' }}>
         <thead>
             <tr>
                 <th style={{ width: '4%'}}>No.</th>
                 <th style={{ textAlign: 'center', padding: '0', verticalAlign: 'middle', width: '11%' }}>
-            <button
-                style={{ border: 'none', background: 'none', cursor: 'pointer', display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center', width: '100%', 
-                }}
-                onClick={handleSortIdNumber}
-            >
-                <span style={{ textAlign: 'center' }}>ID Number</span>
-                {sortOrder === 'asc' ? (
-                <ArrowDropUpIcon style={{ marginLeft: '5px' }} />
-                ) : (
-                <ArrowDropDownIcon style={{ marginLeft: '5px' }} />
-                )}
-            </button>
-            </th>
-            <th style={{ textAlign: 'center', padding: '0', verticalAlign: 'middle' }}>
-            <button
-                style={{ border: 'none', background: 'none', cursor: 'pointer', display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center', width: '100%', 
-                }}
-                onClick={handleSortFullName}
-            >
-                <span style={{ textAlign: 'center' }}>Full Name</span>
-                {sortOrder === 'asc' ? (
-                <ArrowDropUpIcon style={{ marginLeft: '5px' }} />
-                ) : (
-                <ArrowDropDownIcon style={{ marginLeft: '5px' }} />
-                )}
-            </button>
-            </th>
+                    <button style={{ border: 'none', background: 'none', cursor: 'pointer', display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center', width: '100%' }}
+                        onClick={handleSortIdNumber}
+                        >
+                        <span style={{ textAlign: 'center' }}>ID Number</span>
+                        {sortOrder === 'asc' ? (
+                        <ArrowDropUpIcon style={{ marginLeft: '5px' }} />
+                        ) : (
+                        <ArrowDropDownIcon style={{ marginLeft: '5px' }} />
+                        )}
+                    </button>
+                </th>
+                <th style={{ textAlign: 'center', padding: '0', verticalAlign: 'middle' }}>
+                <button style={{ border: 'none', background: 'none', cursor: 'pointer', display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center', width: '100%' }}
+                        onClick={handleSortFullName}
+                        >
+                        <span style={{ textAlign: 'center' }}>Full Name</span>
+                        {sortOrder === 'asc' ? (
+                        <ArrowDropUpIcon style={{ marginLeft: '5px' }} />
+                        ) : (
+                        <ArrowDropDownIcon style={{ marginLeft: '5px' }} />
+                        )}
+                    </button>
+                </th>
                 <th style={{ width: '10%' }}>Year Level</th>
                 <th>Program</th>
                 <th style={{ width: '12%' }}>Status</th>
@@ -365,51 +322,29 @@ const DepartmentalStudentRecordsTable = () => {
         <tbody>
             {currentUsers.map((user, index) => (
                 <tr key={index}>
-                    {/* Display row count based on index */}
                     <td style={{ textAlign: 'center' }}>{index + 1}</td>
                     <td>{user.student_idnumber}</td>
                     <td>
-                        <a
-                            href="#"
+                        <a href="#"
                             onClick={() => handleReadModalShow(user)}
-                            style={{
-                            textDecoration: 'none',  // Start with no underline
-                            color: 'black',
-                            cursor: 'pointer',
-                            transition: 'color 0.3s ease, text-decoration 0.3s ease',  // Smooth transition
-                            }}
+                            style={{ textDecoration: 'none', color: 'black', cursor: 'pointer', transition: 'color 0.3s ease, text-decoration 0.3s ease' }}
                             onMouseEnter={(e) => {
-                            e.target.style.textDecoration = 'underline';  // Add underline on hover
-                            e.target.style.color = '#007bff';  // Change color to indicate hover
-                            }}
+                                e.target.style.textDecoration = 'underline';  
+                                e.target.style.color = '#007bff';  
+                                }}
                             onMouseLeave={(e) => {
-                            e.target.style.textDecoration = 'none';  // Remove underline when not hovering
-                            e.target.style.color = 'black';  // Revert to original color
-                            }}
+                                e.target.style.textDecoration = 'none';  
+                                e.target.style.color = 'black';  
+                                }}
                         >
                             {`${user.first_name} ${user.middle_name} ${user.last_name} ${user.suffix}`}
                         </a>
-                        </td>
+                    </td>
                     <td>{user.year_level}</td>
                     <td>{getProgramName(user.program_id)}</td>
                     <td style={{ textAlign: 'center' }}>
-                        <div style={{
-                            backgroundColor: user.status === 'active' ? '#DBF0DC' : '#F0DBDB',
-                            color: user.status === 'active' ? '#30A530' : '#D9534F',
-                            fontWeight: '600',
-                            fontSize: '14px',
-                            borderRadius: '30px',
-                            padding: '5px 20px',
-                            display: 'inline-flex',
-                            alignItems: 'center',
-                        }}>
-                            <div style={{
-                                width: '8px',
-                                height: '8px',
-                                borderRadius: '50%',
-                                backgroundColor: user.status === 'active' ? '#30A530' : '#D9534F',
-                                marginRight: '7px',
-                            }} />
+                        <div style={{ backgroundColor: user.status === 'active' ? '#DBF0DC' : '#F0DBDB', color: user.status === 'active' ? '#30A530' : '#D9534F', fontWeight: '600', fontSize: '14px', borderRadius: '30px', padding: '5px 20px', display: 'inline-flex', alignItems: 'center' }}>
+                            <div style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: user.status === 'active' ? '#30A530' : '#D9534F', marginRight: '7px' }} />
                             {user.status}
                         </div>
                     </td>
@@ -421,11 +356,11 @@ const DepartmentalStudentRecordsTable = () => {
 };
 
 
+return (
+    <>
+        <CoordinatorNavigation />
+        <CoordinatorInfo />
 
-    return (
-        <>
-            <CoordinatorNavigation />
-            <CoordinatorInfo />
             {/* Title Section */}
             <div style={{ width: '90%', margin: '0 auto', display: 'flex', justifyContent: 'flex-start' }}>
                 <h6 className="section-title" style={{ fontFamily: 'Poppins, sans-serif', color: '#242424', fontSize: '40px', fontWeight: 'bold', marginTop: '20px', marginLeft: '50px' }}> {departmentName || department_code || 'STUDENT RECORDS'} </h6>
@@ -436,20 +371,8 @@ const DepartmentalStudentRecordsTable = () => {
                 <div style={{ flex: '1 1 70%', minWidth: '300px' }}> <SearchAndFilter /> </div>
                 <button 
                     onClick={handleCreateViolation} 
-                    style={{
-                        backgroundColor: '#FAD32E',
-                        color: 'white',
-                        fontWeight: '900',
-                        padding: '12px 15px',
-                        border: 'none',
-                        borderRadius: '10px',
-                        cursor: 'pointer',
-                        display: 'flex',
-                        alignItems: 'center',
-                        boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
-                    }}
-                >
-                    Create Violation
+                    style={{ backgroundColor: '#FAD32E', color: 'white', fontWeight: '900', padding: '12px 15px', border: 'none', borderRadius: '10px', cursor: 'pointer', display: 'flex', alignItems: 'center', boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)' }}>
+                        Create Violation
                     <FaPlus style={{ marginLeft: '10px' }} />
                 </button>
             </div>
@@ -469,10 +392,8 @@ const DepartmentalStudentRecordsTable = () => {
 
             {renderTable()}
 
-            {/* Custom Pagination */}
             {renderPagination()}
 
-  
             {/*Create Violation Modal*/}
             <DepartmentalCreateViolationModal
                 show={showViolationModal} 
@@ -483,5 +404,6 @@ const DepartmentalStudentRecordsTable = () => {
         </>
     );
 };
+
 
 export default DepartmentalStudentRecordsTable;

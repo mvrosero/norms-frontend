@@ -6,7 +6,6 @@ import { faUserCog, faBuilding, faBook, faCalendarAlt, faChevronRight, faArchive
 import AdminNavigation from "./AdminNavigation";
 import AdminInfo from "./AdminInfo";
 
-
 export default function AdminSettings() {
     const navigate = useNavigate();
     const user_id = localStorage.getItem('user_id');
@@ -62,10 +61,10 @@ export default function AdminSettings() {
         marginBottom: '30px', 
     };
 
-    return (
-        <div style={{ marginLeft: '100px' }}>
-            <AdminNavigation />
-            <AdminInfo />
+return (
+    <div style={{ marginLeft: '100px' }}>
+        <AdminNavigation />
+        <AdminInfo />
             <h6 className="page-title"> SETTINGS </h6>
             <div className="container mt-4">
                 <div className="row" style={rowStyle}>
@@ -76,21 +75,21 @@ export default function AdminSettings() {
                             { path: '/manage-programs', icon: faBook, label: 'Manage Programs' },
                             { path: '/manage-academicyears', icon: faCalendarAlt, label: 'Manage Academic Years' },
                             { path: '/manage-archives', icon: faArchive, label: 'Manage Archives' },
-                        ].map(({ path, icon, label }, index) => (
-                            <div
-                                key={index}
-                                style={containerStyle}
-                                onClick={() => handleNavigation(path)}
-                                onMouseEnter={(e) => Object.assign(e.currentTarget.style, containerHoverStyle)}
-                                onMouseLeave={(e) => Object.assign(e.currentTarget.style, containerStyle)}
-                            >
-                                <div style={iconContainerStyle}>
-                                    <FontAwesomeIcon icon={icon} style={{ fontSize: '30px', color: '#1b1c1e' }} />
-                                </div>
-                                <h5 style={textStyle}>{label}</h5>
-                                <FontAwesomeIcon icon={faChevronRight} style={arrowStyle} />
-                            </div>
-                        ))}
+                                ].map(({ path, icon, label }, index) => (
+                                    <div
+                                        key={index}
+                                        style={containerStyle}
+                                        onClick={() => handleNavigation(path)}
+                                        onMouseEnter={(e) => Object.assign(e.currentTarget.style, containerHoverStyle)}
+                                        onMouseLeave={(e) => Object.assign(e.currentTarget.style, containerStyle)}
+                                    >
+                                        <div style={iconContainerStyle}>
+                                            <FontAwesomeIcon icon={icon} style={{ fontSize: '30px', color: '#1b1c1e' }} />
+                                        </div>
+                                        <h5 style={textStyle}>{label}</h5>
+                                        <FontAwesomeIcon icon={faChevronRight} style={arrowStyle} />
+                                    </div>
+                                ))}
                     </div>
                 </div>
             </div>

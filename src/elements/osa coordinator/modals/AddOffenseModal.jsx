@@ -147,4 +147,5 @@ const AddOffenseModal = ({ show, handleClose, offenseFormData, handleOffenseChan
     );
 };
 
+
 export default AddOffenseModal;

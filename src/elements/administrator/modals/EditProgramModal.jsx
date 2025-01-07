@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Modal, Form, Button, Row } from 'react-bootstrap';
+import '../../../styles/style.css'
 
 
 const inputStyle = {
@@ -18,35 +19,6 @@ const activeInputStyle = {
     border: '2px solid'
 };
 
-const buttonStyle = {
-    backgroundColor: '#3B71CA',
-    color: '#FFFFFF',
-    fontSize: '16px',
-    fontWeight: '900',
-    padding: '8px 25px',
-    border: 'none',
-    borderRadius: '10px',
-    cursor: 'pointer',
-    marginLeft: '10px',
-    display: 'flex',
-    alignItems: 'center',
-    boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
-};
-
-const cancelButtonStyle = {
-    backgroundColor: '#8C8C8C',
-    color: '#FFFFFF',
-    fontSize: '16px',
-    fontWeight: '900',
-    padding: '8px 25px',
-    border: 'none',
-    borderRadius: '10px',
-    cursor: 'pointer',
-    display: 'flex',
-    alignItems: 'center',
-    boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
-};
-
 export default function EditProgramModal({ show, handleClose, handleSubmit, programFormData, handleChange, departments }) {
     const [activeField, setActiveField] = useState(null);
 
@@ -60,27 +32,11 @@ export default function EditProgramModal({ show, handleClose, handleSubmit, prog
     return (
         <Modal show={show} onHide={handleClose} backdrop="static">
             <Modal.Header>
-            <Button
-                    variant="link"
-                    onClick={handleClose}
-                    style={{
-                        position: 'absolute',
-                        top: '5px',
-                        right: '20px',
-                        textDecoration: 'none',
-                        fontSize: '30px',
-                        color: '#a9a9a9',
-                    }}
-                >
+                <Button variant="link" onClick={handleClose}
+                    style={{ position: 'absolute', top: '5px', right: '20px', textDecoration: 'none', fontSize: '30px', color: '#a9a9a9' }}>
                     ×
                 </Button>
-                <Modal.Title
-                    style={{
-                        fontSize: '30px',
-                        marginLeft: '80px',
-                        marginRight: '80px'
-                    }}
-                >
+                <Modal.Title style={{ fontSize: '30px', marginLeft: '80px', marginRight: '80px' }}>
                     EDIT PROGRAM
                 </Modal.Title>
             </Modal.Header>
@@ -105,6 +61,7 @@ export default function EditProgramModal({ show, handleClose, handleSubmit, prog
                             />
                         </Form.Group>
                     </Row>
+
                     <Row className="gy-4">
                         <Form.Group controlId="editFormProgramCode">
                             <Form.Label className="fw-bold">Program Name</Form.Label>
@@ -124,6 +81,7 @@ export default function EditProgramModal({ show, handleClose, handleSubmit, prog
                             />
                         </Form.Group>
                     </Row>
+
                     <Row className="gy-4">
                          <Form.Group controlId="editFormDepartmentName">
                             <Form.Label className="fw-bold">Department Name</Form.Label>
@@ -141,10 +99,7 @@ export default function EditProgramModal({ show, handleClose, handleSubmit, prog
                                     }
                                     required
                                 >
-                                    {/* Placeholder option */}
                                     <option value="" disabled>Select Department</option>
-
-                                    {/* Map departments */}
                                     {departments.map((department) => (
                                         <option 
                                             key={department.department_id} 
@@ -156,6 +111,7 @@ export default function EditProgramModal({ show, handleClose, handleSubmit, prog
                              </Form.Control>
                         </Form.Group>
                     </Row>
+
                     <Row className="gy-4">
                         <Form.Group controlId="editFormProgramStatus">
                             <Form.Label className="fw-bold">Status</Form.Label>
@@ -173,7 +129,6 @@ export default function EditProgramModal({ show, handleClose, handleSubmit, prog
                                 }
                                 required
                             >
-                                {/* Default option showing current status */}
                                 <option value="" disabled>Select Status</option>
                                 <option value="active">Active</option>
                                 <option value="inactive">Inactive</option>
@@ -182,16 +137,8 @@ export default function EditProgramModal({ show, handleClose, handleSubmit, prog
                     </Row>
                     {/* Buttons */}
                     <div className="d-flex justify-content-end mt-3">
-                        <Button
-                            type="button"
-                            onClick={handleClose}
-                            style={cancelButtonStyle}
-                        >
-                            Cancel
-                        </Button>
-                        <Button type="submit" style={buttonStyle}>
-                            Update
-                        </Button>
+                        <button type="button" onClick={handleClose} className="settings-cancel-button">Cancel</button>
+                        <button type="submit" className="settings-update-button">Update</button>
                     </div>
                 </Form>
             </Modal.Body>

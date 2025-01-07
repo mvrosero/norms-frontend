@@ -8,7 +8,7 @@ import { MdAnnouncement } from "react-icons/md";
 import { FaGear } from "react-icons/fa6";
 
 import logo from "../../components/images/norms_logo.png";
-import "../general/General.css";
+import "../../styles/General.css";
 
 export default function CoordinatorNavigation() {
   const [collapsed, setCollapsed] = React.useState(true);
@@ -42,6 +42,7 @@ export default function CoordinatorNavigation() {
     return activeMenuItem === menuItem ? "#134E0F" : "initial";
   };
 
+  
   return (
     <>
       <div className="w-full bg-white-A700">

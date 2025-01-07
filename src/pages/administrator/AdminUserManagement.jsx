@@ -4,11 +4,10 @@ import { useNavigate } from 'react-router-dom';
 import AdminNavigation from "./AdminNavigation";
 import AdminInfo from "./AdminInfo";
 import SearchAndFilter from '../general/SearchAndFilter';
-
 import StudentsTable from '../../elements/administrator/tables/StudentsTable';
 import EmployeesTable from '../../elements/administrator/tables/EmployeesTable';
-import ImportStudentsCSV from '../../elements/general/imports/ImportStudentsCSV'; // Import Students CSV component
-import ImportEmployeesCSV from '../../elements/general/imports/ImportEmployeesCSV'; // Import Employees CSV component
+import ImportStudentsCSV from '../../elements/general/imports/ImportStudentsCSV'; 
+import ImportEmployeesCSV from '../../elements/general/imports/ImportEmployeesCSV'; 
 import UserDropdownButton from '../../elements/general/buttons/UserDropdownButton';
 
 export default function AdminUserManagement() {
@@ -27,10 +26,10 @@ export default function AdminUserManagement() {
         setSelectedComponent(event.target.value);
     };
 
-    return (
-        <div>
-            <AdminNavigation />
-            <AdminInfo />
+return (
+    <div>
+        <AdminNavigation />
+        <AdminInfo />
             <h6 className="page-title"> USER MANAGEMENT </h6>
             <div style={{ display: 'flex', marginTop: '20px', alignItems: 'center' }}>
                 <div style={{ width: '750px', marginLeft: '100px' }}>
@@ -40,7 +39,6 @@ export default function AdminUserManagement() {
                 {selectedComponent === 'students' && <ImportStudentsCSV />} {/* Show Import Students CSV component */}
                 {selectedComponent === 'employees' && <ImportEmployeesCSV />} {/* Show Import Employees CSV component */}
             </div>
-
 
             {/* Radio buttons for selecting user type */}
             <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: '20px' }}>

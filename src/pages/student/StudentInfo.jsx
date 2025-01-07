@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import '../general/General.css';
+import "../../styles/General.css";
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import user_icon from '../../components/images/default_profile.jpg';

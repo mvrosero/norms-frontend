@@ -10,7 +10,6 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import AdminNavigation from '../../../pages/administrator/AdminNavigation';
 import AdminInfo from '../../../pages/administrator/AdminInfo';
 import SearchAndFilter from '../../../pages/general/SearchAndFilter';
-
 import AddDepartmentModal from '../modals/AddDepartmentModal';
 import EditDepartmentModal from '../modals/EditDepartmentModal';
 import folderBackground from '../../../components/images/folder_background.png';
@@ -33,6 +32,8 @@ export default function ManageDepartments() {
         fetchDepartments();
     }, []);
 
+
+    // Fetch departments
     const fetchDepartments = async () => {
         try {
             const response = await axios.get('http://localhost:9000/departments', {
@@ -45,6 +46,7 @@ export default function ManageDepartments() {
             setLoading(false);
         }
     };
+
 
     const handleCreateNewDepartment = () => {
         setShowDepartmentModal(true);
@@ -62,7 +64,9 @@ export default function ManageDepartments() {
             [name]: value
         }));
     };
+    
 
+    // Handle the create department
     const handleDepartmentSubmit = async (e) => {
         e.preventDefault();
         try {
@@ -77,6 +81,8 @@ export default function ManageDepartments() {
         }
     };
 
+
+    // Handle the edit department
     const handleEditDepartment = (id) => {
         const department = departments.find(dept => dept.department_id === id);
         setDepartmentFormData({ department_code: department.department_code, department_name: department.department_name, status: department.status });
@@ -98,6 +104,8 @@ export default function ManageDepartments() {
         }
     };
 
+
+    // Handle the delete department
     const handleDeleteDepartment = (id) => {
         Swal.fire({
             title: 'Are you sure you want to delete this department?',
@@ -123,10 +131,11 @@ export default function ManageDepartments() {
         });
     };
     
-
     if (loading) return <p>Loading...</p>;
     if (error) return <p>{error}</p>;
 
+
+    // Set the styles for the status
     const renderStatus = (status) => {
         let backgroundColor, textColor;
         if (status === 'active') {
@@ -139,7 +148,6 @@ export default function ManageDepartments() {
             backgroundColor = '#EDEDED';
             textColor = '#6C757D'; 
         }
-
         return (
             <div style={{
                 backgroundColor,
@@ -165,9 +173,9 @@ export default function ManageDepartments() {
 
 
 return (
-        <div>
-            <AdminNavigation />
-            <AdminInfo />
+    <div>
+        <AdminNavigation />
+        <AdminInfo />
             <div
                 style={{
                     backgroundImage: `url(${folderBackground})`,
@@ -183,7 +191,8 @@ return (
                     paddingTop: '40px',
                     marginBottom: '20px'
                 }}
-                 >
+                >
+
                 {/* Title Section */}
                 <div style={{ width: '90%', margin: '0 auto', display: 'flex', justifyContent: 'flex-start' }}>
                     <h6 className="settings-title" style={{ fontFamily: 'Poppins, sans-serif', color: '#242424', fontSize: '40px', fontWeight: 'bold', marginLeft: '100px' }}>
@@ -196,33 +205,15 @@ return (
                     <div style={{ width: '850px' }}><SearchAndFilter /></div>
                     <button
                         onClick={handleCreateNewDepartment}
-                        style={{
-                            backgroundColor: '#FAD32E',
-                            color: 'white',
-                            fontWeight: '900',
-                            padding: '12px 18px',
-                            borderRadius: '10px',
-                            cursor: 'pointer',
-                            display: 'flex',
-                            alignItems: 'center'
-                        }}
-                    >
-                        Add Department
+                        style={{ backgroundColor: '#FAD32E', color: 'white', fontWeight: '900', padding: '12px 18px', borderRadius: '10px', cursor: 'pointer', display: 'flex', alignItems: 'center' }}>
+                            Add Department
                         <FaPlus style={{ marginLeft: '10px' }} />
                     </button>
                 </div>
     
                 {/* Departments Table */}
                 <div style={{ width: '90%', marginBottom: '40px' }}>
-                    <table
-                        className="table table-hover table-bordered"
-                        style={{
-                            marginTop: '10px',
-                            marginBottom: '20px',
-                            textAlign: 'center',
-                            backgroundColor: 'white',
-                        }}
-                    >
+                    <table className="table table-hover table-bordered" style={{ marginTop: '10px', marginBottom: '20px', textAlign: 'center', backgroundColor: 'white' }}>
                         <thead style={{ backgroundColor: '#FAD32E', textAlign: 'center' }}>
                             <tr>
                                 <th style={{ width: '5%'}}>No.</th>
@@ -254,6 +245,7 @@ return (
                         </tbody>
                     </table>
                 </div>
+    
     
                 {/* Add Department Modal */}
                 <AddDepartmentModal

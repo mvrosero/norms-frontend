@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
-import { useParams, Link, useNavigate } from 'react-router-dom'; // Combined imports
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import { FaPlus } from 'react-icons/fa';
 
 import AdminNavigation from "../../pages/administrator/AdminNavigation";
@@ -12,12 +12,11 @@ import DepartmentalStudentsTable from '../../elements/administrator/tables/Depar
 export default function AdminDepartmentalStudents() {
     const [departments, setDepartments] = useState([]);
     const [departmentName, setDepartmentName] = useState('');
-    const [users, setUsers] = useState([]); // Users state for fetched data
+    const [users, setUsers] = useState([]); 
     const { department_code } = useParams();
     const navigate = useNavigate();
 
     useEffect(() => {
-        // Authorization check
         const token = localStorage.getItem('token');
         const roleId = localStorage.getItem('role_id');
         if (!token || roleId !== '1') {
@@ -63,10 +62,11 @@ export default function AdminDepartmentalStudents() {
         fetchUsers();
     }, [fetchDepartments, fetchUsers]);
 
-    return (
-        <div>
-            <AdminNavigation />
-            <AdminInfo />
+    
+return (
+    <div>
+        <AdminNavigation />
+        <AdminInfo />
 
             {/* Title Section */}
             <div style={{ width: '90%', margin: '0 auto', display: 'flex', justifyContent: 'flex-start' }}>
@@ -76,24 +76,10 @@ export default function AdminDepartmentalStudents() {
             {/* Search And Filter Section */}
             <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'center', marginTop: '10px', marginLeft: '50px', padding: '0 20px', gap: '2px'}}>
             <div style={{ flex: '1 1 70%', minWidth: '300px' }}><SFforDepartmentalTable /></div>
-
                 <button
                     onClick={() => window.location.href = "http://localhost:3000/register-student"}
-                    style={{
-                        backgroundColor: '#FAD32E',
-                        color: 'white',
-                        fontWeight: '900',
-                        padding: '12px 15px',
-                        border: 'none',
-                        borderRadius: '10px',
-                        marginLeft: '5px',
-                        cursor: 'pointer',
-                        display: 'flex',
-                        alignItems: 'center',
-                        boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
-                    }}
-                >
-                    Add Student
+                    style={{ backgroundColor: '#FAD32E', color: 'white', fontWeight: '900', padding: '12px 15px', border: 'none', borderRadius: '10px', marginLeft: '5px', cursor: 'pointer', display: 'flex', alignItems: 'center', boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)' }}>
+                        Add Student
                     <FaPlus style={{ marginLeft: '10px' }} />
                 </button>
                 <ImportDepartmentalCSV />

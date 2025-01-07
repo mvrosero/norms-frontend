@@ -41,6 +41,7 @@ export default function ManageCategories() {
         fetchCategories();
     }, []);
 
+
     // Fetch categories
     const fetchCategories = async () => {
         try {
@@ -192,7 +193,6 @@ export default function ManageCategories() {
             backgroundColor = '#EDEDED';
             textColor = '#6C757D'; 
         }
-
         return (
             <div style={{
                 backgroundColor,
@@ -236,7 +236,7 @@ return (
                     paddingTop: '40px',
                     marginBottom: '20px'
                 }}
-            >
+                >
                 
             {/* Title Section */}
             <div style={{ width: '90%', margin: '0 auto', display: 'flex', justifyContent: 'flex-start' }}>
@@ -250,18 +250,8 @@ return (
                 <div style={{ width: '850px' }}><SearchAndFilter /></div>
                 <button
                     onClick={handleCreateNewCategory}
-                    style={{
-                        backgroundColor: '#FAD32E',
-                        color: 'white',
-                        fontWeight: '900',
-                        padding: '12px 18px',
-                        borderRadius: '10px',
-                        cursor: 'pointer',
-                        display: 'flex',
-                        alignItems: 'center'
-                    }}
-                >
-                    Add Category
+                    style={{ backgroundColor: '#FAD32E', color: 'white', fontWeight: '900', padding: '12px 18px', borderRadius: '10px', cursor: 'pointer', display: 'flex', alignItems: 'center' }}>
+                        Add Category
                     <FaPlus style={{ marginLeft: '10px' }} />
                 </button>
             </div>

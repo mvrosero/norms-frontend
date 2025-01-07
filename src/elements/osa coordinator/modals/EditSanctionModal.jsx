@@ -90,6 +90,7 @@ const EditSanctionModal = ({ show, handleClose, handleSubmit, sanctionFormData, 
                         </Form.Control>
                     </Form.Group>
                 </Row>
+                    {/* Buttons */}
                     <div className="d-flex justify-content-end mt-3">
                         <button type="button" onClick={handleClose} className="settings-cancel-button">Cancel</button>
                         <button type="submit" className="settings-update-button">Update</button>

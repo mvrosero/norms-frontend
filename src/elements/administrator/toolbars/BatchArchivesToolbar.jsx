@@ -13,7 +13,7 @@ const BatchArchivesToolbar = ({ selectedItemsCount, onDelete, selectedStudentIds
   const [status, setStatus] = useState('');
   const [departments, setDepartments] = useState([]);
   const [programs, setPrograms] = useState([]);
-  const [filteredPrograms, setFilteredPrograms] = useState([]);  // Filtered programs state
+  const [filteredPrograms, setFilteredPrograms] = useState([]);  
   const [error, setError] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -40,7 +40,8 @@ const BatchArchivesToolbar = ({ selectedItemsCount, onDelete, selectedStudentIds
     setSuccessMessage('');
   };
 
-  // Fetch departments and programs when the modal is opened
+
+  // Fetch departments and programs 
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -55,7 +56,6 @@ const BatchArchivesToolbar = ({ selectedItemsCount, onDelete, selectedStudentIds
         setError('Failed to load departments or programs.');
       }
     };
-
     if (isModalVisible) {
       fetchData();
     }
@@ -64,21 +64,22 @@ const BatchArchivesToolbar = ({ selectedItemsCount, onDelete, selectedStudentIds
   // Filter programs based on the selected department
   useEffect(() => {
     if (departmentId) {
-      // Fetch programs based on the selected departmentId
       axios
         .get(`http://localhost:9000/programs/${departmentId}`)
         .then((response) => {
-          setFilteredPrograms(response.data);  // Set the filtered programs
+          setFilteredPrograms(response.data);  
         })
         .catch((error) => {
           console.error('Error fetching programs:', error);
-          setFilteredPrograms([]);  // Reset programs on error
+          setFilteredPrograms([]);  
         });
     } else {
-      setFilteredPrograms([]);  // Reset programs if no department is selected
+      setFilteredPrograms([]);  
     }
   }, [departmentId]);
 
+
+  // Handle the submit archives toolbar
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
@@ -97,7 +98,6 @@ const BatchArchivesToolbar = ({ selectedItemsCount, onDelete, selectedStudentIds
       setIsSubmitting(false);
       return;
     }
-
     try {
       const result = await Swal.fire({
         title: 'Are you sure you want to save the changes?',
@@ -115,7 +115,6 @@ const BatchArchivesToolbar = ({ selectedItemsCount, onDelete, selectedStudentIds
           student_ids: selectedStudentIds,
           updates: updates,
         });
-
         handleModalClose();
 
         Swal.fire({
@@ -133,7 +132,6 @@ const BatchArchivesToolbar = ({ selectedItemsCount, onDelete, selectedStudentIds
       }
     } catch (error) {
       console.error('Error updating students:', error.response?.data || error.message);
-
       handleModalClose();
 
       Swal.fire({
@@ -147,6 +145,8 @@ const BatchArchivesToolbar = ({ selectedItemsCount, onDelete, selectedStudentIds
     }
   };
 
+
+  // Handle the cancel archives toolbar
   const handleCancel = () => {
     Swal.fire({
       title: 'Are you sure you want to cancel?',
@@ -164,34 +164,9 @@ const BatchArchivesToolbar = ({ selectedItemsCount, onDelete, selectedStudentIds
     });
   };
   
-  const buttonStyle = {
-    backgroundColor: '#3B71CA',
-    color: '#FFFFFF',
-    fontWeight: '900',
-    padding: '12px 25px',
-    border: 'none',
-    borderRadius: '10px',
-    cursor: 'pointer',
-    marginLeft: '10px',
-    display: 'flex',
-    alignItems: 'center',
-    boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)'
-  };
-
-  const cancelButtonStyle = {
-      backgroundColor: '#8C8C8C',
-      color: '#FFFFFF',
-      fontWeight: '900',
-      padding: '12px 25px',
-      border: 'none',
-      borderRadius: '10px',
-      cursor: 'pointer',
-      display: 'flex',
-      alignItems: 'center',
-      boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)'
-  };
 
   if (!isVisible) return null;
+
 
   return (
     <div style={styles.toolbar}>
@@ -219,30 +194,13 @@ const BatchArchivesToolbar = ({ selectedItemsCount, onDelete, selectedStudentIds
 
         <Modal show={isModalVisible} onHide={handleModalClose} size="lg">
           <Modal.Header>
-                <Button
-                    variant="link"
-                    onClick={handleCancel}
-                    style={{
-                        position: 'absolute',
-                        top: '5px',
-                        right: '20px',
-                        textDecoration: 'none',
-                        fontSize: '30px',
-                        color: '#a9a9a9',
-                    }}
-                >
-                    ×
-                </Button>
-                <Modal.Title
-                    style={{
-                        fontSize: '40px',
-                        marginBottom: '10px',
-                        marginLeft: '80px',
-                        marginRight: '80px',
-                    }}
-                >
-                    BATCH UPDATE STUDENTS
-                </Modal.Title>
+              <Button variant="link" onClick={handleCancel}
+                  style={{ position: 'absolute', top: '5px', right: '20px', textDecoration: 'none', fontSize: '30px', color: '#a9a9a9' }}>
+                  ×
+              </Button>
+              <Modal.Title style={{ fontSize: '40px', marginBottom: '10px', marginLeft: '80px', marginRight: '80px' }}>
+                  BATCH UPDATE STUDENTS
+              </Modal.Title>
           </Modal.Header>
             <Modal.Body>
               {error && <div className="alert alert-danger">{error}</div>}
@@ -313,7 +271,7 @@ const BatchArchivesToolbar = ({ selectedItemsCount, onDelete, selectedStudentIds
                     value={programId}
                     onChange={(e) => setProgramId(e.target.value)}
                     style={{ backgroundColor: '#f2f2f2', border: '1px solid #ced4da'}}
-                    disabled={!departmentId} // Disable if no department is selected
+                    disabled={!departmentId}
                   >
                     <option value="" disabled>Select Program</option>
                     {filteredPrograms.map((program) => (
@@ -326,11 +284,7 @@ const BatchArchivesToolbar = ({ selectedItemsCount, onDelete, selectedStudentIds
                 </Row>
                   {/* Buttons */}
                   <div className="d-flex justify-content-end mt-3" style={{ marginLeft: '30px', marginRight: '30px' }}>
-                      <button
-                          type="button"
-                          onClick={handleCancel} // Trigger the handleCancel function
-                          style={cancelButtonStyle} // Apply the styles
-                      >
+                      <button type="button" onClick={handleCancel} style={cancelButtonStyle}>
                           Cancel
                       </button>
                       <button type="submit" style={buttonStyle}>
@@ -344,6 +298,34 @@ const BatchArchivesToolbar = ({ selectedItemsCount, onDelete, selectedStudentIds
   );
 };
 
+
+// Set the styles for the toolbar
+const buttonStyle = {
+  backgroundColor: '#3B71CA',
+  color: '#FFFFFF',
+  fontWeight: '900',
+  padding: '12px 25px',
+  border: 'none',
+  borderRadius: '10px',
+  cursor: 'pointer',
+  marginLeft: '10px',
+  display: 'flex',
+  alignItems: 'center',
+  boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)'
+};
+
+const cancelButtonStyle = {
+    backgroundColor: '#8C8C8C',
+    color: '#FFFFFF',
+    fontWeight: '900',
+    padding: '12px 25px',
+    border: 'none',
+    borderRadius: '10px',
+    cursor: 'pointer',
+    display: 'flex',
+    alignItems: 'center',
+    boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)'
+};
 
 const styles = {
   toolbar: {
@@ -429,5 +411,6 @@ const styles = {
     marginRight: '5px',
   },
 };
+
 
 export default BatchArchivesToolbar;

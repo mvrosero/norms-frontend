@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Modal, Form, Button, Row } from 'react-bootstrap';
+import '../../../styles/style.css'
 
 const inputStyle = {
     backgroundColor: '#f2f2f2',
@@ -17,35 +18,6 @@ const activeInputStyle = {
     border: '2px solid',
 };
 
-const buttonStyle = {
-    backgroundColor: '#3B71CA',
-    color: '#FFFFFF',
-    fontSize: '16px',
-    fontWeight: '900',
-    padding: '8px 25px',
-    border: 'none',
-    borderRadius: '10px',
-    cursor: 'pointer',
-    marginLeft: '10px',
-    display: 'flex',
-    alignItems: 'center',
-    boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
-};
-
-const cancelButtonStyle = {
-    backgroundColor: '#8C8C8C',
-    color: '#FFFFFF',
-    fontSize: '16px',
-    fontWeight: '900',
-    padding: '8px 25px',
-    border: 'none',
-    borderRadius: '10px',
-    cursor: 'pointer',
-    display: 'flex',
-    alignItems: 'center',
-    boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
-};
-
 const EditAcademicYearModal = ({ show, handleClose, handleSubmit, formData, handleChange }) => {
     const [activeField, setActiveField] = useState(null);
 
@@ -55,25 +27,14 @@ const EditAcademicYearModal = ({ show, handleClose, handleSubmit, formData, hand
     return (
         <Modal show={show} onHide={handleClose} backdrop="static">
             <Modal.Header>
-                <Button
-                    variant="link"
-                    onClick={handleClose}
-                    style={{
-                        position: 'absolute',
-                        top: '5px',
-                        right: '20px',
-                        textDecoration: 'none',
-                        fontSize: '30px',
-                        color: '#a9a9a9',
-                    }}
-                >
+                <Button variant="link" onClick={handleClose}
+                    style={{ position: 'absolute', top: '5px', right: '20px', textDecoration: 'none', fontSize: '30px', color: '#a9a9a9' }}>
                     ×
                 </Button>
                 <Modal.Title style={{ fontSize: '30px', marginLeft: '35px', marginRight: '35px' }}>
                     EDIT ACADEMIC YEAR
                 </Modal.Title>
             </Modal.Header>
-
             <Modal.Body>
                 <Form onSubmit={handleSubmit}>
                     <Row className="gy-4">
@@ -161,24 +122,16 @@ const EditAcademicYearModal = ({ show, handleClose, handleSubmit, formData, hand
                             </Form.Control>
                         </Form.Group>
                     </Row>
-
                     {/* Buttons */}
                     <div className="d-flex justify-content-end mt-3">
-                        <Button
-                            type="button"
-                            onClick={handleClose}
-                            style={cancelButtonStyle}
-                        >
-                            Cancel
-                        </Button>
-                        <Button type="submit" style={buttonStyle}>
-                            Update
-                        </Button>
+                        <button type="button" onClick={handleClose} className="settings-cancel-button">Cancel</button>
+                        <button type="submit" className="settings-update-button">Update</button>
                     </div>
                 </Form>
             </Modal.Body>
         </Modal>
     );
 };
+
 
 export default EditAcademicYearModal;

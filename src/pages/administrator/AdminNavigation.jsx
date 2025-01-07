@@ -1,17 +1,16 @@
 import React from "react";
 import { MenuItem, Menu, Sidebar } from "react-pro-sidebar";
-import "../general/General.css";
+import { useNavigate, useLocation } from "react-router-dom";
 
 import { MdSpaceDashboard } from "react-icons/md";
 import { FaUsers } from "react-icons/fa";
 import { FaGear } from "react-icons/fa6";
 
-import { useNavigate, useLocation } from "react-router-dom";
-
+import "../../styles/General.css";
 import logo from "../../components/images/norms_logo.png";
 
 export default function AdminNavigation() {
-  const [collapsed, setCollapsed] = React.useState(true); // Default state is collapsed
+  const [collapsed, setCollapsed] = React.useState(true); 
   const [searchBarValue2, setSearchBarValue2] = React.useState("");
   const navigate = useNavigate();
   const location = useLocation();
@@ -50,17 +49,17 @@ export default function AdminNavigation() {
       <div className="w-full bg-white-A700">
         <div className="self-end">
           <div className="flex md:flex-col items-start">
-            <div className="sidebar-container"> {/* Container with drop shadow */}
+            <div className="sidebar-container"> 
               <div
-                className="rounded-lg shadow" // Apply rounded corners and lighter drop shadow
+                className="rounded-lg shadow" 
                 style={{
-                  backgroundColor: "#FFFFFF", // White background color
-                  transition: "width 0.3s ease-in-out", // Ensure smooth transition of sidebar width
+                  backgroundColor: "#FFFFFF", 
+                  transition: "width 0.3s ease-in-out", 
                   position: "fixed",
                   left: 0,
                   top: 0,
                   zIndex: 1000,
-                  padding: collapsed ? "0" : "10px", // Add padding when expanded
+                  padding: collapsed ? "0" : "10px", 
                 }}
               >
                 <Sidebar
@@ -81,17 +80,15 @@ export default function AdminNavigation() {
                         fontWeight: 500,
                         fontSize: menuItemFontSize,
                         [`&:hover, &.ps-active`]: {
-                          color: "#134E0F", // Change text color on hover
+                          color: "#134E0F", 
                           "& svg": {
-                            // Change icon color on hover
                             fill: "#134E0F",
                           },
                         },
                       },
                       menuItemActive: {
-                        color: "#134E0F", // Set the active color to green
+                        color: "#134E0F", 
                         "& svg": {
-                          // Set active icon color
                           fill: "#134E0F",
                         },
                       },
@@ -100,7 +97,7 @@ export default function AdminNavigation() {
                     rootStyles={{
                       ["&>ul"]: {
                         gap: "4px",
-                        paddingTop: collapsed ? "13px" : "0", // Adjust paddingTop dynamically
+                        paddingTop: collapsed ? "13px" : "0",
                       },
                     }}
                     className="flex flex-col items-center w-full"

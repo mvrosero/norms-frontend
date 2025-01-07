@@ -3,28 +3,16 @@ import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
 
 const ViewViolationModal = ({ show, onHide, selectedRecord, getCategoryName, getOffenseName, getSanctionNames, getAcademicYearName, getSemesterName }) => {
-    console.log(selectedRecord); // Log selectedRecord to check its contents
+    console.log(selectedRecord); 
 
     return (
         <Modal show={show} onHide={onHide} size="lg">
             <Modal.Header>
-                <Button
-                    variant="link"
-                    onClick={onHide}
-                    style={{
-                        position: 'absolute',
-                        top: '5px',
-                        right: '20px',
-                        textDecoration: 'none',
-                        fontSize: '30px',
-                        color: '#a9a9a9',
-                    }}
-                >
+                <Button variant="link" onClick={onHide} style={{ position: 'absolute', top: '5px', right: '20px', textDecoration: 'none', fontSize: '30px', color: '#a9a9a9' }}>
                     ×
                 </Button>
                 <Modal.Title style={{ fontSize: '40px', marginBottom: '10px', marginLeft: '90px', marginRight: '90px' }}>VIEW VIOLATION RECORD</Modal.Title>
             </Modal.Header>
-
             <Modal.Body>
                 {selectedRecord && (
                     <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', rowGap: '10px', marginLeft: '60px', marginRight: '20px' }}>
@@ -68,5 +56,6 @@ const ViewViolationModal = ({ show, onHide, selectedRecord, getCategoryName, get
         </Modal>
     );
 };
+
 
 export default ViewViolationModal;

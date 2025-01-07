@@ -13,20 +13,21 @@ const BirthdateVerification = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-    
+
         try {
-            const id = localStorage.getItem('student_idnumber');
-            if (!id) {
-                throw new Error('Student ID number not found in local storage');
+            const userId = localStorage.getItem('user_id'); // Get the logged-in user's ID
+            if (!userId) {
+                throw new Error('User ID not found in local storage');
             }
-    
+
             // Format the birthdate as yyyy-mm-dd
-            const formattedUserBirthdate = `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
-            
-            const response = await axios.get(`http://localhost:9000/student/${id}`);
-            const studentInfo = response.data;
-    
-            if (studentInfo.birthdate === formattedUserBirthdate) {
+            const formattedBirthdate = `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+
+            // Fetch user info
+            const response = await axios.get(`http://localhost:9000/user/${userId}`);
+            const userInfo = response.data;
+
+            if (userInfo.birthdate === formattedBirthdate) {
                 navigate('/dashboard');
                 Swal.fire({
                     icon: 'success',
@@ -47,7 +48,6 @@ const BirthdateVerification = () => {
             });
         }
     };
-    
 
     const renderDays = () => {
         const days = [];
@@ -79,16 +79,16 @@ const BirthdateVerification = () => {
                     <div className="container" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', paddingLeft: '13px' }}>
                         <form onSubmit={handleSubmit} style={{ display: 'flex', alignItems: 'center', gap: '10px', flexDirection: 'column' }}>
                             <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexDirection: 'row' }}>
-                                <div className="dropdown-container" style={{ display: 'flex', flexDirection: 'column'}}>
+                                <div className="dropdown-container" style={{ display: 'flex', flexDirection: 'column' }}>
                                     <label htmlFor="year" className="dropdown-label" style={{ color: '#FFFFFF', marginBottom: '5px' }}>Year:</label>
-                                    <select id="year" value={year} onChange={(e) => setYear(e.target.value)} required style={{ width: '100px', height: '50px', backgroundColor: '#FFFFFF', color: '#134E0F', boxShadow: 'inset 0px 0px 5px 2px rgba(0, 0, 0, 0.2)', paddingTop: '0.5em', paddingBottom: '0.5em', paddingLeft: '0.5em' }}>
+                                    <select id="year" value={year} onChange={(e) => setYear(e.target.value)} required style={{ width: '100px', height: '50px', backgroundColor: '#FFFFFF', color: '#134E0F', boxShadow: 'inset 0px 0px 5px 2px rgba(0, 0, 0, 0.2)', padding: '0.5em' }}>
                                         <option value="">Year</option>
                                         {renderYears()}
                                     </select>
                                 </div>
                                 <div className="dropdown-container" style={{ display: 'flex', flexDirection: 'column' }}>
                                     <label htmlFor="month" className="dropdown-label" style={{ color: '#FFFFFF', marginBottom: '5px' }}>Month:</label>
-                                    <select id="month" value={month} onChange={(e) => setMonth(e.target.value)} required style={{ width: '150px', height: '50px', backgroundColor: '#FFFFFF', color: '#134E0F', boxShadow: 'inset 0px 0px 5px 2px rgba(0, 0, 0, 0.2)', paddingTop: '0.5em', paddingBottom: '0.5em', paddingLeft: '0.5em' }}>
+                                    <select id="month" value={month} onChange={(e) => setMonth(e.target.value)} required style={{ width: '150px', height: '50px', backgroundColor: '#FFFFFF', color: '#134E0F', boxShadow: 'inset 0px 0px 5px 2px rgba(0, 0, 0, 0.2)', padding: '0.5em' }}>
                                         <option value="">Month</option>
                                         <option value="01">January</option>
                                         <option value="02">February</option>
@@ -106,7 +106,7 @@ const BirthdateVerification = () => {
                                 </div>
                                 <div className="dropdown-container" style={{ display: 'flex', flexDirection: 'column' }}>
                                     <label htmlFor="day" className="dropdown-label" style={{ color: '#FFFFFF', marginBottom: '5px' }}>Day:</label>
-                                    <select id="day" value={day} onChange={(e) => setDay(e.target.value)} required style={{ width: '100px', height: '50px', backgroundColor: '#FFFFFF', color: '#134E0F', boxShadow: 'inset 0px 0px 5px 2px rgba(0, 0, 0, 0.2)', paddingTop: '0.5em', paddingBottom: '0.5em', paddingLeft: '0.5em' }}>
+                                    <select id="day" value={day} onChange={(e) => setDay(e.target.value)} required style={{ width: '100px', height: '50px', backgroundColor: '#FFFFFF', color: '#134E0F', boxShadow: 'inset 0px 0px 5px 2px rgba(0, 0, 0, 0.2)', padding: '0.5em' }}>
                                         <option value="">Day</option>
                                         {renderDays()}
                                     </select>
@@ -120,5 +120,6 @@ const BirthdateVerification = () => {
         </div>
     );
 };
+
 
 export default BirthdateVerification;

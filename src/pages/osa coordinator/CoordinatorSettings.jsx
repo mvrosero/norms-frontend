@@ -61,10 +61,11 @@ export default function CoordinatorSettings() {
         marginBottom: '30px', 
     };
 
-    return (
-        <div style={{ marginLeft: '100px' }}>
-            <CoordinatorNavigation />
-            <CoordinatorInfo />
+
+return (
+    <div style={{ marginLeft: '100px' }}>
+        <CoordinatorNavigation />
+        <CoordinatorInfo />
             <h6 className="page-title"> SETTINGS </h6>
             <div className="container mt-4">
                 <div className="row" style={rowStyle}>

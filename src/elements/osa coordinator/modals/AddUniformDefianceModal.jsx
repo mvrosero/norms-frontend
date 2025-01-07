@@ -3,10 +3,11 @@ import axios from 'axios';
 import Swal from 'sweetalert2';
 import { Modal, Button, Form, Row, Col } from 'react-bootstrap';
 import { useParams } from 'react-router-dom';
-import Select from 'react-select'; // Import Select from react-select
+import Select from 'react-select'; 
+import '../../../styles/style.css'
 
 const AddUniformDefianceModal = ({ show, onHide, handleCloseModal }) => {
-    const { student_idnumber } = useParams(); // Get student_idnumber from URL
+    const { student_idnumber } = useParams(); 
     const [formData, setFormData] = useState({
         student_idnumber: student_idnumber || '',
         description: '',
@@ -16,7 +17,6 @@ const AddUniformDefianceModal = ({ show, onHide, handleCloseModal }) => {
         acadyear_id: '',
         semester_id: '',
     });
-
     const [categories, setCategories] = useState([]);
     const [offenses, setOffenses] = useState([]);
     const [sanctions, setSanctions] = useState([]);
@@ -25,18 +25,18 @@ const AddUniformDefianceModal = ({ show, onHide, handleCloseModal }) => {
     const [isFocused, setIsFocused] = useState(false);
     const [focusedElement, setFocusedElement] = useState(null);
 
+
     // Maximum text area length 
     const maxLength = 1000;
     const currentLength = formData.description.length;
 
-
-    // Handling the focus state for both text area and semester select
+    // Handle the focus state for both text area and semester select
     const handleFocus = (element) => {
-        setFocusedElement(element); // Set the focused element
+        setFocusedElement(element); 
     };
 
     const handleBlur = () => {
-        setFocusedElement(null); // Reset when the element loses focus
+        setFocusedElement(null);
     };
 
     useEffect(() => {
@@ -68,7 +68,7 @@ const AddUniformDefianceModal = ({ show, onHide, handleCloseModal }) => {
     }, []);
 
 
-    // Handling input change for non-select inputs
+    // Handle input change for non-select inputs
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData((prevState) => ({
@@ -77,7 +77,7 @@ const AddUniformDefianceModal = ({ show, onHide, handleCloseModal }) => {
         }));
     };
 
-    // Handling multi-select field changes
+    // Handle multi-select field changes
     const handleSelectChange = (selectedOptions, { name }) => {
         setFormData((prevState) => ({
             ...prevState,
@@ -85,20 +85,13 @@ const AddUniformDefianceModal = ({ show, onHide, handleCloseModal }) => {
         }));
     };
 
-    const handleSanctionSelectChange = (selectedOptions) => {
-        const selectedSanctions = selectedOptions ? selectedOptions.map(option => option.value) : [];
-        setFormData(prevState => ({
-            ...prevState,
-            sanctions: selectedSanctions,
-        }));
-    };
 
+    // Handle the add violation record
     const handleSubmit = async (e) => {
         e.preventDefault();
     
         const { student_idnumber, description, category_id, offense_id, sanctions, acadyear_id, semester_id } = formData;
     
-        // Check if all required fields are filled in
         if (!student_idnumber || !description || !category_id || !offense_id || sanctions.length === 0 || !acadyear_id || !semester_id) {
             Swal.fire({
                 icon: 'warning',
@@ -107,8 +100,6 @@ const AddUniformDefianceModal = ({ show, onHide, handleCloseModal }) => {
             });
             return;
         }
-    
-        // Show confirmation prompt before submitting
         Swal.fire({
             title: 'Are you sure you want to record this violation?',
             text: 'You are about to create a new violation record.',
@@ -131,8 +122,6 @@ const AddUniformDefianceModal = ({ show, onHide, handleCloseModal }) => {
                         showConfirmButton: false,
                         timer: 3000
                     });
-
-                    // Reset form fields
                     setFormData({
                         student_idnumber: student_idnumber,
                         description: '',
@@ -157,7 +146,7 @@ const AddUniformDefianceModal = ({ show, onHide, handleCloseModal }) => {
     };
     
 
-
+    // Handle the cancel violation record
     const handleCancel = () => {
         Swal.fire({
             title: 'Are you sure you want to cancel?',
@@ -188,35 +177,7 @@ const AddUniformDefianceModal = ({ show, onHide, handleCloseModal }) => {
     };
 
 
-
-    const buttonStyle = {
-        backgroundColor: '#FAD32E',
-        color: '#FFFFFF',
-        fontWeight: '900',
-        padding: '12px 35px',
-        border: 'none',
-        borderRadius: '10px',
-        cursor: 'pointer',
-        marginLeft: '10px',
-        display: 'flex',
-        alignItems: 'center',
-        boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)'
-    };
-
-    const cancelButtonStyle = {
-        backgroundColor: '#8C8C8C',
-        color: '#FFFFFF',
-        fontWeight: '900',
-        padding: '12px 25px',
-        border: 'none',
-        borderRadius: '10px',
-        cursor: 'pointer',
-        display: 'flex',
-        alignItems: 'center',
-        boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)'
-    };
-
-
+    // Handle the field styles
     const regularSelectStyles = {
         backgroundColor: '#f2f2f2',
         borderRadius: '4px',
@@ -225,10 +186,9 @@ const AddUniformDefianceModal = ({ show, onHide, handleCloseModal }) => {
     };
 
     const borderColorStyles = (focusedElement, element) => ({
-        border: `1px solid ${focusedElement === element ? '#FAD32E' : '#ced4da'}`, // Yellow for focused, gray otherwise
-        boxShadow: focusedElement === element ? '0 0 0 2px rgba(250, 211, 46, 1)' : 'none', // Yellow box shadow for focused element
+        border: `1px solid ${focusedElement === element ? '#FAD32E' : '#ced4da'}`, 
+        boxShadow: focusedElement === element ? '0 0 0 2px rgba(250, 211, 46, 1)' : 'none', 
     });
-
 
     const customSelectStyles = {
         control: (provided, state) => ({
@@ -260,40 +220,18 @@ const AddUniformDefianceModal = ({ show, onHide, handleCloseModal }) => {
     };
 
 
-    return (
+return (
         <Modal show={show} onHide={handleCancel} size="lg">
             <Modal.Header>
-                <Button
-                    variant="link"
-                    onClick={handleCancel}
-                    style={{
-                        position: 'absolute',
-                        top: '5px',
-                        right: '20px',
-                        textDecoration: 'none',
-                        fontSize: '30px',
-                        color: '#a9a9a9',
-                    }}
-                >
+                <Button variant="link" onClick={handleCancel} style={{ position: 'absolute', top: '5px', right: '20px', textDecoration: 'none', fontSize: '30px', color: '#a9a9a9' }} >
                     ×
                 </Button>
-                <Modal.Title
-                    style={{
-                        fontSize: '40px',
-                        marginBottom: '10px',
-                        marginLeft: '60px',
-                        marginRight: '60px',
-                    }}
-                >
-                    CREATE VIOLATION RECORD
-                </Modal.Title>
+                <Modal.Title style={{ fontSize: '40px', marginBottom: '10px', marginLeft: '100px', marginRight: '100px' }}> ADD VIOLATION RECORD </Modal.Title>
             </Modal.Header>
-
-
             <Modal.Body style={{ paddingLeft: '30px', paddingRight: '30px' }}>
                 <form onSubmit={handleSubmit}>
                 <Row className="gy-4">
-                <Form.Group className="student_idnumber mb-3">
+                        <Form.Group className="student_idnumber mb-3">
                             <Form.Label className="fw-bold">Student ID Number</Form.Label>
                             <Form.Control
                                 name="student_idnumber"
@@ -420,14 +358,14 @@ const AddUniformDefianceModal = ({ show, onHide, handleCloseModal }) => {
                                     onChange={handleChange}
                                     rows={3}
                                     maxLength={maxLength}
-                                    onFocus={() => handleFocus('description')} // When focused, set 'description'
-                                    onBlur={handleBlur} // Reset focus when blurred 
+                                    onFocus={() => handleFocus('description')} 
+                                    onBlur={handleBlur} 
                                     style={{
                                         width: '100%',
                                         minHeight: '100px',
                                         padding: '10px',
                                         backgroundColor: '#f2f2f2',
-                                        border: `1px solid ${focusedElement === 'description' ? '#FAD32E' : '#ced4da'}`, // Apply focused border for description
+                                        border: `1px solid ${focusedElement === 'description' ? '#FAD32E' : '#ced4da'}`, 
                                         borderRadius: '4px',
                                         boxShadow: focusedElement === 'description' ? '0 0 0 2px rgba(250, 211, 46, 1)' : 'none',
                                     }}
@@ -438,14 +376,10 @@ const AddUniformDefianceModal = ({ show, onHide, handleCloseModal }) => {
                     </Row>
                         {/* Buttons */}
                         <div className="d-flex justify-content-end mt-3">
-                            <button
-                                type="button"
-                                onClick={handleCancel} 
-                                style={cancelButtonStyle} 
-                            >
+                            <button type="button" onClick={handleCancel} className='modal-cancel-button'>
                                 Cancel
                             </button>
-                            <button type="submit" style={buttonStyle}>
+                            <button type="submit" className='modal-save-button'>
                                 Save
                             </button>
                         </div>
@@ -454,5 +388,6 @@ const AddUniformDefianceModal = ({ show, onHide, handleCloseModal }) => {
         </Modal>
     );
 };
+
 
 export default AddUniformDefianceModal;

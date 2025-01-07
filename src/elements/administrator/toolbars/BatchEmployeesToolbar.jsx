@@ -34,11 +34,12 @@ const BatchEmployeesToolbar = ({ selectedItemsCount, selectedEmployeeIds, onDele
     setSuccessMessage('');
   };
 
+
+  // Fetch the roles
   useEffect(() => {
     const fetchData = async () => {
       try {
         const roleResponse = await axios.get('http://localhost:9000/roles');
-        // Filter out role with role_id = 3 (for students)
         setRoles(roleResponse.data.filter(role => role.role_id !== 3));
       } catch (error) {
         console.error('Error fetching roles:', error);
@@ -46,14 +47,13 @@ const BatchEmployeesToolbar = ({ selectedItemsCount, selectedEmployeeIds, onDele
       }
     };
 
-    
-
     if (isModalVisible) {
       fetchData();
     }
   }, [isModalVisible]);
   
 
+  // Handle the submit employees toolbar
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
@@ -64,8 +64,6 @@ const BatchEmployeesToolbar = ({ selectedItemsCount, selectedEmployeeIds, onDele
         ...(roleId && { role_id: roleId }),
         ...(status && { status: status }),
     };
-
-    // Debugging: log the payload before sending the request
     console.log('Selected Employee IDs:', selectedEmployeeIds);
     console.log('Updates:', updates);
 
@@ -74,8 +72,6 @@ const BatchEmployeesToolbar = ({ selectedItemsCount, selectedEmployeeIds, onDele
         setIsSubmitting(false);
         return;
     }
-
-    // Confirmation before proceeding
     const result = await Swal.fire({
         title: 'Are you sure you want to save the changes?',
         text: 'You are about to update the details of the selected employees. These changes cannot be undone.',
@@ -86,21 +82,16 @@ const BatchEmployeesToolbar = ({ selectedItemsCount, selectedEmployeeIds, onDele
         confirmButtonText: 'Yes, update them!',
         cancelButtonText: 'Cancel',
     });
-
     if (!result.isConfirmed) {
         setIsSubmitting(false);
         return; 
     }
-
     try {
         const response = await axios.put('http://localhost:9000/employees', {
             employee_ids: selectedEmployeeIds,
             updates: updates,
         });
-
-        // Debugging: log the response from the server
         console.log('Response:', response);
-
         handleModalClose();
 
         Swal.fire({
@@ -115,7 +106,6 @@ const BatchEmployeesToolbar = ({ selectedItemsCount, selectedEmployeeIds, onDele
         });
     } catch (error) {
         console.error('Error updating employees:', error.response?.data || error.message);
-
         handleModalClose();
 
         Swal.fire({
@@ -130,6 +120,7 @@ const BatchEmployeesToolbar = ({ selectedItemsCount, selectedEmployeeIds, onDele
 };
 
 
+  // Handle the cancel employees toolbar
   const handleCancel = () => {
     Swal.fire({
       title: 'Are you sure you want to cancel?',
@@ -147,34 +138,9 @@ const BatchEmployeesToolbar = ({ selectedItemsCount, selectedEmployeeIds, onDele
     });
   };
   
-  const buttonStyle = {
-    backgroundColor: '#3B71CA',
-    color: '#FFFFFF',
-    fontWeight: '900',
-    padding: '12px 25px',
-    border: 'none',
-    borderRadius: '10px',
-    cursor: 'pointer',
-    marginLeft: '10px',
-    display: 'flex',
-    alignItems: 'center',
-    boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
-  };
-
-  const cancelButtonStyle = {
-      backgroundColor: '#8C8C8C',
-      color: '#FFFFFF',
-      fontWeight: '900',
-      padding: '12px 25px',
-      border: 'none',
-      borderRadius: '10px',
-      cursor: 'pointer',
-      display: 'flex',
-      alignItems: 'center',
-      boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)'
-  };
-
+ 
   if (!isVisible) return null;
+
 
   return (
     <div style={styles.toolbar}>
@@ -202,31 +168,13 @@ const BatchEmployeesToolbar = ({ selectedItemsCount, selectedEmployeeIds, onDele
 
       <Modal show={isModalVisible} onHide={handleModalClose} size="lg">
       <Modal.Header>
-                <Button
-                    variant="link"
-                    onClick={handleCancel}
-                    style={{
-                        position: 'absolute',
-                        top: '5px',
-                        right: '20px',
-                        textDecoration: 'none',
-                        fontSize: '30px',
-                        color: '#a9a9a9',
-                    }}
-                >
-                    ×
-                </Button>
-                <Modal.Title
-                    style={{
-                        fontSize: '40px',
-                        marginBottom: '10px',
-                        marginLeft: '60px',
-                        marginRight: '60px',
-                    }}
-                >
-                    BATCH UPDATE EMPLOYEES
-                </Modal.Title>
-          </Modal.Header>
+            <Button variant="link" onClick={handleCancel} style={{ position: 'absolute', top: '5px', right: '20px', textDecoration: 'none', fontSize: '30px', color: '#a9a9a9' }}>
+                ×
+            </Button>
+            <Modal.Title style={{ fontSize: '40px', marginBottom: '10px', marginLeft: '60px', marginRight: '60px' }}>
+                BATCH UPDATE EMPLOYEES
+            </Modal.Title>
+        </Modal.Header>
         <Modal.Body>
           {error && <div className="alert alert-danger">{error}</div>}
           {successMessage && <div className="alert alert-success">{successMessage}</div>}
@@ -271,11 +219,7 @@ const BatchEmployeesToolbar = ({ selectedItemsCount, selectedEmployeeIds, onDele
                 </Row>      
                   {/* Buttons */}
                   <div className="d-flex justify-content-end mt-3" style={{ marginLeft: '30px', marginRight: '30px' }}>
-                      <button
-                          type="button"
-                          onClick={handleCancel} // Trigger the handleCancel function
-                          style={cancelButtonStyle} // Apply the styles
-                      >
+                      <button type="button" onClick={handleCancel} style={cancelButtonStyle}>
                           Cancel
                       </button>
                       <button type="submit" style={buttonStyle}>
@@ -287,6 +231,35 @@ const BatchEmployeesToolbar = ({ selectedItemsCount, selectedEmployeeIds, onDele
       </Modal>
     </div>
   );
+};
+
+
+// Set the styles for the toolbar
+const buttonStyle = {
+  backgroundColor: '#3B71CA',
+  color: '#FFFFFF',
+  fontWeight: '900',
+  padding: '12px 25px',
+  border: 'none',
+  borderRadius: '10px',
+  cursor: 'pointer',
+  marginLeft: '10px',
+  display: 'flex',
+  alignItems: 'center',
+  boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
+};
+
+const cancelButtonStyle = {
+    backgroundColor: '#8C8C8C',
+    color: '#FFFFFF',
+    fontWeight: '900',
+    padding: '12px 25px',
+    border: 'none',
+    borderRadius: '10px',
+    cursor: 'pointer',
+    display: 'flex',
+    alignItems: 'center',
+    boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)'
 };
 
 const styles = {
@@ -373,5 +346,6 @@ const styles = {
     marginRight: '5px',
   },
 };
+
 
 export default BatchEmployeesToolbar;

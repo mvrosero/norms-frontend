@@ -25,6 +25,35 @@
  
 
 
+/* button styles for coordinator modals */
+  .modal-save-button {
+    background-color: #FAD32E;
+    color: #FFFFFF;
+    font-weight: 900;
+    padding: 12px 35px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    margin-left: 10px;
+    display: flex;
+    align-items: center;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.modal-cancel-button {
+    background-color: #8C8C8C;
+    color: #FFFFFF;
+    font-weight: 900;
+    padding: 12px 25px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+
 
 /* button styles for announcements */
 .custom-create-button {

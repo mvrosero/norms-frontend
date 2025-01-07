@@ -2,19 +2,17 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import background from '../../components/images/norms_background.png';
-import studentImage from '../../components/images/student.png'; // Import student image
-import employeeImage from '../../components/images/employee.png'; // Import employee image
+import studentImage from '../../components/images/student.png'; 
+import employeeImage from '../../components/images/employee.png'; 
 
 const LoginSelectionPage = () => {
   const navigate = useNavigate();
 
   const handleStudentLogin = () => {
-    // Navigate to student login page
     navigate('/student-login');
   };
 
   const handleEmployeeLogin = () => {
-    // Navigate to employee login page
     navigate('/employee-login');
   };
 
@@ -22,7 +20,7 @@ const LoginSelectionPage = () => {
     <div
       style={{
         backgroundImage: `url(${background})`,
-        backgroundSize: '100% 100%', // Adjusted background size
+        backgroundSize: '100% 100%', 
         backgroundPosition: 'center',
         width: '100vw',
         height: '100vh',
@@ -30,13 +28,13 @@ const LoginSelectionPage = () => {
         justifyContent: 'center',
         alignItems: 'center',
         flexDirection: 'column',
-        color: 'white', // Set text color
-        paddingTop: '40px', // Increased space at the top
+        color: 'white', 
+        paddingTop: '40px', 
       }}
     >
       <h5 style={{ fontFamily: 'Inter', marginBottom: '40px', fontSize: '50px', fontWeight: '900', marginTop: '10px' }}>Select User Type </h5>
       <div style={{ display: 'flex', flexDirection: 'row', gap: '20px' }}>
-        {/* Student card */}
+        {/* Student Card */}
         <div
           onClick={handleStudentLogin}
           style={{
@@ -49,15 +47,15 @@ const LoginSelectionPage = () => {
             flexDirection: 'column',
             alignItems: 'center',
             justifyContent: 'center',
-            width: '280px', // Adjusted width
-            height: '300px', // Adjusted height
-            marginRight: '20px', // Added margin between cards
+            width: '280px', 
+            height: '300px', 
+            marginRight: '20px', 
           }}
         >
-          <img src={studentImage} alt="Student" style={{ width: '120px', marginBottom: '30px' }} /> {/* Adjusted image size */}
-          <span style={{ fontSize: '25px', fontFamily: 'Poppins', textAlign: 'center' }}>Student</span> {/* Adjusted font size and family */}
+          <img src={studentImage} alt="Student" style={{ width: '120px', marginBottom: '30px' }} /> 
+          <span style={{ fontSize: '25px', fontFamily: 'Poppins', textAlign: 'center' }}>Student</span> 
         </div>
-        {/* Employee card */}
+        {/* Employee Card */}
         <div
           onClick={handleEmployeeLogin}
           style={{
@@ -70,18 +68,19 @@ const LoginSelectionPage = () => {
             flexDirection: 'column',
             alignItems: 'center',
             justifyContent: 'center',
-            width: '280px', // Adjusted width
-            height: '300px', // Adjusted height
-            marginLeft: '20px', // Added margin between cards
+            width: '280px',
+            height: '300px', 
+            marginLeft: '20px', 
           }}
         >
-          <img src={employeeImage} alt="Employee" style={{ width: '120px', marginBottom: '30px' }} /> {/* Adjusted image size */}
-          <span style={{ fontSize: '25px', fontFamily: 'Poppins', textAlign: 'center' }}>Employee</span> {/* Adjusted font size and family */}
+          <img src={employeeImage} alt="Employee" style={{ width: '120px', marginBottom: '30px' }} /> 
+          <span style={{ fontSize: '25px', fontFamily: 'Poppins', textAlign: 'center' }}>Employee</span> 
         </div>
       </div>
-      <div style={{ height: '60px' }} /> {/* Increased space below the cards */}
+      <div style={{ height: '60px' }} /> 
     </div>
   );
 };
+
 
 export default LoginSelectionPage;

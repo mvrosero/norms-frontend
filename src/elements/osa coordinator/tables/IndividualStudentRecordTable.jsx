@@ -18,15 +18,16 @@ const IndividualStudentRecordTable = () => {
     const [selectedRecord, setSelectedRecord] = useState(null);
     const [showDetailsModal, setShowDetailsModal] = useState(false);
 
+
     // Pagination state
     const [currentPage, setCurrentPage] = useState(1);
     const [rowsPerPage, setRowsPerPage] = useState(10);
 
-    // Sorting states
-    const [sortOrderSlipId, setSortOrderSlipId] = useState('asc'); // 'asc' for ascending, 'desc' for descending
-    const [sortOrderDate, setSortOrderDate] = useState('asc'); // 'asc' for ascending, 'desc' for descending
+    // Sorting state for date
+    const [sortOrderDate, setSortOrderDate] = useState('asc'); 
 
 
+    // Fetch the violation records
     useEffect(() => {
         const fetchData = async () => {
             try {
@@ -43,7 +44,6 @@ const IndividualStudentRecordTable = () => {
                         axios.get('http://localhost:9000/academic_years'),
                         axios.get('http://localhost:9000/semesters'),
                     ]);
-
                 setCategories(categoriesResponse.data);
                 setOffenses(offensesResponse.data);
                 setSanctions(sanctionsResponse.data);
@@ -53,7 +53,6 @@ const IndividualStudentRecordTable = () => {
                 console.error('Error fetching data:', error);
             }
         };
-
         fetchData();
     }, [student_idnumber]);
 
@@ -91,6 +90,7 @@ const IndividualStudentRecordTable = () => {
         return semester ? semester.semester_name : 'Unknown';
     };
 
+
     const handleViewDetails = (record) => {
         setSelectedRecord(record);
         setShowDetailsModal(true);
@@ -100,6 +100,8 @@ const IndividualStudentRecordTable = () => {
         setShowDetailsModal(false);
     };
 
+
+    // Styles for the view button
     const ViewButton = styled.button`
         border-radius: 20px;
         background: linear-gradient(45deg, #015901, #006637, #4aa616);
@@ -113,14 +115,13 @@ const IndividualStudentRecordTable = () => {
     `;
 
 
-
+    // Sort users based on date
     const handleSortDate = () => {
         const sortedRecords = [...records];
         sortedRecords.sort((a, b) => {
             const dateA = new Date(a.created_at); 
             const dateB = new Date(b.created_at);
 
-            // Compare dates including time
             return sortOrderDate === 'asc' ? dateA - dateB : dateB - dateA;
         });
 
@@ -141,20 +142,19 @@ const IndividualStudentRecordTable = () => {
         setCurrentPage(1);
     };
 
-    // Render Custom Pagination
     const renderPagination = () => {
         const pageNumbers = Array.from({ length: totalPages }, (_, i) => i + 1);
     
         const buttonStyle = {
-        width: '30px', // Fixed width for equal size
-        height: '30px', // Fixed height for equal size
+        width: '30px', 
+        height: '30px', 
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
         border: '1px solid #a0a0a0',
         backgroundColor: '#ebebeb',
         color: '#4a4a4a',
-        fontSize: '0.75rem', // Smaller font size
+        fontSize: '0.75rem', 
         cursor: 'pointer',
         };
     
@@ -171,7 +171,7 @@ const IndividualStudentRecordTable = () => {
         cursor: 'not-allowed',
         };
     
-        return (
+    return (
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '15px', fontSize: '14px', color: '#4a4a4a'}}>
             {/* Results per Page */}
             <div>
@@ -180,16 +180,9 @@ const IndividualStudentRecordTable = () => {
                     id="rowsPerPage"
                     value={rowsPerPage}
                     onChange={handleRowsPerPageChange}
-                    style={{
-                        fontSize: '14px',
-                        padding: '5px 25px',
-                        border: '1px solid #ccc',
-                        borderRadius: '3px',
-                    }}
-                >
+                    style={{ fontSize: '14px', padding: '5px 25px', border: '1px solid #ccc', borderRadius: '3px' }} >
                     {Array.from({ length: 10 }, (_, i) => (i + 1) * 10).map((value) => (
-                        <option key={value} value={value}> {value} </option>
-                    ))}
+                        <option key={value} value={value}> {value} </option> ))}
                 </select>
             </div>
     
@@ -244,6 +237,7 @@ const IndividualStudentRecordTable = () => {
 };
 
 
+// Render the individual student records table
     return (
         <div style={{ paddingTop: '10px' }}>
             <Table bordered hover responsive style={{ borderRadius: '20px', marginBottom: '20px', marginLeft: '110px' }}>
@@ -251,19 +245,9 @@ const IndividualStudentRecordTable = () => {
                     <tr>
                         <th style={{ width: '5%'}}>No.</th>
                         <th style={{ width: '20%' }}>
-                            <button
-                                style={{
-                                    border: 'none',
-                                    background: 'none',
-                                    cursor: 'pointer',
-                                    display: 'flex',
-                                    flexDirection: 'row',
-                                    justifyContent: 'center',
-                                    alignItems: 'center',
-                                    width: '100%',
-                                }}
+                            <button style={{ border: 'none', background: 'none', cursor: 'pointer', display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center', width: '100%' }}
                                 onClick={handleSortDate}
-                            >
+                                >
                                 <span>Date</span>
                                 {sortOrderDate === 'asc' ? (
                                     <ArrowDropUpIcon style={{ marginLeft: '5px' }} />
@@ -298,6 +282,7 @@ const IndividualStudentRecordTable = () => {
 
             {renderPagination()}
 
+            {/*View Violation Modal*/}
             <ViewViolationModal
                 show={showDetailsModal}
                 onHide={handleCloseDetailsModal}
@@ -311,5 +296,6 @@ const IndividualStudentRecordTable = () => {
         </div>
     );
 };
+
 
 export default IndividualStudentRecordTable;

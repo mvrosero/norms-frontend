@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
-import { Modal, Button, Table } from 'react-bootstrap';
+import { Button, Table } from 'react-bootstrap';
 import Swal from 'sweetalert2';
+
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import PersonIcon from '@mui/icons-material/Person';
@@ -23,12 +24,17 @@ const EmployeesTable = () => {
     const [deletionStatus, setDeletionStatus] = useState(false);
     const [selectedEmployeeIds, setSelectedEmployeeIds] = useState([]);  
     const [selectAll, setSelectAll] = useState(false);  
-    const [sortConfig, setSortConfig] = useState({ key: 'employee_idnumber', direction: 'asc' }); // Sorting state
+  
 
     // Pagination State
     const [currentPage, setCurrentPage] = useState(1);
     const [rowsPerPage, setRowsPerPage] = useState(10);
+
+     // Sorting state for employee id number
+    const [sortConfig, setSortConfig] = useState({ key: 'employee_idnumber', direction: 'asc' }); 
     
+
+    // Fetch the employees
     const fetchUsers = useCallback(async () => {
         try {
             const response = await axios.get('http://localhost:9000/employees', { headers });
@@ -38,17 +44,18 @@ const EmployeesTable = () => {
         }
     }, [headers, deletionStatus]);
 
+
+    // Fetch the roles
     const fetchRoles = useCallback(async () => {
         try {
             const response = await axios.get('http://localhost:9000/roles', { headers });
             setRoles(response.data);
-            console.log('Fetched roles:', response.data); // Add this line to check the roles
+            console.log('Fetched roles:', response.data); 
         } catch (error) {
             console.error('Error fetching roles:', error.response ? error.response.data : error.message);
         }
     }, [headers]);
     
-
     useEffect(() => {
         fetchUsers();
         fetchRoles();  
@@ -65,7 +72,7 @@ const EmployeesTable = () => {
 
     const getRoleName = (roleId) => {
         const role = roles.find((r) => r.role_id === roleId);
-        console.log('Role ID:', roleId, 'Role Name:', role ? role.role_name : 'Not Found'); // Add this line for debugging
+        console.log('Role ID:', roleId, 'Role Name:', role ? role.role_name : 'Not Found'); 
         return role ? role.role_name : 'Unknown Role';
     };
 
@@ -78,6 +85,8 @@ const EmployeesTable = () => {
         setShowUpdateModal(false);
     };
 
+
+    // Handle the delete employee
     const deleteUser = async (userId) => {
         const isConfirm = await Swal.fire({
             title: 'Are you sure you want to delete this user?',
@@ -93,7 +102,6 @@ const EmployeesTable = () => {
         if (!isConfirm) {
             return;
         }
-
         try {
             await axios.delete(`http://localhost:9000/employee/${userId}`, { headers });
             Swal.fire({
@@ -123,53 +131,52 @@ const EmployeesTable = () => {
     });
   };
 
-    // Handle "Select All" checkbox
-    const handleSelectAll = () => {
-        if (selectAll) {
-            setSelectedEmployeeIds([]);
-        } else {
-            const allIds = users.map(user => user.employee_idnumber);
-            setSelectedEmployeeIds(allIds);
-        }
-        setSelectAll(!selectAll);
-        };
+  // Handle "Select All" checkbox
+  const handleSelectAll = () => {
+      if (selectAll) {
+          setSelectedEmployeeIds([]);
+      } else {
+          const allIds = users.map(user => user.employee_idnumber);
+          setSelectedEmployeeIds(allIds);
+      }
+      setSelectAll(!selectAll);
+      };
 
-        const handleBatchDelete = async () => {
-        const isConfirm = await Swal.fire({
-            title: 'Are you sure you want to delete these users?',
-            text: "Deleting these users will also affect all associated data.",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#d33',
-            cancelButtonColor: '#B0B0B0',
-            confirmButtonText: 'Yes, delete it'
-        }).then((result) => result.isConfirmed);
+      const handleBatchDelete = async () => {
+      const isConfirm = await Swal.fire({
+          title: 'Are you sure you want to delete these users?',
+          text: "Deleting these users will also affect all associated data.",
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonColor: '#d33',
+          cancelButtonColor: '#B0B0B0',
+          confirmButtonText: 'Yes, delete it'
+      }).then((result) => result.isConfirmed);
 
-        if (!isConfirm) return;
+      if (!isConfirm) return;
 
-        try {
-            // Make sure you're passing the correct employee IDs in the request body
-            await axios.delete('http://localhost:9000/employees', {
-                data: { employee_ids: selectedEmployeeIds },
-                headers
-            });
-            Swal.fire({
-                icon: 'success',
-                text: 'Successfully deleted selected employees.'
-            });
-            setDeletionStatus(prevStatus => !prevStatus);  // Trigger re-fetch of users
-            setSelectedEmployeeIds([]);  // Clear the selection after deletion
-        } catch (error) {
-            console.error('Error deleting employees:', error.response?.data || error.message);
-            Swal.fire({
-                icon: 'error',
-                text: 'Failed to delete selected employees. Please try again.'
-            });
-        }
-    };
+      try {
+          await axios.delete('http://localhost:9000/employees', {
+              data: { employee_ids: selectedEmployeeIds },
+              headers
+          });
+          Swal.fire({
+              icon: 'success',
+              text: 'Successfully deleted selected employees.'
+          });
+          setDeletionStatus(prevStatus => !prevStatus);  
+          setSelectedEmployeeIds([]);  
+      } catch (error) {
+          console.error('Error deleting employees:', error.response?.data || error.message);
+          Swal.fire({
+              icon: 'error',
+              text: 'Failed to delete selected employees. Please try again.'
+          });
+      }
+  };
     
 
-  // Handle batch update
+  // Handle the batch update
   const handleBatchUpdate = (updates) => {
     axios
       .put('http://localhost:9000/employees', {
@@ -178,40 +185,41 @@ const EmployeesTable = () => {
       })
       .then((response) => {
         Swal.fire('Success', 'Batch update successful', 'success');
-        fetchUsers(); // Re-fetch users after a successful update
-        setShowUpdateModal(false); // Close the update modal
+        fetchUsers(); 
+        setShowUpdateModal(false); 
       })
       .catch((error) => {
         Swal.fire('Error', error.response?.data?.error || 'Failed to update employees', 'error');
       });
   };
 
-  const handleSort = (key) => {
-    let direction = 'asc';
-    if (sortConfig.key === key && sortConfig.direction === 'asc') {
-        direction = 'desc';
-    }
-    setSortConfig({ key, direction });
 
-    const sortedUsers = [...users].sort((a, b) => {
-        let aValue = a[key];
-        let bValue = b[key];
+   // Sort users based on full name
+    const handleSort = (key) => {
+      let direction = 'asc';
+      if (sortConfig.key === key && sortConfig.direction === 'asc') {
+          direction = 'desc';
+      }
+      setSortConfig({ key, direction });
 
-        // Special handling for full name sorting
-        if (key === 'full_name') {
-            aValue = `${a.first_name} ${a.middle_name || ''} ${a.last_name} ${a.suffix || ''}`.trim().toLowerCase();
-            bValue = `${b.first_name} ${b.middle_name || ''} ${b.last_name} ${b.suffix || ''}`.trim().toLowerCase();
-        }
+      const sortedUsers = [...users].sort((a, b) => {
+          let aValue = a[key];
+          let bValue = b[key];
 
-        if (aValue < bValue) return direction === 'asc' ? -1 : 1;
-        if (aValue > bValue) return direction === 'asc' ? 1 : -1;
-        return 0;
-    });
-    setUsers(sortedUsers);
-};
+          if (key === 'full_name') {
+              aValue = `${a.first_name} ${a.middle_name || ''} ${a.last_name} ${a.suffix || ''}`.trim().toLowerCase();
+              bValue = `${b.first_name} ${b.middle_name || ''} ${b.last_name} ${b.suffix || ''}`.trim().toLowerCase();
+          }
+
+          if (aValue < bValue) return direction === 'asc' ? -1 : 1;
+          if (aValue > bValue) return direction === 'asc' ? 1 : -1;
+          return 0;
+      });
+      setUsers(sortedUsers);
+  };
 
 
-  // Pagination
+  // Pagination logic
   const indexOfLastUser = currentPage * rowsPerPage;
   const indexOfFirstUser = indexOfLastUser - rowsPerPage;
   const currentUsers = users.slice(indexOfFirstUser, indexOfLastUser);
@@ -226,21 +234,19 @@ const EmployeesTable = () => {
     setCurrentPage(1);
   };
 
-
-  // Render Custom Pagination
 const renderPagination = () => {
   const pageNumbers = Array.from({ length: totalPages }, (_, i) => i + 1);
 
   const buttonStyle = {
-    width: '30px', // Fixed width for equal size
-    height: '30px', // Fixed height for equal size
+    width: '30px', 
+    height: '30px', 
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
     border: '1px solid #a0a0a0',
     backgroundColor: '#ebebeb',
     color: '#4a4a4a',
-    fontSize: '0.75rem', // Smaller font size
+    fontSize: '0.75rem', 
     cursor: 'pointer',
   };
 
@@ -266,13 +272,8 @@ const renderPagination = () => {
                 id="rowsPerPage"
                 value={rowsPerPage}
                 onChange={handleRowsPerPageChange}
-                style={{
-                    fontSize: '14px',
-                    padding: '5px 25px',
-                    border: '1px solid #ccc',
-                    borderRadius: '3px',
-                }}
-            >
+                style={{ fontSize: '14px', padding: '5px 25px', border: '1px solid #ccc', borderRadius: '3px' }}
+                >
                 {Array.from({ length: 10 }, (_, i) => (i + 1) * 10).map((value) => (
                     <option key={value} value={value}> {value} </option>
                 ))}
@@ -330,18 +331,12 @@ const renderPagination = () => {
 };
 
 
-  const renderTable = () => {
-    return (
+const renderTable = () => {
+  return (
       <Table bordered hover responsive style={{ borderRadius: '20px', marginBottom: '20px', marginLeft: '110px' }}>
         <thead>
           <tr>
-            <th style={{ width: '3%' }}>
-              <input
-                type="checkbox"
-                checked={selectAll}
-                onChange={handleSelectAll}
-              />
-            </th>
+            <th style={{ width: '3%' }}><input type="checkbox" checked={selectAll} onChange={handleSelectAll}/></th>
             <th style={{ width: '12%' }} onClick={() => handleSort('employee_idnumber')}>
               ID Number{' '}
               {sortConfig.key === 'employee_idnumber' ? (
@@ -372,15 +367,9 @@ const renderPagination = () => {
           </tr>
         </thead>
         <tbody>
-          {/* Loop over currentUsers to display only the users on the current page */}
           {currentUsers.map(user => (
             <tr key={user.employee_idnumber}>
-              <td>
-                <input
-                  type="checkbox"
-                  checked={selectedEmployeeIds.includes(user.employee_idnumber)}
-                  onChange={() => handleSelectUser(user.employee_idnumber)}
-                />
+              <td><input type="checkbox" checked={selectedEmployeeIds.includes(user.employee_idnumber)} onChange={() => handleSelectUser(user.employee_idnumber)}/>
               </td>
               <td>{user.employee_idnumber}</td>
               <td>{`${user.first_name} ${user.middle_name} ${user.last_name} ${user.suffix}`}</td>
@@ -431,42 +420,40 @@ const renderPagination = () => {
   };
   
   
-        return (
-            <div>
-                {selectedEmployeeIds.length > 0 && (
-                <BatchEmployeesToolbar
-                selectedItemsCount={selectedEmployeeIds.length}
-                selectedEmployeeIds={selectedEmployeeIds}
-                    onDelete={handleBatchDelete}
-                />
-            )}
-
-        {renderTable()}
-
-        {/* Custom Pagination */}
-        {renderPagination()}
-
-  
-        {/* View Employee Modal */}
-        <ViewEmployeeModal
-              show={showReadModal}
-              onHide={handleReadModalClose}
-              user={selectedUser}
-              roles={roles}
+return (
+      <div>
+          {selectedEmployeeIds.length > 0 && (
+          <BatchEmployeesToolbar
+          selectedItemsCount={selectedEmployeeIds.length}
+          selectedEmployeeIds={selectedEmployeeIds}
+              onDelete={handleBatchDelete}
           />
+      )}
 
+      {renderTable()}
 
-        {/* Edit Employee Modal */}
-        <EditEmployeeModal
-              show={showUpdateModal}
-              onHide={handleUpdateModalClose} 
-              user={selectedUser}
-              fetchUsers={fetchUsers}
-              headers={headers}
-              roles={roles}
-          />
-       </div>
+      {renderPagination()}
+
+      {/* View Employee Modal */}
+      <ViewEmployeeModal
+            show={showReadModal}
+            onHide={handleReadModalClose}
+            user={selectedUser}
+            roles={roles}
+        />
+
+      {/* Edit Employee Modal */}
+      <EditEmployeeModal
+            show={showUpdateModal}
+            onHide={handleUpdateModalClose} 
+            user={selectedUser}
+            fetchUsers={fetchUsers}
+            headers={headers}
+            roles={roles}
+        />
+      </div>
     );
 }
+
 
 export default EmployeesTable;

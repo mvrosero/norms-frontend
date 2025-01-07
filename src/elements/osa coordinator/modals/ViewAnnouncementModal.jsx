@@ -77,18 +77,7 @@ const ViewAnnouncementModal = ({ show, onHide, selectedAnnouncement }) => {
     return (
         <Modal show={show} onHide={onHide} size="lg" backdrop="static">
             <Modal.Header>
-                <Button
-                    variant="link"
-                    onClick={onHide}
-                    style={{
-                        position: 'absolute',
-                        top: '5px',
-                        right: '20px',
-                        textDecoration: 'none',
-                        fontSize: '30px',
-                        color: '#a9a9a9',
-                    }}
-                >
+                <Button variant="link" onClick={onHide} style={{ position: 'absolute', top: '5px', right: '20px', textDecoration: 'none', fontSize: '30px', color: '#a9a9a9' }}>
                     ×
                 </Button>
                 <Modal.Title style={{ fontSize: '40px', marginBottom: '10px', marginLeft: '120px', marginRight: '120px' }}>VIEW ANNOUNCEMENT</Modal.Title>
@@ -147,5 +136,6 @@ const ViewAnnouncementModal = ({ show, onHide, selectedAnnouncement }) => {
         </Modal>
     );
 };
+
 
 export default ViewAnnouncementModal;

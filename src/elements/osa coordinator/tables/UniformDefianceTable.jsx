@@ -2,12 +2,12 @@ import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import axios from 'axios';
 import { Button, Table } from 'react-bootstrap';
 import Swal from 'sweetalert2';
+import { useNavigate } from 'react-router';
+import Fuse from 'fuse.js';
 import CheckIcon from '@mui/icons-material/Check';
 import CloseIcon from '@mui/icons-material/Close';
 import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
-import { useNavigate } from 'react-router';
-import Fuse from 'fuse.js';
 import ViewUniformDefianceModal from '../modals/ViewUniformDefianceModal';
 
 const UniformDefianceTable = ({ searchQuery }) => {
@@ -16,19 +16,22 @@ const UniformDefianceTable = ({ searchQuery }) => {
     const [selectedRecord, setSelectedRecord] = useState(null);
     const navigate = useNavigate();
 
+
     // Pagination state
     const [currentPage, setCurrentPage] = useState(1);
     const [rowsPerPage, setRowsPerPage] = useState(10);
 
     // Sorting state for full name
-    const [sortOrder, setSortOrder] = useState('asc'); // 'asc' for ascending, 'desc' for descending
-    const [sortOrderDate, setSortOrderDate] = useState('asc'); // 'asc' for ascending, 'desc' for descending
+    const [sortOrder, setSortOrder] = useState('asc'); 
+    const [sortOrderDate, setSortOrderDate] = useState('asc'); 
 
     const headers = useMemo(() => {
         const token = localStorage.getItem('token');
         return token ? { Authorization: `Bearer ${token}` } : {};
     }, []);
 
+
+    // Fetch the employees
     const fetchEmployeeName = async (employee_idnumber) => {
         try {
             const response = await axios.get(`http://localhost:9000/employees/${employee_idnumber}`, { headers });
@@ -39,15 +42,15 @@ const UniformDefianceTable = ({ searchQuery }) => {
         }
     };
 
+
+    // Fetch the uniform defiances
     const fetchDefiances = useCallback(async () => {
         try {
             let response = await axios.get('http://localhost:9000/uniform_defiances', { headers });
             let data = response.data;
 
-            // Filter data to include only those with status 'Pending'
             data = data.filter(defiance => defiance.status === 'pending');
 
-            // Replace submitted_by with full name
             const updatedData = await Promise.all(data.map(async (defiance) => {
                 const fullName = await fetchEmployeeName(defiance.submitted_by);
                 return { ...defiance, submitted_by: fullName };
@@ -77,6 +80,7 @@ const UniformDefianceTable = ({ searchQuery }) => {
     }, [fetchDefiances]);
     
 
+     // Handle redirect to selected uniform defiance slip
     const handleRedirect = async (slip_id) => {
         try {
             const response = await axios.get(`http://localhost:9000/uniform_defiance/${slip_id}`);
@@ -92,6 +96,8 @@ const UniformDefianceTable = ({ searchQuery }) => {
         }
     };
 
+
+     // Handle update status of uniform defiance slip
     const updateStatus = async (slipId, newStatus) => {
         try {
             await axios.put(`http://localhost:9000/uniform_defiance/${slipId}`, { status: newStatus }, { headers });
@@ -111,6 +117,7 @@ const UniformDefianceTable = ({ searchQuery }) => {
         }
     };
 
+
     const handleShowDetailsModal = (record) => {
         setSelectedRecord(record);
         setShowDetailsModal(true);
@@ -126,27 +133,25 @@ const UniformDefianceTable = ({ searchQuery }) => {
     const handleSortSlipId = () => {
         const sortedDefiances = [...defiances];
         sortedDefiances.sort((a, b) => {
-                // Parse defiance_id as integers to ensure numeric sorting
+        
                 const slipIdA = parseInt(a.slip_id, 10);
                 const slipIdB = parseInt(b.slip_id, 10);
         
-                // Check if the parsed values are valid numbers
+         
                 if (isNaN(slipIdA) || isNaN(slipIdB)) {
-                    return 0; // If the values are invalid, maintain the order
+                    return 0; 
                 }
         
-                // Compare numeric values for sorting
                 if (sortOrder === 'asc') {
-                    return slipIdA - slipIdB; // Ascending order
+                    return slipIdA - slipIdB; 
                 } else {
-                    return slipIdB - slipIdA; // Descending order
+                    return slipIdB - slipIdA; 
                 }
             });
             setDefiances(sortedDefiances);
-            setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc'); // Toggle sort order
+            setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc'); 
         };
 
-    // Sort defiances based on id number
     const handleSort = (key) => {
         const sortedDefiances = [...defiances];
         sortedDefiances.sort((a, b) => {
@@ -161,7 +166,6 @@ const UniformDefianceTable = ({ searchQuery }) => {
             return sortOrder === 'asc' ? valueA - valueB : valueB - valueA;
             }
         });
-        
         setDefiances(sortedDefiances);
         setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
         };
@@ -173,23 +177,19 @@ const UniformDefianceTable = ({ searchQuery }) => {
             const dateA = new Date(a.created_at); 
             const dateB = new Date(b.created_at);
     
-            // Compare dates including time
             return sortOrderDate === 'asc' ? dateA - dateB : dateB - dateA;
         });
-    
         setDefiances(sortedDefiances);
         setSortOrderDate(sortOrderDate === 'asc' ? 'desc' : 'asc');
     };
     
 
-    // Calculate paginated defiances
+     // Pagination logic
     const indexOfLastDefiance = currentPage * rowsPerPage;
     const indexOfFirstDefiance = indexOfLastDefiance - rowsPerPage;
     const currentDefiances = defiances.slice(indexOfFirstDefiance, indexOfLastDefiance);
-
     const totalPages = Math.ceil(defiances.length / rowsPerPage);   
 
-    // Handle pagination change
     const handlePaginationChange = (pageNumber) => {
         setCurrentPage(pageNumber);
     };
@@ -199,21 +199,19 @@ const UniformDefianceTable = ({ searchQuery }) => {
         setCurrentPage(1);
         };
 
-
-
-        const renderPagination = () => {
-            const pageNumbers = Array.from({ length: totalPages }, (_, i) => i + 1);
+    const renderPagination = () => {
+        const pageNumbers = Array.from({ length: totalPages }, (_, i) => i + 1);
         
             const buttonStyle = {
-                width: '30px', // Fixed width for equal size
-                height: '30px', // Fixed height for equal size
+                width: '30px', 
+                height: '30px', 
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
                 border: '1px solid #a0a0a0',
                 backgroundColor: '#ebebeb',
                 color: '#4a4a4a',
-                fontSize: '0.75rem', // Smaller font size
+                fontSize: '0.75rem', 
                 cursor: 'pointer',
             };
         
@@ -230,8 +228,8 @@ const UniformDefianceTable = ({ searchQuery }) => {
                 cursor: 'not-allowed',
             };
         
-            return (
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '15px', fontSize: '14px', color: '#4a4a4a'}}>
+        return (
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '15px', fontSize: '14px', color: '#4a4a4a'}}>
                     {/* Results per Page */}
                     <div>
                         <label htmlFor="rowsPerPage" style={{ marginLeft: '120px', marginRight: '5px' }}>Results per page:</label>
@@ -239,16 +237,9 @@ const UniformDefianceTable = ({ searchQuery }) => {
                             id="rowsPerPage"
                             value={rowsPerPage}
                             onChange={handleRowsPerPageChange}
-                            style={{
-                                fontSize: '14px',
-                                padding: '5px 25px',
-                                border: '1px solid #ccc',
-                                borderRadius: '3px',
-                            }}
-                        >
+                            style={{ fontSize: '14px', padding: '5px 25px', border: '1px solid #ccc', borderRadius: '3px' }}>
                             {Array.from({ length: 10 }, (_, i) => (i + 1) * 10).map((value) => (
-                                <option key={value} value={value}> {value} </option>
-                            ))}
+                                <option key={value} value={value}> {value} </option>))}
                         </select>
                     </div>
             
@@ -303,132 +294,101 @@ const UniformDefianceTable = ({ searchQuery }) => {
         };
 
 
-        // Render Table
-        const renderTable = () => {
-            return (
-                <Table bordered hover style={{ borderRadius: '20px', marginLeft: '110px', marginTop: '10px' }}>
-                    <thead style={{ backgroundColor: '#f8f9fa' }}>
-                        <tr>
-                        <th style={{ textAlign: 'center', padding: '0', verticalAlign: 'middle', width: '5%' }}>
-                                <button
-                                    style={{ border: 'none', background: 'none', cursor: 'pointer', display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center', width: '100%', 
-                                    }}
-                                    onClick={handleSortSlipId}
-                                >
-                                    <span style={{ textAlign: 'center' }}>ID</span>
-                                    {sortOrder === 'asc' ? (
-                                    <ArrowDropUpIcon style={{ marginLeft: '5px' }} />
-                                    ) : (
-                                    <ArrowDropDownIcon style={{ marginLeft: '5px' }} />
-                                    )}
-                                </button>
-                            </th>
-                            <th style={{ width: '20%' }}>
-                                <button
-                                    style={{
-                                        border: 'none',
-                                        background: 'none',
-                                        cursor: 'pointer',
-                                        display: 'flex',
-                                        flexDirection: 'row',
-                                        justifyContent: 'center',
-                                        alignItems: 'center',
-                                        width: '100%',
-                                    }}
-                                    onClick={handleSortDate}
-                                >
-                                    <span>Date</span>
-                                    {sortOrderDate === 'asc' ? (
-                                        <ArrowDropUpIcon style={{ marginLeft: '5px' }} />
-                                    ) : (
-                                        <ArrowDropDownIcon style={{ marginLeft: '5px' }} />
-                                    )}
-                                </button>
-                            </th>
-                            <th style={{ textAlign: 'center', padding: '0', verticalAlign: 'middle', width: '12%' }}>
-                                <button onClick={() => handleSort('student_idnumber')}>
-                                    ID Number {sortOrder === 'asc' ? 
-                                    <ArrowDropUpIcon /> : 
-                                    <ArrowDropDownIcon />}
-                                </button>
-                            </th>
-                            <th style={{ width: '20%' }}>Nature of Violation</th>
-                            <th style={{ width: '10%' }}>Details</th>
-                            <th style={{ width: '20%' }}>Status</th>
+// Render uniform defiance table
+const renderTable = () => {
+        return (
+            <Table bordered hover style={{ borderRadius: '20px', marginLeft: '110px', marginTop: '10px' }}>
+                <thead style={{ backgroundColor: '#f8f9fa' }}>
+                    <tr>
+                    <th style={{ textAlign: 'center', padding: '0', verticalAlign: 'middle', width: '5%' }}>
+                        <button style={{ border: 'none', background: 'none', cursor: 'pointer', display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center', width: '100%' }}
+                            onClick={handleSortSlipId}
+                            >
+                            <span style={{ textAlign: 'center' }}>ID</span>
+                            {sortOrder === 'asc' ? (
+                            <ArrowDropUpIcon style={{ marginLeft: '5px' }} />
+                            ) : (
+                            <ArrowDropDownIcon style={{ marginLeft: '5px' }} />
+                            )}
+                        </button>
+                    </th>
+                    <th style={{ width: '20%' }}>
+                        <button style={{ border: 'none', background: 'none', cursor: 'pointer', display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center', width: '100%' }}
+                            onClick={handleSortDate}
+                            >
+                            <span>Date</span>
+                            {sortOrderDate === 'asc' ? (
+                                <ArrowDropUpIcon style={{ marginLeft: '5px' }} />
+                            ) : (
+                                <ArrowDropDownIcon style={{ marginLeft: '5px' }} />
+                            )}
+                        </button>
+                    </th>
+                    <th style={{ textAlign: 'center', padding: '0', verticalAlign: 'middle', width: '12%' }}>
+                        <button onClick={() => handleSort('student_idnumber')}>
+                            ID Number {sortOrder === 'asc' ? 
+                            <ArrowDropUpIcon /> : 
+                            <ArrowDropDownIcon />}
+                        </button>
+                    </th>
+                    <th style={{ width: '20%' }}>Nature of Violation</th>
+                    <th style={{ width: '10%' }}>Details</th>
+                    <th style={{ width: '20%' }}>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {currentDefiances.map((defiance, index) => (
+                        <tr key={index}>
+                            <td style={{ textAlign: 'center' }}>{defiance.slip_id}</td>
+                            <td>{new Date(defiance.created_at).toLocaleString()}</td> 
+                            <td>{defiance.student_idnumber}</td>
+                            <td>{defiance.nature_name}</td>
+                            <td>
+                                <div className="ud-view-container" style={{ cursor: 'pointer', textAlign: 'center', color: '#000000', textDecoration: 'underline', fontWeight: 'bold' }} onClick={() => handleShowDetailsModal(defiance)} >
+                                    View
+                                </div>
+                            </td>
+                            <td>
+                                <div className="d-flex justify-content-around">
+                                    <Button
+                                        className='btn-success btn-md d-flex align-items-center ms-2'
+                                        onClick={() => updateStatus(defiance.slip_id, 'approved')}
+                                        style={{ backgroundColor: '#28a745', color: '#fff', border: '2px solid #28a745', borderRadius: '25px', padding: '2px 10px' }}>
+                                        <CheckIcon style={{ marginRight: '5px' }} />
+                                        Approve
+                                    </Button>
+                                    <Button
+                                        className='btn-danger btn-md d-flex align-items-center ms-2'
+                                        onClick={() => updateStatus(defiance.slip_id, 'rejected')}
+                                        style={{ backgroundColor: '#dc3545', color: '#fff', border: '2px solid #dc3545', borderRadius: '25px', padding: '2px 10px' }}>
+                                        <CloseIcon style={{ marginRight: '5px' }} />
+                                        Reject
+                                    </Button>
+                                </div>
+                            </td>
                         </tr>
-                    </thead>
-                    <tbody>
-                        {currentDefiances.map((defiance, index) => (
-                            <tr key={index}>
-                                <td style={{ textAlign: 'center' }}>{defiance.slip_id}</td>
-                                <td>{new Date(defiance.created_at).toLocaleString()}</td> 
-                                <td>{defiance.student_idnumber}</td>
-                                <td>{defiance.nature_name}</td>
-                                <td>
-                                    <div 
-                                        className="ud-view-container" 
-                                        style={{ cursor: 'pointer', textAlign: 'center', color: '#000000', textDecoration: 'underline', fontWeight: 'bold' }} 
-                                        onClick={() => handleShowDetailsModal(defiance)}
-                                    >
-                                        View
-                                    </div>
-                                </td>
-                                <td>
-                                    <div className="d-flex justify-content-around">
-                                        <Button
-                                            className='btn-success btn-md d-flex align-items-center ms-2'
-                                            onClick={() => updateStatus(defiance.slip_id, 'approved')}
-                                            style={{ 
-                                                backgroundColor: '#28a745', // Bootstrap success color
-                                                color: '#fff',
-                                                border: '2px solid #28a745', // Border color matching fill color
-                                                borderRadius: '25px',
-                                                padding: '2px 10px' // Added padding for left and right
-                                            }}
-                                        >
-                                            <CheckIcon style={{ marginRight: '5px' }} />
-                                            Approve
-                                        </Button>
-                                        <Button
-                                            className='btn-danger btn-md d-flex align-items-center ms-2'
-                                            onClick={() => updateStatus(defiance.slip_id, 'rejected')}
-                                            style={{ 
-                                                backgroundColor: '#dc3545', // Bootstrap danger color
-                                                color: '#fff',
-                                                border: '2px solid #dc3545', // Border color matching fill color
-                                                borderRadius: '25px',
-                                                padding: '2px 10px' // Added padding for left and right
-                                            }}
-                                        >
-                                            <CloseIcon style={{ marginRight: '5px' }} />
-                                            Reject
-                                        </Button>
-                                    </div>
-                                </td>
-
-                            </tr>
-                        ))}
-                    </tbody>
-                </Table>
-                );
-            };
+                    ))}
+                </tbody>
+            </Table>
+            );
+        };
 
     
-    return (
-        <div>
-            {renderTable()}
+return (
+    <div>
+        {renderTable()}
 
-            {/* Custom Pagination */}
-            {renderPagination()}
+        {renderPagination()}
 
-             {/* View Defiance Modal */}
-                <ViewUniformDefianceModal 
-                    show={showDetailsModal} 
-                    onHide={handleCloseDetailsModal} 
-                    record={selectedRecord} 
-                />
-          </div>
-        );
-    };
+        {/* View Defiance Modal */}
+        <ViewUniformDefianceModal 
+            show={showDetailsModal} 
+            onHide={handleCloseDetailsModal} 
+            record={selectedRecord} 
+        />
+        </div>
+    );
+};
+
 
 export default UniformDefianceTable;

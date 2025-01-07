@@ -16,11 +16,12 @@ export default function ManageArchives() {
         <div style={{ padding: '20px' }}>
             <AdminNavigation />
             <AdminInfo />
-            <h6 className="page-title">ARCHIVED STUDENTS</h6>
-                <div style={{ width: '1100px', marginLeft: '100px' }}>
-                    <SearchAndFilter />
-                </div>
-            <ArchivesTable />
+                <h6 className="page-title">ARCHIVED STUDENTS</h6>
+                    <div style={{ width: '1100px', marginLeft: '100px' }}>
+                        <SearchAndFilter />
+                    </div>
+                    
+                <ArchivesTable />
         </div>
     );
 }

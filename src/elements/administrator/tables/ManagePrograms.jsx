@@ -10,7 +10,6 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import AdminNavigation from '../../../pages/administrator/AdminNavigation';
 import AdminInfo from '../../../pages/administrator/AdminInfo';
 import SearchAndFilter from '../../../pages/general/SearchAndFilter';
-
 import AddProgramModal from '../../../elements/administrator/modals/AddProgramModal';
 import EditProgramModal from '../../../elements/administrator/modals/EditProgramModal';
 import folderBackground from '../../../components/images/folder_background.png';
@@ -22,6 +21,7 @@ export default function ManagePrograms() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [showProgramModal, setShowProgramModal] = useState(false);
+    const [editProgramId, setEditProgramId] = useState(null);
     const [showEditModal, setShowEditModal] = useState(false);
     const [programFormData, setProgramFormData] = useState({
         program_code: '',
@@ -30,11 +30,12 @@ export default function ManagePrograms() {
         department_name: '',
         status: '',
     });
-    const [editProgramId, setEditProgramId] = useState(null);
     
+
     // Pagination state
     const [currentPage, setCurrentPage] = useState(1);
     const [programsPerPage] = useState(10);
+
 
     useEffect(() => {
         const token = localStorage.getItem('token');
@@ -50,6 +51,8 @@ export default function ManagePrograms() {
         fetchPrograms();
     }, []);
 
+
+    // Fetch programs
     const fetchPrograms = async () => {
         try {
             const response = await axios.get('http://localhost:9000/programs', {
@@ -63,6 +66,8 @@ export default function ManagePrograms() {
         }
     };
 
+
+    // Fetch departments
     const fetchDepartments = async () => {
         try {
             const response = await axios.get('http://localhost:9000/departments', {
@@ -78,6 +83,7 @@ export default function ManagePrograms() {
 
     if (loading) return <p>Loading...</p>;
     if (error) return <p>{error}</p>;
+
 
     const handleCreateNewProgram = () => {
         setShowProgramModal(true);
@@ -101,6 +107,8 @@ export default function ManagePrograms() {
         }));
     };
 
+
+    // Handle the create program
     const handleProgramSubmit = async (e) => {
         e.preventDefault();
         try {
@@ -124,63 +132,56 @@ export default function ManagePrograms() {
     };
 
     
-const handleEditProgram = (id) => {
-    const program = programs.find(prog => prog.program_id === id);
-    if (program) {
-        setProgramFormData({
-            program_code: program.program_code,
-            program_name: program.program_name,
-            department_name: program.department_name, 
-            status: program.status,
-        });
-        setEditProgramId(id);
-        setShowEditModal(true);
-    }
-};
+    // Handle the edit program
+    const handleEditProgram = (id) => {
+        const program = programs.find(prog => prog.program_id === id);
+        if (program) {
+            setProgramFormData({
+                program_code: program.program_code,
+                program_name: program.program_name,
+                department_name: program.department_name, 
+                status: program.status,
+            });
+            setEditProgramId(id);
+            setShowEditModal(true);
+        }
+    };
+
+    const handleEditSubmit = async (e) => {
+        e.preventDefault();
+
+        try {
+            const payload = {
+                program_code: programFormData.program_code,
+                program_name: programFormData.program_name,
+                department_name: programFormData.department_name,
+                status: programFormData.status,
+            };
+            await axios.put(`http://localhost:9000/program/${editProgramId}`, payload, {
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                    'Content-Type': 'application/json', 
+                },
+            });
+            Swal.fire({
+                icon: 'success',
+                title: 'Program Updated Successfully!',
+                text: 'The program has been updated successfully.',
+            });
+            setShowEditModal(false);
+            fetchPrograms();
+        } catch (error) {
+            console.error("Error updating program:", error.response || error.message);
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: 'An error occurred while updating the program. Please try again later!',
+            });
+        }
+    };
 
 
-const handleEditSubmit = async (e) => {
-    e.preventDefault();
-
-    try {
-        // Prepare the data to send to the server
-        const payload = {
-            program_code: programFormData.program_code,
-            program_name: programFormData.program_name,
-            department_name: programFormData.department_name,
-            status: programFormData.status,
-        };
-
-        // Make the PUT request
-        await axios.put(`http://localhost:9000/program/${editProgramId}`, payload, {
-            headers: {
-                'Authorization': `Bearer ${localStorage.getItem('token')}`,
-                'Content-Type': 'application/json', // Explicitly set content type
-            },
-        });
-
-        // Show success message
-        Swal.fire({
-            icon: 'success',
-            title: 'Program Updated Successfully!',
-            text: 'The program has been updated successfully.',
-        });
-
-        // Close modal and refresh program list
-        setShowEditModal(false);
-        fetchPrograms();
-    } catch (error) {
-        // Log the error and show an error message
-        console.error("Error updating program:", error.response || error.message);
-        Swal.fire({
-            icon: 'error',
-            title: 'Oops...',
-            text: 'An error occurred while updating the program. Please try again later!',
-        });
-    }
-};
-
-
+    // Handle the delete program
     const handleDeleteProgram = (id) => {
         Swal.fire({
             title: 'Are you sure you want to delete this program?',
@@ -214,6 +215,8 @@ const handleEditSubmit = async (e) => {
         });
     };
 
+
+    // Set the styles for the status
     const renderStatus = (status) => {
         let backgroundColor, textColor;
         if (status === 'active') {
@@ -250,13 +253,12 @@ const handleEditSubmit = async (e) => {
         );
     };
 
+
     // Pagination logic
     const indexOfLastProgram = currentPage * programsPerPage;
     const indexOfFirstProgram = indexOfLastProgram - programsPerPage;
     const currentPrograms = programs.slice(indexOfFirstProgram, indexOfLastProgram);
-
     const paginate = (pageNumber) => setCurrentPage(pageNumber);
-
     const totalPages = Math.ceil(programs.length / programsPerPage);
 
     const buttonStyle = {
@@ -297,10 +299,10 @@ const handleEditSubmit = async (e) => {
     }
 
     
-    return (
-        <div>
-            <AdminNavigation />
-            <AdminInfo />
+return (
+    <div>
+        <AdminNavigation />
+        <AdminInfo />
             <div
                 style={{
                     backgroundImage: `url(${folderBackground})`,
@@ -316,7 +318,8 @@ const handleEditSubmit = async (e) => {
                     paddingTop: '40px',
                     marginBottom: '20px'
                 }}
-            >
+                >
+
                 {/* Title Section */}
                 <div style={{ width: '90%', margin: '0 auto', display: 'flex', justifyContent: 'flex-start' }}>
                     <h6 className="settings-title" style={{ fontFamily: 'Poppins, sans-serif', color: '#242424', fontSize: '40px', fontWeight: 'bold', marginLeft: '100px' }}>
@@ -329,18 +332,8 @@ const handleEditSubmit = async (e) => {
                     <div style={{ width: '850px' }}><SearchAndFilter /></div>
                     <button
                         onClick={handleCreateNewProgram}
-                        style={{
-                            backgroundColor: '#FAD32E',
-                            color: 'white',
-                            fontWeight: '900',
-                            padding: '12px 18px',
-                            borderRadius: '10px',
-                            cursor: 'pointer',
-                            display: 'flex',
-                            alignItems: 'center'
-                        }}
-                    >
-                        Add Program
+                        style={{ backgroundColor: '#FAD32E', color: 'white', fontWeight: '900', padding: '12px 18px', borderRadius: '10px', cursor: 'pointer', display: 'flex', alignItems: 'center'}}>
+                            Add Program
                         <FaPlus style={{ marginLeft: '10px' }} />
                     </button>
                 </div>
@@ -388,12 +381,12 @@ const handleEditSubmit = async (e) => {
                         Page {currentPage} out of {totalPages}
                     </div>
 
-                    {/* Previous Page Button with left rounded corners */}
+                    {/* Previous Page Button */}
                     <button
                         onClick={() => handlePaginationChange(currentPage - 1)}
                         style={{
                             ...buttonStyle,
-                            borderTopLeftRadius: '8px',  // left rounded corner
+                            borderTopLeftRadius: '8px',  
                             borderBottomLeftRadius: '8px',
                             ...(currentPage === 1 ? disabledButtonStyle : {}),
                         }}
@@ -402,7 +395,7 @@ const handleEditSubmit = async (e) => {
                         ❮
                     </button>
 
-                    {/* Page Numbers (only 3 visible) */}
+                    {/* Page Numbers */}
                     {(() => {
                         let pageStart = currentPage - 1 > 0 ? currentPage - 1 : 1;
                         let pageEnd = pageStart + 2 <= totalPages ? pageStart + 2 : totalPages;
@@ -413,22 +406,18 @@ const handleEditSubmit = async (e) => {
                         }
 
                         return pageTiles.map(number => (
-                            <button
-                                key={number}
-                                onClick={() => paginate(number)}
-                                style={currentPage === number ? activeButtonStyle : buttonStyle}
-                            >
+                            <button key={number} onClick={() => paginate(number)} style={currentPage === number ? activeButtonStyle : buttonStyle}>
                                 {number}
                             </button>
                         ));
                     })()}
 
-                    {/* Next Page Button with right rounded corners */}
+                    {/* Next Page Button */}
                     <button
                         onClick={() => handlePaginationChange(currentPage + 1)}
                         style={{
                             ...buttonStyle,
-                            borderTopRightRadius: '8px',  // right rounded corner
+                            borderTopRightRadius: '8px',  
                             borderBottomRightRadius: '8px',
                             ...(currentPage === totalPages ? disabledButtonStyle : {}),
                         }}
@@ -440,25 +429,25 @@ const handleEditSubmit = async (e) => {
             </div>
         </div>
             
-            {/* Add Program Modal */}
-            <AddProgramModal 
-                show={showProgramModal} 
-                handleClose={handleCloseProgramModal} 
-                handleSubmit={handleProgramSubmit} 
-                programFormData={programFormData}
-                handleChange={handleProgramChange} 
-                departments={departments}
-            />
+        {/* Add Program Modal */}
+        <AddProgramModal 
+            show={showProgramModal} 
+            handleClose={handleCloseProgramModal} 
+            handleSubmit={handleProgramSubmit} 
+            programFormData={programFormData}
+            handleChange={handleProgramChange} 
+            departments={departments}
+        />
 
-            {/* Edit Program Modal */}
-            <EditProgramModal 
-                show={showEditModal} 
-                handleClose={() => setShowEditModal(false)} 
-                handleSubmit={handleEditSubmit} 
-                programFormData={programFormData}
-                handleChange={handleProgramChange} 
-                departments={departments}
-            />
-        </div>
+        {/* Edit Program Modal */}
+        <EditProgramModal 
+            show={showEditModal} 
+            handleClose={() => setShowEditModal(false)} 
+            handleSubmit={handleEditSubmit} 
+            programFormData={programFormData}
+            handleChange={handleProgramChange} 
+            departments={departments}
+        />
+    </div>
     );
 }

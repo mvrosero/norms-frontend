@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Swal from 'sweetalert2';
 import { Button } from 'react-bootstrap';
+
 import { FaPlus } from 'react-icons/fa';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -10,7 +11,6 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import AdminNavigation from '../../../pages/administrator/AdminNavigation';
 import AdminInfo from '../../../pages/administrator/AdminInfo';
 import SearchAndFilter from '../../../pages/general/SearchAndFilter';
-
 import AddAcademicYearModal from '../modals/AddAcademicYearModal'; 
 import EditAcademicYearModal from '../modals/EditAcademicYearModal';
 import folderBackground from '../../../components/images/folder_background.png';
@@ -19,8 +19,8 @@ export default function ManageAcademicYears() {
     const [academicYears, setAcademicYears] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const [showAddModal, setShowAddModal] = useState(false); // Add modal state
-    const [showEditModal, setShowEditModal] = useState(false); // Edit modal state
+    const [showAddModal, setShowAddModal] = useState(false); 
+    const [showEditModal, setShowEditModal] = useState(false); 
     const [formData, setFormData] = useState({
         acadyear_code: '',
         start_year: '',
@@ -39,6 +39,8 @@ export default function ManageAcademicYears() {
         fetchAcademicYears();
     }, [navigate]);
 
+
+    // Fetch academic years
     const fetchAcademicYears = async () => {
         try {
             const response = await axios.get('http://localhost:9000/academic_years', {
@@ -55,7 +57,8 @@ export default function ManageAcademicYears() {
     if (loading) return <p>Loading...</p>;
     if (error) return <p>{error}</p>;
 
-    const handleOpenAddModal = () => setShowAddModal(true); // Open Add Modal
+
+    const handleOpenAddModal = () => setShowAddModal(true); 
     const handleCloseAddModal = () => {
         setShowAddModal(false);
         setFormData({ acadyear_code: '', start_year: '', end_year: '', status: 'active' });
@@ -70,7 +73,7 @@ export default function ManageAcademicYears() {
             status: academicYear.status
         });
         setCurrentAcademicYearId(id);
-        setShowEditModal(true); // Open Edit Modal
+        setShowEditModal(true); 
     };
 
     const handleCloseEditModal = () => {
@@ -83,6 +86,8 @@ export default function ManageAcademicYears() {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
+
+    // Handle the create academic year
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
@@ -117,6 +122,8 @@ export default function ManageAcademicYears() {
         }
     };
 
+
+    // Handle the delete academic year
     const handleDelete = async (id) => {
         Swal.fire({
             title: 'Are you sure you want to delete this academic year?',
@@ -146,6 +153,8 @@ export default function ManageAcademicYears() {
         });
     };
 
+
+    // Set the styles for the status
     const renderStatus = (status) => {
         let backgroundColor, textColor;
         if (status === 'active') {
@@ -158,7 +167,6 @@ export default function ManageAcademicYears() {
             backgroundColor = '#EDEDED';
             textColor = '#6C757D'; 
         }
-
         return (
             <div style={{
                 backgroundColor,
@@ -182,10 +190,11 @@ export default function ManageAcademicYears() {
         );
     };
 
-    return (
-        <div>
-            <AdminNavigation />
-            <AdminInfo />
+
+return (
+    <div>
+        <AdminNavigation />
+        <AdminInfo />
             <div
                 style={{
                     backgroundImage: `url(${folderBackground})`,
@@ -202,12 +211,14 @@ export default function ManageAcademicYears() {
                     marginBottom: '20px'
                 }}
             >
+
                 {/* Title Section */}
                 <div style={{ width: '90%', margin: '0 auto', display: 'flex', justifyContent: 'flex-start' }}>
                     <h6 className="settings-title" style={{ fontFamily: 'Poppins, sans-serif', color: '#242424', fontSize: '40px', fontWeight: 'bold', marginLeft: '100px' }}>
                         Manage Academic Years
                     </h6>
                 </div>
+
                 {/* Search and Add Button */}
                 <div style={{ marginTop: '5px', marginLeft: '30px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                     <div style={{ width: '850px' }}><SearchAndFilter /></div>
@@ -232,15 +243,7 @@ export default function ManageAcademicYears() {
 
                 {/* Academic Year Table */}
                 <div style={{ width: '90%', marginBottom: '40px' }}>
-                    <table
-                        className="table table-hover table-bordered"
-                        style={{
-                            marginTop: '10px',
-                            marginBottom: '20px',
-                            textAlign: 'center',
-                            backgroundColor: 'white',
-                        }}
-                    >
+                    <table className="table table-hover table-bordered" style={{ marginTop: '10px', marginBottom: '20px', textAlign: 'center', backgroundColor: 'white' }}>
                         <thead style={{ backgroundColor: '#FAD32E', textAlign: 'center' }}>
                             <tr>
                                 <th style={{ width: '3%' }}>No.</th>

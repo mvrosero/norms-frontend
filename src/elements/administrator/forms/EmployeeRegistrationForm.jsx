@@ -1,15 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom'; 
 import axios from 'axios';
-import DatePicker from 'react-datepicker';
-import 'react-datepicker/dist/react-datepicker.css';
 import Swal from 'sweetalert2'; 
 
+import 'react-datepicker/dist/react-datepicker.css';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import '../../../styles/Registration.css';
 
 export default function EmployeeRegistrationForm() {
-    const navigate = useNavigate(); // Initialize useNavigate
+    const navigate = useNavigate(); 
     const [employee_idnumber, setEmployeeIdNumber] = useState('');
     const [first_name, setFirstName] = useState('');
     const [middle_name, setMiddleName] = useState('');
@@ -24,6 +23,8 @@ export default function EmployeeRegistrationForm() {
     const [error, setError] = useState('');
     const [errors, setErrors] = useState({});
 
+
+    // Set the styles for the fields
     const inputStyle = {
         border: '1px solid #ced4da',
         borderRadius: '.25rem',
@@ -48,6 +49,8 @@ export default function EmployeeRegistrationForm() {
         return baseStyle;
     };
 
+
+    // Fetch roles
     useEffect(() => {
         const token = localStorage.getItem('token');
         const roleId = localStorage.getItem('role_id');
@@ -60,18 +63,18 @@ export default function EmployeeRegistrationForm() {
                     console.error('Error fetching roles', error);
                 });
         } else {
-            // Redirect or handle unauthorized access
             console.error("Token with role_id 1 is required for accessing this page.");
         }
     }, []);
 
 
-
+    // Validate input fields
     const validateField = (name, value) => {
         const newErrors = { ...errors };
 
+        // Validate ID Number
         if (name === 'employee_idnumber') {
-            const idFormat = /^\d{2}-\d{5}$/; // Matches "00-00000" format
+            const idFormat = /^\d{2}-\d{5}$/; 
             if (!idFormat.test(value)) {
                 newErrors.employee_idnumber = 'Employee ID number format should be "00-00000".';
             } else {
@@ -81,7 +84,7 @@ export default function EmployeeRegistrationForm() {
 
         // Validate First Name
         if (name === 'first_name') {
-            const nameFormat = /^[A-Z][a-zA-Z .'-]*$/; // Capital letter followed by letters, spaces, dots, or dashes
+            const nameFormat = /^[A-Z][a-zA-Z .'-]*$/; 
             if (!nameFormat.test(value)) {
                 newErrors.first_name = 'First name must start with a capital letter and can contain only letters, spaces, dots, or dashes.';
             } else {
@@ -90,8 +93,8 @@ export default function EmployeeRegistrationForm() {
         }
 
         // Validate Middle Name
-        if (name === 'middle_name' && value) { // Middle name is optional
-            const nameFormat = /^[A-Z][a-zA-Z .'-]*$/; // Capital letter followed by letters, spaces, dots, or dashes
+        if (name === 'middle_name' && value) { 
+            const nameFormat = /^[A-Z][a-zA-Z .'-]*$/; 
             if (!nameFormat.test(value)) {
                 newErrors.middle_name = 'Middle name must start with a capital letter and can contain only letters, spaces, dots, or dashes.';
             } else {
@@ -101,7 +104,7 @@ export default function EmployeeRegistrationForm() {
 
         // Validate Last Name
         if (name === 'last_name') {
-            const nameFormat = /^[A-Z][a-zA-Z .'-]*$/; // Capital letter followed by letters, spaces, dots, or dashes
+            const nameFormat = /^[A-Z][a-zA-Z .'-]*$/; 
             if (!nameFormat.test(value)) {
                 newErrors.last_name = 'Last name must start with a capital letter and can contain only letters, spaces, dots, or dashes.';
             } else {
@@ -110,8 +113,8 @@ export default function EmployeeRegistrationForm() {
         }
 
         // Validate Suffix
-        if (name === 'suffix' && value) { // Suffix is optional
-            const nameFormat = /^[A-Z][a-zA-Z .-]*$/; // Capital letter followed by letters, spaces, dots, or dashes
+        if (name === 'suffix' && value) { 
+            const nameFormat = /^[A-Z][a-zA-Z .-]*$/; 
             if (!nameFormat.test(value)) {
                 newErrors.suffix = 'Suffix must start with a capital letter and can contain only letters, spaces, dots, or dashes.';
             } else {
@@ -121,7 +124,7 @@ export default function EmployeeRegistrationForm() {
 
         // Validate Email
         if (name === 'email') {
-            const emailFormat = /^[a-zA-Z0-9._%+-]+@ncf\.edu\.ph$/; // Must end with "@ncf.edu.ph"
+            const emailFormat = /^[a-zA-Z0-9._%+-]+@ncf\.edu\.ph$/; 
             if (!emailFormat.test(value)) {
                 newErrors.email = 'Email must end with "@ncf.edu.ph".';
             } else {
@@ -142,8 +145,6 @@ export default function EmployeeRegistrationForm() {
         };
 
 
-
-
         const validateAllFields = () => {
             const allFields = {
                 employee_idnumber,
@@ -154,7 +155,6 @@ export default function EmployeeRegistrationForm() {
                 email,
                 password,
             };
-        
             let valid = true;
             Object.keys(allFields).forEach((field) => {
                 validateField(field, allFields[field]);
@@ -162,18 +162,14 @@ export default function EmployeeRegistrationForm() {
                     valid = false;
                 }
             });
-        
             return valid;
         };
 
 
-
-
-
+    // Handle the register employee
     const handleRegistration = async (e) => {
         e.preventDefault();
 
-        // Validate all fields before proceeding
         if (!validateAllFields()) {
             Swal.fire({
                 icon: 'error',
@@ -182,8 +178,6 @@ export default function EmployeeRegistrationForm() {
             });
             return;
         }
-
-        // Confirmation before proceeding with registration
         const confirmRegistration = await Swal.fire({
             title: 'Are you sure you want to register this user?',
             text: 'You are about to create a new employee account.',
@@ -198,10 +192,6 @@ export default function EmployeeRegistrationForm() {
         if (!confirmRegistration.isConfirmed) {
             return; 
         }
-
-
-
-
         try {
             const response = await axios.post('http://localhost:9000/register-employee', {
                 employee_idnumber,
@@ -224,27 +214,21 @@ export default function EmployeeRegistrationForm() {
                 timer: 2000,
                 timerProgressBar: true,
             });
-            // Navigate back to admin user management page after successful registration
             navigate('/admin-usermanagement');
         } catch (error) {
-            console.error('Registration failed', error); // Log the entire error object for debugging
+            console.error('Registration failed', error); 
         
-            // Default error message if no specific message is found
             let errorMessage = 'An unknown error occurred';
     
-            // Check if error.response is available and contains relevant info
             if (error.response) {
-                console.error('Error response:', error.response); // Log the error response for debugging
+                console.error('Error response:', error.response); 
     
-                // Extract error message from server response if available
                 if (error.response.data) {
                     errorMessage = error.response.data.error || error.response.data.message || errorMessage;
                 }
             } else if (error.message) {
                 errorMessage = error.message;
             }
-    
-            // Handle specific error messages
             let friendlyMessage = 'Registration failed. Please try again later!';
     
             if (errorMessage) {
@@ -262,7 +246,7 @@ export default function EmployeeRegistrationForm() {
                         friendlyMessage = 'Please fill in all required fields.';
                         break;
                     default:
-                        friendlyMessage = errorMessage; // Display the actual error message
+                        friendlyMessage = errorMessage; 
                         break;
                 }
             }
@@ -274,6 +258,8 @@ export default function EmployeeRegistrationForm() {
         }
     };
 
+
+    // Handle the cancel register employee
     const handleCancel = () => {
         Swal.fire({
             title: 'Are you sure you want to cancel?',
@@ -290,18 +276,20 @@ export default function EmployeeRegistrationForm() {
             }
         });
     };
-
     if (!localStorage.getItem('token') || localStorage.getItem('role_id') !== '1') {
-        return null; // Do not render anything if token or role_id is invalid
+        return null; 
     }
 
-    return (
-        <div className="registration-group">
-            <div className="container1">
-                <h1>Employee Registration</h1>
-            </div>
+
+return (
+    <div className="registration-group">
+        <div className="container1">
+            <h1>Employee Registration</h1>
+        </div>
+
             <div className="container2" style={{ height: '480px'}}>
                 <form className="form" onSubmit={handleRegistration}>
+
                     {/* Personal Information */}
                     <fieldset className="form-section">
                         <legend className="form-legend">Personal Information</legend>
@@ -334,7 +322,6 @@ export default function EmployeeRegistrationForm() {
                             {errors.employee_idnumber && (
                                 <div style={{ color: 'red', fontSize: '12px', marginLeft: '170px', marginBottom: '20px' }}>{errors.employee_idnumber}</div>
                             )}
-
                         <div className="input-group">
                             <label htmlFor="first_name" className="label">First Name:</label>
                                 <input
@@ -415,7 +402,6 @@ export default function EmployeeRegistrationForm() {
                         </div>
                     </fieldset>
 
-
                     {/* Account Information */}
                     <fieldset className="form-section">
                         <legend className="form-legend">Account Information</legend>
@@ -473,8 +459,7 @@ export default function EmployeeRegistrationForm() {
                                 </div>
                             )}
                     </fieldset>
-
-                    
+                    {/* Buttons */}
                     <div class="btn-container">
                         <button type="button" className="cancel-btn" onClick={handleCancel}>Cancel</button>
                         <button type="submit" class="save-btn">Save</button>

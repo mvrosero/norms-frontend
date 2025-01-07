@@ -299,18 +299,8 @@ return (
                 <div style={{ width: '850px' }}><SearchAndFilter /></div>
                 <button
                     onClick={handleCreateNewSubcategory}
-                    style={{
-                        backgroundColor: '#FAD32E',
-                        color: 'white',
-                        fontWeight: '900',
-                        padding: '12px 18px',
-                        borderRadius: '10px',
-                        cursor: 'pointer',
-                        display: 'flex',
-                        alignItems: 'center'
-                    }}
-                >
-                    Add Subcategory
+                    style={{ backgroundColor: '#FAD32E', color: 'white', fontWeight: '900', padding: '12px 18px', borderRadius: '10px', cursor: 'pointer', display: 'flex', alignItems: 'center' }}>
+                        Add Subcategory
                     <FaPlus style={{ marginLeft: '10px' }} />
                 </button>
             </div>

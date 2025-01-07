@@ -1,16 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router';
 import axios from 'axios';
-import DatePicker from 'react-datepicker';
-import 'react-datepicker/dist/react-datepicker.css';
 import Swal from 'sweetalert2';
 
+import 'react-datepicker/dist/react-datepicker.css';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import '../../../styles/Registration.css';
 
 export default function StudentRegistrationForm() {
     const navigate = useNavigate();
-
     const [student_idnumber, setStudentIdNumber] = useState('');
     const [first_name, setFirstName] = useState('');
     const [middle_name, setMiddleName] = useState('');
@@ -29,10 +27,10 @@ export default function StudentRegistrationForm() {
     const [role_id] = useState(3);
     const [batch, setBatch] = useState('');
     const [errors, setErrors] = useState({});
-
     const [filteredPrograms, setFilteredPrograms] = useState([]);
 
 
+    // Set the styles for the fields
     const inputStyle = {
         border: '1px solid #ced4da',
         borderRadius: '.25rem',
@@ -58,10 +56,12 @@ export default function StudentRegistrationForm() {
     };
 
 
+    // Generate years for the batch field
     const currentYear = new Date().getFullYear();
     const years = Array.from({ length: 31 }, (_, index) => currentYear - 5 + index);    
     
 
+    // Fetch roles and departments
     useEffect(() => {
         axios.get('http://localhost:9000/programs')
             .then(response => {
@@ -83,7 +83,6 @@ export default function StudentRegistrationForm() {
 
     useEffect(() => {
         if (department_id) {
-            // Fetch programs based on selected department_id
             axios
                 .get(`http://localhost:9000/programs/${department_id}`)
                 .then((response) => {
@@ -97,12 +96,13 @@ export default function StudentRegistrationForm() {
     }, [department_id]);
 
 
-
+    // Validate input fields
     const validateField = (name, value) => {
         const newErrors = { ...errors };
 
+        // Validate ID Number
         if (name === 'student_idnumber') {
-            const idFormat = /^\d{2}-\d{5}$/; // Matches "00-00000" format
+            const idFormat = /^\d{2}-\d{5}$/; 
             if (!idFormat.test(value)) {
                 newErrors.student_idnumber = 'Student ID number format should be "00-00000".';
             } else {
@@ -112,7 +112,7 @@ export default function StudentRegistrationForm() {
 
         // Validate First Name
         if (name === 'first_name') {
-            const nameFormat = /^[A-Z][a-zA-Z .'-]*$/; // Capital letter followed by letters, spaces, dots, or dashes
+            const nameFormat = /^[A-Z][a-zA-Z .'-]*$/; 
             if (!nameFormat.test(value)) {
                 newErrors.first_name = 'First name must start with a capital letter and can contain only letters, spaces, dots, or dashes.';
             } else {
@@ -121,8 +121,8 @@ export default function StudentRegistrationForm() {
         }
 
         // Validate Middle Name
-        if (name === 'middle_name' && value) { // Middle name is optional
-            const nameFormat = /^[A-Z][a-zA-Z .'-]*$/; // Capital letter followed by letters, spaces, dots, or dashes
+        if (name === 'middle_name' && value) { 
+            const nameFormat = /^[A-Z][a-zA-Z .'-]*$/; 
             if (!nameFormat.test(value)) {
                 newErrors.middle_name = 'Middle name must start with a capital letter and can contain only letters, spaces, dots, or dashes.';
             } else {
@@ -132,7 +132,7 @@ export default function StudentRegistrationForm() {
 
         // Validate Last Name
         if (name === 'last_name') {
-            const nameFormat = /^[A-Z][a-zA-Z .'-]*$/; // Capital letter followed by letters, spaces, dots, or dashes
+            const nameFormat = /^[A-Z][a-zA-Z .'-]*$/; 
             if (!nameFormat.test(value)) {
                 newErrors.last_name = 'Last name must start with a capital letter and can contain only letters, spaces, dots, or dashes.';
             } else {
@@ -141,8 +141,8 @@ export default function StudentRegistrationForm() {
         }
 
         // Validate Suffix
-        if (name === 'suffix' && value) { // Suffix is optional
-            const nameFormat = /^[A-Z][a-zA-Z .-]*$/; // Capital letter followed by letters, spaces, dots, or dashes
+        if (name === 'suffix' && value) { 
+            const nameFormat = /^[A-Z][a-zA-Z .-]*$/; 
             if (!nameFormat.test(value)) {
                 newErrors.suffix = 'Suffix must start with a capital letter and can contain only letters, spaces, dots, or dashes.';
             } else {
@@ -152,7 +152,7 @@ export default function StudentRegistrationForm() {
 
         // Validate Email
         if (name === 'email') {
-            const emailFormat = /^[a-zA-Z0-9._%+-]+@gbox\.ncf\.edu\.ph$/; // Must end with "@gbox.ncf.edu.ph"
+            const emailFormat = /^[a-zA-Z0-9._%+-]+@gbox\.ncf\.edu\.ph$/; 
             if (!emailFormat.test(value)) {
                 newErrors.email = 'Email must end with "@gbox.ncf.edu.ph".';
             } else {
@@ -172,8 +172,7 @@ export default function StudentRegistrationForm() {
             setErrors(newErrors);
         };
 
-        
-    
+
         const validateAllFields = () => {
             const allFields = {
                 student_idnumber,
@@ -184,7 +183,6 @@ export default function StudentRegistrationForm() {
                 email,
                 password,
             };
-        
             let valid = true;
             Object.keys(allFields).forEach((field) => {
                 validateField(field, allFields[field]);
@@ -192,121 +190,109 @@ export default function StudentRegistrationForm() {
                     valid = false;
                 }
             });
-        
             return valid;
         };
 
 
-        const handleRegistration = async (e) => {
-            e.preventDefault();
-        
-            // Validate all fields before proceeding
-            if (!validateAllFields()) {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Validation Failed',
-                    text: 'Please fix the errors in the form before submitting.',
-                });
-                return;
-            }
-
-            // Confirmation before proceeding with registration
-            const confirmRegistration = await Swal.fire({
-                title: 'Are you sure you want to register this user?',
-                text: 'You are about to create a new student account.',
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#B0B0B0',
-                confirmButtonText: 'Yes, register',
-                cancelButtonText: 'Cancel',
+    // Handle the register employee
+    const handleRegistration = async (e) => {
+        e.preventDefault();
+    
+        if (!validateAllFields()) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Validation Failed',
+                text: 'Please fix the errors in the form before submitting.',
             });
+            return;
+        }
+        const confirmRegistration = await Swal.fire({
+            title: 'Are you sure you want to register this user?',
+            text: 'You are about to create a new student account.',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#B0B0B0',
+            confirmButtonText: 'Yes, register',
+            cancelButtonText: 'Cancel',
+        });
 
-            if (!confirmRegistration.isConfirmed) {
-                return; // Exit if the user cancels
-            }
-        
-            try {
-                const response = await axios.post('http://localhost:9000/register-student', {
-                    student_idnumber,
-                    first_name,
-                    middle_name,
-                    last_name,
-                    suffix,
-                    birthdate,
-                    email,
-                    password,
-                    year_level,
-                    profile_photo_filename,
-                    program_id,
-                    department_id,
-                    role_id,
-                    batch,
-                });
-        
-                // Success alert
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Registration Successful!',
-                    text: 'You successfully registered a new student.',
-                    showConfirmButton: false,
-                    timer: 2000,
-                    timerProgressBar: true,
-                });                
-        
-                // Redirect to the user management page
-                navigate('/admin-usermanagement');
-            } catch (error) {
-                console.error('Registration failed', error); // Log the entire error object for debugging
-        
-                // Default error message if no specific message is found
-                let errorMessage = 'An unknown error occurred';
-        
-                // Check if error.response is available and contains relevant info
-                if (error.response) {
-                    console.error('Error response:', error.response); // Log the error response for debugging
-        
-                    // Extract error message from server response if available
-                    if (error.response.data) {
-                        errorMessage = error.response.data.error || error.response.data.message || errorMessage;
-                    }
-                } else if (error.message) {
-                    errorMessage = error.message;
+        if (!confirmRegistration.isConfirmed) {
+            return; 
+        }
+        try {
+            const response = await axios.post('http://localhost:9000/register-student', {
+                student_idnumber,
+                first_name,
+                middle_name,
+                last_name,
+                suffix,
+                birthdate,
+                email,
+                password,
+                year_level,
+                profile_photo_filename,
+                program_id,
+                department_id,
+                role_id,
+                batch,
+            });
+            Swal.fire({
+                icon: 'success',
+                title: 'Registration Successful!',
+                text: 'You successfully registered a new student.',
+                showConfirmButton: false,
+                timer: 2000,
+                timerProgressBar: true,
+            });                
+    
+            navigate('/admin-usermanagement');
+        } catch (error) {
+            console.error('Registration failed', error);
+
+            let errorMessage = 'An unknown error occurred';
+
+            if (error.response) {
+                console.error('Error response:', error.response); 
+    
+                if (error.response.data) {
+                    errorMessage = error.response.data.error || error.response.data.message || errorMessage;
                 }
-        
-                // Handle specific error messages
-                let friendlyMessage = 'Registration failed. Please try again later!';
-        
-                if (errorMessage) {
-                    switch (errorMessage) {
-                        case 'DUPLICATE_STUDENT_ID':
-                            friendlyMessage = 'A student with this student ID number already exists.';
-                            break;
-                        case 'DUPLICATE_EMAIL':
-                            friendlyMessage = 'A student with this email already exists.';
-                            break;
-                        case 'MISSING_BIRTHDATE':
-                            friendlyMessage = 'Please provide a valid birthdate.';
-                            break;
-                        case 'MISSING_REQUIRED_FIELDS':
-                            friendlyMessage = 'Please fill in all required fields.';
-                            break;
-                        default:
-                            friendlyMessage = errorMessage; // Display the actual error message
-                            break;
-                    }
-                }
-        
-                // Display the specific error message from the backend
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Oops...',
-                    text: friendlyMessage,
-                });
+            } else if (error.message) {
+                errorMessage = error.message;
             }
-        };
-        
-        
+            let friendlyMessage = 'Registration failed. Please try again later!';
+    
+            if (errorMessage) {
+                switch (errorMessage) {
+                    case 'DUPLICATE_STUDENT_ID':
+                        friendlyMessage = 'A student with this student ID number already exists.';
+                        break;
+                    case 'DUPLICATE_EMAIL':
+                        friendlyMessage = 'A student with this email already exists.';
+                        break;
+                    case 'MISSING_BIRTHDATE':
+                        friendlyMessage = 'Please provide a valid birthdate.';
+                        break;
+                    case 'MISSING_REQUIRED_FIELDS':
+                        friendlyMessage = 'Please fill in all required fields.';
+                        break;
+                    default:
+                        friendlyMessage = errorMessage; 
+                        break;
+                }
+            }
+    
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: friendlyMessage,
+            });
+        }
+    };
+    
+    
+    // Handle the cancel register student
     const handleCancel = () => {
         Swal.fire({
             title: 'Are you sure you want to cancel?',
@@ -325,13 +311,15 @@ export default function StudentRegistrationForm() {
     };
     
 
-    return (
-        <div className="registration-group">
-            <div className="container1">
-                <h1>Student Registration</h1>
-            </div>
+return (
+    <div className="registration-group">
+        <div className="container1">
+            <h1>Student Registration</h1>
+        </div>
+
             <div className="container2">
                 <form className="form" onSubmit={handleRegistration}>
+
                     {/* Personal Information */}
                     <fieldset className="form-section">
                         <legend className="form-legend">Personal Information</legend>
@@ -364,8 +352,6 @@ export default function StudentRegistrationForm() {
                             {errors.student_idnumber && (
                                 <div style={{ color: 'red', fontSize: '12px', marginLeft: '170px', marginBottom: '20px' }}>{errors.student_idnumber}</div>
                             )}
-
-
                         <div className="input-group">
                             <label htmlFor="first_name" className="label">First Name:</label>
                             <input
@@ -446,7 +432,6 @@ export default function StudentRegistrationForm() {
                         </div>
                     </fieldset>
 
-
                     {/* Academic Information */}
                     <fieldset className="form-section">
                         <legend className="form-legend">Academic Information</legend>
@@ -489,7 +474,6 @@ export default function StudentRegistrationForm() {
                             </div>
                         </div>
                     </fieldset>
-
 
                     {/* Account Information */}
                     <fieldset className="form-section">
@@ -539,7 +523,7 @@ export default function StudentRegistrationForm() {
                                 </div>
                             )}
                     </fieldset>
-
+                    {/* Buttons */}
                     <div className="btn-container">
                         <button type="button" className="cancel-btn" onClick={handleCancel}>Cancel</button>
                         <button type="submit" className="save-btn">Save</button>

@@ -3,19 +3,18 @@ import axios from 'axios';
 import Swal from 'sweetalert2';
 import { Modal, Form, Button, Row, Col } from 'react-bootstrap';
 import Select from 'react-select';
-import { useParams } from 'react-router-dom'; // If using react-router to get params from URL
+import { useParams } from 'react-router-dom'; 
 
 export default function DepartmentalCreateViolationModal({ show, onHide, handleCloseModal}) {
     const [formData, setFormData] = useState({
         description: '',
         category_id: '',
         offense_id: '',
-        users: [], // Multi-select field for user IDs
-        sanctions: [], // Multi-select field for sanction IDs
+        users: [],
+        sanctions: [], 
         acadyear_id: '',
         semester_id: '',
     });
-
     const [students, setStudents] = useState([]);
     const [categories, setCategories] = useState([]);
     const [offenses, setOffenses] = useState([]);
@@ -24,25 +23,22 @@ export default function DepartmentalCreateViolationModal({ show, onHide, handleC
     const [semesters, setSemesters] = useState([]);
     const [isFocused, setIsFocused] = useState(false);
     const [focusedElement, setFocusedElement] = useState(null); 
-    
-    // Get the department_code from URL parameters 
     const { department_code } = useParams();
+
 
     // Maximum text area length 
     const maxLength = 1000;
     const currentLength = formData.description.length;
 
-
-    // Handling the focus state for both text area and semester select
+    // Handle the focus state for both text area and semester select
     const handleFocus = (element) => {
-        setFocusedElement(element); // Set the focused element
+        setFocusedElement(element); 
     };
 
     const handleBlur = () => {
-        setFocusedElement(null); // Reset when the element loses focus
+        setFocusedElement(null); 
     };
 
-    // Fetching data from backend
     useEffect(() => {
         const fetchData = async () => {
             try {
@@ -76,7 +72,7 @@ export default function DepartmentalCreateViolationModal({ show, onHide, handleC
         fetchData();
     }, []);
 
-    // Handling input change for non-select inputs
+    // Handle input change for non-select inputs
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData((prevState) => ({
@@ -85,7 +81,7 @@ export default function DepartmentalCreateViolationModal({ show, onHide, handleC
         }));
     };
 
-    // Handling multi-select field changes
+    // Handle multi-select field changes
     const handleSelectChange = (selectedOptions, { name }) => {
         setFormData((prevState) => ({
             ...prevState,
@@ -94,6 +90,7 @@ export default function DepartmentalCreateViolationModal({ show, onHide, handleC
     };
     
 
+    // Handle the create violation record
     const handleSubmit = async (e) => {
         e.preventDefault();
     
@@ -107,7 +104,6 @@ export default function DepartmentalCreateViolationModal({ show, onHide, handleC
             confirmButtonText: 'Yes, record it',
             cancelButtonText: 'Cancel',
         });
-    
         if (result.isConfirmed) {
             try {
                 const response = await axios.post('http://localhost:9000/create-violationrecord', formData);
@@ -120,8 +116,6 @@ export default function DepartmentalCreateViolationModal({ show, onHide, handleC
                         showConfirmButton: false,
                         timer: 3000
                     });
-
-                    // Reset form fields to default values
                     setFormData({
                         users: [], 
                         description: '',
@@ -131,7 +125,6 @@ export default function DepartmentalCreateViolationModal({ show, onHide, handleC
                         acadyear_id: '',
                         semester_id: '',
                     });
-
                     handleCloseModal();
                 } else {
                     Swal.fire('Error', `Unexpected status: ${response.status} ${response.statusText}`, 'error');
@@ -149,6 +142,7 @@ export default function DepartmentalCreateViolationModal({ show, onHide, handleC
     };
     
     
+    // Handle the cancel violation record
     const handleCancel = () => {
         Swal.fire({
             title: 'Are you sure you want to cancel?',
@@ -178,34 +172,7 @@ export default function DepartmentalCreateViolationModal({ show, onHide, handleC
     };
     
 
-    const buttonStyle = {
-        backgroundColor: '#FAD32E',
-        color: '#FFFFFF',
-        fontWeight: '900',
-        padding: '12px 35px',
-        border: 'none',
-        borderRadius: '10px',
-        cursor: 'pointer',
-        marginLeft: '10px',
-        display: 'flex',
-        alignItems: 'center',
-        boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)'
-    };
-
-    const cancelButtonStyle = {
-        backgroundColor: '#8C8C8C',
-        color: '#FFFFFF',
-        fontWeight: '900',
-        padding: '12px 25px',
-        border: 'none',
-        borderRadius: '10px',
-        cursor: 'pointer',
-        display: 'flex',
-        alignItems: 'center',
-        boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)'
-    };
-
-
+    // Handle the field styles
     const regularSelectStyles = {
         backgroundColor: '#f2f2f2',
         borderRadius: '4px',
@@ -214,10 +181,9 @@ export default function DepartmentalCreateViolationModal({ show, onHide, handleC
     };
 
     const borderColorStyles = (focusedElement, element) => ({
-        border: `1px solid ${focusedElement === element ? '#FAD32E' : '#ced4da'}`, // Yellow for focused, gray otherwise
-        boxShadow: focusedElement === element ? '0 0 0 2px rgba(250, 211, 46, 1)' : 'none', // Yellow box shadow for focused element
+        border: `1px solid ${focusedElement === element ? '#FAD32E' : '#ced4da'}`, 
+        boxShadow: focusedElement === element ? '0 0 0 2px rgba(250, 211, 46, 1)' : 'none',
     });
-    
     
     const customSelectStyles = {
         control: (provided, state) => ({
@@ -249,36 +215,14 @@ export default function DepartmentalCreateViolationModal({ show, onHide, handleC
     };
     
 
-
-    return (
+return (
         <Modal show={show} onHide={handleCancel} size="lg">
             <Modal.Header>
-                <Button
-                    variant="link"
-                    onClick={handleCancel}
-                    style={{
-                        position: 'absolute',
-                        top: '5px',
-                        right: '20px',
-                        textDecoration: 'none',
-                        fontSize: '30px',
-                        color: '#a9a9a9',
-                    }}
-                >
+                <Button variant="link" onClick={handleCancel} style={{ position: 'absolute', top: '5px', right: '20px', textDecoration: 'none', fontSize: '30px', color: '#a9a9a9' }} >
                     ×
                 </Button>
-                <Modal.Title
-                    style={{
-                        fontSize: '40px',
-                        marginBottom: '10px',
-                        marginLeft: '60px',
-                        marginRight: '60px',
-                    }}
-                >
-                    CREATE VIOLATION RECORD
-                </Modal.Title>
+                <Modal.Title style={{ fontSize: '40px', marginBottom: '10px', marginLeft: '60px', marginRight: '60px' }}> CREATE VIOLATION RECORD </Modal.Title>
             </Modal.Header>
-
             <Modal.Body style={{ paddingLeft: '30px', paddingRight: '30px' }}>
                 <form onSubmit={handleSubmit}>
                     <Row className="gy-4">
@@ -426,14 +370,14 @@ export default function DepartmentalCreateViolationModal({ show, onHide, handleC
                                     onChange={handleChange}
                                     rows={3}
                                     maxLength={maxLength}
-                                    onFocus={() => handleFocus('description')} // When focused, set 'description'
-                                    onBlur={handleBlur} // Reset focus when blurred 
+                                    onFocus={() => handleFocus('description')} 
+                                    onBlur={handleBlur} 
                                     style={{
                                         width: '100%',
                                         minHeight: '100px',
                                         padding: '10px',
                                         backgroundColor: '#f2f2f2',
-                                        border: `1px solid ${focusedElement === 'description' ? '#FAD32E' : '#ced4da'}`, // Apply focused border for description
+                                        border: `1px solid ${focusedElement === 'description' ? '#FAD32E' : '#ced4da'}`,
                                         borderRadius: '4px',
                                         boxShadow: focusedElement === 'description' ? '0 0 0 2px rgba(250, 211, 46, 1)' : 'none',
                                     }}
@@ -444,17 +388,13 @@ export default function DepartmentalCreateViolationModal({ show, onHide, handleC
                     </Row>
                         {/* Buttons */}
                         <div className="d-flex justify-content-end mt-3">
-                            <button
-                                type="button"
-                                onClick={handleCancel} 
-                                style={cancelButtonStyle} 
-                            >
-                                Cancel
-                            </button>
-                            <button type="submit" style={buttonStyle}>
-                                Save
-                            </button>
-                        </div>
+                        <button onClick={handleCancel} className='modal-cancel-button'>
+                            Cancel
+                        </button>
+                        <button type="submit" className='modal-save-button'>
+                            Save
+                        </button>
+                    </div>   
                 </form>
             </Modal.Body>
         </Modal>

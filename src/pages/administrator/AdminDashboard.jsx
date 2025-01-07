@@ -18,6 +18,7 @@ import chsBackgroundImage from "../../components/images/chs.png";
 import coeBackgroundImage from "../../components/images/coe.png";
 import ctedBackgroundImage from "../../components/images/cted.png";
 
+
 const departments = [
   { code: '2', name: 'CAF', fullName: 'College of Accountancy and Finance' },
   { code: '1', name: 'CAS', fullName: 'College of Arts and Sciences' },
@@ -42,6 +43,7 @@ export default function AdminDashboard() {
     }
   }, []);
 
+
   const fetchUserCounts = async (token) => {
     try {
       const response = await axios.get(`http://localhost:9000/user-counts`, {
@@ -59,8 +61,9 @@ export default function AdminDashboard() {
     return null; 
   }
 
-  return (
-    <>
+
+return (
+  <>
       <AdminNavigation />
       <AdminInfo />
       <h6 className="page-title"> DASHBOARD </h6>

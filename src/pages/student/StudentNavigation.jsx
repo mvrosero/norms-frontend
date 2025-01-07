@@ -11,7 +11,7 @@ import { FaGear } from "react-icons/fa6";
 import { GiHelp } from "react-icons/gi";
 
 import logo from "../../components/images/norms_logo.png";
-import "../general/General.css";
+import "../../styles/General.css";
 
 export default function StudentNavigation() {
   const [collapsed, setCollapsed] = React.useState(true);

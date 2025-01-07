@@ -3,8 +3,7 @@ import axios from 'axios';
 import { FaPlus } from 'react-icons/fa'; 
 import SearchAndFilter from '../general/SearchAndFilter';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Modal, Button } from 'react-bootstrap';
-import { AiOutlineClose } from 'react-icons/ai'; 
+import { Button } from 'react-bootstrap';
 
 import CoordinatorNavigation from './CoordinatorNavigation';
 import CoordinatorInfo from './CoordinatorInfo';
@@ -14,20 +13,20 @@ import defaultProfile from '../../components/images/default_profile.jpg';
 
 export default function IndividualStudentRecord() {
     const [studentInfo, setStudentInfo] = useState(null);
-    const [profilePhoto, setProfilePhoto] = useState(defaultProfile); // State to manage the profile photo
+    const [profilePhoto, setProfilePhoto] = useState(defaultProfile); 
     const [violationRecords, setViolationRecords] = useState([]);
-    const [showAddViolationModal, setShowAddViolationModal] = useState(false); // State for managing the Add Violation modal
+    const [showAddViolationModal, setShowAddViolationModal] = useState(false); 
     const location = useLocation();
     const navigate = useNavigate();
 
-    // Fetch student info function
+
+    // Fetch the student information
     const fetchStudentInfo = async (student_idnumber) => {
         try {
             const studentResponse = await axios.get(`http://localhost:9000/student/${student_idnumber}`);
             const studentData = studentResponse.data[0];
             setStudentInfo(studentData);
 
-            // Set profile photo if available
             const photoFilename = studentData?.profile_photo_filename;
             if (photoFilename) {
                 const photoUrl = `http://localhost:9000/uploads/profile_photo/${photoFilename}`;
@@ -43,27 +42,24 @@ export default function IndividualStudentRecord() {
     };
 
     useEffect(() => {
-        // Check if token and role_id exist in localStorage
         const token = localStorage.getItem('token');
         const roleId = localStorage.getItem('role_id');
 
-        // If token or role_id is invalid, redirect to unauthorized page
         if (!token || roleId !== '2') {
             navigate('/unauthorized');
         } else {
-            // If token and role_id are valid, fetch student info
             const student_idnumber = location.pathname.split('/').pop();
             fetchStudentInfo(student_idnumber);
         }
     }, [location.pathname, navigate]);
 
+
     const handleCreateNewRecord = () => {
-        setShowAddViolationModal(true); // Open the Add Violation modal
+        setShowAddViolationModal(true); 
     };
 
     const handleCloseModal = async () => {
-        setShowAddViolationModal(false); // Close the Add Violation modal
-        // Refetch the violation records data
+        setShowAddViolationModal(false); 
         const student_idnumber = location.pathname.split('/').pop();
         await fetchStudentInfo(student_idnumber);
     };
@@ -72,8 +68,10 @@ export default function IndividualStudentRecord() {
         handleCloseModal();
     };
 
-    return (
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+
+return (
+    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+
             {/* Title Section */}
             <div style={{ width: '90%', margin: '0 auto', display: 'flex', justifyContent: 'flex-start' }}>
                 <h6 className="section-title" style={{ fontFamily: 'Poppins, sans-serif', color: '#242424', fontSize: '40px', fontWeight: 'bold', marginTop: '20px', marginLeft: '50px' }}>Individual Violation Records</h6>
@@ -134,18 +132,15 @@ export default function IndividualStudentRecord() {
             {/* Search And Filter Section */}
             <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'center', marginLeft: '60px', padding: '0 20px' }}>
                 <div style={{ flex: '1 1 70%', minWidth: '300px' }}> <SearchAndFilter /> </div>
-                <Button
-                    onClick={handleCreateNewRecord}
-                    title="Add Record"
-                    style={{ backgroundColor: '#FAD32E', color: 'white', fontWeight: '900', padding: '12px 20px', border: 'none', borderRadius: '10px', cursor: 'pointer', display: 'flex', alignItems: 'center', boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)' }} >
-                    Add Violation
+                <Button onClick={handleCreateNewRecord} title="Add Record" style={{ backgroundColor: '#FAD32E', color: 'white', fontWeight: '900', padding: '12px 20px', border: 'none', borderRadius: '10px', cursor: 'pointer', display: 'flex', alignItems: 'center', boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)' }} >
+                        Add Violation
                     <FaPlus style={{ marginLeft: '10px' }} />
                 </Button>
             </div>
 
 
             {/* Table for displaying violation records */}
-                <IndividualStudentRecordTable records={violationRecords} />
+            <IndividualStudentRecordTable records={violationRecords} />
        
 
             {/* Add Individual Violation Record Modal */}

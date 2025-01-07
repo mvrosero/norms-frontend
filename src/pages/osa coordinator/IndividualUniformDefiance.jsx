@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import axios from 'axios';
 import { Modal, Button } from 'react-bootstrap';
-import { useNavigate, useLocation, useParams } from 'react-router-dom';  // Import useParams
+import { useNavigate, useLocation, useParams } from 'react-router-dom';  
 import { FaPlus } from 'react-icons/fa';
 import defaultProfile from '../../components/images/default_profile.jpg';
 
@@ -22,13 +22,15 @@ const IndividualUniformDefiance = () => {
     const [employees, setEmployees] = useState({});
     const location = useLocation();
     const navigate = useNavigate();
-    const { student_idnumber } = useParams();  // Extract student_idnumber from URL params
+    const { student_idnumber } = useParams();  
 
     const headers = useMemo(() => {
         const token = localStorage.getItem('token');
         return token ? { Authorization: `Bearer ${token}` } : {};
     }, []);
 
+
+    // Fetch the student information
     const fetchStudentInfo = useCallback(async () => {
         try {
             const response = await axios.get(`http://localhost:9000/student/${student_idnumber}`, { headers });
@@ -51,6 +53,8 @@ const IndividualUniformDefiance = () => {
         }
     }, [student_idnumber, headers]);
 
+
+    // Fetch the employee information
     const fetchEmployeeName = useCallback(async (employee_idnumber) => {
         try {
             const response = await axios.get(`http://localhost:9000/employees/${employee_idnumber}`, { headers });
@@ -60,9 +64,11 @@ const IndividualUniformDefiance = () => {
         } catch (error) {
             console.error('Error fetching employee name:', error);
         }
-        return employee_idnumber; // Fallback to employee_idnumber if name not found
+        return employee_idnumber; 
     }, [headers]);
 
+
+    // Fetch uniform defiances specific to the student
     const fetchDefiances = useCallback(async () => {
         try {
             await fetchStudentInfo();
@@ -71,7 +77,6 @@ const IndividualUniformDefiance = () => {
             const nonPendingDefiances = response.data.filter(defiance => defiance.status !== 'Pending');
             setDefiances(nonPendingDefiances);
 
-            // Fetch employee names
             const employeeIds = new Set(response.data.map(defiance => defiance.submitted_by));
             const employeeNames = {};
             for (const id of employeeIds) {
@@ -88,21 +93,22 @@ const IndividualUniformDefiance = () => {
         fetchDefiances();
     }, [fetchDefiances]);
 
+
     const handleShowDetailsModal = (record) => {
         setSelectedRecord(record);
     };
 
     const handleCloseAddViolationModal = async () => {
         setShowAddViolationModal(false);
-        await fetchDefiances(); // Fetch the updated defiances
+        await fetchDefiances(); 
     };
 
-    return (
-        <>
-        <CoordinatorNavigation />
-        <CoordinatorInfo />
-
+return (
+    <>
+    <CoordinatorNavigation />
+    <CoordinatorInfo />
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+
         {/* Title Section */}
             <div style={{ width: '90%', margin: '0 auto', display: 'flex', justifyContent: 'flex-start' }}>
                 <h6 className="section-title" style={{ fontFamily: 'Poppins, sans-serif', color: '#242424', fontSize: '40px', fontWeight: 'bold', marginTop: '20px', marginLeft: '50px' }}>Individual Uniform Defiances</h6>
@@ -157,7 +163,6 @@ const IndividualUniformDefiance = () => {
                 )}
             </div>
 
-            
             {/* Search And Filter Section */}
             <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'center', marginLeft: '60px', padding: '0 20px' }}>
                 <div style={{ flex: '1 1 70%', minWidth: '300px' }}> <SearchAndFilter /> </div>
@@ -171,7 +176,6 @@ const IndividualUniformDefiance = () => {
                 <ExportIndividualDefianceCSV student_idnumber={student_idnumber} />
             </div>
 
-
             {/* Table Section */}
             <IndividualUniformDefianceTable 
                 defiances={defiances.filter(defiance => 
@@ -183,13 +187,15 @@ const IndividualUniformDefiance = () => {
             />
             </div>
 
+            {/* Add Individual Violation Record Modal */}
             <AddUniformDefianceModal
                 show={showAddViolationModal}
                 onHide={handleCloseAddViolationModal} 
-                handleCloseModal={handleCloseAddViolationModal} // Ensure this function is passed correctly
-                studentInfo={studentInfo} // Pass student info to modal
+                handleCloseModal={handleCloseAddViolationModal} 
+                studentInfo={studentInfo} 
             />
 
+            {/* View Uniform Defiance Modal */}
             {selectedRecord && (
                 <ViewIndividualUniformDefianceModal
                     show={Boolean(selectedRecord)}
@@ -200,5 +206,6 @@ const IndividualUniformDefiance = () => {
         </>
     );
 };
+
 
 export default IndividualUniformDefiance;

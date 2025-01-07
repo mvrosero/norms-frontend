@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
-import { Modal, Button, Table } from 'react-bootstrap';
+import { Button, Table } from 'react-bootstrap';
 import Swal from 'sweetalert2';
+
 import EditIcon from '@mui/icons-material/Edit';
 import PersonIcon from '@mui/icons-material/Person';
 import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
@@ -22,14 +23,17 @@ const StudentsTable = () => {
   const [selectedStudentIds, setSelectedStudentIds] = useState([]);
   const [selectAll, setSelectAll] = useState(false);
 
+
   // Pagination State
   const [currentPage, setCurrentPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(10);
 
-  // Sorting state for full name
-  const [sortOrder, setSortOrder] = useState('asc'); // 'asc' for ascending, 'desc' for descending
 
-  // Fetch users, departments, and programs
+  // Sorting state for full name
+  const [sortOrder, setSortOrder] = useState('asc'); 
+
+
+  // Fetch the users, departments, and programs
   const fetchUsers = useCallback(async () => {
     try {
       const [userResponse, departmentResponse, programResponse] = await Promise.all([
@@ -49,6 +53,7 @@ const StudentsTable = () => {
     fetchUsers();
   }, [fetchUsers]);
 
+
   // Handle selecting individual users
   const handleSelectUser = (userId) => {
     setSelectedStudentIds((prevSelectedIds) => {
@@ -59,6 +64,7 @@ const StudentsTable = () => {
       }
     });
   };
+
 
   // Handle "Select All" checkbox
   const handleSelectAll = () => {
@@ -71,7 +77,6 @@ const StudentsTable = () => {
     setSelectAll(!selectAll);
   };
 
-  // Handle modal to view user details
   const handleReadModalShow = (user) => {
     setSelectedUser(user);
     setShowReadModal(true);
@@ -79,13 +84,13 @@ const StudentsTable = () => {
 
   const handleReadModalClose = () => setShowReadModal(false);
 
-  // Handle modal to edit user details
   const handleUpdateModalShow = (user) => {
     setSelectedUser(user);
     setShowUpdateModal(true);
   };
 
   const handleUpdateModalClose = () => setShowUpdateModal(false);
+
 
   // Handle batch update
   const handleBatchUpdate = (updates) => {
@@ -96,8 +101,8 @@ const StudentsTable = () => {
       })
       .then((response) => {
         Swal.fire('Success', 'Batch update successful', 'success');
-        fetchUsers(); // Re-fetch users after a successful update
-        setShowUpdateModal(false); // Close the update modal
+        fetchUsers(); 
+        setShowUpdateModal(false); 
       })
       .catch((error) => {
         Swal.fire('Error', error.response?.data?.error || 'Failed to update students', 'error');
@@ -105,50 +110,47 @@ const StudentsTable = () => {
   };
 
 
-    // Sort users based on full name
-    const handleSortFullName = () => {
-        const sortedUsers = [...users];
-        sortedUsers.sort((a, b) => {
-          const fullNameA = `${a.first_name} ${a.middle_name || ''} ${a.last_name} ${a.suffix || ''}`.toLowerCase();
-          const fullNameB = `${b.first_name} ${b.middle_name || ''} ${b.last_name} ${b.suffix || ''}`.toLowerCase();
-    
-          if (sortOrder === 'asc') {
-            return fullNameA.localeCompare(fullNameB);
-          } else {
-            return fullNameB.localeCompare(fullNameA);
-          }
-        });
-        setUsers(sortedUsers);
-        setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc'); // Toggle sort order
-      };
-
-
-      // Sort users based on idnumber
-      const handleSortIdNumber = () => {
-        const sortedUsers = [...users];
-        sortedUsers.sort((a, b) => {
-            // Parse student_idnumber as integers to ensure numeric sorting
-            const idNumberA = parseInt(a.student_idnumber, 10);
-            const idNumberB = parseInt(b.student_idnumber, 10);
-    
-            // Check if the parsed values are valid numbers
-            if (isNaN(idNumberA) || isNaN(idNumberB)) {
-                return 0; // If the values are invalid, maintain the order
-            }
-    
-            // Compare numeric values for sorting
-            if (sortOrder === 'asc') {
-                return idNumberA - idNumberB; // Ascending order
-            } else {
-                return idNumberB - idNumberA; // Descending order
-            }
-        });
-        setUsers(sortedUsers);
-        setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc'); // Toggle sort order
+  // Sort users based on full name
+  const handleSortFullName = () => {
+      const sortedUsers = [...users];
+      sortedUsers.sort((a, b) => {
+        const fullNameA = `${a.first_name} ${a.middle_name || ''} ${a.last_name} ${a.suffix || ''}`.toLowerCase();
+        const fullNameB = `${b.first_name} ${b.middle_name || ''} ${b.last_name} ${b.suffix || ''}`.toLowerCase();
+  
+        if (sortOrder === 'asc') {
+          return fullNameA.localeCompare(fullNameB);
+        } else {
+          return fullNameB.localeCompare(fullNameA);
+        }
+      });
+      setUsers(sortedUsers);
+      setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc'); 
     };
-    
 
-  // Pagination
+
+    // Sort users based on idnumber
+    const handleSortIdNumber = () => {
+      const sortedUsers = [...users];
+      sortedUsers.sort((a, b) => {
+          const idNumberA = parseInt(a.student_idnumber, 10);
+          const idNumberB = parseInt(b.student_idnumber, 10);
+  
+          if (isNaN(idNumberA) || isNaN(idNumberB)) {
+              return 0; 
+          }
+  
+          if (sortOrder === 'asc') {
+              return idNumberA - idNumberB;
+          } else {
+              return idNumberB - idNumberA;
+          }
+      });
+      setUsers(sortedUsers);
+      setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc'); 
+  };
+  
+
+  // Pagination logic
   const indexOfLastUser = currentPage * rowsPerPage;
   const indexOfFirstUser = indexOfLastUser - rowsPerPage;
   const currentUsers = users.slice(indexOfFirstUser, indexOfLastUser);
@@ -163,22 +165,19 @@ const StudentsTable = () => {
     setCurrentPage(1);
   };
 
-
-
-  // Render Custom Pagination
 const renderPagination = () => {
   const pageNumbers = Array.from({ length: totalPages }, (_, i) => i + 1);
 
   const buttonStyle = {
-    width: '30px', // Fixed width for equal size
-    height: '30px', // Fixed height for equal size
+    width: '30px', 
+    height: '30px', 
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
     border: '1px solid #a0a0a0',
     backgroundColor: '#ebebeb',
     color: '#4a4a4a',
-    fontSize: '0.75rem', // Smaller font size
+    fontSize: '0.75rem',
     cursor: 'pointer',
   };
 
@@ -200,20 +199,10 @@ const renderPagination = () => {
         {/* Results per Page */}
         <div>
             <label htmlFor="rowsPerPage" style={{ marginLeft: '120px', marginRight: '5px' }}>Results per page:</label>
-            <select
-                id="rowsPerPage"
-                value={rowsPerPage}
-                onChange={handleRowsPerPageChange}
-                style={{
-                    fontSize: '14px',
-                    padding: '5px 25px',
-                    border: '1px solid #ccc',
-                    borderRadius: '3px',
-                }}
-            >
+            <select id="rowsPerPage" value={rowsPerPage} onChange={handleRowsPerPageChange}
+                style={{ fontSize: '14px', padding: '5px 25px', border: '1px solid #ccc', borderRadius: '3px' }}>
                 {Array.from({ length: 10 }, (_, i) => (i + 1) * 10).map((value) => (
-                    <option key={value} value={value}> {value} </option>
-                ))}
+                    <option key={value} value={value}> {value} </option>))}
             </select>
         </div>
 
@@ -224,10 +213,8 @@ const renderPagination = () => {
 
             {/* Pagination Buttons */}
             <div style={{ display: 'flex' }}>
-                <button
-                    onClick={() =>
-                        currentPage > 1 && handlePaginationChange(currentPage - 1)
-                    }
+                <button onClick={() =>
+                    currentPage > 1 && handlePaginationChange(currentPage - 1) }
                     disabled={currentPage === 1}
                     style={{
                         ...buttonStyle,
@@ -239,18 +226,12 @@ const renderPagination = () => {
                     ❮
                 </button>
                 {pageNumbers.map((number) => (
-                    <button
-                        key={number}
-                        onClick={() => handlePaginationChange(number)}
-                        style={number === currentPage ? activeButtonStyle : buttonStyle}
-                    >
+                    <button key={number} onClick={() => handlePaginationChange(number)} style={number === currentPage ? activeButtonStyle : buttonStyle}>
                         {number}
                     </button>
                 ))}
                 <button
-                    onClick={() =>
-                        currentPage < totalPages && handlePaginationChange(currentPage + 1)
-                    }
+                    onClick={() => currentPage < totalPages && handlePaginationChange(currentPage + 1)}
                     disabled={currentPage === totalPages}
                     style={{
                         ...buttonStyle,
@@ -268,46 +249,38 @@ const renderPagination = () => {
 };
 
 
-  // Render Table
-  const renderTable = () => {
+// Render the students table
+const renderTable = () => {
     return (
       <Table bordered hover responsive style={{ borderRadius: '20px', marginBottom: '20px', marginLeft: '110px' }}>
         <thead>
           <tr>
-            <th style={{ width: '3%' }}>
-              <input
-                type="checkbox"
-                checked={selectAll}
-                onChange={handleSelectAll}
-              />
-            </th>
+            <th style={{ width: '3%' }}> <input type="checkbox" checked={selectAll} onChange={handleSelectAll}/> </th>
             <th style={{ textAlign: 'center', padding: '0', verticalAlign: 'middle', width: '11%' }}>
-            <button
-                style={{ border: 'none', background: 'none', cursor: 'pointer', display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center', width: '100%', 
-                }}
-                onClick={handleSortIdNumber}
-            >
-                <span style={{ textAlign: 'center' }}>ID Number</span>
-                {sortOrder === 'asc' ? (
-                <ArrowDropUpIcon style={{ marginLeft: '5px' }} />
-                ) : (
-                <ArrowDropDownIcon style={{ marginLeft: '5px' }} />
-                )}
-            </button>
+              <button
+                  style={{ border: 'none', background: 'none', cursor: 'pointer', display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center', width: '100%' }}
+                  onClick={handleSortIdNumber}
+                  >
+                  <span style={{ textAlign: 'center' }}>ID Number</span>
+                  {sortOrder === 'asc' ? (
+                  <ArrowDropUpIcon style={{ marginLeft: '5px' }} />
+                  ) : (
+                  <ArrowDropDownIcon style={{ marginLeft: '5px' }} />
+                  )}
+              </button>
             </th>
             <th style={{ textAlign: 'center', padding: '0', verticalAlign: 'middle' }}>
-            <button
-                style={{ border: 'none', background: 'none', cursor: 'pointer', display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center', width: '100%', 
-                }}
-                onClick={handleSortFullName}
-            >
-                <span style={{ textAlign: 'center' }}>Full Name</span>
-                {sortOrder === 'asc' ? (
-                <ArrowDropUpIcon style={{ marginLeft: '5px' }} />
-                ) : (
-                <ArrowDropDownIcon style={{ marginLeft: '5px' }} />
-                )}
-            </button>
+              <button
+                  style={{ border: 'none', background: 'none', cursor: 'pointer', display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center', width: '100%' }}
+                  onClick={handleSortFullName}
+                  >
+                  <span style={{ textAlign: 'center' }}>Full Name</span>
+                  {sortOrder === 'asc' ? (
+                  <ArrowDropUpIcon style={{ marginLeft: '5px' }} />
+                  ) : (
+                  <ArrowDropDownIcon style={{ marginLeft: '5px' }} />
+                  )}
+              </button>
             </th>
             <th style={{ width: '9%' }}>Year Level</th>
             <th>Department</th>
@@ -319,13 +292,7 @@ const renderPagination = () => {
         <tbody>
           {currentUsers.map(user => (
             <tr key={user.student_idnumber}>
-              <td>
-                <input
-                  type="checkbox"
-                  checked={selectedStudentIds.includes(user.student_idnumber)}
-                  onChange={() => handleSelectUser(user.student_idnumber)}
-                />
-              </td>
+              <td> <input type="checkbox" checked={selectedStudentIds.includes(user.student_idnumber)} onChange={() => handleSelectUser(user.student_idnumber)}/> </td>
               <td>{user.student_idnumber}</td>
               <td>{`${user.first_name} ${user.middle_name || ''} ${user.last_name} ${user.suffix || ''}`}</td>
               <td>{user.year_level}</td>
@@ -370,9 +337,7 @@ const renderPagination = () => {
   };
 
 
-
-
-  return (
+return (
     <div>
       {selectedStudentIds.length > 0 && (
         <BatchStudentsToolbar
@@ -383,29 +348,29 @@ const renderPagination = () => {
 
       {renderTable()}
 
-      {/* Custom Pagination */}
       {renderPagination()}
 
-        {/* View Student Modal */}
-          <ViewStudentModal
-              show={showReadModal}
-              onHide={handleReadModalClose}
-              user={selectedUser}
-              departments={departments}
-              programs={programs}
-          />
+      {/* View Student Modal */}
+        <ViewStudentModal
+            show={showReadModal}
+            onHide={handleReadModalClose}
+            user={selectedUser}
+            departments={departments}
+            programs={programs}
+        />
 
-        {/* Edit Student Modal */}
-          <EditStudentModal
-              show={showUpdateModal}
-              onHide={handleUpdateModalClose} 
-              user={selectedUser}
-              fetchUsers={fetchUsers}
-              departments={departments} 
-              programs={programs} 
+      {/* Edit Student Modal */}
+        <EditStudentModal
+            show={showUpdateModal}
+            onHide={handleUpdateModalClose} 
+            user={selectedUser}
+            fetchUsers={fetchUsers}
+            departments={departments} 
+            programs={programs} 
         />
     </div>
   );
 };
+
 
 export default StudentsTable;

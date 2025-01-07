@@ -77,7 +77,6 @@ const departments = [
   { code: '8', name: 'CTED', fullName: 'College of Teacher Education' }
 ];
 
-
 const CoordinatorDashboard = () => {
   const navigate = useNavigate();
   const [userCounts, setUserCounts] = useState({});
@@ -120,6 +119,7 @@ const CoordinatorDashboard = () => {
   const handleOffensesClick = () => {
     navigate('/manage-offenses');
   };
+
 
   return (
     <>
@@ -211,5 +211,6 @@ const DepartmentCard = ({ department, userCount }) => {
     </Card>
   );
 };
+
 
 export default CoordinatorDashboard;

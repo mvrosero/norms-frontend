@@ -37,8 +37,8 @@ export default function AccountSettings() {
     const [profilePhotoUrl, setProfilePhotoUrl] = useState(''); 
     
 
+    // Fetch the profile photo
     useEffect(() => {
-        // Fetch current profile photo URL when the component mounts
         const fetchProfilePhoto = async () => {
             try {
                 const response = await axios.get(`http://localhost:9000/view-profile-photo/${userId}`, {
@@ -48,17 +48,17 @@ export default function AccountSettings() {
                     responseType: 'blob' 
                 });
                 
-                // Create a URL for the blob object
                 const imageUrl = URL.createObjectURL(response.data);
                 setProfilePhotoUrl(imageUrl);
             } catch (error) {
                 console.error('Error fetching profile photo:', error);
             }
         };
-
         fetchProfilePhoto();
     }, [userId]);
 
+
+     // Display navigation bar based on user role
     const renderNavigation = () => {
         switch (roleId) {
             case '1':
@@ -73,6 +73,7 @@ export default function AccountSettings() {
                 return null;
         }
     };
+
 
     const handleProfileInputChange = (e) => {
         if (e.target.name === 'profile_photo_filename') {
@@ -94,6 +95,8 @@ export default function AccountSettings() {
         }));
     };
 
+
+    // Handle the submit profile photo
     const handleProfileSubmit = async (e) => {
         e.preventDefault();
     
@@ -107,13 +110,11 @@ export default function AccountSettings() {
                     'Authorization': `Bearer ${localStorage.getItem('token')}` 
                 }
             });
-    
             console.log('Response:', response);
             setMessage(response.data.message);
             setProfileFormData({
                 profile_photo_filename: null
             });
-            // Update profile photo URL after successful upload
             setProfilePhotoUrl(response.data.updatedProfilePhotoUrl); 
     
             Swal.fire({
@@ -126,7 +127,6 @@ export default function AccountSettings() {
             }).then(() => {
                 window.location.reload();
             });
-    
         } catch (error) {
             Swal.fire({
                 title: 'Error!',
@@ -139,89 +139,84 @@ export default function AccountSettings() {
     };
     
 
-// Handle delete profile photo
-const handleDeleteProfilePhoto = async () => {
-    try {
-        const response = await axios.delete(`http://localhost:9000/delete-profile-photo/${userId}`, {
-            headers: {
-                'Authorization': `Bearer ${localStorage.getItem('token')}` // Ensure authentication
+    // Handle delete profile photo
+    const handleDeleteProfilePhoto = async () => {
+        try {
+            const response = await axios.delete(`http://localhost:9000/delete-profile-photo/${userId}`, {
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('token')}` 
+                }
+            });
+
+            if (response.status === 200) {
+                setProfilePhotoUrl(null);
+
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Success!',
+                    text: 'Profile photo deleted successfully.',
+                    confirmButtonText: 'OK',
+                });
             }
-        });
+        } catch (error) {
+            console.error('Error deleting profile photo:', error);
 
-        // On success, remove the profile photo from the state
-        if (response.status === 200) {
-            setProfilePhotoUrl(null);
-
-            // SweetAlert for success
             Swal.fire({
-                icon: 'success',
-                title: 'Success!',
-                text: 'Profile photo deleted successfully.',
-                confirmButtonText: 'OK',
+                icon: 'error',
+                title: 'Error',
+                text: 'Failed to delete profile photo.',
+                confirmButtonText: 'Try Again',
             });
         }
-    } catch (error) {
-        console.error('Error deleting profile photo:', error);
-
-        // SweetAlert for failure
-        Swal.fire({
-            icon: 'error',
-            title: 'Error',
-            text: 'Failed to delete profile photo.',
-            confirmButtonText: 'Try Again',
-        });
-    }
-};
-
-const handlePasswordSubmit = async (e) => {
-    e.preventDefault();
-
-    // Check if new password and confirmation match
-    if (passwordFormData.new_password !== passwordFormData.confirm_new_password) {
-        setMessage('New password and confirmation do not match.');
-        return;
-    }
-
-    try {
-        const response = await axios.put(`http://localhost:9000/password-change/${userId}`, {
-            current_password: passwordFormData.current_password,
-            new_password: passwordFormData.new_password
-        }, {
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${localStorage.getItem('token')}` 
-            }
-        });
-
-        console.log('Password Change Response:', response);
-        setPasswordFormData({
-            current_password: '',
-            new_password: '',
-            confirm_new_password: ''
-        });
-
-        // Show success alert
-        Swal.fire({
-            title: 'Success!',
-            text: 'Your password has been changed successfully.',
-            icon: 'success',
-            timer: 3000,  
-            timerProgressBar: true,  
-            showConfirmButton: false  
-        });
-
-    } catch (error) {
-        Swal.fire({
-            title: 'Error!',
-            text: 'There was an issue while changing your password. Please try again.',
-            icon: 'error',
-            showConfirmButton: true
-        });
-    }
-};
+    };
 
 
+    // Handle the submit password
+    const handlePasswordSubmit = async (e) => {
+        e.preventDefault();
 
+        if (passwordFormData.new_password !== passwordFormData.confirm_new_password) {
+            setMessage('New password and confirmation do not match.');
+            return;
+        }
+        try {
+            const response = await axios.put(`http://localhost:9000/password-change/${userId}`, {
+                current_password: passwordFormData.current_password,
+                new_password: passwordFormData.new_password
+            }, {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('token')}` 
+                }
+            });
+
+            console.log('Password Change Response:', response);
+            setPasswordFormData({
+                current_password: '',
+                new_password: '',
+                confirm_new_password: ''
+            });
+            Swal.fire({
+                title: 'Success!',
+                text: 'Your password has been changed successfully.',
+                icon: 'success',
+                timer: 3000,  
+                timerProgressBar: true,  
+                showConfirmButton: false  
+            });
+
+        } catch (error) {
+            Swal.fire({
+                title: 'Error!',
+                text: 'There was an issue while changing your password. Please try again.',
+                icon: 'error',
+                showConfirmButton: true
+            });
+        }
+    };
+
+
+    // Handle the cancel button
     const handleCancel = () => {
         Swal.fire({
             title: 'Are you sure you want to cancel?',
@@ -240,7 +235,7 @@ const handlePasswordSubmit = async (e) => {
     };
     
 
-
+    // Set the styles for the settings
     const formControlStyles = {
         padding: '8px 12px',
         fontSize: '14px',
@@ -288,84 +283,37 @@ const handlePasswordSubmit = async (e) => {
     };
 
 
-    return (
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '20px' }}>
-            {renderNavigation()}
-                {/* Title Section */}
-                <div style={{ width: '90%', margin: '0 auto', display: 'flex', justifyContent: 'flex-start' }}>
-                    <h6
-                        className="settings-title"
-                        style={{
-                            fontFamily: 'Poppins, sans-serif',
-                            color: '#242424',
-                            fontSize: '40px',
-                            fontWeight: 'bold',
-                            marginLeft: '30px',
-                        }}
-                    >
-                        Account Settings
-                    </h6>
-                </div>
+return (
+    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '20px' }}>
+        {renderNavigation()}
 
-                <div style={{
-                display: 'grid',
-                gridTemplateColumns: '1fr 1fr',
-                gap: '20px',
-                width: '95%',
-                paddingTop: '30px',
-                paddingLeft: '75px'
-            }}>
+            {/* Title Section */}
+            <div style={{ width: '90%', margin: '0 auto', display: 'flex', justifyContent: 'flex-start' }}>
+                <h6 className="settings-title" style={{ fontFamily: 'Poppins, sans-serif', color: '#242424', fontSize: '40px', fontWeight: 'bold', marginLeft: '30px' }}>
+                    Account Settings
+                </h6>
+            </div>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', width: '95%', paddingTop: '30px', paddingLeft: '75px' }}>
 
             {/* Profile Photo Upload Form */}
             <Card style={{ boxShadow: '0px 4px 6px rgba(0,0,0,0.1)', marginBottom: '20px', paddingBottom: '30px' }}>
                 <Card.Body>
                     <Card.Title
-                        style={{
-                            textAlign: 'center',
-                            marginTop: '30px',
-                            marginBottom: '30px',
-                            fontWeight: '600', 
-                            fontFamily: 'Poppins, sans-serif' 
-                        }}
-                    >
-                        Change Profile Picture
+                        style={{ textAlign: 'center', marginTop: '30px', marginBottom: '30px', fontWeight: '600', fontFamily: 'Poppins, sans-serif' }}>
+                            Change Profile Picture
                     </Card.Title>
                     
                     {/* Current Profile Photo */}
                     <Form.Label style={formLabelStyles}>Current Profile Picture:</Form.Label>
-                    
                     {profilePhotoUrl && (
-                                <div
-                                style={{
-                                    display: 'flex',
-                                    justifyContent: 'center', 
-                                    alignItems: 'center', 
-                                    marginLeft: '20px',
-                                    marginBottom: '20px'
-                                }}
-                            >
+                        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginLeft: '20px', marginBottom: '20px' }}>
                             <img
                                 src={profilePhotoUrl}
                                 alt="Profile"
-                                style={{
-                                    width: '400px',
-                                    height: '400px',
-                                    objectFit: 'cover',
-                                    borderRadius: '0%', 
-                                }}
-                            />
+                                style={{ width: '400px', height: '400px', objectFit: 'cover', borderRadius: '0%' }}/>
                             <button
-                            onClick={handleDeleteProfilePhoto}
-                            style={{
-                                position: 'relative',
-                                bottom: '180px',
-                                right: '30px',
-                                color: '#dcdcdc',   
-                                fontSize: '20px',
-                                borderRadius: '50%',
-                                cursor: 'pointer',
-                            }}
-                        >
+                                onClick={handleDeleteProfilePhoto}
+                                style={{ position: 'relative', bottom: '180px', right: '30px', color: '#dcdcdc', fontSize: '20px', borderRadius: '50%', cursor: 'pointer' }}>
                             <IoMdClose />
                         </button>
                         </div>
@@ -379,16 +327,7 @@ const handlePasswordSubmit = async (e) => {
                                 name="profile_photo_filename"
                                 onChange={handleProfileInputChange}
                                 accept="image/*"
-                                style={{
-                                    padding: '8px 12px',
-                                    fontSize: '14px',
-                                    borderRadius: '5px',
-                                    border: '1px solid #ccc',
-                                    display: 'block',
-                                    width: '90%',
-                                    marginLeft: '20px',
-                                }}
-                            />
+                                style={{ padding: '8px 12px', fontSize: '14px', borderRadius: '5px', border: '1px solid #ccc', display: 'block', width: '90%', marginLeft: '20px' }}/>
                         </Form.Group>
                         <div className="d-flex justify-content-end mt-3" style={{ paddingTop: '10px', paddingRight: '30px' }}>
                             <Button type="button" onClick={handleCancel} style={cancelButtonStyle}> Cancel </Button>
@@ -403,15 +342,8 @@ const handlePasswordSubmit = async (e) => {
             <Card style={{ boxShadow: '0px 4px 6px rgba(0,0,0,0.1)', marginBottom: '20px', paddingBottom: '30px', maxHeight: '430px' }}>
                 <Card.Body>
                     <Card.Title
-                        style={{
-                            textAlign: 'center',
-                            marginTop: '30px',
-                            marginBottom: '30px',
-                            fontWeight: '600',
-                            fontFamily: 'Poppins, sans-serif',
-                        }}
-                    >
-                        Change Password
+                        style={{ textAlign: 'center', marginTop: '30px', marginBottom: '30px', fontWeight: '600', fontFamily: 'Poppins, sans-serif' }}>
+                            Change Password
                     </Card.Title>
                     <Form onSubmit={handlePasswordSubmit}>
                         <Form.Group controlId="currentPassword">

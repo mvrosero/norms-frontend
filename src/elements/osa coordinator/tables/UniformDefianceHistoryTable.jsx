@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import axios from 'axios';
-import { Table, Button } from 'react-bootstrap';
+import { Table } from 'react-bootstrap';
 import Swal from 'sweetalert2';
 import { useNavigate, Link } from 'react-router-dom';
 import Fuse from 'fuse.js';
@@ -10,24 +10,27 @@ import ViewHistoryModal from '../modals/ViewHistoryModal';
 
 const UniformDefianceHistoryTable = ({ searchQuery }) => {
     const [defiances, setDefiances] = useState([]);
-    const [deletionStatus, setDeletionStatus] = useState(false); 
     const [showModal, setShowModal] = useState(false); 
     const [selectedRecord, setSelectedRecord] = useState(null); 
     const navigate = useNavigate();
+
 
     // Pagination state
     const [currentPage, setCurrentPage] = useState(1);
     const [rowsPerPage, setRowsPerPage] = useState(10);
 
     // Sorting state for full name
-    const [sortOrder, setSortOrder] = useState('asc'); // 'asc' for ascending, 'desc' for descending
-    const [sortOrderDate, setSortOrderDate] = useState('asc'); // 'asc' for ascending, 'desc' for descending
+    const [sortOrder, setSortOrder] = useState('asc'); 
+    const [sortOrderDate, setSortOrderDate] = useState('asc'); 
+
 
     const headers = useMemo(() => {
         const token = localStorage.getItem('token');
         return token ? { Authorization: `Bearer ${token}` } : {};
     }, []);
 
+
+    // Fetch the uniform defiances
     const fetchDefiances = useCallback(async () => {
         try {
             let response;
@@ -60,6 +63,8 @@ const UniformDefianceHistoryTable = ({ searchQuery }) => {
         fetchDefiances();
     }, [fetchDefiances]);
 
+
+    // Handle redirect to selected uniform defiance slip
     const handleRedirect = async (slip_id) => {
         try {
             const response = await axios.get(`http://localhost:9000/uniform_defiance/${slip_id}`);
@@ -75,37 +80,6 @@ const UniformDefianceHistoryTable = ({ searchQuery }) => {
         }
     };
 
-    const deleteDefiance = async (slipId) => {
-        const isConfirm = await Swal.fire({
-            title: 'Are you sure?',
-            text: "You won't be able to revert this!",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Yes, Delete it!'
-        }).then((result) => {
-            return result.isConfirmed;
-        });
-        if (!isConfirm) {
-            return;
-        }
-
-        try {
-            await axios.delete(`http://localhost:9000/uniform_defiance/${slipId}`, { headers });
-            Swal.fire({
-                icon: 'success',
-                text: 'Defiance has been deleted.',
-            });
-            setDefiances(prevDefiances => prevDefiances.filter(defiance => defiance.slip_id !== slipId));
-        } catch (error) {
-            console.error('Error deleting defiance:', error);
-            Swal.fire({
-                icon: 'error',
-                text: 'An error occurred while deleting defiance. Please try again later.',
-            });
-        }
-    };
 
     const handleShowDetailsModal = (record) => {
         setSelectedRecord(record);
@@ -118,6 +92,7 @@ const UniformDefianceHistoryTable = ({ searchQuery }) => {
     };
 
 
+    // Set the styles for the status
     const renderStatus = (status) => {
         let backgroundColor, textColor;
         if (status === 'approved') {
@@ -133,7 +108,6 @@ const UniformDefianceHistoryTable = ({ searchQuery }) => {
             backgroundColor = '#EDEDED';
             textColor = '#6C757D'; 
         }
-
         return (
             <div style={{
                 backgroundColor,
@@ -158,31 +132,26 @@ const UniformDefianceHistoryTable = ({ searchQuery }) => {
     };
 
 
-
     // Sort defiances based on slip_id
     const handleSortSlipId = () => {
         const sortedDefiances = [...defiances];
         sortedDefiances.sort((a, b) => {
-                // Parse defiance_id as integers to ensure numeric sorting
                 const slipIdA = parseInt(a.slip_id, 10);
                 const slipIdB = parseInt(b.slip_id, 10);
         
-                // Check if the parsed values are valid numbers
                 if (isNaN(slipIdA) || isNaN(slipIdB)) {
-                    return 0; // If the values are invalid, maintain the order
+                    return 0; 
                 }
         
-                // Compare numeric values for sorting
                 if (sortOrder === 'asc') {
-                    return slipIdA - slipIdB; // Ascending order
+                    return slipIdA - slipIdB; 
                 } else {
-                    return slipIdB - slipIdA; // Descending order
+                    return slipIdB - slipIdA; 
                 }
             });
             setDefiances(sortedDefiances);
-            setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc'); // Toggle sort order
+            setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc'); 
         };
-
 
     // Sort defiances based on id_number
     const handleSort = (key) => {
@@ -199,7 +168,6 @@ const UniformDefianceHistoryTable = ({ searchQuery }) => {
             return sortOrder === 'asc' ? valueA - valueB : valueB - valueA;
             }
         });
-        
         setDefiances(sortedDefiances);
         setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
         };
@@ -207,191 +175,167 @@ const UniformDefianceHistoryTable = ({ searchQuery }) => {
         const handleSortDate = () => {
             const sortedDefiances = [...defiances];
             sortedDefiances.sort((a, b) => {
-                const dateA = new Date(a.updated_at); // Convert to Date object for comparison
+                const dateA = new Date(a.updated_at); 
                 const dateB = new Date(b.updated_at);
         
-                // Compare dates including time
                 return sortOrderDate === 'asc' ? dateA - dateB : dateB - dateA;
             });
-        
             setDefiances(sortedDefiances);
             setSortOrderDate(sortOrderDate === 'asc' ? 'desc' : 'asc');
         };
 
 
-        // Calculate paginated defiances
-        const indexOfLastDefiance = currentPage * rowsPerPage;
-        const indexOfFirstDefiance = indexOfLastDefiance - rowsPerPage;
-        const currentDefiances = defiances.slice(indexOfFirstDefiance, indexOfLastDefiance);
-    
-        const totalPages = Math.ceil(defiances.length / rowsPerPage);   
-    
-        // Handle pagination change
-        const handlePaginationChange = (pageNumber) => {
-            setCurrentPage(pageNumber);
+     // Pagination logic
+    const indexOfLastDefiance = currentPage * rowsPerPage;
+    const indexOfFirstDefiance = indexOfLastDefiance - rowsPerPage;
+    const currentDefiances = defiances.slice(indexOfFirstDefiance, indexOfLastDefiance);
+    const totalPages = Math.ceil(defiances.length / rowsPerPage);   
+
+    const handlePaginationChange = (pageNumber) => {
+        setCurrentPage(pageNumber);
+    };
+
+    const handleRowsPerPageChange = (e) => {
+        setRowsPerPage(Number(e.target.value));
+        setCurrentPage(1);
         };
 
-        const handleRowsPerPageChange = (e) => {
-            setRowsPerPage(Number(e.target.value));
-            setCurrentPage(1);
+    const renderPagination = () => {
+        const pageNumbers = Array.from({ length: totalPages }, (_, i) => i + 1);
+        
+            const buttonStyle = {
+                width: '30px', 
+                height: '30px', 
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                border: '1px solid #a0a0a0',
+                backgroundColor: '#ebebeb',
+                color: '#4a4a4a',
+                fontSize: '0.75rem', 
+                cursor: 'pointer',
             };
-
-    
-            const renderPagination = () => {
-                const pageNumbers = Array.from({ length: totalPages }, (_, i) => i + 1);
-            
-                const buttonStyle = {
-                    width: '30px', // Fixed width for equal size
-                    height: '30px', // Fixed height for equal size
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    border: '1px solid #a0a0a0',
-                    backgroundColor: '#ebebeb',
-                    color: '#4a4a4a',
-                    fontSize: '0.75rem', // Smaller font size
-                    cursor: 'pointer',
-                };
-            
-                const activeButtonStyle = {
-                    ...buttonStyle,
-                    backgroundColor: '#a0a0a0',
-                    color: '#f1f1f1',
-                };
-            
-                const disabledButtonStyle = {
-                    ...buttonStyle,
-                    backgroundColor: '#ebebeb',
-                    color: '#a1a1a1',
-                    cursor: 'not-allowed',
-                };
-            
-                return (
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '15px', fontSize: '14px', color: '#4a4a4a'}}>
-                        {/* Results per Page */}
-                        <div>
-                            <label htmlFor="rowsPerPage" style={{ marginLeft: '120px', marginRight: '5px' }}>Results per page:</label>
-                            <select
-                                id="rowsPerPage"
-                                value={rowsPerPage}
-                                onChange={handleRowsPerPageChange}
-                                style={{
-                                    fontSize: '14px',
-                                    padding: '5px 25px',
-                                    border: '1px solid #ccc',
-                                    borderRadius: '3px',
-                                }}
+        
+            const activeButtonStyle = {
+                ...buttonStyle,
+                backgroundColor: '#a0a0a0',
+                color: '#f1f1f1',
+            };
+        
+            const disabledButtonStyle = {
+                ...buttonStyle,
+                backgroundColor: '#ebebeb',
+                color: '#a1a1a1',
+                cursor: 'not-allowed',
+            };
+        
+        return (
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '15px', fontSize: '14px', color: '#4a4a4a'}}>
+                {/* Results per Page */}
+                <div>
+                    <label htmlFor="rowsPerPage" style={{ marginLeft: '120px', marginRight: '5px' }}>Results per page:</label>
+                    <select
+                        id="rowsPerPage"
+                        value={rowsPerPage}
+                        onChange={handleRowsPerPageChange}
+                        style={{ fontSize: '14px', padding: '5px 25px', border: '1px solid #ccc', borderRadius: '3px' }}>
+                        {Array.from({ length: 10 }, (_, i) => (i + 1) * 10).map((value) => (
+                            <option key={value} value={value}> {value} </option>
+                        ))}
+                    </select>
+                </div>
+        
+                {/* Pagination Info and Buttons */}
+                <div style={{ display: 'flex', alignItems: 'center', marginRight: '25px' }}>
+                    {/* Page Info */}
+                    <div style={{ marginRight: '10px' }}>Page {currentPage} of {totalPages}</div>
+        
+                    {/* Pagination Buttons */}
+                    <div style={{ display: 'flex' }}>
+                        <button
+                            onClick={() =>
+                                currentPage > 1 && handlePaginationChange(currentPage - 1)
+                            }
+                            disabled={currentPage === 1}
+                            style={{
+                                ...buttonStyle,
+                                borderTopLeftRadius: '10px',
+                                borderBottomLeftRadius: '10px',
+                                ...(currentPage === 1 ? disabledButtonStyle : {}),
+                            }}
+                        >
+                            ❮
+                        </button>
+                        {pageNumbers.map((number) => (
+                            <button
+                                key={number}
+                                onClick={() => handlePaginationChange(number)}
+                                style={number === currentPage ? activeButtonStyle : buttonStyle}
                             >
-                                {Array.from({ length: 10 }, (_, i) => (i + 1) * 10).map((value) => (
-                                    <option key={value} value={value}> {value} </option>
-                                ))}
-                            </select>
-                        </div>
-                
-                        {/* Pagination Info and Buttons */}
-                        <div style={{ display: 'flex', alignItems: 'center', marginRight: '25px' }}>
-                            {/* Page Info */}
-                            <div style={{ marginRight: '10px' }}>Page {currentPage} of {totalPages}</div>
-                
-                            {/* Pagination Buttons */}
-                            <div style={{ display: 'flex' }}>
-                                <button
-                                    onClick={() =>
-                                        currentPage > 1 && handlePaginationChange(currentPage - 1)
-                                    }
-                                    disabled={currentPage === 1}
-                                    style={{
-                                        ...buttonStyle,
-                                        borderTopLeftRadius: '10px',
-                                        borderBottomLeftRadius: '10px',
-                                        ...(currentPage === 1 ? disabledButtonStyle : {}),
-                                    }}
-                                >
-                                    ❮
-                                </button>
-                                {pageNumbers.map((number) => (
-                                    <button
-                                        key={number}
-                                        onClick={() => handlePaginationChange(number)}
-                                        style={number === currentPage ? activeButtonStyle : buttonStyle}
-                                    >
-                                        {number}
-                                    </button>
-                                ))}
-                                <button
-                                    onClick={() =>
-                                        currentPage < totalPages && handlePaginationChange(currentPage + 1)
-                                    }
-                                    disabled={currentPage === totalPages}
-                                    style={{
-                                        ...buttonStyle,
-                                        borderTopRightRadius: '10px',
-                                        borderBottomRightRadius: '10px',
-                                        ...(currentPage === totalPages ? disabledButtonStyle : {}),
-                                    }}
-                                >
-                                    ❯
-                                </button>
-                            </div>
-                        </div>
+                                {number}
+                            </button>
+                        ))}
+                        <button
+                            onClick={() =>
+                                currentPage < totalPages && handlePaginationChange(currentPage + 1)
+                            }
+                            disabled={currentPage === totalPages}
+                            style={{
+                                ...buttonStyle,
+                                borderTopRightRadius: '10px',
+                                borderBottomRightRadius: '10px',
+                                ...(currentPage === totalPages ? disabledButtonStyle : {}),
+                            }}
+                        >
+                            ❯
+                        </button>
                     </div>
-                );
-            };
-    
+                </div>
+            </div>
+        );
+    };
 
 
-    // Render Table
-    const renderTable = () => {
+// Render uniform defiance history table
+const renderTable = () => {
         return (
             <Table bordered hover style={{ borderRadius: '20px', marginLeft: '110px', marginTop: '10px' }}>
                     <thead>
                         <tr>
                         <th style={{ textAlign: 'center', padding: '0', verticalAlign: 'middle', width: '5%' }}>
-                                <button
-                                    style={{ border: 'none', background: 'none', cursor: 'pointer', display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center', width: '100%', 
-                                    }}
-                                    onClick={handleSortSlipId}
+                            <button style={{ border: 'none', background: 'none', cursor: 'pointer', display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center', width: '100%' }}
+                                onClick={handleSortSlipId}
                                 >
-                                    <span style={{ textAlign: 'center' }}>ID</span>
-                                    {sortOrder === 'asc' ? (
+                                <span style={{ textAlign: 'center' }}>ID</span>
+                                {sortOrder === 'asc' ? (
+                                <ArrowDropUpIcon style={{ marginLeft: '5px' }} />
+                                ) : (
+                                <ArrowDropDownIcon style={{ marginLeft: '5px' }} />
+                                )}
+                            </button>
+                        </th>
+                        <th style={{ width: '23%' }}>
+                            <button style={{ border: 'none', background: 'none', cursor: 'pointer', display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center', width: '100%' }}
+                                onClick={handleSortDate}
+                                >
+                                <span>Date</span>
+                                {sortOrderDate === 'asc' ? (
                                     <ArrowDropUpIcon style={{ marginLeft: '5px' }} />
-                                    ) : (
+                                ) : (
                                     <ArrowDropDownIcon style={{ marginLeft: '5px' }} />
-                                    )}
-                                </button>
-                            </th>
-                            <th style={{ width: '23%' }}>
-                                <button
-                                    style={{
-                                        border: 'none',
-                                        background: 'none',
-                                        cursor: 'pointer',
-                                        display: 'flex',
-                                        flexDirection: 'row',
-                                        justifyContent: 'center',
-                                        alignItems: 'center',
-                                        width: '100%',
-                                    }}
-                                    onClick={handleSortDate}
-                                >
-                                    <span>Date</span>
-                                    {sortOrderDate === 'asc' ? (
-                                        <ArrowDropUpIcon style={{ marginLeft: '5px' }} />
-                                    ) : (
-                                        <ArrowDropDownIcon style={{ marginLeft: '5px' }} />
-                                    )}
-                                </button>
-                            </th>
-                            <th style={{ textAlign: 'center', padding: '0', verticalAlign: 'middle', width: '13%' }}>
-                                <button onClick={() => handleSort('student_idnumber')}>
-                                    ID Number {sortOrder === 'asc' ? 
-                                    <ArrowDropUpIcon /> : 
-                                    <ArrowDropDownIcon />}
-                                </button>
-                            </th>
-                            <th>Nature of Violation</th>
-                            <th style={{ width: '10%' }}>Details</th>
-                            <th style={{ width: '13%' }}>Status</th>
+                                )}
+                            </button>
+                        </th>
+                        <th style={{ textAlign: 'center', padding: '0', verticalAlign: 'middle', width: '13%' }}>
+                            <button onClick={() => handleSort('student_idnumber')}>
+                                ID Number {sortOrder === 'asc' ? 
+                                <ArrowDropUpIcon /> : 
+                                <ArrowDropDownIcon />}
+                            </button>
+                        </th>
+                        <th>Nature of Violation</th>
+                        <th style={{ width: '10%' }}>Details</th>
+                        <th style={{ width: '13%' }}>Status</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -409,10 +353,7 @@ const UniformDefianceHistoryTable = ({ searchQuery }) => {
                                 </td>
                                 <td>{defiance.nature_name}</td>
                                 <td style={{ textAlign: 'center' }}>
-                                    <span 
-                                        onClick={() => handleShowDetailsModal(defiance)} 
-                                        style={{ cursor: 'pointer', fontWeight: 'bold', textDecoration: 'underline' }}
-                                    >
+                                    <span onClick={() => handleShowDetailsModal(defiance)} style={{ cursor: 'pointer', fontWeight: 'bold', textDecoration: 'underline' }}>
                                         View
                                     </span>
                                 </td>
@@ -429,10 +370,9 @@ const UniformDefianceHistoryTable = ({ searchQuery }) => {
     <div>
         {renderTable()}
 
-        {/* Custom Pagination */}
         {renderPagination()}
 
-        {/* Use the imported ViewHistoryModal instead of inline modal */}
+        {/*View History Modal*/}
         <ViewHistoryModal 
             show={showModal} 
             onHide={handleCloseDetailsModal} 
