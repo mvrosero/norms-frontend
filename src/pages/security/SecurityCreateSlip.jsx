@@ -3,7 +3,8 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import Form from 'react-bootstrap/Form';
 import Select from 'react-select';
-import { FaPlus, FaTimes } from 'react-icons/fa';
+import { FaTimes } from 'react-icons/fa';
+import { IoMdAttach } from "react-icons/io";
 import Swal from 'sweetalert2';
 import '../../styles/style.css';
 
@@ -19,6 +20,20 @@ const SecurityCreateSlip = () => {
     const [filePreviews, setFilePreviews] = useState([]);
     const [violationOptions, setViolationOptions] = useState([]);
     const [isFocused, setIsFocused] = useState(false);
+    const [filteredOptions, setFilteredOptions] = useState(students.slice(0, 10)); 
+
+
+    // Filter to only display 10 students on the dropdown options
+    const handleSearch = (inputValue) => {
+        if (inputValue) {
+            const filtered = students.filter((student) =>
+                student.label.toLowerCase().includes(inputValue.toLowerCase())
+            );
+            setFilteredOptions(filtered);
+        } else {
+            setFilteredOptions(students.slice(0, 10)); 
+        }
+    };
 
 
     // Fetch students and violation options
@@ -241,23 +256,26 @@ return (
 
         <div className="create-slip-container2">
             <Form onSubmit={handleSubmit}>
-                <Form.Group controlId="studentId">
+            <Form.Group controlId="studentId">
                     <div className="row align-items-center" style={{ marginBottom: '30px' }}>
-                        <div className="col-4"> <Form.Label className="fw-bold">Student ID Number:</Form.Label> </div>
-                            <div className="col-8">
-                                <Select
-                                    options={students}
-                                    onChange={(option) => handleSelectChange(option, { name: 'student_idnumber' })}
-                                    placeholder="Select Student"
-                                    isSearchable
-                                    value={students.find((option) => option.value === formData.student_idnumber)}
-                                    required
-                                    onFocus={() => setIsFocused(true)}
-                                    onBlur={() => setIsFocused(false)}
-                                    styles={customStyles} 
-                                    className={`${isFocused ? 'create-slip-focused-select' : 'create-slip-default-select'} create-slip-regular-select`}
-                                />
-                            </div>
+                        <div className="col-4">
+                            <Form.Label className="fw-bold">Student ID Number:</Form.Label>
+                        </div>
+                        <div className="col-8">
+                            <Select
+                                options={filteredOptions} 
+                                onChange={(option) => handleSelectChange(option, { name: 'student_idnumber' })}
+                                placeholder="Select Student"
+                                isSearchable
+                                value={students.find((option) => option.value === formData.student_idnumber)}
+                                required
+                                onFocus={() => setIsFocused(true)}
+                                onBlur={() => setIsFocused(false)}
+                                onInputChange={handleSearch} 
+                                styles={customStyles} 
+                                className={`${isFocused ? 'create-slip-focused-select' : 'create-slip-default-select'} create-slip-regular-select`}
+                            />
+                        </div>
                     </div>
                 </Form.Group>
 
@@ -294,7 +312,7 @@ return (
                                     </div>
                                 ))}
                                 <label htmlFor="file-upload" style={addFileTileStyle}>
-                                    <FaPlus style={{ fontSize: '30px', color: 'gray' }} />
+                                    <IoMdAttach style={{ fontSize: '30px', color: 'gray' }} />
                                 </label>
                                 <input id="file-upload" type="file" name="photo_video_files" onChange={handleInputChange} multiple style={{ display: 'none' }}/>
                             </div>

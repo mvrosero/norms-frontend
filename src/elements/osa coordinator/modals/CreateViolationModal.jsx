@@ -23,6 +23,20 @@ export default function CreateViolationModal({ show, onHide, handleCloseModal })
     const [semesters, setSemesters] = useState([]);
     const [isFocused, setIsFocused] = useState(false);
     const [focusedElement, setFocusedElement] = useState(null); 
+    const [filteredOptions, setFilteredOptions] = useState(students.slice(0, 10));
+
+
+    // Filter to only display 10 students on the dropdown options
+    const handleSearch = (inputValue) => {
+        if (inputValue) {
+            const filtered = students.filter((student) =>
+                `${student.first_name} ${student.last_name}`.toLowerCase().includes(inputValue.toLowerCase())
+            );
+            setFilteredOptions(filtered);
+        } else {
+            setFilteredOptions(students.slice(0, 10)); 
+        }
+    };
 
 
     // Maximum text area length 
@@ -230,13 +244,14 @@ return (
                     <Select
                         isMulti
                         name="users"
-                        options={students.map((student) => ({
+                        options={filteredOptions.map((student) => ({
                             value: student.user_id,
                             label: `${student.first_name} ${student.last_name}`,
                         }))}
                         onChange={handleSelectChange}
                         required
                         styles={customSelectStyles}
+                        onInputChange={handleSearch} 
                     />
                 </Form.Group>
                 </Row>
