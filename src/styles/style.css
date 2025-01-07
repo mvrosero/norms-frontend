@@ -157,6 +157,21 @@
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
+.custom-update-button {
+  background-color: #3B71CA;
+  color: #FFFFFF;
+  font-size: 16px;
+  font-weight: 900;
+  padding: 8px 25px;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  margin-left: 10px;
+  display: flex;
+  align-items: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
 .custom-cancel-button {
   background-color: #8C8C8C;
   color: #FFFFFF;

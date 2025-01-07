@@ -450,12 +450,12 @@ export default function CoordinatorAnnouncements() {
         outline: 'none',
     };
 
-    const borderColorStyles = (focusedElement, element) => ({
-        border: `1px solid ${focusedElement === element ? '#FAD32E' : '#ced4da'}`, 
-        boxShadow: focusedElement === element ? '0 0 0 2px rgba(250, 211, 46, 1)' : 'none', 
+    const borderColorStyles = (focusedElement, element, editing) => ({
+        border: `1px solid ${focusedElement === element ? (editing ? '#3B71CA' : '#FAD32E') : '#ced4da'}`,
+        boxShadow: focusedElement === element ? (editing ? '0 0 0 2px rgba(59, 113, 202, 1)' : '0 0 0 2px rgba(250, 211, 46, 1)') : 'none',
     });
     
-
+    
 return (
     <div>
         <CoordinatorNavigation />
@@ -644,15 +644,15 @@ return (
                                 value={announcementFormData.title}
                                 onChange={handleChange}
                                 required
-                                onFocus={() => handleFocus('title')} 
-                                onBlur={handleBlur} 
+                                onFocus={() => setFocusedElement('title')}
+                                onBlur={() => setFocusedElement(null)}
                                 style={{
                                     width: '100%',
                                     padding: '10px',
                                     backgroundColor: '#f2f2f2',
-                                    border: `1px solid ${focusedElement === 'title' ? '#FAD32E' : '#ced4da'}`, 
+                                    border: `1px solid ${focusedElement === 'title' ? (editing ? '#3B71CA' : '#FAD32E') : '#ced4da'}`,
                                     borderRadius: '4px',
-                                    boxShadow: focusedElement === 'title' ? '0 0 0 2px rgba(250, 211, 46, 1)' : 'none',
+                                    boxShadow: focusedElement === 'title' ? (editing ? '0 0 0 2px rgba(59, 113, 202, 1)' : '0 0 0 2px rgba(250, 211, 46, 1)') : 'none',
                                 }}
                             />
                         </Form.Group>
@@ -661,7 +661,7 @@ return (
                     <Row className="gy-4">
                         <Form.Group className="content mb-3" style={{ marginBottom: '20px' }}>
                             <Form.Label className="fw-bold">Content</Form.Label>
-                                <div style={{ position: 'relative' }}>
+                            <div style={{ position: 'relative' }}>
                                 <Form.Control
                                     as="textarea"
                                     name="content"
@@ -669,19 +669,20 @@ return (
                                     onChange={handleChange}
                                     rows={3}
                                     maxLength={maxLength}
-                                    onFocus={() => handleFocus('description')} 
-                                    onBlur={handleBlur} 
+                                    onFocus={() => setFocusedElement('content')}
+                                    onBlur={() => setFocusedElement(null)}
                                     style={{
                                         width: '100%',
-                                        minHeight: '100px',
                                         padding: '10px',
                                         backgroundColor: '#f2f2f2',
-                                        border: `1px solid ${focusedElement === 'description' ? '#FAD32E' : '#ced4da'}`, 
+                                        border: `1px solid ${focusedElement === 'content' ? (editing ? '#3B71CA' : '#FAD32E') : '#ced4da'}`,
                                         borderRadius: '4px',
-                                        boxShadow: focusedElement === 'description' ? '0 0 0 2px rgba(250, 211, 46, 1)' : 'none',
+                                        boxShadow: focusedElement === 'content' ? (editing ? '0 0 0 2px rgba(59, 113, 202, 1)' : '0 0 0 2px rgba(250, 211, 46, 1)') : 'none',
                                     }}
                                 />
-                                <div style={{ position: 'absolute', bottom: '10px', right: '10px', fontSize: '12px', color: '#666' }}> {currentLength}/{maxLength} </div>
+                                <div style={{ position: 'absolute', bottom: '10px', right: '10px', fontSize: '12px', color: '#666' }}>
+                                    {currentLength}/{maxLength}
+                                </div>
                             </div>
                         </Form.Group>
                     </Row>
@@ -692,13 +693,14 @@ return (
                             <Form.Select
                                 as="select"
                                 name="status"
-                                value={announcementFormData.status || ""} 
+                                value={announcementFormData.status || ''}
                                 onChange={handleChange}
-                                onFocus={() => handleFocus('status')} 
-                                onBlur={handleBlur} 
+                                onFocus={() => setFocusedElement('status')} 
+                                onBlur={() => setFocusedElement(null)}
                                 style={{
                                     ...regularSelectStyles,
-                                    ...borderColorStyles(focusedElement, 'status'), 
+                                    border: `1px solid ${focusedElement === 'status' ? (editing ? '#3B71CA' : '#FAD32E') : '#ced4da'}`,
+                                    boxShadow: focusedElement === 'status' ? (editing ? '0 0 0 2px rgba(59, 113, 202, 1)' : '0 0 0 2px rgba(250, 211, 46, 1)') : 'none',
                                 }}
                             >
                                 <option>Draft</option>
@@ -743,7 +745,7 @@ return (
                             <button type="button" onClick={handleCancel} className='custom-cancel-button'>
                                 Cancel
                             </button>
-                            <button type="submit" className='custom-create-button'>
+                            <button type="submit" className={editing ? 'custom-update-button' : 'custom-create-button'}>
                                 {editing ? 'Update' : 'Create'}
                             </button>
                         </div>
