@@ -46,7 +46,7 @@ const ViewAnnouncementModal = ({ show, onHide, announcement }) => {
                     <p>{announcement.title}</p>
 
                     <p style={{ fontWeight: 'bold' }}>Content:</p>
-                    <p>{announcement.content}</p>
+                    <p style={{ textAlign: 'justify' }}>{announcement.content}</p>
 
                     <p style={{ fontWeight: 'bold' }}>Attachments:</p>
                     <div style={{ display: 'flex', flexWrap: 'wrap' }}>
