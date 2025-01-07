@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { Card, Row, Col } from 'react-bootstrap';
 import { FaRegClock } from 'react-icons/fa';
+import { MdFilePresent } from "react-icons/md";
 
 import SearchAndFilter from '../general/SearchAndFilter'; 
 import StudentInfo from './StudentInfo';
@@ -197,8 +198,14 @@ return (
                                                         alt="Announcement Image"
                                                         style={{ maxHeight: '250px', maxWidth: '250px', marginTop: '20px', marginBottom: '20px', marginLeft: '20px', marginRight: '50px' }}
                                                     />
-                                                ) : null;
-                                            })()}
+                                                ) :  (
+                                                    <Card style={{ maxHeight: '450px', maxWidth: '450px', marginTop: '20px', marginBottom: '20px', marginLeft: '20px', marginRight: '50px', border: '1px solid #0D4809' }}>
+                                                        <Card.Body style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
+                                                            <MdFilePresent style={{ fontSize: '220px', color: '#0D4809' }} />
+                                                        </Card.Body>
+                                                    </Card>
+                                                );
+                                        })()}
                                     {/* Text content on the right */}
                                     <div style={{ flex: 1 }}>
                                         <Card.Title style={{ marginTop: '20px', marginBottom: '20px', fontSize: '28px' }}>{a.title}</Card.Title>

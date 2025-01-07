@@ -21,7 +21,7 @@ const ViewAnnouncementModal = ({ show, onHide, announcement }) => {
                 return (
                     <div key={index} style={{ position: 'relative', display: 'inline-block', cursor: 'pointer', marginBottom: '50px' }}>
                         <a href={fileUrl} target="_blank" rel="noopener noreferrer">
-                            <Card style={{ width: '100px', height: '100px', border: '1px solid #0D4809' }}>
+                            <Card style={{ width: '100px', height: '100px', border: '1px solid #0D4809', marginRight: '10px' }}>
                                 <Card.Body style={{ padding: '5px', display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
                                     <MdFilePresent style={{ fontSize: '90px', color: '#0D4809' }} />
                                 </Card.Body>       
@@ -52,6 +52,22 @@ const ViewAnnouncementModal = ({ show, onHide, announcement }) => {
                     <div style={{ display: 'flex', flexWrap: 'wrap' }}>
                         {renderFileTiles(announcement.filenames.split(','))}
                     </div>
+
+                    <p style={{ fontWeight: 'bold' }}>Date Updated:</p>
+                    <p>
+                        {announcement.updated_at
+                            ? `${new Date(announcement.updated_at).toLocaleDateString('en-US', {
+                                year: 'numeric',
+                                month: 'long',
+                                day: 'numeric',
+                            })}, ${new Date(announcement.updated_at).toLocaleTimeString('en-US', {
+                                hour: '2-digit',
+                                minute: '2-digit',
+                                second: '2-digit',
+                                hour12: true,
+                            })}`
+                            : 'N/A'}
+                    </p>
                 </div>
             </Modal.Body>
         </Modal>

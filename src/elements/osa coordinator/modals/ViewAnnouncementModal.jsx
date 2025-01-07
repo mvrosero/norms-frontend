@@ -6,34 +6,42 @@ const ViewAnnouncementModal = ({ show, onHide, selectedAnnouncement }) => {
     const renderFile = () => {
         if (selectedAnnouncement) {
             const filenames = selectedAnnouncement.filenames.split(',');
-
-            return filenames.map((filename, index) => {
-                const fileExtension = filename.split('.').pop().toLowerCase();
-                const fileUrl = `http://localhost:9000/uploads/${filename.trim()}`;
-
-                if (['jpg', 'jpeg', 'png', 'gif'].includes(fileExtension)) {
-                    return (
-                        <div key={index} style={{ marginBottom: '10px' }}>
-                            <a href={fileUrl} target="_blank" rel="noopener noreferrer">
-                                <img src={fileUrl} alt="File Preview" style={{ maxWidth: '100%' }} />
-                            </a>
-                        </div>
-                    );
-                } else {
-                    return (
-                        <div key={index} style={{ position: 'relative', display: 'inline-block', cursor: 'pointer' }}>
-                            <Card style={{ width: '150px', height: '150px', border: '1px solid #ddd' }}>
-                                <Card.Body style={{ padding: '5px', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                                    <FileIcon style={{ fontSize: '100px', color: '#007bff' }} />
-                                </Card.Body>
-                            </Card>
-                        </div>
-                    );
-                }
-            });
+    
+            return (
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px' }}> {/* Added gap to ensure spacing */}
+                    {filenames.map((filename, index) => {
+                        const fileExtension = filename.split('.').pop().toLowerCase();
+                        const fileUrl = `http://localhost:9000/uploads/${filename.trim()}`;
+    
+                        if (['jpg', 'jpeg', 'png', 'gif'].includes(fileExtension)) {
+                            return (
+                                <div key={index} style={{ margin: '0' }}> {/* Removed extra margin here */}
+                                    <a href={fileUrl} target="_blank" rel="noopener noreferrer">
+                                        <img src={fileUrl} alt="File Preview" style={{ maxWidth: '100%' }} />
+                                    </a>
+                                </div>
+                            );
+                        } else {
+                            return (
+                                <div key={index} style={{ margin: '0' }}> {/* Removed extra margin here */}
+                                    <Card style={{ width: '150px', height: '150px', border: '1px solid #ddd' }}>
+                                        <Card.Body style={{ padding: '5px', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                                            <FileIcon style={{ fontSize: '100px', color: '#007bff' }} />
+                                        </Card.Body>
+                                    </Card>
+                                    <p style={{ textAlign: 'center', marginTop: '5px', fontSize: '10px', wordWrap: 'break-word' }}>
+                                        {filename.trim()}
+                                    </p>
+                                </div>
+                            );
+                        }
+                    })}
+                </div>
+            );
         }
         return null;
     };
+    
 
 
     const renderStatus = (status) => {
