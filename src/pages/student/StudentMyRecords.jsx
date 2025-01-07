@@ -28,8 +28,13 @@ const StudentMyRecords = () => {
 
     // Render the component if token and role_id are valid
     return (
-        <div>
-            <h6 className="page-title">MY RECORDS</h6>
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '20px' }}>
+            {/* Title Section */}
+            <div style={{ width: '90%', margin: '0 auto', display: 'flex', justifyContent: 'flex-start' }}>
+                <h6 className="settings-title" style={{ fontFamily: 'Poppins, sans-serif', color: '#242424', fontSize: '40px', fontWeight: 'bold', marginLeft: '30px' }}>
+                    My Records
+                </h6>
+            </div>
             <StudentNavigation />
             <StudentInfo />
             <MyRecordsTable />

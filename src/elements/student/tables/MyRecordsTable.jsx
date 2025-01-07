@@ -134,9 +134,9 @@ const MyRecordsTable = () => {
                         <thead style={{ backgroundColor: '#f8f9fa' }}>
                             <tr>
                                 <th style={{ width: '5%' }}>ID</th>
-                                <th style={{ width: '20%' }}>Created At</th>
+                                <th style={{ width: '20%' }}>Date</th>
                                 <th style={{ width: '13%' }}>Category</th>
-                                <th>Offense Name</th>
+                                <th>Offense</th>
                                 <th style={{ width: '15%' }}>Sanction</th>
                                 <th style={{ width: '15%' }}>Action</th>
                             </tr>

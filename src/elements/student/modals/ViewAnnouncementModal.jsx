@@ -1,55 +1,63 @@
 import React from 'react';
-import { Modal, Card } from 'react-bootstrap';  // Ensure Card is imported
+import { Modal, Card, Button } from 'react-bootstrap';  
 import FileIcon from '@mui/icons-material/InsertDriveFile';
 
 const ViewAnnouncementModal = ({ show, onHide, announcement }) => {
-    // Render file tiles with conditional size based on the parameter
-    const renderFileTiles = (files, isModal = false) => (
-        files.map((file, index) => (
-            <div key={index} style={{ position: 'relative', margin: '10px' }}>
-                <Card
-                    style={{
-                        width: isModal ? '75px' : '300px',
-                        height: isModal ? '75px' : '300px',
-                        cursor: isModal ? 'pointer' : 'default',
-                    }}
-                    onClick={() => isModal && window.open(`http://localhost:9000/uploads/${file}`, '_blank')}
-                >
-                    <Card.Body style={{ padding: 0 }}>
-                        {file.match(/\.(jpg|jpeg|png|gif)$/) ? (
-                            <img
-                                src={`http://localhost:9000/uploads/${file}`}
-                                alt={file}
-                                style={{
-                                    width: '100%',
-                                    height: '100%',
-                                    objectFit: 'cover',
-                                }}
-                            />
-                        ) : (
-                            <FileIcon style={{ fontSize: isModal ? '40px' : '60px', color: '#007bff', display: 'block', margin: 'auto' }} />
-                        )}
-                    </Card.Body>
-                </Card>
-            </div>
-        ))
-    );
+    
+    const renderFileTiles = (files) => {
+        return files.map((file, index) => {
+            const fileExtension = file.split('.').pop().toLowerCase();
+            const fileUrl = `http://localhost:9000/uploads/${file.trim()}`;
+    
+            if (['jpg', 'jpeg', 'png', 'gif'].includes(fileExtension)) {
+                return (
+                    <div key={index} style={{ marginBottom: '10px' }}>
+                        <a href={fileUrl} target="_blank" rel="noopener noreferrer">
+                            <img src={fileUrl} alt="File Preview" style={{ maxWidth: '100%' }} />
+                        </a>
+                    </div>
+                );
+            } else {
+                return (
+                    <div key={index} style={{ position: 'relative', display: 'inline-block', cursor: 'pointer', marginBottom: '10px' }}>
+                        <Card style={{ width: '150px', height: '150px', border: '1px solid #ddd' }}>
+                            <Card.Body style={{ padding: '5px', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                                <FileIcon style={{ fontSize: '100px', color: '#007bff' }} />
+                            </Card.Body>
+                        </Card>
+                    </div>
+                );
+            }
+        });
+    };
+    
 
     return (
-        <Modal show={show} onHide={onHide} size="lg">
-            <Modal.Header closeButton>
-                <Modal.Title>{announcement.title}</Modal.Title>
+        <Modal show={show} onHide={onHide} size="lg" backdrop="static">
+            <Modal.Header>
+                <Button variant="link" onClick={onHide} style={{ position: 'absolute', top: '5px', right: '20px', textDecoration: 'none', fontSize: '30px', color: '#a9a9a9' }}>
+                    ×
+                </Button>
+                <Modal.Title style={{ fontSize: '40px', marginBottom: '10px', marginLeft: '120px', marginRight: '120px' }}>VIEW ANNOUNCEMENT</Modal.Title>
             </Modal.Header>
+
             <Modal.Body>
-                <h5>{announcement.title}</h5>
-                <p>{announcement.content}</p>
-                <h6>Attachments:</h6>
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px' }}>
-                    {renderFileTiles(announcement.filenames.split(','), true)}
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', rowGap: '10px', marginLeft: '20px', marginRight: '20px' }}>
+                    <p style={{ fontWeight: 'bold' }}>Title:</p>
+                    <p>{announcement.title}</p>
+
+                    <p style={{ fontWeight: 'bold' }}>Content:</p>
+                    <p>{announcement.content}</p>
+
+                    <p style={{ fontWeight: 'bold' }}>Attachments:</p>
+                    <div>
+                        {renderFileTiles(announcement.filenames.split(','), true)}
+                    </div>
                 </div>
             </Modal.Body>
         </Modal>
     );
 };
+
 
 export default ViewAnnouncementModal;

@@ -526,7 +526,6 @@ return (
                                         style={{ maxHeight: '250px', maxWidth: '250px', marginTop: '20px', marginBottom: '20px', marginLeft: '20px', marginRight: '50px' }}
                                     />
                                 )}
-
                                 {/* Text content on the right */}
                                 <div style={{ flex: 1 }}>
                                     <Card.Title style={{ marginTop: '20px', marginBottom: '20px', fontSize: '28px' }}>{a.title}</Card.Title>
