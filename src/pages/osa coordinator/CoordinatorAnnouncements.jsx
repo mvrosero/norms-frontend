@@ -5,11 +5,11 @@ import Swal from 'sweetalert2';
 import { Modal, Form, Button, Card, Row, Col } from 'react-bootstrap';
 import Dropdown from 'react-bootstrap/Dropdown';
 
-import FileIcon from '@mui/icons-material/InsertDriveFile';
 import { MdClose, MdFilePresent } from 'react-icons/md';
 import { BsThreeDotsVertical } from "react-icons/bs";
 import { FaPlus, FaRegClock, FaThumbtack, FaEye, FaPen, FaTrash } from 'react-icons/fa';
 import { RiUnpinFill } from "react-icons/ri";
+import { IoMdAttach } from "react-icons/io";
 
 import '../../styles/style.css';
 import CoordinatorNavigation from './CoordinatorNavigation';
@@ -321,7 +321,6 @@ export default function CoordinatorAnnouncements() {
         setShowViewModal(true);
     };
     
-
     const handleCloseViewModal = () => {
         setShowViewModal(false);
         setSelectedAnnouncement(null);
@@ -333,41 +332,19 @@ export default function CoordinatorAnnouncements() {
         filesList.map((file, index) => (
             <Card
                 key={isOriginal ? `original-${index}` : index}
-                style={{
-                    width: '100px',
-                    height: '100px',
-                    position: 'relative',
-                    margin: '10px',
-                    display: 'inline-block',
-                }}
-            >
+                style={{ width: '120px', height: '120px', position: 'relative', margin: '10px', display: 'inline-block' }}
+                >
                 <Card.Body style={{ padding: 0 }}>
                     {file.name.match(/\.(jpg|jpeg|png|gif)$/) ? (
                         <img
                             src={isOriginal ? `http://localhost:9000/uploads/${file.name}` : URL.createObjectURL(file)}
                             alt={file.name}
-                            style={{
-                                width: '100%',
-                                height: '100%',
-                                objectFit: 'cover',
-                            }}
-                        />
+                            style={{ width: '100%', height: '100%', objectFit: 'cover' }}/>
                     ) : (
-                        <FileIcon style={{ fontSize: '100px', color: '#007bff', display: 'block', margin: 'auto' }} />
+                        <MdFilePresent style={{ fontSize: '100px', color: '#0D4809', display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%', width: '100%' }} />
                     )}
-                        <p style={{ fontSize: '12px', color: '#6c757d', marginTop: '5px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                            {file.name}
-                        </p>
-                    <MdClose
-                        onClick={() => handleRemoveFile(file, isOriginal)}
-                        style={{
-                            position: 'absolute',
-                            top: '5px',
-                            right: '5px',
-                            cursor: 'pointer',
-                            color: 'red',
-                        }}
-                    />
+                        <p style={{ textAlign: 'center', marginTop: '5px', fontSize: '10px', wordWrap: 'break-word' }}> {file.name.trim()} </p>
+                    <MdClose onClick={() => handleRemoveFile(file, isOriginal)} style={{ position: 'absolute', top: '5px', right: '5px', cursor: 'pointer', color: '#888' }}/>
                 </Card.Body>
             </Card>
         ))
@@ -384,17 +361,15 @@ export default function CoordinatorAnnouncements() {
             })
             .then(() => {
                 setOriginalFiles(prevFiles => prevFiles.filter(f => f.name !== filename));
-                fetchAnnouncements(); // Optionally refetch to update the list
+                fetchAnnouncements(); 
             })
             .catch(error => {
                 console.error('Error removing file:', error.response?.data?.error || 'An error occurred');
             });
         } else {
-            // For new files, just update the state
             setFiles(prevFiles => prevFiles.filter(f => f.name !== filename));
         }
     };
-
 
 
     // Set the proper format for date and time
@@ -467,7 +442,6 @@ export default function CoordinatorAnnouncements() {
     };
 
 
-    
     // Set the styles for the input fields and select fields
     const regularSelectStyles = {
         backgroundColor: '#f2f2f2',
@@ -481,7 +455,6 @@ export default function CoordinatorAnnouncements() {
         boxShadow: focusedElement === element ? '0 0 0 2px rgba(250, 211, 46, 1)' : 'none', 
     });
     
-
 
 return (
     <div>
@@ -585,11 +558,6 @@ return (
                 ))}
             </Row>
 
-
-
-          
-
-
             {/* Announcement Containers Section */}
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginLeft: '120px', marginRight: '20px' }}>
                 <text style={{ fontSize: '20px', fontWeight: '600' }}>Other Announcements</text>
@@ -636,15 +604,15 @@ return (
                                         <Dropdown.Item onClick={() => handlePinAnnouncement(a.announcement_id)} className="d-flex align-items-center">
                                             <FaThumbtack style={{ marginLeft: '10px', marginRight: '20px' }} /> Pin
                                         </Dropdown.Item>
-                                        <hr /> {/* Adds a line separator */}
+                                        <hr /> 
                                         <Dropdown.Item onClick={() => handleViewAnnouncement(a)} className="d-flex align-items-center">
                                             <FaEye style={{  marginLeft: '10px', marginRight: '20px' }} /> View
                                         </Dropdown.Item>
-                                        <hr /> {/* Adds a line separator */}
+                                        <hr /> 
                                         <Dropdown.Item onClick={() => handleEditAnnouncement(a.announcement_id)} className="d-flex align-items-center">
                                             <FaPen style={{ marginLeft: '10px', marginRight: '20px' }} /> Edit
                                         </Dropdown.Item>
-                                        <hr /> {/* Adds a line separator */}
+                                        <hr /> 
                                         <Dropdown.Item onClick={() => handleDeleteAnnouncement(a.announcement_id)} className="d-flex align-items-center">
                                             <FaTrash style={{ marginLeft: '10px', marginRight: '20px' }} /> Delete
                                         </Dropdown.Item>
@@ -660,34 +628,13 @@ return (
            {/* Add and Edit Announcement Modal */}
            <Modal show={showAnnouncementModal} onHide={handleCancel} size="lg" backdrop="static">
            <Modal.Header>
-                <Button
-                    variant="link"
-                    onClick={handleCancel}
-                    style={{
-                        position: 'absolute',
-                        top: '5px',
-                        right: '20px',
-                        textDecoration: 'none',
-                        fontSize: '30px',
-                        color: '#a9a9a9',
-                    }}
-                >
+                <Button variant="link" onClick={handleCancel} style={{ position: 'absolute', top: '5px', right: '20px', textDecoration: 'none', fontSize: '30px', color: '#a9a9a9' }}>
                     ×
                 </Button>
-                <Modal.Title
-                    style={{
-                        fontSize: '40px',
-                        marginBottom: '10px',
-                        marginLeft: editing ? '130px' : '90px',
-                        marginRight: editing ? '130px' : '90px',
-                    }}
-                >
-                    {editing ? 'EDIT ANNOUNCEMENT' : 'CREATE ANNOUNCEMENT'}
-                </Modal.Title>
+                <Modal.Title style={{ fontSize: '40px',marginBottom: '10px', marginLeft: editing ? '130px' : '90px', marginRight: editing ? '130px' : '90px' }}> {editing ? 'EDIT ANNOUNCEMENT' : 'CREATE ANNOUNCEMENT'} </Modal.Title>
             </Modal.Header>
-
-                <Modal.Body>
-                    <Form onSubmit={handleAnnouncementSubmit}>
+            <Modal.Body>
+                <Form onSubmit={handleAnnouncementSubmit}>
                     <Row className="gy-4">
                         <Form.Group className="title mb-3">
                             <Form.Label className="fw-bold">Title</Form.Label>
@@ -729,7 +676,7 @@ return (
                                         minHeight: '100px',
                                         padding: '10px',
                                         backgroundColor: '#f2f2f2',
-                                        border: `1px solid ${focusedElement === 'description' ? '#FAD32E' : '#ced4da'}`, // Apply focused border for description
+                                        border: `1px solid ${focusedElement === 'description' ? '#FAD32E' : '#ced4da'}`, 
                                         borderRadius: '4px',
                                         boxShadow: focusedElement === 'description' ? '0 0 0 2px rgba(250, 211, 46, 1)' : 'none',
                                     }}
@@ -770,8 +717,7 @@ return (
                                 multiple
                                 onChange={handleFileChange}
                                 ref={fileInputRef}
-                                style={{ display: 'none' }}
-                            />
+                                style={{ display: 'none' }} />
                             <div style={{ marginTop: '10px', display: 'flex', flexWrap: 'wrap' }}>
                                 {/* Render New Files (Added in this session) */}
                                 {renderFileTiles(files)}
@@ -786,7 +732,7 @@ return (
                                         onMouseEnter={(e) => e.target.style.boxShadow = '0px 6px 12px rgba(0, 0, 0, 0.2)'}
                                         onMouseLeave={(e) => e.target.style.boxShadow = '0px 4px 6px rgba(0, 0, 0, 0.1)'}
                                     >
-                                        <FaPlus style={{ fontSize: '35px', color: '#888' }} />
+                                        <IoMdAttach style={{ fontSize: '35px', color: '#888' }} />
                                         <span style={{ marginTop: '8px', fontSize: '14px', color: '#888' }}>Add File</span>
                                     </Card>
                             </div>

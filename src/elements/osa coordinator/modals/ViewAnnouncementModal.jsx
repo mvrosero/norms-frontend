@@ -1,6 +1,5 @@
 import React from 'react';
 import { Modal, Button, Card } from 'react-bootstrap';
-import FileIcon from '@mui/icons-material/InsertDriveFile';
 import { MdFilePresent } from "react-icons/md";
 
 const ViewAnnouncementModal = ({ show, onHide, selectedAnnouncement }) => {
