@@ -6,7 +6,7 @@ import { Modal, Form, Button, Card, Row, Col } from 'react-bootstrap';
 import Dropdown from 'react-bootstrap/Dropdown';
 
 import FileIcon from '@mui/icons-material/InsertDriveFile';
-import { MdClose } from 'react-icons/md';
+import { MdClose, MdFilePresent } from 'react-icons/md';
 import { BsThreeDotsVertical } from "react-icons/bs";
 import { FaPlus, FaRegClock, FaThumbtack, FaEye, FaPen, FaTrash } from 'react-icons/fa';
 import { RiUnpinFill } from "react-icons/ri";
@@ -518,14 +518,26 @@ return (
                         >
                             <Card.Body style={{ display: 'flex', justifyContent: 'flex-start', alignItems: 'center' }}>
                                 {/* Image on the left */}
-                                {a.filenames && (
-                                    <Card.Img
-                                        variant="top"
-                                        src={`http://localhost:9000/uploads/${a.filenames.split(',')[0]}`}
-                                        alt="Announcement Image"
-                                        style={{ maxHeight: '250px', maxWidth: '250px', marginTop: '20px', marginBottom: '20px', marginLeft: '20px', marginRight: '50px' }}
-                                    />
-                                )}
+                                    {a.filenames && (() => {
+                                                const firstFile = a.filenames.split(',')[0];
+                                                const fileExtension = firstFile.split('.').pop().toLowerCase();
+                                                const isImage = ['jpg', 'jpeg', 'png', 'gif'].includes(fileExtension);
+
+                                                return isImage ? (
+                                                    <Card.Img
+                                                        variant="top"
+                                                        src={`http://localhost:9000/uploads/${firstFile}`}
+                                                        alt="Announcement Image"
+                                                        style={{ maxHeight: '250px', maxWidth: '250px', marginTop: '20px', marginBottom: '20px', marginLeft: '20px', marginRight: '50px' }}
+                                                    />
+                                                ) :  (
+                                                    <Card style={{ maxHeight: '450px', maxWidth: '450px', marginTop: '20px', marginBottom: '20px', marginLeft: '20px', marginRight: '50px', border: '1px solid #0D4809' }}>
+                                                        <Card.Body style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
+                                                            <MdFilePresent style={{ fontSize: '220px', color: '#0D4809' }} />
+                                                        </Card.Body>
+                                                    </Card>
+                                                );
+                                     })()}
                                 {/* Text content on the right */}
                                 <div style={{ flex: 1 }}>
                                     <Card.Title style={{ marginTop: '20px', marginBottom: '20px', fontSize: '28px' }}>{a.title}</Card.Title>
@@ -544,7 +556,6 @@ return (
                                         {renderStatus(a.status)} {renderDateTime(a.created_at, a.updated_at)}
                                     </Card.Text>
                                 </div>
-
                                 {/* Dropdown menu for actions */}
                                 <Dropdown style={{ marginBottom: '180px', marginLeft: '10px' }}>
                                     <Dropdown.Toggle variant="link" id={`dropdown-${a.announcement_id}`} style={{ boxShadow: 'none', color: '#FFFFFF', fontSize: '0px', padding: '0' }}>
@@ -603,8 +614,20 @@ return (
                                     </Card.Text>
                                     <Card.Text className="text-muted" style={{ marginTop: '10px', marginLeft: '10px', fontSize: '13px' }}> {renderStatus(a.status)} {renderDateTime(a.created_at, a.updated_at)} </Card.Text>
                                 </div>
-                                {a.filenames && ( <Card.Img variant="top" src={`http://localhost:9000/uploads/${a.filenames.split(',')[0]}`} alt="Announcement Image" style={{ maxHeight: '100px', maxWidth: '100px' }}/>)}
+                                    {a.filenames && (() => {
+                                            const firstFile = a.filenames.split(',')[0];
+                                            const fileExtension = firstFile.split('.').pop().toLowerCase();
+                                            const isImage = ['jpg', 'jpeg', 'png', 'gif'].includes(fileExtension);
 
+                                            return isImage ? (
+                                                <Card.Img
+                                                    variant="top"
+                                                    src={`http://localhost:9000/uploads/${firstFile}`}
+                                                    alt="Announcement Image"
+                                                    style={{ maxHeight: '100px', maxWidth: '100px' }}
+                                                />
+                                            ) : null;
+                                     })()}
                                 <Dropdown style={{ marginLeft: '10px' }}>
                                     <Dropdown.Toggle variant="link" id={`dropdown-${a.announcement_id}`} style={{ boxShadow: 'none', color: '#FFFFFF', fontSize: '0px', padding: '0' }}>
                                         <BsThreeDotsVertical style={{ boxShadow: 'none', color: '#A2A3A3', fontSize: '20px', padding: '0', marginBottom: '70px', marginRight: '0px' }} />

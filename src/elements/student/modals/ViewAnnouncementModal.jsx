@@ -19,9 +19,9 @@ const ViewAnnouncementModal = ({ show, onHide, announcement }) => {
                 );
             } else {
                 return (
-                    <div key={index} style={{ position: 'relative', display: 'inline-block', cursor: 'pointer', marginBottom: '50px' }}>
+                    <div key={index} style={{ position: 'relative', display: 'inline-block', cursor: 'pointer' }}>
                         <a href={fileUrl} target="_blank" rel="noopener noreferrer">
-                            <Card style={{ width: '100px', height: '100px', border: '1px solid #0D4809', marginRight: '10px' }}>
+                            <Card style={{ width: '100px', height: '100px', border: '1px solid #0D4809', marginRight: '10px', marginBottom: '50px' }}>
                                 <Card.Body style={{ padding: '5px', display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
                                     <MdFilePresent style={{ fontSize: '90px', color: '#0D4809' }} />
                                 </Card.Body>       
