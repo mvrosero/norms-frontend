@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { Card, Row, Col } from 'react-bootstrap';
+import { FaRegClock } from 'react-icons/fa';
 
 import SearchAndFilter from '../general/SearchAndFilter'; 
 import StudentInfo from './StudentInfo';
@@ -17,6 +18,7 @@ export default function StudentAnnouncements() {
     const [selectedAnnouncement, setSelectedAnnouncement] = useState(null);
     const [activeAnnouncement, setActiveAnnouncement] = useState(null);
     const [hoveredAnnouncement, setHoveredAnnouncement] = useState(null);
+    const [sortOrder, setSortOrder] = useState('asc');
     const [searchKeyword, setSearchKeyword] = useState('');
 
 
@@ -70,6 +72,21 @@ export default function StudentAnnouncements() {
         setSelectedAnnouncement(null);
     };
 
+
+    // Handle the sort announcement
+    const sortAnnouncements = (announcements) => {
+        return announcements.sort((a, b) => {
+            const dateA = new Date(a.updated_at);
+            const dateB = new Date(b.updated_at);
+
+            if (sortOrder === 'asc') {
+                return dateA - dateB; 
+            } else {
+                return dateB - dateA; 
+            }
+        });
+    };
+    
 
     // Set the proper format for date and time
     const formatDateTime = (dateTimeString) => {
@@ -168,14 +185,20 @@ return (
                             >
                                 <Card.Body style={{ display: 'flex', justifyContent: 'flex-start', alignItems: 'center' }}>
                                     {/* Image on the left */}
-                                    {a.filenames && (
-                                        <Card.Img
-                                            variant="top"
-                                            src={`http://localhost:9000/uploads/${a.filenames.split(',')[0]}`}
-                                            alt="Announcement Image"
-                                            style={{ maxHeight: '250px', maxWidth: '250px', marginTop: '20px', marginBottom: '20px', marginLeft: '20px', marginRight: '50px' }}
-                                        />
-                                    )}
+                                        {a.filenames && (() => {
+                                                const firstFile = a.filenames.split(',')[0];
+                                                const fileExtension = firstFile.split('.').pop().toLowerCase();
+                                                const isImage = ['jpg', 'jpeg', 'png', 'gif'].includes(fileExtension);
+
+                                                return isImage ? (
+                                                    <Card.Img
+                                                        variant="top"
+                                                        src={`http://localhost:9000/uploads/${firstFile}`}
+                                                        alt="Announcement Image"
+                                                        style={{ maxHeight: '250px', maxWidth: '250px', marginTop: '20px', marginBottom: '20px', marginLeft: '20px', marginRight: '50px' }}
+                                                    />
+                                                ) : null;
+                                            })()}
                                     {/* Text content on the right */}
                                     <div style={{ flex: 1 }}>
                                         <Card.Title style={{ marginTop: '20px', marginBottom: '20px', fontSize: '28px' }}>{a.title}</Card.Title>
@@ -198,50 +221,52 @@ return (
                             </Card>
                         </Col>
                     ))}
-          
-        
-
-
-
-
-
-
-
-                {loading ? (
-                    <div>Loading...</div> // Optional loading message
-                ) : (
-                    filteredAnnouncements.map(a => (
-                        <Col key={a.id}>
-                            <Card>
-                                <Card.Body>
-                                    <Card.Title>{a.title}</Card.Title>
-                                    <Card.Text>
-                                        {a.content.length > 100 ? `${a.content.substring(0, 100)}...` : a.content}
-                                        {a.content.length > 100 && (
-                                            <span
-                                                onClick={() => handleViewAnnouncement(a)}
-                                                style={{ color: '#007bff', cursor: 'pointer', textDecoration: 'underline' }}
-                                            >
-                                                See more...
-                                            </span>
-                                        )}
-                                    </Card.Text>
-                                    {a.filenames && a.filenames.split(',').length > 0 && (
-                                        <img
-                                            src={`http://localhost:9000/uploads/${a.filenames.split(',')[0]}`}
-                                            alt={a.filenames.split(',')[0]}
-                                            style={{ width: '100%', height: 'auto', objectFit: 'cover' }}
-                                        />
-                                    )}
-                                    <Card.Text className="text-muted" style={{ marginTop: '10px' }}>
-                                        {a.updated_at ? `${new Date(a.updated_at).toLocaleString()}` : `${new Date(a.created_at).toLocaleString()}`}
-                                    </Card.Text>
-                                </Card.Body>
-                            </Card>
-                        </Col>
-                    ))
-                )}
             </Row>
+
+            {/* Announcement Containers Section */}
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginLeft: '120px', marginRight: '20px' }}>
+                <text style={{ fontSize: '20px', fontWeight: '600' }}>Other Announcements</text>
+                <button onClick={() => setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')} style={{ marginRight: '20px', background: 'none', border: 'none', cursor: 'pointer' }}>
+                    <FaRegClock style={{ fontSize: '25px', color: sortOrder === 'asc' ? '#8C8C8C' : '#134E0F' }}/>
+                </button>
+            </div>
+            <Row xs={1} md={1} lg={1} className="g-4" style={{ marginTop: '2px', marginBottom: '40px', marginLeft: '100px', marginRight: '20px' }}>
+                {sortAnnouncements(announcements.filter(a => a.status === 'published')).map(a => (
+                    <Col key={a.announcement_id}>
+                        <Card
+                            style={{ backgroundColor: (activeAnnouncement === a.announcement_id || hoveredAnnouncement === a.announcement_id) ? '#ebebeb' : '', cursor: 'pointer',transition: 'background-color 0.3s ease' }}
+                                onMouseOut={() => setActiveAnnouncement(null)} onClick={() => handleViewAnnouncement(a)}
+                                onMouseEnter={() => setHoveredAnnouncement(a.announcement_id)} 
+                                onMouseLeave={() => setHoveredAnnouncement(null)} 
+                            >
+                            <Card.Body style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                <div style={{ flex: 1 }}>
+                                    <Card.Title style={{ marginTop: '7px', marginLeft: '10px', fontSize: '20px' }}>{a.title}</Card.Title>
+                                    <Card.Text style={{ marginLeft: '10px', marginRight: '50px', fontSize: '14px' }}> {truncateText(a.content, 250)}{' '} {a.content.length > 250 && (
+                                        <span onClick={() => handleViewAnnouncement(a)} style={{ color: '#007bff', cursor: 'pointer', textDecoration: 'underline' }}> See more... </span>)}
+                                    </Card.Text>
+                                    <Card.Text className="text-muted" style={{ marginTop: '10px', marginLeft: '10px', fontSize: '13px' }}> {renderStatus(a.status)} {renderDateTime(a.created_at, a.updated_at)} </Card.Text>
+                                </div>
+                                    {a.filenames && (() => {
+                                            const firstFile = a.filenames.split(',')[0];
+                                            const fileExtension = firstFile.split('.').pop().toLowerCase();
+                                            const isImage = ['jpg', 'jpeg', 'png', 'gif'].includes(fileExtension);
+
+                                            return isImage ? (
+                                                <Card.Img
+                                                    variant="top"
+                                                    src={`http://localhost:9000/uploads/${firstFile}`}
+                                                    alt="Announcement Image"
+                                                    style={{ maxHeight: '100px', maxWidth: '100px' }}
+                                                />
+                                            ) : null;
+                                        })()}
+                            </Card.Body>
+                        </Card>
+                    </Col>
+                ))}
+            </Row>
+
 
             {/* View Announcement Modal */}
             {selectedAnnouncement && (
