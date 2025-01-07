@@ -3,13 +3,17 @@ import axios from 'axios';
 import { useNavigate, Link } from "react-router-dom";
 import { Button, Card } from "react-bootstrap";
 import styled from "@emotion/styled";
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUser } from '@fortawesome/free-solid-svg-icons';
 
 import "../../styles/style.css";
 import CoordinatorNavigation from "./CoordinatorNavigation";
 import CoordinatorInfo from "./CoordinatorInfo";
+
+import TopOffensesByDepartmentChart from "../../elements/osa coordinator/graphs/TopOffensesByDepartmentChart";
+import TopViolationRecordsByDepartmentChart from "../../elements/osa coordinator/graphs/TopViolationRecordsByDepartmentChart";
+import TopUniformDefiancesByDepartmentChart from "../../elements/osa coordinator/graphs/TopUniformDefiancesByDepartmentChart";
+import TopViolationNaturesByDepartment from "../../elements/osa coordinator/graphs/TopViolationNaturesByDepartment";
 
 import yellowBackgroundImage from "../../components/images/yellow_background.png";
 import cafBackgroundImage from "../../components/images/caf.png";
@@ -50,21 +54,6 @@ const AcademicYearButton = styled(BaseButton)`
   background-image: url(${categoriesImage}) !important;
 `;
 
-
-const data = [
-  { name: 'Jan', pv: 2400 },
-  { name: 'Feb', pv: 1398 },
-  { name: 'Mar', pv: 9800 },
-  { name: 'Apr', pv: 3908 },
-  { name: 'May', pv: 4800 },
-  { name: 'Jun', pv: 3800 },
-  { name: 'Jul', pv: 4300 },
-  { name: 'Aug', pv: 3800 },
-  { name: 'Sep', pv: 4300 },
-  { name: 'Oct', pv: 3800 },
-  { name: 'Nov', pv: 4300 },
-  { name: 'Dec', pv: 3800 },
-];
 
 const departments = [
   { code: '2', name: 'CAF', fullName: 'College of Accountancy and Finance' },
@@ -154,15 +143,10 @@ const CoordinatorDashboard = () => {
       {/* Graphs Cards */}
       <text style={{ fontSize: '20px', fontWeight: '600', marginLeft: '120px' }}>Graphs</text>
       <div className="chart-container p-4" style={{ marginLeft: '120px', marginTop: '20px' }}>
-        <BarChart width={500}
-          height={300} data={data} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
-          <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="name" />
-          <YAxis />
-          <Tooltip />
-          <Legend />
-          <Bar dataKey="pv" fill="#006400" />
-        </BarChart>
+        <TopOffensesByDepartmentChart/>
+        <TopViolationRecordsByDepartmentChart/>
+        <TopUniformDefiancesByDepartmentChart/>
+        <TopViolationNaturesByDepartment/>
       </div>
     </>
   );
