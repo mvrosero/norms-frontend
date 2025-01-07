@@ -7,32 +7,43 @@ import styled from '@emotion/styled';
 import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 
-const UniformDefianceTable = () => {
+const UniformDefianceTable = ({}) => {
     const [records, setRecords] = useState([]);
     const [selectedRecord, setSelectedRecord] = useState(null);
     const [employeeName, setEmployeeName] = useState('');
     const [showDetailsModal, setShowDetailsModal] = useState(false);
+    const [error, setError] = useState('');
+    const [loading, setLoading] = useState(true);
 
 
     // Pagination state
     const [currentPage, setCurrentPage] = useState(1);
     const [rowsPerPage, setRowsPerPage] = useState(10);
 
+    
     // Sorting state for full name
     const [sortOrder, setSortOrder] = useState('asc'); 
     const [sortOrderDate, setSortOrderDate] = useState('asc'); 
 
 
-    // Fetch the uniform defiances
+    // Fetch the uniform defiances submitted by the employee currently logged in
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await axios.get('http://localhost:9000/uniform_defiances');
+                const employeeIdNumber = localStorage.getItem('employee_idnumber');
+                if (!employeeIdNumber) {
+                    throw new Error('Employee ID number not found in local storage');
+                }
+
+                const response = await axios.get(`http://localhost:9000/uniform_defiances/submitted_by/${employeeIdNumber}`);
                 setRecords(response.data);
             } catch (error) {
-                console.error('Error fetching data:', error);
+                setError(error.message || 'An error occurred');
+            } finally {
+                setLoading(false);
             }
         };
+
         fetchData();
     }, []);
 
