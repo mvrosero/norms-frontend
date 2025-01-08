@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import ReactApexChart from 'react-apexcharts';
 
-const TopOffensesByDepartmentChart = () => {
+const TopOffensesByDepartmentChart = ({ startDate, endDate }) => {
   const [chartData, setChartData] = useState({
     options: {
       chart: {
@@ -39,10 +39,7 @@ const TopOffensesByDepartmentChart = () => {
     series: [],
   });
 
-  const [startDate, setStartDate] = useState('');
-  const [endDate, setEndDate] = useState('');
-
-  // Fetch the data
+  
   const fetchData = () => {
     const params = {};
     if (startDate) params.start_date = startDate;
@@ -65,7 +62,6 @@ const TopOffensesByDepartmentChart = () => {
           'College of Health Sciences': '#10A955',
         };
 
-        // Organize data by offense and department
         response.data.forEach((row) => {
           if (!offenses.includes(row.offense_name)) {
             offenses.push(row.offense_name);
@@ -74,7 +70,6 @@ const TopOffensesByDepartmentChart = () => {
             departments.push(row.department_name);
           }
 
-          // Initialize offense counts for departments if not already
           if (!offenseCountsByDepartment[row.offense_name]) {
             offenseCountsByDepartment[row.offense_name] = {};
           }
@@ -82,18 +77,14 @@ const TopOffensesByDepartmentChart = () => {
             row.offense_count;
         });
 
-        // Prepare the chart data
-        const seriesData = departments.map((department) => {
-          return {
-            name: department,
-            data: offenses.map(
-              (offense) => offenseCountsByDepartment[offense][department] || 0
-            ),
-            color: departmentColors[department] || '#000000',
-          };
-        });
+        const seriesData = departments.map((department) => ({
+          name: department,
+          data: offenses.map(
+            (offense) => offenseCountsByDepartment[offense][department] || 0
+          ),
+          color: departmentColors[department] || '#000000',
+        }));
 
-        // Set the chart data and options
         setChartData({
           options: {
             ...chartData.options,
@@ -111,52 +102,11 @@ const TopOffensesByDepartmentChart = () => {
 
   useEffect(() => {
     fetchData();
-  }, []); // Fetch data on component mount
+  }, [startDate, endDate]); 
 
-  const handleFilter = () => {
-    fetchData(); // Fetch data based on the selected date range
-  };
 
   return (
     <div>
-      {/* Date range filters */}
-      <div style={{ marginBottom: '20px', display: 'flex', gap: '10px' }}>
-        <div>
-          <label htmlFor="startDate">Start Date: </label>
-          <input
-            type="date"
-            id="startDate"
-            value={startDate}
-            onChange={(e) => setStartDate(e.target.value)}
-            style={{ padding: '5px' }}
-          />
-        </div>
-        <div>
-          <label htmlFor="endDate">End Date: </label>
-          <input
-            type="date"
-            id="endDate"
-            value={endDate}
-            onChange={(e) => setEndDate(e.target.value)}
-            style={{ padding: '5px' }}
-          />
-        </div>
-        <button
-          onClick={handleFilter}
-          style={{
-            padding: '5px 10px',
-            backgroundColor: '#4CAF50',
-            color: 'white',
-            border: 'none',
-            borderRadius: '5px',
-            cursor: 'pointer',
-          }}
-        >
-          Apply Filter
-        </button>
-      </div>
-
-      {/* Chart */}
       <ReactApexChart
         options={chartData.options}
         series={chartData.series}
@@ -167,5 +117,5 @@ const TopOffensesByDepartmentChart = () => {
   );
 };
 
-export default TopOffensesByDepartmentChart;
 
+export default TopOffensesByDepartmentChart;

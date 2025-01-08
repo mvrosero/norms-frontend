@@ -137,7 +137,6 @@ const CoordinatorDashboard = () => {
 
 
       {/* Graphs Cards */}
-      <text style={{ fontSize: '20px', fontWeight: '600', marginLeft: '120px' }}>Graphs</text>
         <div className="chart-container p-4" style={{ marginLeft: '100px' }}>
           <CoordinatorGraphs/>
       </div>
