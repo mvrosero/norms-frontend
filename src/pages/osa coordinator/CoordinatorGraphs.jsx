@@ -168,7 +168,7 @@ const CoordinatorGraphs = () => {
             {selectedChart === 'offenses' ? 'OFFENSES BY DEPARTMENT' : 
              selectedChart === 'violationRecords' ? 'VIOLATION RECORDS BY DEPARTMENT' :
              selectedChart === 'uniformDefiances' ? 'UNIFORM DEFIANCES BY DEPARTMENT' :
-             selectedChart === 'violationNatures' ? 'Top Violation Natures By Department' :
+             selectedChart === 'violationNatures' ? 'TOP NATURE OF VIOLATIONS' :
              selectedChart === 'categories' ? 'Top Categories' :
              selectedChart === 'subcategories' ? 'Top Subcategories' :
              selectedChart === 'totalViolationRecords' ? 'Total Violation Records' :
