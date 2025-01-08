@@ -170,7 +170,7 @@ const CoordinatorGraphs = () => {
              selectedChart === 'uniformDefiances' ? 'UNIFORM DEFIANCES BY DEPARTMENT' :
              selectedChart === 'violationNatures' ? 'TOP NATURE OF VIOLATIONS' :
              selectedChart === 'categories' ? 'TOP CATEGORIES' :
-             selectedChart === 'subcategories' ? 'Top Subcategories' :
+             selectedChart === 'subcategories' ? 'TOP SUBCATEGORIES' :
              selectedChart === 'totalViolationRecords' ? 'Total Violation Records' :
              selectedChart === 'violationRecordsByYearLevel' ? 'Top Violation Records By Year Level' :
              'Top Uniform Defiance By Status'}
