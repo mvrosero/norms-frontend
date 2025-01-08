@@ -1,10 +1,25 @@
 import React, { useState, useEffect } from 'react';
 import ApexCharts from 'react-apexcharts';
 
-const TopViolationNaturesByDepartment = () => {
-  const [chartData, setChartData] = useState({
-    series: [],
-    labels: [],
+const TopViolationNaturesByDepartmentChart = () => {
+  const [state, setState] = useState({
+    series: [
+      {
+        data: [], // This will hold the violation nature data (e.g., x: nature_name, y: violation_count)
+      },
+    ],
+    options: {
+      legend: {
+        show: false,
+      },
+      chart: {
+        height: 350,
+        type: 'treemap', // Change chart type to 'treemap'
+      },
+      title: {
+        text: 'Top Violation Natures by Department', // Set title
+      },
+    },
   });
 
   useEffect(() => {
@@ -12,39 +27,31 @@ const TopViolationNaturesByDepartment = () => {
     fetch('http://localhost:9000/api/top-violationnatures')
       .then((response) => response.json())
       .then((data) => {
-        // Extract violation names and counts
-        const labels = data.map((record) => record.nature_name);
-        const series = data.map((record) => record.violation_count);
+        // Format the data for the treemap chart
+        const formattedData = data.map((record) => ({
+          x: record.nature_name, // Set 'x' as violation nature name
+          y: record.violation_count, // Set 'y' as the violation count
+        }));
 
-        // Update chart data
-        setChartData({ labels, series });
+        // Update the chart state with the formatted data
+        setState({
+          series: [{ data: formattedData }],
+          options: { ...state.options }, // Retain existing options
+        });
       })
       .catch((err) => console.error('Error fetching top violation natures:', err));
   }, []);
 
-  const options = {
-    chart: {
-      width: 380,
-      type: 'polarArea',
-    },
-    labels: chartData.labels,
-    fill: {
-      opacity: 1,
-    },
-    stroke: {
-      width: 1,
-      colors: undefined,
-    },
-    yaxis: {
-      show: false,
-    },
-  };
-
   return (
     <div>
       <h2>Top Violation Natures</h2>
-      {chartData.labels.length > 0 ? (
-        <ApexCharts options={options} series={chartData.series} type="polarArea" height={350} />
+      {state.series[0].data.length > 0 ? (
+        <ApexCharts
+          options={state.options}
+          series={state.series}
+          type="treemap"
+          height={350}
+        />
       ) : (
         <p>Loading chart...</p>
       )}
@@ -52,4 +59,4 @@ const TopViolationNaturesByDepartment = () => {
   );
 };
 
-export default TopViolationNaturesByDepartment;
+export default TopViolationNaturesByDepartmentChart;

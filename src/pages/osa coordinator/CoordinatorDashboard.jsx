@@ -13,7 +13,12 @@ import CoordinatorInfo from "./CoordinatorInfo";
 import TopOffensesByDepartmentChart from "../../elements/osa coordinator/graphs/TopOffensesByDepartmentChart";
 import TopViolationRecordsByDepartmentChart from "../../elements/osa coordinator/graphs/TopViolationRecordsByDepartmentChart";
 import TopUniformDefiancesByDepartmentChart from "../../elements/osa coordinator/graphs/TopUniformDefiancesByDepartmentChart";
-import TopViolationNaturesByDepartment from "../../elements/osa coordinator/graphs/TopViolationNaturesByDepartment";
+import TopViolationNaturesByDepartmentChart from "../../elements/osa coordinator/graphs/TopViolationNaturesByDepartment";
+import TopCategoriesChart from "../../elements/osa coordinator/graphs/TopCategoriesChart";
+import TopSubcategoriesChart from "../../elements/osa coordinator/graphs/TopSubcategoriesChart";
+import TotalViolationRecordsChart from "../../elements/osa coordinator/graphs/TotalViolationRecordsChart";
+import TopViolationRecordsByYearLevel from "../../elements/osa coordinator/graphs/TopViolationRecordsByYearLevel";
+import TopUniformDefianceByStatusChart from "../../elements/osa coordinator/graphs/TopUniformDefiancesByStatus";
 
 import yellowBackgroundImage from "../../components/images/yellow_background.png";
 import cafBackgroundImage from "../../components/images/caf.png";
@@ -146,7 +151,12 @@ const CoordinatorDashboard = () => {
         <TopOffensesByDepartmentChart/>
         <TopViolationRecordsByDepartmentChart/>
         <TopUniformDefiancesByDepartmentChart/>
-        <TopViolationNaturesByDepartment/>
+        <TopViolationNaturesByDepartmentChart/>
+        <TopCategoriesChart/>
+        <TopSubcategoriesChart/>
+        <TotalViolationRecordsChart/>
+        <TopViolationRecordsByYearLevel/>
+        <TopUniformDefianceByStatusChart/>
       </div>
     </>
   );
