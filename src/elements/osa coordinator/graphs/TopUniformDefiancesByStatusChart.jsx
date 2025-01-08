@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import ReactApexChart from "react-apexcharts";
 import axios from "axios";
 
-const TopUniformDefianceByStatusChart = ({ startDate, endDate }) => {
+const TopUniformDefiancesByStatusChart = ({ startDate, endDate }) => {
   const [chartData, setChartData] = useState({
     series: [], 
     labels: [], 
@@ -59,7 +59,7 @@ const TopUniformDefianceByStatusChart = ({ startDate, endDate }) => {
           download: true, 
         },
         offsetX: 0, 
-        offsetY: -10, 
+        offsetY: 10, 
       },
     },
     labels: chartData.labels, 
@@ -78,6 +78,9 @@ const TopUniformDefianceByStatusChart = ({ startDate, endDate }) => {
       monochrome: {
         enabled: false, 
       },
+    },
+      legend: {
+        offsetY: 230, 
     },
   };
 
@@ -99,4 +102,4 @@ const TopUniformDefianceByStatusChart = ({ startDate, endDate }) => {
 };
 
 
-export default TopUniformDefianceByStatusChart;
+export default TopUniformDefiancesByStatusChart;

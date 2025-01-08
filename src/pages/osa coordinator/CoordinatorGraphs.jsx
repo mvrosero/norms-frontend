@@ -7,9 +7,9 @@ import TopUniformDefiancesByDepartmentChart from "../../elements/osa coordinator
 import TopViolationNaturesChart from '../../elements/osa coordinator/graphs/TopViolationNaturesChart';
 import TopCategoriesChart from "../../elements/osa coordinator/graphs/TopCategoriesChart";
 import TopSubcategoriesChart from "../../elements/osa coordinator/graphs/TopSubcategoriesChart";
+import TopUniformDefiancesByStatusChart from '../../elements/osa coordinator/graphs/TopUniformDefiancesByStatusChart';
 import TotalViolationRecordsChart from "../../elements/osa coordinator/graphs/TotalViolationRecordsChart";
 import TopViolationRecordsByYearLevel from "../../elements/osa coordinator/graphs/TopViolationRecordsByYearLevel";
-import TopUniformDefiancesByStatus from "../../elements/osa coordinator/graphs/TopUniformDefiancesByStatus";
 
 const CoordinatorGraphs = () => {
   const [showModal, setShowModal] = useState(false);
@@ -137,7 +137,7 @@ const CoordinatorGraphs = () => {
           style={{ flex: 1, padding: '10px', cursor: 'pointer', backgroundColor: '#f8f9fa', border: '1px solid #ddd', borderRadius: '8px', marginRight: '20px' }}
           onClick={() => handleOpenModal('uniformDefianceByStatus')}
         >
-          <TopUniformDefiancesByStatus startDate={startDate} endDate={endDate}/>
+          <TopUniformDefiancesByStatusChart startDate={startDate} endDate={endDate}/>
         </div>
         <div
           style={{ flex: 1, padding: '10px', cursor: 'pointer', backgroundColor: '#f8f9fa', border: '1px solid #ddd', borderRadius: '8px' }}
@@ -172,7 +172,7 @@ const CoordinatorGraphs = () => {
              selectedChart === 'categories' ? 'TOP CATEGORIES' :
              selectedChart === 'subcategories' ? 'TOP SUBCATEGORIES' :
              selectedChart === 'totalViolationRecords' ? 'Total Violation Records' :
-             selectedChart === 'violationRecordsByYearLevel' ? 'Top Violation Records By Year Level' :
+             selectedChart === 'violationRecordsByYearLevel' ? 'VIOLATION RECORDS BY YEAR LEVEL' :
              'UNIFORM DEFIANCES BY STATUS'}
           </Modal.Title>
         </Modal.Header>
@@ -183,7 +183,7 @@ const CoordinatorGraphs = () => {
           {selectedChart === 'violationNatures' && <TopViolationNaturesChart startDate={startDate} endDate={endDate}/>}
           {selectedChart === 'categories' && <TopCategoriesChart startDate={startDate} endDate={endDate}/>}
           {selectedChart === 'subcategories' && <TopSubcategoriesChart startDate={startDate} endDate={endDate}/>}
-          {selectedChart === 'uniformDefianceByStatus' && <TopUniformDefiancesByStatus startDate={startDate} endDate={endDate}/>}
+          {selectedChart === 'uniformDefianceByStatus' && <TopUniformDefiancesByStatusChart startDate={startDate} endDate={endDate}/>}
           {selectedChart === 'violationRecordsByYearLevel' && <TopViolationRecordsByYearLevel startDate={startDate} endDate={endDate}/>}
           {selectedChart === 'totalViolationRecords' && <TotalViolationRecordsChart startDate={startDate} endDate={endDate}/>}
         </Modal.Body>

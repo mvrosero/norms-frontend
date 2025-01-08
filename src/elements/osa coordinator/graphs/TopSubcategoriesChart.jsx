@@ -40,6 +40,7 @@ const TopSubcategoriesChart = ({ startDate, endDate }) => {
       },
       legend: {
         position: "right",
+        offsetY: 10,
       },
     },
   });

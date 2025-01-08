@@ -2,13 +2,22 @@ import React, { useEffect, useState } from "react";
 import ReactApexChart from "react-apexcharts";
 import axios from "axios";
 
-const TopViolationRecordsByYearLevel = () => {
+const TopViolationRecordsByYearLevel = ({ startDate, endDate }) => {
   const [state, setState] = useState({
-    series: [], // This will hold the count of users for each year level
+    series: [], 
     options: {
       chart: {
         height: 350,
         type: "radialBar",
+        offsetX: 0, 
+        toolbar: {
+          show: true, 
+          tools: {
+            download: true, 
+          },
+          offsetX: 0, 
+          offsetY: 10, 
+        },
       },
       plotOptions: {
         radialBar: {
@@ -23,49 +32,58 @@ const TopViolationRecordsByYearLevel = () => {
               show: true,
               label: "Total",
               formatter: function (w) {
-                // Custom formatter to display the total count of users
                 return w.globals.seriesTotals.reduce((a, b) => a + b, 0);
               },
             },
           },
         },
       },
-      labels: [], // This will hold the year levels (e.g., 'First Year', 'Second Year', etc.)
+      labels: [], 
       legend: {
-        show: true, // Enable legend
-        position: "top", // Position of the legend (top, bottom, left, right)
-        horizontalAlign: "center", // Align the legend horizontally (center, left, right)
-        floating: true, // Make the legend float over the chart
-        fontSize: "14px", // Font size for the legend items
+        show: true, 
+        position: "right", 
+        horizontalAlign: "center", 
+        floating: true, 
+        fontSize: "12px", 
+        offsetY: 230
       },
+      colors: [
+        "#5FB4FA", "#10A955", "#E28641", "#4B9393", "#F0CD44", "#54A210", "#772133", "#CE1F20" 
+      ],
     },
   });
 
+
   useEffect(() => {
-    // Fetch data from the backend API
-    axios
-      .get("http://localhost:9000/violation-records/year-level")
-      .then((response) => {
+    const fetchData = async () => {
+      try {
+        const params = new URLSearchParams();
+        if (startDate) params.append('start_date', startDate);
+        if (endDate) params.append('end_date', endDate);
+
+        // Fetch data from the backend API with the date filters
+        const response = await axios.get(
+          `http://localhost:9000/violation-records/year-level?${params.toString()}`
+        );
         const data = response.data;
 
-        // Extract year levels and user counts
         const yearLevels = data.map((item) => item.year_level);
         const userCounts = data.map((item) => item.user_count);
-
-        // Update state with the data for the chart
         setState({
           ...state,
           series: userCounts,
           options: {
             ...state.options,
-            labels: yearLevels, // Set labels for the year levels dynamically
+            labels: yearLevels, 
           },
         });
-      })
-      .catch((error) => {
+      } catch (error) {
         console.error("Error fetching violation record counts:", error);
-      });
-  }, []);
+      }
+    };
+    fetchData();
+  }, [startDate, endDate]); 
+
 
   return (
     <div>
@@ -81,5 +99,6 @@ const TopViolationRecordsByYearLevel = () => {
     </div>
   );
 };
+
 
 export default TopViolationRecordsByYearLevel;
