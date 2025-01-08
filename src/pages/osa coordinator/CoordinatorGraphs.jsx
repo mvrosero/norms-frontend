@@ -82,8 +82,6 @@ const CoordinatorGraphs = () => {
     </div>
 
 
-
-
       {/* First Row of Charts */}
       <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '20px' }}>
         <div

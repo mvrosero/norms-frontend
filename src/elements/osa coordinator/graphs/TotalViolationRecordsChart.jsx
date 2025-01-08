@@ -14,10 +14,13 @@ const getBarColor = (total) => {
 
 const TotalViolationRecordsChart = ({ startDate, endDate }) => {
   const [chartData, setChartData] = useState({
-    weekly: [],
+    daily: [],
     monthly: [],
     yearly: [],
   });
+  
+  const [selectedOption, setSelectedOption] = useState('daily'); 
+
 
   useEffect(() => {
     const fetchData = async () => {
@@ -32,7 +35,7 @@ const TotalViolationRecordsChart = ({ startDate, endDate }) => {
         );
         const data = response.data;
         setChartData({
-          weekly: data.weekly,
+          daily: data.daily,
           monthly: data.monthly,
           yearly: data.yearly,
         });
@@ -41,24 +44,33 @@ const TotalViolationRecordsChart = ({ startDate, endDate }) => {
       }
     };
     fetchData();
-  }, [startDate, endDate]); 
+  }, [startDate, endDate]);
 
 
-  // Chart options for the weekly data
-  const weeklyOptions = {
+  // Chart options for the daily data
+  const dailyOptions = {
     chart: {
       type: "line",
     },
     title: {
-      text: "Weekly Violation Totals",
+      text: "Daily Violation Records Total",
       align: "center",
     },
     xaxis: {
-      categories: chartData.weekly.map((item) => item.day_of_week),
+      categories: chartData.daily.map((item) => item.day_of_week),
+      title: {
+        text: "Days",
+        style: {
+          fontWeight: '600',
+        },
+      },
     },
     yaxis: {
       title: {
-        text: "Total Violations",
+        text: "Record Counts",
+        style: {
+          fontWeight: '600',
+        },
       },
     },
     stroke: {
@@ -73,75 +85,92 @@ const TotalViolationRecordsChart = ({ startDate, endDate }) => {
       },
     },
   };
+
+  // Chart options for the monthly data 
+  const monthlyOptions = {
+    chart: {
+      type: "bar",
+    },
+    title: {
+      text: "Monthly Violation Records Total",
+      align: "center",
+    },
+    xaxis: {
+      categories: chartData.monthly.map((item) => item.month),
+      title: {
+        text: "Months",
+        style: {
+          fontWeight: '600',
+        },
+      },
+    },
+    yaxis: {
+      title: {
+        text: "Record Counts",
+        style: {
+          fontWeight: '600',
+        },
+      },
+    },
+    plotOptions: {
+      bar: {
+        colors: {
+          ranges: chartData.monthly.map((item) => ({
+            from: item.total,
+            to: item.total,
+            color: getBarColor(item.total),
+          })),
+        },
+      },
+    },
+  };
+
+  // Chart options for the yearly data 
+  const yearlyOptions = {
+    chart: {
+      type: "bar",
+    },
+    title: {
+      text: "Yearly Violation Records Total",
+      align: "center",
+    },
+    xaxis: {
+      categories: chartData.yearly.map((item) => item.year),
+      title: {
+        text: "Record Counts",
+        style: {
+          fontWeight: '600',
+        },
+      },
+    },
+    yaxis: {
+      title: {
+        text: "Years",
+        style: {
+          fontWeight: '600',
+        },
+      },
+    },
+    plotOptions: {
+      bar: {
+        horizontal: true, 
+        colors: {
+          ranges: chartData.yearly.map((item) => ({
+            from: item.total,
+            to: item.total,
+            color: getBarColor(item.total),
+          })),
+        },
+      },
+    },
+  };
   
-// Chart options for the monthly data 
-const monthlyOptions = {
-  chart: {
-    type: "bar",
-  },
-  title: {
-    text: "Monthly Violation Totals",
-    align: "center",
-  },
-  xaxis: {
-    categories: chartData.monthly.map((item) => item.month),
-  },
-  yaxis: {
-    title: {
-      text: "Total Violations",
-    },
-  },
-  plotOptions: {
-    bar: {
-      colors: {
-        ranges: chartData.monthly.map((item) => ({
-          from: item.total, 
-          to: item.total,  
-          color: getBarColor(item.total),
-        })),
-      },
-    },
-  },
-};
-
-
-// Chart options for the yearly data 
-const yearlyOptions = {
-  chart: {
-    type: "bar",
-  },
-  title: {
-    text: "Yearly Violation Totals",
-    align: "center",
-  },
-  xaxis: {
-    categories: chartData.yearly.map((item) => item.year),
-  },
-  yaxis: {
-    title: {
-      text: "Total Violations",
-    },
-  },
-  plotOptions: {
-    bar: {
-      horizontal: true, 
-      colors: {
-        ranges: chartData.yearly.map((item) => ({
-          from: item.total,
-          to: item.total,
-          color: getBarColor(item.total),
-        })),
-      },
-    },
-  },
-};
-
 
   // Series data for the charts
-  const weeklySeries = [
+  const dailySeries = [
     {
       name: "Violations",
-      data: chartData.weekly.map((item) => item.total),
+      data: chartData.daily.map((item) => item.total),
     },
   ];
 
@@ -159,37 +188,57 @@ const yearlyOptions = {
     },
   ];
 
+
+  // Handle the dropdown change
+  const handleOptionChange = (event) => {
+    setSelectedOption(event.target.value);
+  };
+
+
   return (
     <div>
-      {/* Weekly Chart */}
-      <div>
-        <ReactApexChart
-          options={weeklyOptions}
-          series={weeklySeries}
-          type="line"
-          height={350}
-        />
+      {/* Dropdown for selecting the chart view */}
+      <div style={{ marginBottom: '20px' }}>
+          <select id="chart-view" value={selectedOption} onChange={handleOptionChange} style={{ padding: '4px 30px', border: '1px solid #ccc', backgroundColor: '#f9f9f9', borderRadius: '5px' }}>
+              <option value="daily">Daily</option>
+              <option value="monthly">Monthly</option>
+              <option value="yearly">Yearly</option>
+          </select>
       </div>
 
-      {/* Monthly Chart */}
-      <div>
-        <ReactApexChart
-          options={monthlyOptions}
-          series={monthlySeries}
-          type="bar"
-          height={350}
-        />
-      </div>
+      {/* Conditional rendering based on selectedOption */}
+      {selectedOption === 'daily' && (
+        <div>
+          <ReactApexChart
+            options={dailyOptions}
+            series={dailySeries}
+            type="line"
+            height={350}
+          />
+        </div>
+      )}
 
-      {/* Yearly Chart */}
-      <div>
-        <ReactApexChart
-          options={yearlyOptions}
-          series={yearlySeries}
-          type="bar"
-          height={350}
-        />
-      </div>
+      {selectedOption === 'monthly' && (
+        <div>
+          <ReactApexChart
+            options={monthlyOptions}
+            series={monthlySeries}
+            type="bar"
+            height={350}
+          />
+        </div>
+      )}
+
+      {selectedOption === 'yearly' && (
+        <div>
+          <ReactApexChart
+            options={yearlyOptions}
+            series={yearlySeries}
+            type="bar"
+            height={350}
+          />
+        </div>
+      )}
     </div>
   );
 };
