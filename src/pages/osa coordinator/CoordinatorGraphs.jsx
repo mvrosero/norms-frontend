@@ -173,7 +173,7 @@ const CoordinatorGraphs = () => {
              selectedChart === 'subcategories' ? 'TOP SUBCATEGORIES' :
              selectedChart === 'totalViolationRecords' ? 'Total Violation Records' :
              selectedChart === 'violationRecordsByYearLevel' ? 'Top Violation Records By Year Level' :
-             'Top Uniform Defiance By Status'}
+             'UNIFORM DEFIANCES BY STATUS'}
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>

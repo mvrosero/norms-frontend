@@ -8,6 +8,14 @@ const TopSubcategoriesChart = ({ startDate, endDate }) => {
     options: {
       chart: {
         type: "donut",
+        toolbar: {
+          show: true, 
+          tools: {
+            download: true, 
+          },
+          offsetX: 10, 
+          offsetY: -50, 
+        },
       },
       labels: [],
       fill: {

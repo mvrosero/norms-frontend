@@ -17,6 +17,14 @@ const TopCategoriesChart = ({ startDate, endDate }) => {
           blur: 5,
           opacity: 0.5,
         },
+        toolbar: {
+          show: true, 
+          tools: {
+            download: true, 
+          },
+          offsetX: 70, 
+          offsetY: -50, 
+        },
       },
       labels: [],
       stroke: {
