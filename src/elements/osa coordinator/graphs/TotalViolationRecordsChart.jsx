@@ -2,7 +2,17 @@ import React, { useEffect, useState } from "react";
 import ReactApexChart from "react-apexcharts";
 import axios from "axios";
 
-const TotalViolationRecordsChart = () => {
+const getBarColor = (total) => {
+  if (total <= 20) {
+    return '#FFEB3B'; 
+  } else if (total <= 40) {
+    return '#FF9800'; 
+  } else {
+    return '#F44336'; 
+  }
+};
+
+const TotalViolationRecordsChart = ({ startDate, endDate }) => {
   const [chartData, setChartData] = useState({
     weekly: [],
     monthly: [],
@@ -10,23 +20,31 @@ const TotalViolationRecordsChart = () => {
   });
 
   useEffect(() => {
-    // Fetch data from backend
-    axios
-      .get("http://localhost:9000/violation-records/totals")
-      .then((response) => {
+    const fetchData = async () => {
+      try {
+        const params = new URLSearchParams();
+        if (startDate) params.append('start_date', startDate);
+        if (endDate) params.append('end_date', endDate);
+
+        // Fetch data from backend with date filter
+        const response = await axios.get(
+          `http://localhost:9000/violation-records/totals?${params.toString()}`
+        );
         const data = response.data;
         setChartData({
           weekly: data.weekly,
           monthly: data.monthly,
           yearly: data.yearly,
         });
-      })
-      .catch((error) => {
+      } catch (error) {
         console.error("Error fetching data:", error);
-      });
-  }, []);
+      }
+    };
+    fetchData();
+  }, [startDate, endDate]); 
 
-  // Prepare chart options for the weekly data
+
+  // Chart options for the weekly data
   const weeklyOptions = {
     chart: {
       type: "line",
@@ -43,48 +61,83 @@ const TotalViolationRecordsChart = () => {
         text: "Total Violations",
       },
     },
-    colors: ["#FF5733"], // Red color for weekly chart
-  };
-
-  const monthlyOptions = {
-    chart: {
-      type: "bar",
+    stroke: {
+      curve: 'smooth', 
+      colors: ['#ff856b'], 
+      width: 3, 
     },
-    title: {
-      text: "Monthly Violation Totals",
-      align: "center",
-    },
-    xaxis: {
-      categories: chartData.monthly.map((item) => item.month),
-    },
-    yaxis: {
-      title: {
-        text: "Total Violations",
+    plotOptions: {
+      area: {
+        fillColor: '#FF5733', 
+        opacity: 0.2, 
       },
     },
-    colors: ["#33FF57"], // Green color for monthly chart
   };
-
-  const yearlyOptions = {
-    chart: {
-      type: "bar",
-    },
+  
+// Chart options for the monthly data 
+const monthlyOptions = {
+  chart: {
+    type: "bar",
+  },
+  title: {
+    text: "Monthly Violation Totals",
+    align: "center",
+  },
+  xaxis: {
+    categories: chartData.monthly.map((item) => item.month),
+  },
+  yaxis: {
     title: {
-      text: "Yearly Violation Totals",
-      align: "center",
+      text: "Total Violations",
     },
-    xaxis: {
-      categories: chartData.yearly.map((item) => item.year),
-    },
-    yaxis: {
-      title: {
-        text: "Total Violations",
+  },
+  plotOptions: {
+    bar: {
+      colors: {
+        ranges: chartData.monthly.map((item) => ({
+          from: item.total, 
+          to: item.total,  
+          color: getBarColor(item.total),
+        })),
       },
     },
-    colors: ["#3357FF"], // Blue color for yearly chart
-  };
+  },
+};
 
-  // Prepare the series data
+
+// Chart options for the yearly data 
+const yearlyOptions = {
+  chart: {
+    type: "bar",
+  },
+  title: {
+    text: "Yearly Violation Totals",
+    align: "center",
+  },
+  xaxis: {
+    categories: chartData.yearly.map((item) => item.year),
+  },
+  yaxis: {
+    title: {
+      text: "Total Violations",
+    },
+  },
+  plotOptions: {
+    bar: {
+      horizontal: true, 
+      colors: {
+        ranges: chartData.yearly.map((item) => ({
+          from: item.total,
+          to: item.total,
+          color: getBarColor(item.total),
+        })),
+      },
+    },
+  },
+};
+
+
+  // Series data for the charts
   const weeklySeries = [
     {
       name: "Violations",
@@ -110,7 +163,6 @@ const TotalViolationRecordsChart = () => {
     <div>
       {/* Weekly Chart */}
       <div>
-        <h2>Weekly Violation Totals</h2>
         <ReactApexChart
           options={weeklyOptions}
           series={weeklySeries}
@@ -121,7 +173,6 @@ const TotalViolationRecordsChart = () => {
 
       {/* Monthly Chart */}
       <div>
-        <h2>Monthly Violation Totals</h2>
         <ReactApexChart
           options={monthlyOptions}
           series={monthlySeries}
@@ -132,7 +183,6 @@ const TotalViolationRecordsChart = () => {
 
       {/* Yearly Chart */}
       <div>
-        <h2>Yearly Violation Totals</h2>
         <ReactApexChart
           options={yearlyOptions}
           series={yearlySeries}
@@ -143,5 +193,6 @@ const TotalViolationRecordsChart = () => {
     </div>
   );
 };
+
 
 export default TotalViolationRecordsChart;
