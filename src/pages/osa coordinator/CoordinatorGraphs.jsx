@@ -8,8 +8,9 @@ import TopViolationNaturesChart from '../../elements/osa coordinator/graphs/TopV
 import TopCategoriesChart from "../../elements/osa coordinator/graphs/TopCategoriesChart";
 import TopSubcategoriesChart from "../../elements/osa coordinator/graphs/TopSubcategoriesChart";
 import TopUniformDefiancesByStatusChart from '../../elements/osa coordinator/graphs/TopUniformDefiancesByStatusChart';
-import TotalViolationRecordsChart from "../../elements/osa coordinator/graphs/TotalViolationRecordsChart";
 import TopViolationRecordsByYearLevel from "../../elements/osa coordinator/graphs/TopViolationRecordsByYearLevel";
+import TotalViolationRecordsChart from "../../elements/osa coordinator/graphs/TotalViolationRecordsChart";
+import TotalUniformDefiancesChart from '../../elements/osa coordinator/graphs/TotalUniformDefiancesChart';
 
 const CoordinatorGraphs = () => {
   const [showModal, setShowModal] = useState(false);
@@ -157,6 +158,16 @@ const CoordinatorGraphs = () => {
         </div>
       </div>
 
+      {/* Sixth Row of Charts */}
+      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '20px' }}>
+        <div
+          style={{ flex: 1, padding: '10px', cursor: 'pointer', backgroundColor: '#f8f9fa', border: '1px solid #ddd', borderRadius: '8px', marginRight: '20px' }}
+          onClick={() => handleOpenModal('totalUniformDefiances')}
+        >
+          <TotalUniformDefiancesChart startDate={startDate} endDate={endDate}/>
+        </div>
+      </div>
+
 
       {/* Modal for displaying the clicked chart in large view */}
       <Modal show={showModal} onHide={handleCloseModal} size="lg">
@@ -172,6 +183,7 @@ const CoordinatorGraphs = () => {
              selectedChart === 'categories' ? 'TOP CATEGORIES' :
              selectedChart === 'subcategories' ? 'TOP SUBCATEGORIES' :
              selectedChart === 'totalViolationRecords' ? 'TOTAL VIOLATION RECORDS' :
+             selectedChart === 'totalUniformDefiances' ? 'TOTAL UNIFORM DEFIANCES' :
              selectedChart === 'violationRecordsByYearLevel' ? 'VIOLATION RECORDS BY YEAR LEVEL' :
              'UNIFORM DEFIANCES BY STATUS'}
           </Modal.Title>
@@ -186,6 +198,7 @@ const CoordinatorGraphs = () => {
           {selectedChart === 'uniformDefianceByStatus' && <TopUniformDefiancesByStatusChart startDate={startDate} endDate={endDate}/>}
           {selectedChart === 'violationRecordsByYearLevel' && <TopViolationRecordsByYearLevel startDate={startDate} endDate={endDate}/>}
           {selectedChart === 'totalViolationRecords' && <TotalViolationRecordsChart startDate={startDate} endDate={endDate}/>}
+          {selectedChart === 'totalUniformDefiances' && <TotalUniformDefiancesChart startDate={startDate} endDate={endDate}/>}
         </Modal.Body>
       </Modal>
     </div>
