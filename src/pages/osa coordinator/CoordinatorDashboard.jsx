@@ -9,16 +9,7 @@ import { faUser } from '@fortawesome/free-solid-svg-icons';
 import "../../styles/style.css";
 import CoordinatorNavigation from "./CoordinatorNavigation";
 import CoordinatorInfo from "./CoordinatorInfo";
-
-import TopOffensesByDepartmentChart from "../../elements/osa coordinator/graphs/TopOffensesByDepartmentChart";
-import TopViolationRecordsByDepartmentChart from "../../elements/osa coordinator/graphs/TopViolationRecordsByDepartmentChart";
-import TopUniformDefiancesByDepartmentChart from "../../elements/osa coordinator/graphs/TopUniformDefiancesByDepartmentChart";
-import TopViolationNaturesByDepartmentChart from "../../elements/osa coordinator/graphs/TopViolationNaturesByDepartment";
-import TopCategoriesChart from "../../elements/osa coordinator/graphs/TopCategoriesChart";
-import TopSubcategoriesChart from "../../elements/osa coordinator/graphs/TopSubcategoriesChart";
-import TotalViolationRecordsChart from "../../elements/osa coordinator/graphs/TotalViolationRecordsChart";
-import TopViolationRecordsByYearLevel from "../../elements/osa coordinator/graphs/TopViolationRecordsByYearLevel";
-import TopUniformDefianceByStatusChart from "../../elements/osa coordinator/graphs/TopUniformDefiancesByStatus";
+import CoordinatorGraphs from "./CoordinatorGraphs";
 
 import yellowBackgroundImage from "../../components/images/yellow_background.png";
 import cafBackgroundImage from "../../components/images/caf.png";
@@ -147,16 +138,8 @@ const CoordinatorDashboard = () => {
 
       {/* Graphs Cards */}
       <text style={{ fontSize: '20px', fontWeight: '600', marginLeft: '120px' }}>Graphs</text>
-      <div className="chart-container p-4" style={{ marginLeft: '120px', marginTop: '20px' }}>
-        <TopOffensesByDepartmentChart/>
-        <TopViolationRecordsByDepartmentChart/>
-        <TopUniformDefiancesByDepartmentChart/>
-        <TopViolationNaturesByDepartmentChart/>
-        <TopCategoriesChart/>
-        <TopSubcategoriesChart/>
-        <TotalViolationRecordsChart/>
-        <TopViolationRecordsByYearLevel/>
-        <TopUniformDefianceByStatusChart/>
+        <div className="chart-container p-4" style={{ marginLeft: '100px' }}>
+          <CoordinatorGraphs/>
       </div>
     </>
   );
