@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import ApexCharts from 'react-apexcharts';
 
-const TopViolationNaturesByDepartmentChart = ({ startDate, endDate }) => {
+const TopViolationNaturesChart = ({ startDate, endDate }) => {
   const [state, setState] = useState({
     series: [
       {
@@ -64,4 +64,4 @@ const TopViolationNaturesByDepartmentChart = ({ startDate, endDate }) => {
   );
 };
 
-export default TopViolationNaturesByDepartmentChart;
+export default TopViolationNaturesChart;

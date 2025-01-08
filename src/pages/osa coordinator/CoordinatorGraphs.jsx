@@ -4,7 +4,7 @@ import { Row, Button, Modal } from 'react-bootstrap';
 import TopOffensesByDepartmentChart from "../../elements/osa coordinator/graphs/TopOffensesByDepartmentChart";
 import TopViolationRecordsByDepartmentChart from "../../elements/osa coordinator/graphs/TopViolationRecordsByDepartmentChart";
 import TopUniformDefiancesByDepartmentChart from "../../elements/osa coordinator/graphs/TopUniformDefiancesByDepartmentChart";
-import TopViolationNaturesByDepartment from "../../elements/osa coordinator/graphs/TopViolationNaturesByDepartment";
+import TopViolationNaturesChart from '../../elements/osa coordinator/graphs/TopViolationNaturesChart';
 import TopCategoriesChart from "../../elements/osa coordinator/graphs/TopCategoriesChart";
 import TopSubcategoriesChart from "../../elements/osa coordinator/graphs/TopSubcategoriesChart";
 import TotalViolationRecordsChart from "../../elements/osa coordinator/graphs/TotalViolationRecordsChart";
@@ -111,7 +111,7 @@ const CoordinatorGraphs = () => {
           style={{ flex: 1, padding: '10px', cursor: 'pointer', backgroundColor: '#f8f9fa', border: '1px solid #ddd', borderRadius: '8px' }}
           onClick={() => handleOpenModal('violationNatures')}
         >
-          <TopViolationNaturesByDepartment startDate={startDate} endDate={endDate}/>
+          <TopViolationNaturesChart startDate={startDate} endDate={endDate}/>
         </div>
       </div>
 
@@ -135,9 +135,9 @@ const CoordinatorGraphs = () => {
       <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '20px' }}>
         <div
           style={{ flex: 1, padding: '10px', cursor: 'pointer', backgroundColor: '#f8f9fa', border: '1px solid #ddd', borderRadius: '8px', marginRight: '20px' }}
-          onClick={() => handleOpenModal('totalViolationRecords')}
+          onClick={() => handleOpenModal('uniformDefianceByStatus')}
         >
-          <TotalViolationRecordsChart startDate={startDate} endDate={endDate}/>
+          <TopUniformDefiancesByStatus startDate={startDate} endDate={endDate}/>
         </div>
         <div
           style={{ flex: 1, padding: '10px', cursor: 'pointer', backgroundColor: '#f8f9fa', border: '1px solid #ddd', borderRadius: '8px' }}
@@ -151,9 +151,9 @@ const CoordinatorGraphs = () => {
       <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '20px' }}>
         <div
           style={{ flex: 1, padding: '10px', cursor: 'pointer', backgroundColor: '#f8f9fa', border: '1px solid #ddd', borderRadius: '8px', marginRight: '20px' }}
-          onClick={() => handleOpenModal('uniformDefianceByStatus')}
+          onClick={() => handleOpenModal('totalViolationRecords')}
         >
-          <TopUniformDefiancesByStatus startDate={startDate} endDate={endDate}/>
+          <TotalViolationRecordsChart startDate={startDate} endDate={endDate}/>
         </div>
       </div>
 
@@ -180,12 +180,12 @@ const CoordinatorGraphs = () => {
           {selectedChart === 'offenses' && <TopOffensesByDepartmentChart startDate={startDate} endDate={endDate}/>}
           {selectedChart === 'violationRecords' && <TopViolationRecordsByDepartmentChart startDate={startDate} endDate={endDate}/>}
           {selectedChart === 'uniformDefiances' && <TopUniformDefiancesByDepartmentChart startDate={startDate} endDate={endDate}/>}
-          {selectedChart === 'violationNatures' && <TopViolationNaturesByDepartment startDate={startDate} endDate={endDate}/>}
+          {selectedChart === 'violationNatures' && <TopViolationNaturesChart startDate={startDate} endDate={endDate}/>}
           {selectedChart === 'categories' && <TopCategoriesChart startDate={startDate} endDate={endDate}/>}
           {selectedChart === 'subcategories' && <TopSubcategoriesChart startDate={startDate} endDate={endDate}/>}
-          {selectedChart === 'totalViolationRecords' && <TotalViolationRecordsChart startDate={startDate} endDate={endDate}/>}
-          {selectedChart === 'violationRecordsByYearLevel' && <TopViolationRecordsByYearLevel startDate={startDate} endDate={endDate}/>}
           {selectedChart === 'uniformDefianceByStatus' && <TopUniformDefiancesByStatus startDate={startDate} endDate={endDate}/>}
+          {selectedChart === 'violationRecordsByYearLevel' && <TopViolationRecordsByYearLevel startDate={startDate} endDate={endDate}/>}
+          {selectedChart === 'totalViolationRecords' && <TotalViolationRecordsChart startDate={startDate} endDate={endDate}/>}
         </Modal.Body>
       </Modal>
     </div>
