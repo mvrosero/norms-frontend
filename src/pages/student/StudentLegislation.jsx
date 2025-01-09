@@ -4,8 +4,14 @@ import StudentNavigation from '../student/StudentNavigation';
 import StudentInfo from './StudentInfo';
 import SearchAndFilter from '../general/SearchAndFilter';
 
-// Import images directly from the src folder
-import cbm from '../../components/images/cbm.png';
+import constitution from '../../components/images/constitution.png';
+import hazing from '../../components/images/hazing.jpg';
+import safespace from '../../components/images/safespace.jpg';
+import cybercrime from '../../components/images/cybercrime.jpg';
+import harassment from '../../components/images/harassment.jpg';
+import dataprivacy from '../../components/images/dataprivacy.jpg';
+import journalism from '../../components/images/journalism.jpg';
+import drugs from '../../components/images/drugs.jpg';
 
 export default function StudentLegislations() {
     const navigate = useNavigate();
@@ -23,15 +29,24 @@ export default function StudentLegislations() {
         return null;
     }
 
-    // Array of imported image objects (use the same image or different images if needed)
-    const images = [cbm, cbm, cbm, cbm, cbm, cbm, cbm, cbm];
+    const images = [constitution, hazing, safespace, cybercrime, harassment, dataprivacy, journalism, drugs];
 
-    return (
-        <div>
-            <StudentNavigation />
-            <StudentInfo />
-            <h6 className="page-title">LEGISLATIONS</h6>
-            <SearchAndFilter />
+
+return (
+    <div>
+        <StudentNavigation />
+        <StudentInfo />
+
+            {/* Title Section */}
+            <div style={{ width: '90%', margin: '0 auto', display: 'flex', justifyContent: 'flex-start' }}>
+                <h6 className="section-title" style={{ fontFamily: 'Poppins, sans-serif', color: '#242424', fontSize: '40px', fontWeight: 'bold', marginTop: '20px', marginLeft: '50px' }}>Legislations</h6>
+            </div>
+
+            {/* Search And Filter Section */}
+            <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', marginLeft: '70px', padding: '0 20px' }}>
+                <SearchAndFilter />
+            </div>
+
 
             <style>
                 {`
@@ -40,12 +55,14 @@ export default function StudentLegislations() {
                         grid-template-columns: repeat(4, 1fr);
                         gap: 20px;
                         margin: 20px auto;
-                        max-width: 1200px;
+                        max-width: 1100px;
                     }
 
                     .grid-item {
                         background-color: #f1f1f1;
+                        border: 1px solid #ccc;
                         border-radius: 8px;
+                        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
                         text-align: center;
                         padding: 0;
                         cursor: pointer;
@@ -72,13 +89,26 @@ export default function StudentLegislations() {
                 `}
             </style>
 
-            <div className="grid-container">
-                {images.map((image, index) => (
-                    <Link to={`/legislations/${index + 1}`} className="grid-item" key={index}>
-                        <img src={image} alt={`Legislation ${index + 1}`} />
-                        <p>Text for Item {index + 1}</p>
-                    </Link>
-                ))}
+
+            <div className="grid-container" style={{ marginLeft: '120px', fontWeight: '500' }}>
+                {images.map((image, index) => {
+                    const titles = [
+                        "1987 Constitution",
+                        "Anti-Hazing Law",
+                        "Safe Spaces Act",
+                        "Cybercrime Law",
+                        "Anti-Sexual Harassment Law",
+                        "Data Privacy Act",
+                        "Campus Journalism Law",
+                        "Dangerous Drug Act"
+                    ]; 
+                    return (
+                        <Link to={`/legislations/${index + 1}`} className="grid-item" key={index}>
+                            <img src={image} alt={titles[index]} />
+                            <p>{titles[index]}</p>
+                        </Link>
+                    );
+                })}
             </div>
         </div>
     );

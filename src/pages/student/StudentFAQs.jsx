@@ -39,7 +39,6 @@ return (
         <StudentNavigation />
         <StudentInfo />
 
-
             {/* Title Section */}
             <div style={{ width: '90%', marginTop: '20px', marginBottom: '20px', display: 'flex', justifyContent: 'flex-start' }}>
                 <h6 className="settings-title" style={{ fontFamily: 'Poppins, sans-serif', color: '#242424', fontSize: '40px', fontWeight: 'bold', marginLeft: '50px' }}>
@@ -47,12 +46,10 @@ return (
                 </h6>
             </div>
 
-
             {/* Search And Filter Section */}
             <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', marginBottom: '10px', marginLeft: '10px', padding: '0 20px' }}>
                 <SearchAndFilter />
             </div>
-
 
             {/* FAQs Container Section */}
             <div className="faqs-container" style={{ marginBottom: '50px', marginLeft: '80px' }}>
