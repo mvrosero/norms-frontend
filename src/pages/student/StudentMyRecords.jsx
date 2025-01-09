@@ -1,12 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Button } from 'react-bootstrap';
-import { FaTable, FaChartBar } from 'react-icons/fa';
 import { MdOutlineDashboardCustomize } from "react-icons/md";
 import { VscTable } from "react-icons/vsc";
-import { RiDashboardFill } from "react-icons/ri";
-import { HiTableCells } from "react-icons/hi2";
-import { ImTable } from "react-icons/im";
 
 import StudentNavigation from '../student/StudentNavigation';
 import StudentInfo from '../student/StudentInfo';
