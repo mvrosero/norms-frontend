@@ -64,6 +64,13 @@ import StudentSubcategoryRecords from './pages/student/StudentSubcategoryRecords
 import StudentSettings from './pages/student/StudentSettings';
 import StudentLegislations from './pages/student/StudentLegislation';
 import StudentLegislationOne from './elements/student/containers/StudentLegislationOne';
+import StudentLegislationTwo from './elements/student/containers/StudentLegislationTwo';
+import StudentLegislationThree from './elements/student/containers/StudentLegislationThree';
+import StudentLegislationFour from './elements/student/containers/StudentLegislationFour';
+import StudentLegislationFive from './elements/student/containers/StudentLegislationFive';
+import StudentLegislationSix from './elements/student/containers/StudentLegislationSix';
+import StudentLegislationSeven from './elements/student/containers/StudentLegislationSeven';
+import StudentLegislationEight from './elements/student/containers/StudentLegislationEight';
 import StudentFAQs from './pages/student/StudentFAQs';
 import StudentFAQsDataPrivacy from './elements/student/containers/StudentFAQsDataPrivacy';
 import StudentFAQsGeneral from './elements/student/containers/StudentFAQsGeneral';
@@ -132,6 +139,13 @@ function App() {
                 <Route path='/student-settings' element={<StudentSettings />} />
                 <Route path='/legislations' element={<StudentLegislations />} />
                 <Route path='/legislations/1' element={<StudentLegislationOne />} />
+                <Route path='/legislations/2' element={<StudentLegislationTwo />} />
+                <Route path='/legislations/3' element={<StudentLegislationThree />} />
+                <Route path='/legislations/4' element={<StudentLegislationFour />} />
+                <Route path='/legislations/5' element={<StudentLegislationFive />} />
+                <Route path='/legislations/6' element={<StudentLegislationSix />} />
+                <Route path='/legislations/7' element={<StudentLegislationSeven />} />
+                <Route path='/legislations/8' element={<StudentLegislationEight />} />
                 <Route path='/student-faqs' element={<StudentFAQs />} />
                 <Route path='/student-faqs/data-privacy' element={<StudentFAQsDataPrivacy />} />
                 <Route path='/student-faqs/general' element={<StudentFAQsGeneral />} />

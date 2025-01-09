@@ -4,7 +4,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import StudentNavigation from '../../../pages/student/StudentNavigation';
 import StudentInfo from '../../../pages/student/StudentInfo';
 
-const StudentLegislationOne = () => {
+const StudentLegislationTwo = () => {
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -29,7 +29,7 @@ return (
                 {/* Title Section */}
                 <div style={{ width: '90%', margin: '0 auto', display: 'flex', justifyContent: 'flex-start' }}>
                     <h6 className="section-title" style={{ fontFamily: 'Poppins, sans-serif', color: '#242424', fontSize: '40px', fontWeight: 'bold', marginTop: '20px', marginLeft: '50px' }}>
-                        1987 Constitution
+                        Anti-Hazing Law <br></br> Republic Act No. 11053
                     </h6>
                 </div>
 
@@ -37,23 +37,16 @@ return (
                 <div style={{ display: 'flex', marginTop: '10px', justifyContent: 'flex-start' }}>
                     <div style={{ width: '800px', padding: '30px', marginTop: '20px', marginLeft: '100px', borderTop: '1px solid #ddd' }}>
                         <p style={{ fontSize: '16px', color: 'black', textAlign: 'justify', margin: 0 }}>
-                            The 1987 Constitution of the Philippines is the supreme law of the Philippines. 
-                            It was promulgated on February 2, 1987. The Constitution establishes a democratic 
-                            government with three branches: the executive, legislative, and judicial. It also 
-                            enshrines basic human rights, such as freedom of speech, religion, and assembly, 
-                            and guarantees equal protection under the law.
+                            The Anti-Hazing Law of the Philippines, also known as Republic Act No. 8049, was enacted in 1995 to address the issue of hazing in fraternities, sororities, and other organizations in the country. The law defines hazing as an initiation rite or practice that involves the infliction of physical or psychological harm to a neophyte or applicant as a prerequisite for admission or membership into an organization.
                             <br />
                             <br />
-                            The Constitution also mandates the separation of powers between the national 
-                            government and local government units and provides for the creation of autonomous 
-                            regions for certain minority groups. It also imposes term limits for elected 
-                            officials and requires the establishment of an independent commission to monitor 
-                            elections.
+                            Under the law, hazing is considered a criminal offense and is punishable by imprisonment, fines, and other penalties. It is also prohibited to participate in or conceal any hazing activity, as well as to force someone to undergo hazing. Any person found guilty of violating the Anti-Hazing Law can face penalties including imprisonment for up to 20 years, fines of up to PHP 3 million, and expulsion from school or university.
                             <br />
                             <br />
-                            Overall, the 1987 Constitution of the Philippines serves as a cornerstone of 
-                            Philippine democracy, guiding the country's political and legal system and ensuring 
-                            the protection of its citizens' rights and freedoms.
+                            Furthermore, educational institutions are required to take measures to prevent hazing activities, such as implementing anti-hazing policies and educating students about the dangers of hazing. The law also mandates that schools and universities should report any hazing incident to the authorities within 24 hours.
+                            <br />
+                            <br />
+                            Overall, the Anti-Hazing Law aims to protect the safety and well-being of students and prevent the culture of violence and abuse in organizations.
                         </p>
                     </div>
                 </div>
@@ -68,7 +61,7 @@ return (
                 </div>
                 <ul style={{ listStyleType: 'circle', padding: '20px 30px 20px 50px' }}>
                     {[
-                        { path: '/legislations/2', title: 'Anti-Hazing Law (Republic Act No. 11053)' },
+                        { path: '/legislations/1', title: '1987 Constitution' },
                         { path: '/legislations/3', title: 'Safe Spaces Act (Republic Act No. 11313)' },
                         { path: '/legislations/4', title: 'Cybercrime Law (Republic Act No. 10175)' },
                         { path: '/legislations/5', title: 'Anti-Sexual Harassment Law (Republic Act No. 7877)' },
@@ -97,4 +90,4 @@ return (
 };
 
 
-export default StudentLegislationOne;
+export default StudentLegislationTwo;

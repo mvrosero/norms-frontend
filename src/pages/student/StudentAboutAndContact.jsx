@@ -173,7 +173,7 @@ return (
                     <div style={{ display: 'flex', alignItems: 'center', marginBottom: '8px' }}>
                             <GrLocation style={{ color: '#0D4809', fontSize: '18px', marginRight: '30px' }} />
                             <p style={{ margin: 0 }}>
-                                ST 108, First Floor, Science and Technology Building, Naga College Foundation, Inc.
+                                ST 108, Ground Floor, Science and Technology Building, Naga College Foundation, Inc.
                             </p>
                         </div>
                         <div style={{ marginLeft: '50px', }}>

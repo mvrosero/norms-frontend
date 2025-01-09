@@ -4,7 +4,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import StudentNavigation from '../../../pages/student/StudentNavigation';
 import StudentInfo from '../../../pages/student/StudentInfo';
 
-const StudentLegislationOne = () => {
+const StudentLegislationFive = () => {
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -29,7 +29,7 @@ return (
                 {/* Title Section */}
                 <div style={{ width: '90%', margin: '0 auto', display: 'flex', justifyContent: 'flex-start' }}>
                     <h6 className="section-title" style={{ fontFamily: 'Poppins, sans-serif', color: '#242424', fontSize: '40px', fontWeight: 'bold', marginTop: '20px', marginLeft: '50px' }}>
-                        1987 Constitution
+                        Anti-Sexual Harassment Law <br></br> Republic Act No. 7877
                     </h6>
                 </div>
 
@@ -37,23 +37,35 @@ return (
                 <div style={{ display: 'flex', marginTop: '10px', justifyContent: 'flex-start' }}>
                     <div style={{ width: '800px', padding: '30px', marginTop: '20px', marginLeft: '100px', borderTop: '1px solid #ddd' }}>
                         <p style={{ fontSize: '16px', color: 'black', textAlign: 'justify', margin: 0 }}>
-                            The 1987 Constitution of the Philippines is the supreme law of the Philippines. 
-                            It was promulgated on February 2, 1987. The Constitution establishes a democratic 
-                            government with three branches: the executive, legislative, and judicial. It also 
-                            enshrines basic human rights, such as freedom of speech, religion, and assembly, 
-                            and guarantees equal protection under the law.
+                            The Anti-Sexual Harassment Law of the Philippines, also
+                            known as Republic Act No. 7877, is a law that aims to
+                            protect individuals from sexual harassment in the
+                            workplace, schools, and other similar environments.
                             <br />
                             <br />
-                            The Constitution also mandates the separation of powers between the national 
-                            government and local government units and provides for the creation of autonomous 
-                            regions for certain minority groups. It also imposes term limits for elected 
-                            officials and requires the establishment of an independent commission to monitor 
-                            elections.
+                            Under the law, sexual harassment is defined as any
+                            unwanted and unwelcome sexual advances, requests for
+                            sexual favors, and other forms of verbal or physical
+                            conduct of a sexual nature that have the effect of
+                            creating a hostile, intimidating, or offensive
+                            environment.
                             <br />
                             <br />
-                            Overall, the 1987 Constitution of the Philippines serves as a cornerstone of 
-                            Philippine democracy, guiding the country's political and legal system and ensuring 
-                            the protection of its citizens' rights and freedoms.
+                            Employers, school administrators, and other persons in
+                            authority are required to establish policies and
+                            procedures for the prevention and resolution of sexual
+                            harassment complaints. They are also required to
+                            conduct information campaigns to educate employees
+                            and students about their rights and responsibilities
+                            under the law.
+                            <br />
+                            <br />
+                            Victims of sexual harassment may file complaints with
+                            the appropriate government agencies, such as the
+                            Department of Labor and Employment, the Department
+                            of Education, or the Commission on Human Rights. The
+                            law also provides for penalties for violators, which may
+                            include fines and imprisonment.
                         </p>
                     </div>
                 </div>
@@ -68,10 +80,10 @@ return (
                 </div>
                 <ul style={{ listStyleType: 'circle', padding: '20px 30px 20px 50px' }}>
                     {[
+                        { path: '/legislations/1', title: '1987 Constitution' },
                         { path: '/legislations/2', title: 'Anti-Hazing Law (Republic Act No. 11053)' },
                         { path: '/legislations/3', title: 'Safe Spaces Act (Republic Act No. 11313)' },
                         { path: '/legislations/4', title: 'Cybercrime Law (Republic Act No. 10175)' },
-                        { path: '/legislations/5', title: 'Anti-Sexual Harassment Law (Republic Act No. 7877)' },
                         { path: '/legislations/6', title: 'Data Privacy Act (Republic Act No. 10173)' },
                         { path: '/legislations/7', title: 'Campus Journalism Law (Republic Act No. 7079)' },
                         { path: '/legislations/8', title: 'Comprehensive Dangerous Drug Act of 2002 (Republic Act No. 9165)' },
@@ -97,4 +109,4 @@ return (
 };
 
 
-export default StudentLegislationOne;
+export default StudentLegislationFive;

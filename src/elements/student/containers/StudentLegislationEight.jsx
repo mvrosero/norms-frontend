@@ -4,7 +4,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import StudentNavigation from '../../../pages/student/StudentNavigation';
 import StudentInfo from '../../../pages/student/StudentInfo';
 
-const StudentLegislationOne = () => {
+const StudentLegislationEight = () => {
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -29,7 +29,7 @@ return (
                 {/* Title Section */}
                 <div style={{ width: '90%', margin: '0 auto', display: 'flex', justifyContent: 'flex-start' }}>
                     <h6 className="section-title" style={{ fontFamily: 'Poppins, sans-serif', color: '#242424', fontSize: '40px', fontWeight: 'bold', marginTop: '20px', marginLeft: '50px' }}>
-                        1987 Constitution
+                        Comprehensive Dangerous Drug Act <br></br> Republic Act No. 9165
                     </h6>
                 </div>
 
@@ -37,23 +37,38 @@ return (
                 <div style={{ display: 'flex', marginTop: '10px', justifyContent: 'flex-start' }}>
                     <div style={{ width: '800px', padding: '30px', marginTop: '20px', marginLeft: '100px', borderTop: '1px solid #ddd' }}>
                         <p style={{ fontSize: '16px', color: 'black', textAlign: 'justify', margin: 0 }}>
-                            The 1987 Constitution of the Philippines is the supreme law of the Philippines. 
-                            It was promulgated on February 2, 1987. The Constitution establishes a democratic 
-                            government with three branches: the executive, legislative, and judicial. It also 
-                            enshrines basic human rights, such as freedom of speech, religion, and assembly, 
-                            and guarantees equal protection under the law.
+                            The Comprehensive Dangerous Drugs Act of 2002 (Republic
+                            Act No. 9165) is a law in the Philippines that aims to address
+                            the country's drug problem by regulating and penalizing
+                            drug-related activities. The law defines dangerous drugs
+                            and lists prohibited acts related to the manufacture,
+                            distribution, and use of illegal drugs.
                             <br />
                             <br />
-                            The Constitution also mandates the separation of powers between the national 
-                            government and local government units and provides for the creation of autonomous 
-                            regions for certain minority groups. It also imposes term limits for elected 
-                            officials and requires the establishment of an independent commission to monitor 
-                            elections.
+                            Under the law, the government is mandated to create a
+                            comprehensive drug prevention and control program, as
+                            well as to establish drug treatment and rehabilitation
+                            centers for drug users. The law also establishes a
+                            comprehensive system of penalties for drug offenses, which
+                            includes imprisonment, fines, and mandatory drug testing.
                             <br />
                             <br />
-                            Overall, the 1987 Constitution of the Philippines serves as a cornerstone of 
-                            Philippine democracy, guiding the country's political and legal system and ensuring 
-                            the protection of its citizens' rights and freedoms.
+                            The Comprehensive Dangerous Drugs Act of 2002 also
+                            created the Dangerous Drugs Board (DDB), which is
+                            responsible for formulating policies, plans, and programs
+                            on drug prevention and control. The law also established
+                            the Philippine Drug Enforcement Agency (PDEA), which is
+                            responsible for implementing the government's drug
+                            prevention and control programs and enforcing the law.
+                            <br />
+                            <br />
+                            The law has undergone several amendments since its
+                            enactment, including the passage of the Philippine
+                            Compassionate Medical Cannabis Act in 2019, which allows
+                            the use of medical marijuana in the Philippines under
+                            certain conditions. However, the Comprehensive Dangerous
+                            Drugs Act of 2002 remains a critical legal framework for
+                            addressing the country's drug problem.
                         </p>
                     </div>
                 </div>
@@ -68,13 +83,13 @@ return (
                 </div>
                 <ul style={{ listStyleType: 'circle', padding: '20px 30px 20px 50px' }}>
                     {[
+                        { path: '/legislations/1', title: '1987 Constitution' },
                         { path: '/legislations/2', title: 'Anti-Hazing Law (Republic Act No. 11053)' },
                         { path: '/legislations/3', title: 'Safe Spaces Act (Republic Act No. 11313)' },
                         { path: '/legislations/4', title: 'Cybercrime Law (Republic Act No. 10175)' },
                         { path: '/legislations/5', title: 'Anti-Sexual Harassment Law (Republic Act No. 7877)' },
                         { path: '/legislations/6', title: 'Data Privacy Act (Republic Act No. 10173)' },
-                        { path: '/legislations/7', title: 'Campus Journalism Law (Republic Act No. 7079)' },
-                        { path: '/legislations/8', title: 'Comprehensive Dangerous Drug Act of 2002 (Republic Act No. 9165)' },
+                        { path: '/legislations/7', title: 'Campus Journalism Law (Republic Act No. 7079)' }
                         ].map(({ path, title }, index) => (
                             <li key={index} style={{ marginBottom: '15px' }}>
                                 <Link
@@ -97,4 +112,4 @@ return (
 };
 
 
-export default StudentLegislationOne;
+export default StudentLegislationEight;
