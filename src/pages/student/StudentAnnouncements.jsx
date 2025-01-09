@@ -4,10 +4,10 @@ import axios from 'axios';
 import { Card, Row, Col } from 'react-bootstrap';
 import { FaRegClock } from 'react-icons/fa';
 import { MdFilePresent } from "react-icons/md";
-
-import SearchAndFilter from '../general/SearchAndFilter'; 
+ 
 import StudentInfo from './StudentInfo';
 import StudentNavigation from './StudentNavigation';
+import SearchAndFilter from '../general/SearchAndFilter';
 import ViewAnnouncementModal from '../../elements/student/modals/ViewAnnouncementModal';
 
 export default function StudentAnnouncements() {

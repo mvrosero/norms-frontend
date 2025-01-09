@@ -22,7 +22,7 @@ export default function StudentAboutAndContact() {
         }
     }, [navigate]);
 
-    // Inline styles
+  
     const containerStyle = {
         padding: '32px',
         display: 'flex',
@@ -67,7 +67,7 @@ export default function StudentAboutAndContact() {
 
     const primaryFunctionsContainerStyle = {
         display: 'flex',
-        justifyContent: 'space-between', // Spread the items evenly
+        justifyContent: 'space-between',
         gap: '25px',
         width: '131%',
         fontWeight: '600'
@@ -75,7 +75,7 @@ export default function StudentAboutAndContact() {
 
     const functionBoxStyle = {
         backgroundColor: "white",
-        flex: '1', // Equal width for all containers
+        flex: '1', 
         border: '1px solid #ddd',
         padding: '16px',
         borderRadius: '8px',
@@ -98,8 +98,8 @@ return (
             </div>
 
 
+            {/* Primary Functions Section */}
             <div style={containerStyle}>
-                {/* Primary Functions Section */}
                 <div>
                     <h6 style={titleStyle}>Primary Functions</h6>
                     <div style={primaryFunctionsContainerStyle}>
@@ -110,6 +110,7 @@ return (
                 </div>
 
 
+                {/* Mission and Vision Section */}
                 <div>
                     <h6 style={titleStyle}>Mission</h6>
                     <div style={contentContainerStyle}>
@@ -136,6 +137,7 @@ return (
                 </div>
 
 
+                {/* Connect With Us Section */}
                 <div style={{ marginBottom: '15px' }}>
                     <h6 style={titleStyle}>Connect With Us</h6>
                     <div style={bottomContainerStyle}>
@@ -169,6 +171,7 @@ return (
                 </div>
 
 
+                {/* Visit Us Section */}
                 <div style={{ marginBottom: '30px' }}>
                     <h6 style={titleStyle}>Visit Us</h6>
                     <div style={bottomContainerStyle}>
