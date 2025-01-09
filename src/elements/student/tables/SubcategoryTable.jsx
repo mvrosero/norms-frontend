@@ -264,7 +264,7 @@ return (
                             <button style={{ cursor: 'pointer', display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100%' }}
                                 onClick={handleSortDate}
                                 >
-                                <span>SUBCATEGORY</span>
+                                <span>Date</span>
                                 {sortOrderDate === 'asc' ? (
                                     <ArrowDropUpIcon style={{ marginLeft: '5px' }} />
                                 ) : (

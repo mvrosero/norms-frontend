@@ -26,6 +26,7 @@ const StudentMyRecords = () => {
     return null;
   }
 
+  
   return (
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '20px' }}>
       <StudentNavigation />

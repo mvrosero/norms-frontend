@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Link } from 'react-router-dom';  
 
+
 const MyRecordsVisual = () => {
   const navigate = useNavigate();
   const [subcategories, setSubcategories] = useState([]);
@@ -53,9 +54,10 @@ const MyRecordsVisual = () => {
                         {subcategory.subcategory_name}
                     </h3>
                     <p style={{ fontFamily: 'Poppins, sans-serif', color: '#818181', fontSize: '16px', margin: '0' }}>
-                        Content of container {index + 1} under {subcategory.department_name}
+                        Content of container {index + 1} under {subcategory.subcategory_name}
                     </p>
             </div>
+            
         </Link>
       ))}
     </div>
