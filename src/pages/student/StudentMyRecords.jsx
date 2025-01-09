@@ -1,47 +1,59 @@
-import React, { useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Button } from 'react-bootstrap';
+import { FaTable, FaChartBar } from 'react-icons/fa';
+import { MdOutlineDashboardCustomize } from "react-icons/md";
+import { VscTable } from "react-icons/vsc";
+import { RiDashboardFill } from "react-icons/ri";
+import { HiTableCells } from "react-icons/hi2";
+import { ImTable } from "react-icons/im";
 
 import StudentNavigation from '../student/StudentNavigation';
 import StudentInfo from '../student/StudentInfo';
 import SearchAndFilter from '../general/SearchAndFilter';
 import MyRecordsTable from '../../elements/student/tables/MyRecordsTable';
+import MyRecordsVisual from '../../elements/student/visuals/MyRecordsVisual';
 
 const StudentMyRecords = () => {
-    const navigate = useNavigate();
+  const navigate = useNavigate();
+  const [activeView, setActiveView] = useState('table');
 
-    useEffect(() => {
-        const token = localStorage.getItem('token');
-        const roleId = localStorage.getItem('role_id');
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    const roleId = localStorage.getItem('role_id');
 
-        if (!token || roleId !== '3') {
-            navigate('/unauthorized', { replace: true });
-        }
-    }, [navigate]);
-    if (!localStorage.getItem('token') || localStorage.getItem('role_id') !== '3') {
-        return null;
+    if (!token || roleId !== '3') {
+      navigate('/unauthorized', { replace: true });
     }
+  }, [navigate]);
 
+  if (!localStorage.getItem('token') || localStorage.getItem('role_id') !== '3') {
+    return null;
+  }
 
-return (
+  return (
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '20px' }}>
-        <StudentNavigation />
-        <StudentInfo />
+      <StudentNavigation />
+      <StudentInfo />
 
-            {/* Title Section */}
-            <div style={{ width: '90%', margin: '0 auto', display: 'flex', justifyContent: 'flex-start' }}>
-                <h6 className="settings-title" style={{ fontFamily: 'Poppins, sans-serif', color: '#242424', fontSize: '40px', fontWeight: 'bold', marginLeft: '30px' }}>
-                    My Records
-                </h6>
-            </div>
-
-            {/* Search And Filter Section */}
-            <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'center', marginTop: '10px', padding: '0 20px' }}>
-                <div style={{ flex: '1 1 100%', minWidth: '300px' }}> <SearchAndFilter /> </div>
-            </div>
-
-            <MyRecordsTable />
+        {/* Title Section */}
+        <div style={{ width: '90%', margin: '0 auto', display: 'flex', justifyContent: 'flex-start' }}>
+            <h6 className="settings-title" style={{ fontFamily: 'Poppins, sans-serif', color: '#242424', fontSize: '40px', fontWeight: 'bold', marginLeft: '30px' }}> My Records </h6>
         </div>
-    );
+
+        {/* Search And Filter Section */}
+        <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'center', marginLeft: '70px', padding: '0 20px' }}>
+            <div style={{ flex: '1', minWidth: '400px' }}> <SearchAndFilter /> </div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '15px', marginLeft: '20px' }}>
+                        <VscTable  size={52} style={{ cursor: 'pointer', color: activeView === 'table' ? 'FAD32E' : 'C1C1C1' }} onClick={() => setActiveView('table')} />
+                        <MdOutlineDashboardCustomize size={50} style={{ cursor: 'pointer', color: activeView === 'dashboard' ? 'FAD32E' : 'C1C1C1' }} onClick={() => setActiveView('dashboard')} />
+                    </div>
+            </div>
+        
+        {/* Conditional Rendering of Views */}
+        {activeView === 'table' ? <MyRecordsTable /> : <MyRecordsVisual />}
+    </div>
+  );
 };
 
 

@@ -8,16 +8,17 @@ import user_icon from '../../components/images/default_profile.jpg';
 const StudentInfo = ({ role }) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [profilePhoto, setProfilePhoto] = useState(user_icon);
-  const [userName, setUserName] = useState(''); // State to hold the user's name
+  const [userName, setUserName] = useState(''); 
   const navigate = useNavigate();
-  const studentId = localStorage.getItem('student_idnumber'); // Get student ID from local storage
+  const studentId = localStorage.getItem('student_idnumber');
+
 
   useEffect(() => {
     const fetchProfileData = async () => {
       try {
         const response = await axios.get(`http://localhost:9000/student/${studentId}`, {
           headers: {
-            'Authorization': `Bearer ${localStorage.getItem('token')}` // Add token for authentication
+            'Authorization': `Bearer ${localStorage.getItem('token')}` 
           }
         });
 
@@ -47,7 +48,7 @@ const StudentInfo = ({ role }) => {
   };
 
   const handleLogout = () => {
-    localStorage.clear(); // Clear all items in local storage
+    localStorage.clear(); 
     navigate('/student-login');
   };
 
@@ -64,7 +65,7 @@ const StudentInfo = ({ role }) => {
           className="profilePhoto"
           onError={(e) => {
             console.error('Error loading image:', e.target.src);
-            e.target.src = user_icon; // Fallback to default image on error
+            e.target.src = user_icon; 
           }}
         />
         <div className="userInfo">
@@ -98,5 +99,6 @@ StudentInfo.propTypes = {
 StudentInfo.defaultProps = {
   role: 'Student',
 };
+
 
 export default StudentInfo;

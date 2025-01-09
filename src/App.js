@@ -128,7 +128,7 @@ function App() {
                 <Route path='/student-announcements' element={<StudentAnnouncements />} />
                 <Route path='/student-myrecords' element={<StudentMyRecords />} />
                 <Route path='/student-myrecords-visual' element={<StudentVisualRecords />} />
-                <Route path='/student-myrecords/subcategory' element={<StudentSubcategoryRecords />} />
+                <Route path='/student-myrecords/:subcategory_name' element={<StudentSubcategoryRecords />} />
                 <Route path='/student-settings' element={<StudentSettings />} />
                 <Route path='/legislations' element={<StudentLegislations />} />
                 <Route path='/legislations/1' element={<StudentLegislationOne />} />
