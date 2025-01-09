@@ -19,7 +19,7 @@ const UniformDefianceHistoryTable = ({ searchQuery }) => {
     const [currentPage, setCurrentPage] = useState(1);
     const [rowsPerPage, setRowsPerPage] = useState(10);
 
-    // Sorting state for full name
+    // Sorting state for full name and date
     const [sortOrder, setSortOrder] = useState('asc'); 
     const [sortOrderDate, setSortOrderDate] = useState('asc'); 
 

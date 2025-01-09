@@ -18,6 +18,7 @@ const CoordinatorGraphs = () => {
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
 
+
   const handleStartDateChange = (e) => {
     setStartDate(e.target.value);
   };
@@ -26,24 +27,20 @@ const CoordinatorGraphs = () => {
     setEndDate(e.target.value);
   };
 
-
   const handleApplyFilter = () => {
     // Check if both dates are selected
     if (!startDate || !endDate) {
       alert('Please select both start and end dates.');
       return;
     }
-  
     // Check if endDate is greater than or equal to startDate
     if (new Date(endDate) < new Date(startDate)) {
       alert('End date must be later than start date.');
       return;
     }
-  
     console.log('Filter applied:', { startDate, endDate });
   };
   
-
 
   const handleOpenModal = (chart) => {
     setSelectedChart(chart);
@@ -54,6 +51,7 @@ const CoordinatorGraphs = () => {
     setShowModal(false);
     setSelectedChart(null);
   };
+
 
   return (
     <div>

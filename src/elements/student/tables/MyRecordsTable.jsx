@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Table, Spinner, Alert, Button } from 'react-bootstrap';
-import Modal from 'react-bootstrap/Modal';
-
+import { Table, Button } from 'react-bootstrap';
+import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
+import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import ViewRecordModal from '../modals/ViewRecordModal';
 
 const MyRecordsTable = () => {
@@ -16,6 +16,15 @@ const MyRecordsTable = () => {
     const [semesters, setSemesters] = useState([]);
     const [subcategories, setSubcategories] = useState([]); 
     const [selectedRecord, setSelectedRecord] = useState(null);
+
+
+    // Pagination state
+    const [currentPage, setCurrentPage] = useState(1);
+    const [rowsPerPage, setRowsPerPage] = useState(10);
+
+    // Sorting states
+    const [sortOrderDate, setSortOrderDate] = useState('asc'); 
+
 
     useEffect(() => {
         const fetchData = async () => {
@@ -51,16 +60,16 @@ const MyRecordsTable = () => {
 
                 // Fetch subcategories (newly added)
                 const subcategoriesResponse = await axios.get('http://localhost:9000/subcategories');
-                setSubcategories(subcategoriesResponse.data);
-            } catch (error) {
-                setError(error.message || 'An error occurred');
-            } finally {
-                setLoading(false);
-            }
-        };
+                    setSubcategories(subcategoriesResponse.data);
+                } catch (error) {
+                    setError(error.message || 'An error occurred');
+                } finally {
+                    setLoading(false);
+                }
+            };
+            fetchData();
+        }, []);
 
-        fetchData();
-    }, []);
 
     const getSubcategoryName = (subcategory_id) => {
         const subcategory = subcategories.find(subcategory => subcategory.subcategory_id === subcategory_id);
@@ -84,7 +93,6 @@ const MyRecordsTable = () => {
         
         const sanctionNames = ids.map(id => getSanctionName(id));
 
-        // Log sanction names for debugging
         console.log('Sanction Names:', sanctionNames);
 
         return sanctionNames.every(name => name === 'Unknown') ? 'Unknown' : sanctionNames.join(', ');
@@ -96,21 +104,38 @@ const MyRecordsTable = () => {
         return sanction ? sanction.sanction_name : 'Unknown';
     };
 
-    // Function to get academic year name by ID in "start_year - end_year" format
     const getAcademicYearName = (acadyear_id) => {
         const academicYear = academicYears.find(year => year.acadyear_id === acadyear_id);
         return academicYear ? `${academicYear.start_year} - ${academicYear.end_year}` : 'Unknown';
     };
 
-    // Function to get semester name by ID
     const getSemesterName = (semester_id) => {
         const semester = semesters.find(sem => sem.semester_id === semester_id);
         return semester ? semester.semester_name : 'Unknown';
     };
 
+
     const handleViewDetails = (record) => {
         setSelectedRecord(record);
     };
+
+
+    // Sort records based on date
+    const handleSortDate = () => {
+        const sortedRecords = [...records];
+        sortedRecords.sort((a, b) => {
+            const dateA = new Date(a.created_at); 
+            const dateB = new Date(b.created_at);
+
+            return sortOrderDate === 'asc' ? dateA - dateB : dateB - dateA;
+        });
+
+        setRecords(sortedRecords);
+        setSortOrderDate(sortOrderDate === 'asc' ? 'desc' : 'asc');
+    };
+
+
+
 
     const buttonStyles = {
         borderRadius: '20px',
@@ -122,29 +147,141 @@ const MyRecordsTable = () => {
         textAlign: 'center',
     };
 
-    return (
-        <>
-            {loading && <Spinner animation="border" role="status">
-                <span className="sr-only">Loading...</span>
-            </Spinner>}
-            {error && <Alert variant="danger">{error}</Alert>}
-            {!loading && !error && (
-                <>
-                    <Table bordered hover style={{ marginTop: '30px', marginBottom: '50px', marginLeft: '105px', borderRadius: '20px' }}>
-                        <thead style={{ backgroundColor: '#f8f9fa' }}>
-                            <tr>
-                                <th style={{ width: '5%' }}>ID</th>
-                                <th style={{ width: '20%' }}>Date</th>
-                                <th style={{ width: '13%' }}>Category</th>
-                                <th>Offense</th>
-                                <th style={{ width: '15%' }}>Sanction</th>
-                                <th style={{ width: '15%' }}>Action</th>
-                            </tr>
-                        </thead>
+
+      // Pagination Logic
+      const indexOfLastRecord = currentPage * rowsPerPage;
+      const indexOfFirstRecord = indexOfLastRecord - rowsPerPage;
+      const currentRecords = records.slice(indexOfFirstRecord, indexOfLastRecord);
+      const totalPages = Math.ceil(records.length / rowsPerPage);
+  
+      const handlePaginationChange = (pageNumber) => setCurrentPage(pageNumber);
+      const handleRowsPerPageChange = (e) => {
+          setRowsPerPage(Number(e.target.value));
+          setCurrentPage(1);
+      };
+  
+      const renderPagination = () => {
+          const pageNumbers = Array.from({ length: totalPages }, (_, i) => i + 1);
+      
+          const buttonStyle = {
+          width: '30px', 
+          height: '30px', 
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          border: '1px solid #a0a0a0',
+          backgroundColor: '#ebebeb',
+          color: '#4a4a4a',
+          fontSize: '0.75rem', 
+          cursor: 'pointer',
+          };
+      
+          const activeButtonStyle = {
+          ...buttonStyle,
+          backgroundColor: '#a0a0a0',
+          color: '#f1f1f1',
+          };
+      
+          const disabledButtonStyle = {
+          ...buttonStyle,
+          backgroundColor: '#ebebeb',
+          color: '#a1a1a1',
+          cursor: 'not-allowed',
+          };
+
+          return (
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '15px', fontSize: '14px', color: '#4a4a4a'}}>
+                {/* Results per Page */}
+                <div>
+                    <label htmlFor="rowsPerPage" style={{ marginLeft: '120px', marginRight: '5px' }}>Results per page:</label>
+                    <select
+                        id="rowsPerPage"
+                        value={rowsPerPage}
+                        onChange={handleRowsPerPageChange}
+                        style={{ fontSize: '14px', padding: '5px 25px', border: '1px solid #ccc', borderRadius: '3px' }} >
+                        {Array.from({ length: 10 }, (_, i) => (i + 1) * 10).map((value) => (
+                            <option key={value} value={value}> {value} </option> ))}
+                    </select>
+                </div>
+        
+                {/* Pagination Info and Buttons */}
+                <div style={{ display: 'flex', alignItems: 'center', marginRight: '25px' }}>
+                    {/* Page Info */}
+                    <div style={{ marginRight: '10px' }}>Page {currentPage} of {totalPages}</div>
+        
+                    {/* Pagination Buttons */}
+                    <div style={{ display: 'flex' }}>
+                        <button
+                            onClick={() =>
+                                currentPage > 1 && handlePaginationChange(currentPage - 1)
+                            }
+                            disabled={currentPage === 1}
+                            style={{
+                                ...buttonStyle,
+                                borderTopLeftRadius: '10px',
+                                borderBottomLeftRadius: '10px',
+                                ...(currentPage === 1 ? disabledButtonStyle : {}),
+                            }}
+                        >
+                            ❮
+                        </button>
+                        {pageNumbers.map((number) => (
+                            <button
+                                key={number}
+                                onClick={() => handlePaginationChange(number)}
+                                style={number === currentPage ? activeButtonStyle : buttonStyle}
+                            >
+                                {number}
+                            </button>
+                        ))}
+                        <button
+                            onClick={() =>
+                                currentPage < totalPages && handlePaginationChange(currentPage + 1)
+                            }
+                            disabled={currentPage === totalPages}
+                            style={{
+                                ...buttonStyle,
+                                borderTopRightRadius: '10px',
+                                borderBottomRightRadius: '10px',
+                                ...(currentPage === totalPages ? disabledButtonStyle : {}),
+                            }}
+                        >
+                            ❯
+                        </button>
+                    </div>
+                </div>
+            </div>
+        );
+    };  
+
+return (
+    <div>
+           <Table bordered hover responsive style={{ borderRadius: '20px', marginTop: '10px', marginBottom: '20px', marginLeft: '110px' }}>
+                <thead>
+                    <tr>
+                        <th style={{ width: '5%' }}>No.</th>
+                        <th style={{ width: '20%' }}>
+                            <button style={{ cursor: 'pointer', display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100%' }}
+                                onClick={handleSortDate}
+                                >
+                                <span>Date</span>
+                                {sortOrderDate === 'asc' ? (
+                                    <ArrowDropUpIcon style={{ marginLeft: '5px' }} />
+                                ) : (
+                                    <ArrowDropDownIcon style={{ marginLeft: '5px' }} />
+                                )}
+                            </button>
+                        </th>
+                        <th style={{ width: '13%' }}>Category</th>
+                        <th>Offense</th>
+                        <th style={{ width: '25%' }}>Sanction</th>
+                        <th style={{ width: '10%' }}>Action</th>
+                    </tr>
+                </thead>
                         <tbody>
-                            {records.map(record => (
+                            {currentRecords.map((record, index) => (
                                 <tr key={record.record_id}>
-                                    <td style={{ textAlign: 'center' }}>{record.record_id}</td>
+                                    <td style={{ textAlign: 'center' }}>{ (currentPage - 1) * rowsPerPage + (index + 1) }</td>
                                     <td style={{ textAlign: 'center' }}>{new Date(record.created_at).toLocaleString()}</td>
                                     <td>{getCategoryName(record.category_id)}</td>
                                     <td>{getOffenseName(record.offense_id)}</td>
@@ -159,24 +296,25 @@ const MyRecordsTable = () => {
                         </tbody>
                     </Table>
 
-                    {/* Modal to display record details */}
-                    {selectedRecord && (
-                        <ViewRecordModal 
-                            show={selectedRecord !== null} 
-                            onHide={() => setSelectedRecord(null)} 
-                            record={selectedRecord}
-                            getCategoryName={getCategoryName}
-                            getOffenseName={getOffenseName}
-                            getSubcategoryName={getSubcategoryName}
-                            getSanctionNames={getSanctionNames}
-                            getAcademicYearName={getAcademicYearName} 
-                            getSemesterName={getSemesterName} 
-                        />
-                    )}
-                </>
+            {renderPagination()}
+
+            {/* View Record Modal */}
+            {selectedRecord && (
+                <ViewRecordModal 
+                    show={selectedRecord !== null} 
+                    onHide={() => setSelectedRecord(null)} 
+                    record={selectedRecord}
+                    getCategoryName={getCategoryName}
+                    getOffenseName={getOffenseName}
+                    getSubcategoryName={getSubcategoryName}
+                    getSanctionNames={getSanctionNames}
+                    getAcademicYearName={getAcademicYearName} 
+                    getSemesterName={getSemesterName} 
+                />
             )}
-        </>
+       </div>
     );
 };
+
 
 export default MyRecordsTable;
