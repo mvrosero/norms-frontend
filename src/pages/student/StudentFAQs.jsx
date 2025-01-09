@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { FaExclamationTriangle, FaServer, FaQuestionCircle, FaBook, FaShieldAlt } from 'react-icons/fa'; // Importing icons
+
+import { FaExclamationTriangle, FaServer, FaQuestionCircle, FaBook, FaShieldAlt } from 'react-icons/fa'; 
 import { RiServiceFill } from "react-icons/ri";
 
 import StudentNavigation from '../student/StudentNavigation';
@@ -21,26 +22,22 @@ const StudentFAQs = () => {
     const navigate = useNavigate();
 
     useEffect(() => {
-        // Check if token and role_id exist in localStorage
         const token = localStorage.getItem('token');
         const roleId = localStorage.getItem('role_id');
 
-        // If token or role_id is invalid, redirect to unauthorized page
         if (!token || roleId !== '3') {
             navigate('/unauthorized', { replace: true });
         }
     }, [navigate]);
-
-    // Render null or a loading indicator until the redirection check is complete
     if (!localStorage.getItem('token') || localStorage.getItem('role_id') !== '3') {
         return null;
     }
 
-    // Render the component if token and role_id are valid
-    return (
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-            <StudentNavigation />
-            <StudentInfo />
+
+return (
+    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+        <StudentNavigation />
+        <StudentInfo />
 
 
             {/* Title Section */}
@@ -57,37 +54,19 @@ const StudentFAQs = () => {
             </div>
 
 
-
+            {/* FAQs Container Section */}
             <div className="faqs-container" style={{ marginBottom: '50px', marginLeft: '80px' }}>
-                <div className="row justify-content-center"> {/* Centering the row */}
+                <div className="row justify-content-center"> 
                     {categoryData.map((category, index) => (
-                        <div 
-                            key={index}
-                            className="col-md-4 mb-3" 
-                            onClick={() => navigate(category.path)} 
-                            style={{
-                                cursor: 'pointer',
-                                textAlign: 'center',
-                                padding: '10px',
-                                border: '1px solid #ccc',
-                                borderRadius: '8px',
-                                background: '#FFFFFF',
-                                transition: 'background-color 0.3s',
-                                height: '320px', 
-                                width: '320px',
-                                display: 'flex',
-                                flexDirection: 'column',
-                                justifyContent: 'center',
-                                alignItems: 'center',
-                                margin: '10px', 
-                            }}
-                            onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#e2e6ea'}
-                            onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#f8f9fa'}
-                        >
-                            <div style={{ color: '#0D4809', fontSize: '80px', marginBottom: '20px' }}> {/* Increased icon size */}
+                        <div key={index} className="col-md-4 mb-3" onClick={() => navigate(category.path)} 
+                             style={{ cursor: 'pointer', textAlign: 'center', padding: '10px', border: '1px solid #ccc', borderRadius: '8px', background: '#FFFFFF', transition: 'background-color 0.3s', height: '320px', width: '320px', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', margin: '10px', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)' }}
+                             onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#e2e6ea'}
+                             onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#f8f9fa'}
+                            >
+                            <div style={{ color: '#0D4809', fontSize: '80px', marginBottom: '20px' }}> 
                                 {category.icon}
                             </div>
-                            <h5 style={{ color: '#0D4809', fontSize: '22px', fontWeight: '500', marginTop: '5px' }}> {/* Increased text size and added margin */}
+                            <h5 style={{ color: '#0D4809', fontSize: '22px', fontWeight: '500', marginTop: '5px' }}> 
                                 {category.name}
                             </h5>
                         </div>
@@ -97,5 +76,6 @@ const StudentFAQs = () => {
         </div>
     );
 };
+
 
 export default StudentFAQs;

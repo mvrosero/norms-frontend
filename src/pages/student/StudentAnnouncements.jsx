@@ -170,7 +170,7 @@ return (
             </div>
 
             {/* Search And Filter Section */}
-            <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', marginBottom: '20px', marginLeft: '90px', padding: '0 20px' }}>
+            <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', marginBottom: '20px', marginLeft: '70px', padding: '0 20px' }}>
                 <SearchAndFilter />
             </div>
             

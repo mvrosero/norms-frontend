@@ -97,7 +97,6 @@ return (
                 </h6>
             </div>
 
-
             {/* Primary Functions Section */}
             <div style={containerStyle}>
                 <div>
@@ -108,7 +107,6 @@ return (
                         <div style={functionBoxStyle}>Student Assistants’ Scholarship</div>
                     </div>
                 </div>
-
 
                 {/* Mission and Vision Section */}
                 <div>
@@ -122,7 +120,6 @@ return (
                         </p>
                     </div>
                 </div>
-
                 <div style={{ marginBottom: '15px' }}>
                     <h6 style={titleStyle}>Vision</h6>
                     <div style={contentContainerStyle}>
@@ -135,7 +132,6 @@ return (
                         </p>
                     </div>
                 </div>
-
 
                 {/* Connect With Us Section */}
                 <div style={{ marginBottom: '15px' }}>
@@ -169,7 +165,6 @@ return (
                         </p>
                     </div>
                 </div>
-
 
                 {/* Visit Us Section */}
                 <div style={{ marginBottom: '30px' }}>
