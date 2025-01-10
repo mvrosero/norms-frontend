@@ -14,7 +14,6 @@ import ViewStudentModal from '../modals/ViewStudentModal';
 import EditStudentModal from '../modals/EditStudentModal';
 import "../../../styles/Students.css";
 
-
 export default function DepartmentalStudentsTable({filters, searchQuery }) {
     const { department_code } = useParams(); 
     const [users, setUsers] = useState([]);
@@ -30,8 +29,6 @@ export default function DepartmentalStudentsTable({filters, searchQuery }) {
     const [deletionStatus, setDeletionStatus] = useState(false); 
     
     
-    
-    
     // Pagination State
     const [currentPage, setCurrentPage] = useState(1);
     const [rowsPerPage, setRowsPerPage] = useState(10);
@@ -40,62 +37,58 @@ export default function DepartmentalStudentsTable({filters, searchQuery }) {
     const [sortOrder, setSortOrder] = useState('asc'); 
 
 
-// Fetch the users
-const fetchUsers = useCallback(async () => {
-    try {
-        const response = await axios.get(`http://localhost:9000/admin-usermanagement/${department_code}`, { headers });
-        console.log('Fetched users:', response.data);
+    // Fetch the users
+    const fetchUsers = useCallback(async () => {
+        try {
+            const response = await axios.get(`http://localhost:9000/admin-usermanagement/${department_code}`, { headers });
+            console.log('Fetched users:', response.data);
 
-        const activeUsers = response.data.filter(user => user.status !== 'archived');
-        setUsers(activeUsers); 
-    } catch (error) {
-        console.error('Error fetching users:', error);
-        Swal.fire('Error', 'Failed to fetch users.', 'error');
-    }
-}, [headers, department_code, deletionStatus]);
-
-// Fetch the programs based on the selected department
-const fetchProgramsByDepartment = useCallback(async () => {
-    try {
-        const response = await axios.get(`http://localhost:9000/programs-by-department/${department_code}`, { headers });
-        console.log('Fetched programs for department:', response.data);
-
-        setPrograms(response.data); // Set the programs for the selected department
-    } catch (error) {
-        console.error('Error fetching programs:', error);
-        Swal.fire('Error', 'Failed to fetch programs.', 'error');
-    }
-}, [headers, department_code]);
-
-// Fetch the departments
-const fetchDepartments = useCallback(async () => {  
-    try {
-        const response = await axios.get('http://localhost:9000/departments', { headers });
-        setDepartments(response.data);
-
-        const normalizedDepartmentCode = department_code.toUpperCase();
-
-        const department = response.data.find(d => d.department_code.toUpperCase() === normalizedDepartmentCode);
-        if (department) {
-            setDepartmentName(department.department_name);
-        } else {
-            console.log('Department not found for code:', department_code);
+            const activeUsers = response.data.filter(user => user.status !== 'archived');
+            setUsers(activeUsers); 
+        } catch (error) {
+            console.error('Error fetching users:', error);
+            Swal.fire('Error', 'Failed to fetch users.', 'error');
         }
-    } catch (error) {
-        console.error('Error fetching departments:', error);
-    }
-}, [headers, department_code]);
+    }, [headers, department_code, deletionStatus]);
 
-useEffect(() => {
-    fetchUsers(); // Fetch users based on the department code
-    fetchDepartments(); // Fetch department details
-    fetchProgramsByDepartment(); // Fetch programs based on the department code
-}, [fetchUsers, fetchDepartments, fetchProgramsByDepartment]);  
+    // Fetch the programs based on the selected department
+    const fetchProgramsByDepartment = useCallback(async () => {
+        try {
+            const response = await axios.get(`http://localhost:9000/programs-by-department/${department_code}`, { headers });
+            console.log('Fetched programs for department:', response.data);
+
+            setPrograms(response.data); 
+        } catch (error) {
+            console.error('Error fetching programs:', error);
+            Swal.fire('Error', 'Failed to fetch programs.', 'error');
+        }
+    }, [headers, department_code]);
+
+    // Fetch the departments
+    const fetchDepartments = useCallback(async () => {  
+        try {
+            const response = await axios.get('http://localhost:9000/departments', { headers });
+            setDepartments(response.data);
+
+            const normalizedDepartmentCode = department_code.toUpperCase();
+
+            const department = response.data.find(d => d.department_code.toUpperCase() === normalizedDepartmentCode);
+            if (department) {
+                setDepartmentName(department.department_name);
+            } else {
+                console.log('Department not found for code:', department_code);
+            }
+        } catch (error) {
+            console.error('Error fetching departments:', error);
+        }
+    }, [headers, department_code]);
+    useEffect(() => {
+        fetchUsers(); 
+        fetchDepartments();
+        fetchProgramsByDepartment(); 
+    }, [fetchUsers, fetchDepartments, fetchProgramsByDepartment]);  
  
     
-    
-
-
     // Handle selecting individual users
     const handleSelectUser = (userId) => {
         setSelectedStudentIds((prevSelectedIds) => {
@@ -107,68 +100,34 @@ useEffect(() => {
         });
     };
 
-// Handle "Select All" checkbox
-const handleSelectAll = () => {
-    // Filter users based on the current filters and search query
-    const activeUsers = users.filter(user => user.status !== 'archived');
+    // Handle "Select All" checkbox
+    const handleSelectAll = () => {
+        const activeUsers = users.filter(user => user.status !== 'archived');
 
-    const filteredUsers = activeUsers.filter(user => {
-        const fullName = `${user.first_name} ${user.middle_name || ''} ${user.last_name} ${user.suffix || ''}`.toLowerCase();
-        const studentId = user.student_idnumber.toLowerCase();
-        const matchesSearchQuery = fullName.includes(searchQuery.toLowerCase()) || studentId.includes(searchQuery.toLowerCase());
+        const filteredUsers = activeUsers.filter(user => {
+            const fullName = `${user.first_name} ${user.middle_name || ''} ${user.last_name} ${user.suffix || ''}`.toLowerCase();
+            const studentId = user.student_idnumber.toLowerCase();
+            const matchesSearchQuery = fullName.includes(searchQuery.toLowerCase()) || studentId.includes(searchQuery.toLowerCase());
 
-        const matchesFilters = Object.keys(filters).every(key => {
-            if (filters[key]) {
-                if (key === 'yearLevel' && user.year_level && user.year_level !== filters[key]) return false;  // Use user.year_level
-                if (key === 'program' && user.program_name && user.program_name !== filters[key]) return false;  // Use user.program_name
-                if (key === 'batch' && user.batch !== filters[key]) return false;
-                if (key === 'status' && user.status !== filters[key]) return false;
-            }
-            return true;
+            const matchesFilters = Object.keys(filters).every(key => {
+                if (filters[key]) {
+                    if (key === 'yearLevel' && user.year_level && user.year_level !== filters[key]) return false; 
+                    if (key === 'program' && user.program_name && user.program_name !== filters[key]) return false;  
+                    if (key === 'batch' && user.batch !== filters[key]) return false;
+                    if (key === 'status' && user.status !== filters[key]) return false;
+                }
+                return true;
+            });
+            return matchesSearchQuery && matchesFilters; 
         });
 
-        return matchesSearchQuery && matchesFilters; // Return true if both search and filter match
-    });
-
-    if (selectAll) {
-        setSelectedStudentIds([]); // Deselect all filtered users
-    } else {
-        const allFilteredIds = filteredUsers.map(user => user.student_idnumber);
-        setSelectedStudentIds(allFilteredIds); // Select all filtered users
-    }
-    setSelectAll(!selectAll);
-};
-
-
-
-    
-    
-    // Handle batch update
-    const handleBatchUpdate = (updates) => {
-        axios
-        .put('http://localhost:9000/students', {
-            student_ids: selectedStudentIds,
-            updates,
-        })
-        .then((response) => {
-            Swal.fire('Success', 'Batch update successful', 'success');
-            fetchUsers(); 
-            setShowUpdateModal(false); 
-        })
-        .catch((error) => {
-            Swal.fire('Error', error.response?.data?.error || 'Failed to update students', 'error');
-        });
-    };
-
-
-    const getDepartmentName = (departmentId) => {
-        const department = departments.find((d) => d.department_id === departmentId);
-        return department ? department.department_name : '';
-    };
-
-    const getprogram = (program_id) => {
-        const program = programs.find(p => p.program_id === program_id);
-        return program ? program.program_name : 'Unknown Program'; // Return program name or a default value
+        if (selectAll) {
+            setSelectedStudentIds([]); 
+        } else {
+            const allFilteredIds = filteredUsers.map(user => user.student_idnumber);
+            setSelectedStudentIds(allFilteredIds); 
+        }
+        setSelectAll(!selectAll);
     };
     
 
@@ -230,152 +189,144 @@ const handleSelectAll = () => {
 };
 
 
-  // Pagination logic
-  const indexOfLastUser = currentPage * rowsPerPage;
-  const indexOfFirstUser = indexOfLastUser - rowsPerPage;
+// Pagination logic
+const indexOfLastUser = currentPage * rowsPerPage;
+const indexOfFirstUser = indexOfLastUser - rowsPerPage;
+const totalPages = Math.ceil(users.length / rowsPerPage);
+
+const handlePaginationChange = (pageNumber) => {
+  setCurrentPage(pageNumber);
+};
+
+const handleRowsPerPageChange = (e) => {
+  setRowsPerPage(Number(e.target.value));
+  setCurrentPage(1);
+};
+
+const renderPagination = () => {
+  const pageNumbers = Array.from({ length: totalPages }, (_, i) => i + 1);
   
-  const totalPages = Math.ceil(users.length / rowsPerPage);
-
-  const handlePaginationChange = (pageNumber) => {
-    setCurrentPage(pageNumber);
+  const buttonStyle = {
+      width: '30px', 
+      height: '30px', 
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      border: '1px solid #a0a0a0',
+      backgroundColor: '#ebebeb',
+      color: '#4a4a4a',
+      fontSize: '0.75rem', 
+      cursor: 'pointer',
   };
-
-
   
-
-  const handleRowsPerPageChange = (e) => {
-    setRowsPerPage(Number(e.target.value));
-    setCurrentPage(1);
+  const activeButtonStyle = {
+      ...buttonStyle,
+      backgroundColor: '#a0a0a0',
+      color: '#f1f1f1',
   };
+  
+  const disabledButtonStyle = {
+      ...buttonStyle,
+      backgroundColor: '#ebebeb',
+      color: '#a1a1a1',
+      cursor: 'not-allowed',
+  };
+  
+  return (
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '15px', fontSize: '14px', color: '#4a4a4a'}}>
+          {/* Results per Page */}
+          <div>
+              <label htmlFor="rowsPerPage" style={{ marginLeft: '120px', marginRight: '5px' }}>Results per page:</label>
+              <select
+                  id="rowsPerPage"
+                  value={rowsPerPage}
+                  onChange={handleRowsPerPageChange}
+                  style={{ fontSize: '14px', padding: '5px 25px', border: '1px solid #ccc', borderRadius: '3px' }}>
+                  {Array.from({ length: 10 }, (_, i) => (i + 1) * 10).map((value) => (
+                      <option key={value} value={value}> {value} </option>))}
+              </select>
+          </div>
+  
+          {/* Pagination Info and Buttons */}
+          <div style={{ display: 'flex', alignItems: 'center', marginRight: '25px' }}>
+              {/* Page Info */}
+              <div style={{ marginRight: '10px' }}>Page {currentPage} of {totalPages}</div>
+  
+              {/* Pagination Buttons */}
+              <div style={{ display: 'flex' }}>
+                  <button
+                      onClick={() =>
+                          currentPage > 1 && handlePaginationChange(currentPage - 1)
+                      }
+                      disabled={currentPage === 1}
+                      style={{
+                          ...buttonStyle,
+                          borderTopLeftRadius: '10px',
+                          borderBottomLeftRadius: '10px',
+                          ...(currentPage === 1 ? disabledButtonStyle : {}),
+                      }}
+                  >
+                      ❮
+                  </button>
+                  {pageNumbers.map((number) => (
+                      <button
+                          key={number}
+                          onClick={() => handlePaginationChange(number)}
+                          style={number === currentPage ? activeButtonStyle : buttonStyle}
+                      >
+                          {number}
+                      </button>
+                  ))}
+                  <button
+                      onClick={() =>
+                          currentPage < totalPages && handlePaginationChange(currentPage + 1)
+                      }
+                      disabled={currentPage === totalPages}
+                      style={{
+                          ...buttonStyle,
+                          borderTopRightRadius: '10px',
+                          borderBottomRightRadius: '10px',
+                          ...(currentPage === totalPages ? disabledButtonStyle : {}),
+                      }}
+                  >
+                      ❯
+                  </button>
+              </div>
+          </div>
+      </div>
+  );
+};
 
-    const renderPagination = () => {
-        const pageNumbers = Array.from({ length: totalPages }, (_, i) => i + 1);
-    
-        const buttonStyle = {
-            width: '30px', 
-            height: '30px', 
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            border: '1px solid #a0a0a0',
-            backgroundColor: '#ebebeb',
-            color: '#4a4a4a',
-            fontSize: '0.75rem', 
-            cursor: 'pointer',
-        };
-    
-        const activeButtonStyle = {
-            ...buttonStyle,
-            backgroundColor: '#a0a0a0',
-            color: '#f1f1f1',
-        };
-    
-        const disabledButtonStyle = {
-            ...buttonStyle,
-            backgroundColor: '#ebebeb',
-            color: '#a1a1a1',
-            cursor: 'not-allowed',
-        };
-    
-        return (
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '15px', fontSize: '14px', color: '#4a4a4a'}}>
-                {/* Results per Page */}
-                <div>
-                    <label htmlFor="rowsPerPage" style={{ marginLeft: '120px', marginRight: '5px' }}>Results per page:</label>
-                    <select
-                        id="rowsPerPage"
-                        value={rowsPerPage}
-                        onChange={handleRowsPerPageChange}
-                        style={{ fontSize: '14px', padding: '5px 25px', border: '1px solid #ccc', borderRadius: '3px' }}>
-                        {Array.from({ length: 10 }, (_, i) => (i + 1) * 10).map((value) => (
-                            <option key={value} value={value}> {value} </option>))}
-                    </select>
-                </div>
-        
-                {/* Pagination Info and Buttons */}
-                <div style={{ display: 'flex', alignItems: 'center', marginRight: '25px' }}>
-                    {/* Page Info */}
-                    <div style={{ marginRight: '10px' }}>Page {currentPage} of {totalPages}</div>
-        
-                    {/* Pagination Buttons */}
-                    <div style={{ display: 'flex' }}>
-                        <button
-                            onClick={() =>
-                                currentPage > 1 && handlePaginationChange(currentPage - 1)
-                            }
-                            disabled={currentPage === 1}
-                            style={{
-                                ...buttonStyle,
-                                borderTopLeftRadius: '10px',
-                                borderBottomLeftRadius: '10px',
-                                ...(currentPage === 1 ? disabledButtonStyle : {}),
-                            }}
-                        >
-                            ❮
-                        </button>
-                        {pageNumbers.map((number) => (
-                            <button
-                                key={number}
-                                onClick={() => handlePaginationChange(number)}
-                                style={number === currentPage ? activeButtonStyle : buttonStyle}
-                            >
-                                {number}
-                            </button>
-                        ))}
-                        <button
-                            onClick={() =>
-                                currentPage < totalPages && handlePaginationChange(currentPage + 1)
-                            }
-                            disabled={currentPage === totalPages}
-                            style={{
-                                ...buttonStyle,
-                                borderTopRightRadius: '10px',
-                                borderBottomRightRadius: '10px',
-                                ...(currentPage === totalPages ? disabledButtonStyle : {}),
-                            }}
-                        >
-                            ❯
-                        </button>
-                    </div>
-                </div>
-            </div>
-        );
-    };
 
-    
 // Render Table
 const renderTable = () => {
 
     const activeUsers = users.filter(user => user.status !== 'archived');
 
-   
+    // Calculate filteredUsers first
     const filteredUsers = activeUsers.filter(user => {
-    
         const fullName = `${user.first_name} ${user.middle_name || ''} ${user.last_name} ${user.suffix || ''}`.toLowerCase();
         const studentId = user.student_idnumber.toLowerCase();
         const matchesSearchQuery = fullName.includes(searchQuery.toLowerCase()) || studentId.includes(searchQuery.toLowerCase());
     
         const matchesFilters = Object.keys(filters).every(key => {
             if (filters[key]) {
-                if (key === 'yearLevel' && user.year_level && user.year_level !== filters[key]) return false;  // Use user.year_level
-                if (key === 'program' && user.program_name && user.program_name !== filters[key]) return false;  // Use user.program_id
+                if (key === 'yearLevel' && user.year_level && user.year_level !== filters[key]) return false;  
+                if (key === 'program' && user.program_name && user.program_name !== filters[key]) return false;  
                 if (key === 'batch' && user.batch !== filters[key]) return false;
                 if (key === 'status' && user.status !== filters[key]) return false;
             }
             return true;
         });
     
-        return matchesSearchQuery && matchesFilters; // Return true if both search and filter match
+        return matchesSearchQuery && matchesFilters; 
     });
     
-    const currentUsers = filteredUsers.slice(indexOfFirstUser, indexOfLastUser);
-
-
-
+const currentUsers = filteredUsers.slice(indexOfFirstUser, indexOfLastUser);
     
-    return (
-        
-        <Table bordered hover responsive style={{ borderRadius: '20px', marginBottom: '20px', marginLeft: '110px' }}>
+
+return (
+    <Table bordered hover responsive style={{ borderRadius: '20px', marginBottom: '20px', marginLeft: '110px' }}>
             <thead>
                 <tr>
                     <th style={{ width: '3%' }}>
@@ -419,8 +370,8 @@ const renderTable = () => {
             </thead>
             <tbody>
                 {filteredUsers &&filteredUsers.length > 0 ? (
-                    filteredUsers.map((user, index) => (
-                        <tr key={index}>
+                    currentUsers.map(user => (
+                        <tr key={user.student_idnumber}>
                             <td>
                                 <input
                                     type="checkbox"
@@ -480,7 +431,6 @@ const renderTable = () => {
 };
 
 
-  
 return (
     <div>
         {selectedStudentIds.length > 0 && (
