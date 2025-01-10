@@ -34,53 +34,50 @@ export default function StudentsTable ({filters, searchQuery}) {
   const [sortOrder, setSortOrder] = useState('asc'); 
 
 
-// Fetch the users
-const fetchUsers = useCallback(async () => {
-  try {
-      const response = await axios.get('http://localhost:9000/students-not-archived', { headers });
-      console.log('Fetched users:', response.data);
+  // Fetch the users
+  const fetchUsers = useCallback(async () => {
+    try {
+        const response = await axios.get('http://localhost:9000/students-not-archived', { headers });
+        console.log('Fetched users:', response.data);
 
-      const activeUsers = response.data.filter(user => user.status !== 'archived');
-      setUsers(activeUsers); 
-  } catch (error) {
-      console.error('Error fetching users:', error);
-      Swal.fire('Error', 'Failed to fetch users.', 'error');
-  }
-}, [headers, deletionStatus]);
-
-// Fetch the departments
-const fetchDepartments = useCallback(async () => {
-  try {
-      const response = await axios.get('http://localhost:9000/departments', { headers });
-        console.log('Fetched departments:', response.data);
-  
-        setDepartments(response.data);
+        const activeUsers = response.data.filter(user => user.status !== 'archived');
+        setUsers(activeUsers); 
     } catch (error) {
-        console.error('Error fetching departments:', error);
-        Swal.fire('Error', 'Failed to fetch departments.', 'error');
+        console.error('Error fetching users:', error);
+        Swal.fire('Error', 'Failed to fetch users.', 'error');
+    }
+  }, [headers, deletionStatus]);
+
+  // Fetch the departments
+  const fetchDepartments = useCallback(async () => {
+    try {
+        const response = await axios.get('http://localhost:9000/departments', { headers });
+          console.log('Fetched departments:', response.data);
+    
+          setDepartments(response.data);
+      } catch (error) {
+          console.error('Error fetching departments:', error);
+          Swal.fire('Error', 'Failed to fetch departments.', 'error');
+      }
+    }, [headers]);
+
+  // Fetch the programs
+  const fetchPrograms = useCallback(async () => {
+    try {
+        const response = await axios.get('http://localhost:9000/programs', { headers });
+        console.log('Fetched programs:', response.data);
+
+        setPrograms(response.data);
+    } catch (error) {
+        console.error('Error fetching programs:', error);
+        Swal.fire('Error', 'Failed to fetch programs.', 'error');
     }
   }, [headers]);
-
-// Fetch the programs
-const fetchPrograms = useCallback(async () => {
-  try {
-      const response = await axios.get('http://localhost:9000/programs', { headers });
-      console.log('Fetched programs:', response.data);
-
-      setPrograms(response.data);
-  } catch (error) {
-      console.error('Error fetching programs:', error);
-      Swal.fire('Error', 'Failed to fetch programs.', 'error');
-  }
-}, [headers]);
-
-// Use useEffect to call all the fetch functions
-useEffect(() => {
-  fetchUsers();
-  fetchDepartments();
-  fetchPrograms();
-}, [fetchUsers, fetchDepartments, fetchPrograms]);
-
+  useEffect(() => {
+    fetchUsers();
+    fetchDepartments();
+    fetchPrograms();
+  }, [fetchUsers, fetchDepartments, fetchPrograms]);
 
 
     // Handle selecting individual users
@@ -115,7 +112,6 @@ useEffect(() => {
           });
           return matchesSearchQuery && matchesFilters; 
       });
-
       if (selectAll) {
           setSelectedStudentIds([]); 
       } else {
@@ -131,32 +127,16 @@ useEffect(() => {
     setShowReadModal(true);
   };
 
-  const handleReadModalClose = () => setShowReadModal(false);
+  const handleReadModalClose = () => 
+    setShowReadModal(false);
 
   const handleUpdateModalShow = (user) => {
     setSelectedUser(user);
     setShowUpdateModal(true);
   };
 
-  const handleUpdateModalClose = () => setShowUpdateModal(false);
-
-
-  // Handle batch update
-  const handleBatchUpdate = (updates) => {
-    axios
-      .put('http://localhost:9000/students', {
-        student_ids: selectedStudentIds,
-        updates,
-      })
-      .then((response) => {
-        Swal.fire('Success', 'Batch update successful', 'success');
-        fetchUsers(); 
-        setShowUpdateModal(false); 
-      })
-      .catch((error) => {
-        Swal.fire('Error', error.response?.data?.error || 'Failed to update students', 'error');
-      });
-  };
+  const handleUpdateModalClose = () => 
+    setShowUpdateModal(false);
 
 
   // Sort users based on full name
@@ -175,7 +155,6 @@ useEffect(() => {
       setUsers(sortedUsers);
       setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc'); 
     };
-
 
     // Sort users based on idnumber
     const handleSortIdNumber = () => {
@@ -308,10 +287,8 @@ const renderPagination = () => {
 };
 
 
-
 // Render the students table
 const renderTable = () => {
-
 
     const activeUsers = users.filter(user => user.status !== 'archived');
 
@@ -330,17 +307,14 @@ const renderTable = () => {
             }
             return true;
         });
-    
         return matchesSearchQuery && matchesFilters; 
     });
     
-const currentUsers = filteredUsers.slice(indexOfFirstUser, indexOfLastUser);
+    const currentUsers = filteredUsers.slice(indexOfFirstUser, indexOfLastUser);
 
 
-
-
-    return (
-      <Table bordered hover responsive style={{ borderRadius: '20px', marginBottom: '20px', marginLeft: '110px' }}>
+  return (
+    <Table bordered hover responsive style={{ borderRadius: '20px', marginBottom: '20px', marginLeft: '110px' }}>
         <thead>
           <tr>
             <th style={{ width: '3%' }}> <input type="checkbox" checked={selectAll} onChange={handleSelectAll}/> </th>
@@ -419,12 +393,12 @@ const currentUsers = filteredUsers.slice(indexOfFirstUser, indexOfLastUser);
                 </div>
               </td>
             </tr>
-                    ))
-                  ) : (
-                      <tr>
-                          <td colSpan="7">No users found</td>
-                      </tr>
-                  )}
+              ))
+            ) : (
+                <tr>
+                    <td colSpan="7">No users found</td>
+                </tr>
+            )}
         </tbody>
       </Table>
     );
