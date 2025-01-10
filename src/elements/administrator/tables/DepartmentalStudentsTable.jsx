@@ -14,7 +14,8 @@ import ViewStudentModal from '../modals/ViewStudentModal';
 import EditStudentModal from '../modals/EditStudentModal';
 import "../../../styles/Students.css";
 
-const DepartmentalStudentsTable = () => {
+
+export default function DepartmentalStudentsTable({filters, searchQuery }) {
     const { department_code } = useParams(); 
     const [users, setUsers] = useState([]);
     const [departments, setDepartments] = useState([]);
@@ -28,7 +29,9 @@ const DepartmentalStudentsTable = () => {
     const [headers, setHeaders] = useState({});
     const [deletionStatus, setDeletionStatus] = useState(false); 
     
-
+    
+    
+    
     // Pagination State
     const [currentPage, setCurrentPage] = useState(1);
     const [rowsPerPage, setRowsPerPage] = useState(10);
@@ -110,6 +113,9 @@ const DepartmentalStudentsTable = () => {
         }
         setSelectAll(!selectAll);
     };
+
+
+    
     
     // Handle batch update
     const handleBatchUpdate = (updates) => {
@@ -134,11 +140,11 @@ const DepartmentalStudentsTable = () => {
         return department ? department.department_name : '';
     };
 
-    const getProgramName = (programId) => {
-        const program = programs.find((p) => p.program_id === programId);
-        return program ? program.program_name : '';
+    const getprogram = (program_id) => {
+        const program = programs.find(p => p.program_id === program_id);
+        return program ? program.program_name : 'Unknown Program'; // Return program name or a default value
     };
-
+    
 
     const handleReadModalShow = (user) => {
         setSelectedUser(user);
@@ -201,12 +207,15 @@ const DepartmentalStudentsTable = () => {
   // Pagination logic
   const indexOfLastUser = currentPage * rowsPerPage;
   const indexOfFirstUser = indexOfLastUser - rowsPerPage;
-  const currentUsers = users.slice(indexOfFirstUser, indexOfLastUser);
+  
   const totalPages = Math.ceil(users.length / rowsPerPage);
 
   const handlePaginationChange = (pageNumber) => {
     setCurrentPage(pageNumber);
   };
+
+
+  
 
   const handleRowsPerPageChange = (e) => {
     setRowsPerPage(Number(e.target.value));
@@ -310,96 +319,141 @@ const DepartmentalStudentsTable = () => {
     
 // Render Table
 const renderTable = () => {
+
     const activeUsers = users.filter(user => user.status !== 'archived');
 
-        return (
-            <Table bordered hover responsive style={{ borderRadius: '20px', marginBottom: '20px', marginLeft: '110px' }}>
-                    <thead>
-                        <tr>
-                            <th style={{ width: '3%' }}>
-                                <input type="checkbox" checked={selectAll} onChange={handleSelectAll}/>
-                            </th>
-                            <th style={{ textAlign: 'center', padding: '0', verticalAlign: 'middle', width: '11%' }}>
-                                <button style={{ border: 'none', background: 'none', cursor: 'pointer', display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center', width: '100%' }}
-                                    onClick={handleSortIdNumber}
-                                    >
-                                    <span style={{ textAlign: 'center' }}>ID Number</span>
-                                    {sortOrder === 'asc' ? (
-                                    <ArrowDropUpIcon style={{ marginLeft: '5px' }} />
-                                    ) : (
-                                    <ArrowDropDownIcon style={{ marginLeft: '5px' }} />
-                                    )}
-                                </button>
-                            </th>
-                            <th style={{ textAlign: 'center', padding: '0', verticalAlign: 'middle' }}>
-                                <button
-                                    style={{ border: 'none', background: 'none', cursor: 'pointer', display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center', width: '100%' }}
-                                    onClick={handleSortFullName}
-                                    >
-                                    <span style={{ textAlign: 'center' }}>Full Name</span>
-                                    {sortOrder === 'asc' ? (
-                                    <ArrowDropUpIcon style={{ marginLeft: '5px' }} />
-                                    ) : (
-                                    <ArrowDropDownIcon style={{ marginLeft: '5px' }} />
-                                    )}
-                                </button>
-                            </th>
-                            <th style={{ width: '10%' }}>Year Level</th>
-                            <th>Program</th>
-                            <th style={{ width: '12%' }}>Status</th>
-                            <th style={{ width: '10%' }}>Actions</th>
+   
+    const filteredUsers = activeUsers.filter(user => {
+    
+        const fullName = `${user.first_name} ${user.middle_name || ''} ${user.last_name} ${user.suffix || ''}`.toLowerCase();
+        const studentId = user.student_idnumber.toLowerCase();
+        const matchesSearchQuery = fullName.includes(searchQuery.toLowerCase()) || studentId.includes(searchQuery.toLowerCase());
+    
+        const matchesFilters = Object.keys(filters).every(key => {
+            if (filters[key]) {
+                if (key === 'yearLevel' && user.year_level && user.year_level !== filters[key]) return false;  // Use user.year_level
+                if (key === 'program' && user.program_name && user.program_name !== filters[key]) return false;  // Use user.program_id
+                if (key === 'batch' && user.batch !== filters[key]) return false;
+                if (key === 'status' && user.status !== filters[key]) return false;
+            }
+            return true;
+        });
+    
+        return matchesSearchQuery && matchesFilters; // Return true if both search and filter match
+    });
+    
+    const currentUsers = filteredUsers.slice(indexOfFirstUser, indexOfLastUser);
+
+
+
+    
+    return (
+        
+        <Table bordered hover responsive style={{ borderRadius: '20px', marginBottom: '20px', marginLeft: '110px' }}>
+            <thead>
+                <tr>
+                    <th style={{ width: '3%' }}>
+                        <input type="checkbox" checked={selectAll} onChange={handleSelectAll} />
+                    </th>
+                    <th style={{ textAlign: 'center', padding: '0', verticalAlign: 'middle', width: '11%' }}>
+                        <button
+                            style={{
+                                border: 'none', background: 'none', cursor: 'pointer', display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center', width: '100%'
+                            }}
+                            onClick={handleSortIdNumber}
+                        >
+                            <span style={{ textAlign: 'center' }}>ID Number</span>
+                            {sortOrder === 'asc' ? (
+                                <ArrowDropUpIcon style={{ marginLeft: '5px' }} />
+                            ) : (
+                                <ArrowDropDownIcon style={{ marginLeft: '5px' }} />
+                            )}
+                        </button>
+                    </th>
+                    <th style={{ textAlign: 'center', padding: '0', verticalAlign: 'middle' }}>
+                        <button
+                            style={{
+                                border: 'none', background: 'none', cursor: 'pointer', display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center', width: '100%'
+                            }}
+                            onClick={handleSortFullName}
+                        >
+                            <span style={{ textAlign: 'center' }}>Full Name</span>
+                            {sortOrder === 'asc' ? (
+                                <ArrowDropUpIcon style={{ marginLeft: '5px' }} />
+                            ) : (
+                                <ArrowDropDownIcon style={{ marginLeft: '5px' }} />
+                            )}
+                        </button>
+                    </th>
+                    <th style={{ width: '10%' }}>Year Level</th>
+                    <th>Program</th>
+                    <th style={{ width: '12%' }}>Status</th>
+                    <th style={{ width: '10%' }}>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {filteredUsers &&filteredUsers.length > 0 ? (
+                    filteredUsers.map((user, index) => (
+                        <tr key={index}>
+                            <td>
+                                <input
+                                    type="checkbox"
+                                    checked={selectedStudentIds.includes(user.student_idnumber)}
+                                    onChange={() => handleSelectUser(user.student_idnumber)}
+                                />
+                            </td>
+                            <td>{user.student_idnumber}</td>
+                            <td>{`${user.first_name || ''} ${user.middle_name || ''} ${user.last_name || ''} ${user.suffix || ''}`}</td>
+                            <td>{user.year_level}</td>
+                            <td>{user.program_name}</td>
+                            <td style={{ textAlign: 'center' }}>
+                                <div
+                                    style={{
+                                        backgroundColor: user.status === 'active' ? '#DBF0DC' : '#F0DBDB',
+                                        color: user.status === 'active' ? '#30A530' : '#D9534F',
+                                        fontWeight: '600',
+                                        fontSize: '14px',
+                                        borderRadius: '30px',
+                                        padding: '5px 20px',
+                                        display: 'inline-flex',
+                                        alignItems: 'center',
+                                    }}
+                                >
+                                    <div
+                                        style={{
+                                            width: '8px',
+                                            height: '8px',
+                                            borderRadius: '50%',
+                                            backgroundColor: user.status === 'active' ? '#30A530' : '#D9534F',
+                                            marginRight: '7px',
+                                        }}
+                                    />
+                                    {user.status}
+                                </div>
+                            </td>
+                            <td>
+                                <div className="d-flex justify-content-around">
+                                    <Button className="btn btn-secondary btn-sm" onClick={() => handleReadModalShow(user)}>
+                                        <PersonIcon />
+                                    </Button>
+                                    <Button className="btn btn-success btn-sm" onClick={() => handleUpdateModalShow(user)}>
+                                        <EditIcon />
+                                    </Button>
+                                </div>
+                            </td>
                         </tr>
-                        </thead>
-                        <tbody>
-                            {currentUsers.map((user, index) => (
-                                <tr key={index}>
-                                    <td> <input type="checkbox" checked={selectedStudentIds.includes(user.student_idnumber)} onChange={() => handleSelectUser(user.student_idnumber)}/></td>
-                                    <td>{user.student_idnumber}</td>
-                                    <td>{`${user.first_name} ${user.middle_name} ${user.last_name} ${user.suffix}`}</td>
-                                    <td>{user.year_level}</td>
-                                    <td>{getProgramName(user.program_id)}</td>
-                                    <td style={{ textAlign: 'center' }}>
-                                        <div
-                                            style={{
-                                                backgroundColor: user.status === 'active' ? '#DBF0DC' : '#F0DBDB',
-                                                color: user.status === 'active' ? '#30A530' : '#D9534F',
-                                                fontWeight: '600',
-                                                fontSize: '14px',
-                                                borderRadius: '30px',
-                                                padding: '5px 20px',
-                                                display: 'inline-flex',
-                                                alignItems: 'center',
-                                            }}
-                                        >
-                                            <div
-                                                style={{
-                                                    width: '8px',
-                                                    height: '8px',
-                                                    borderRadius: '50%',
-                                                    backgroundColor: user.status === 'active' ? '#30A530' : '#D9534F',
-                                                    marginRight: '7px',
-                                                }}
-                                            />
-                                            {user.status}
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div className="d-flex justify-content-around">
-                                            <Button className="btn btn-secondary btn-sm" onClick={() => handleReadModalShow(user)}>
-                                                <PersonIcon />
-                                            </Button>
-                                            <Button className="btn btn-success btn-sm" onClick={() => handleUpdateModalShow(user)}>
-                                                <EditIcon />
-                                            </Button>
-                                        </div>
-                                    </td>
-                            </tr>
-                        ))}
-                </tbody>
+                    ))
+                ) : (
+                    <tr>
+                        <td colSpan="7">No users found</td>
+                    </tr>
+                )}
+            </tbody>
         </Table>
     );
 };
-    
+
+
   
 return (
     <div>
@@ -436,5 +490,3 @@ return (
     );
 };
 
-
-export default DepartmentalStudentsTable;

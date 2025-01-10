@@ -13,9 +13,20 @@ export default function AdminDepartmentalStudents() {
     const [departments, setDepartments] = useState([]);
     const [departmentName, setDepartmentName] = useState('');
     const [users, setUsers] = useState([]); 
+    const [searchQuery, setSearchQuery] = useState('');
+    const [allUsers, setAllUsers] = useState([]);  // All users before any filtering
+    const [filteredUsers, setFilteredUsers] = useState([]);  // Filtered users for the table
+    const [filters, setFilters] = useState({
+      yearLevel: '',
+      program: '',
+      batch: '',
+      status: '',
+    });
+
     const { department_code } = useParams();
     const navigate = useNavigate();
 
+    // Handle authorization check
     useEffect(() => {
         const token = localStorage.getItem('token');
         const roleId = localStorage.getItem('role_id');
@@ -24,6 +35,7 @@ export default function AdminDepartmentalStudents() {
         }
     }, [navigate]);
 
+    // Fetch users from the department
     const fetchUsers = useCallback(async () => {
         try {
             const token = localStorage.getItem('token');
@@ -34,13 +46,56 @@ export default function AdminDepartmentalStudents() {
                 { headers }
             );
             const activeUsers = response.data.filter(user => user.status !== 'archived');
-            setUsers(activeUsers);
+            setUsers(activeUsers);  // Active users
+            setAllUsers(activeUsers);  // Store all users for future filtering
+            setFilteredUsers(activeUsers);  // Set initial filtered users to all users
         } catch (error) {
             console.error('Error fetching users:', error);
             alert('Failed to fetch users.');
         }
     }, [department_code]);
 
+    // Handle search query changes
+    const handleSearch = (query) => {
+        setSearchQuery(query);
+        const normalizedQuery = query ? query.toLowerCase() : '';
+    
+        const filtered = allUsers.filter(user => {
+            const userName = user.name ? user.name.toLowerCase() : '';  // Ensure name is defined
+            return userName.includes(normalizedQuery);
+        });
+    
+        setFilteredUsers(filtered);  // Correct function call here
+    };
+
+    // Handle filter changes (yearLevel, program, batch, status)
+    const handleFilterChange = (filters) => {
+        console.log('Updated Filters:', filters);
+        setFilters(filters);  // Update filter state
+    
+        let filtered = allUsers;
+    
+        // Apply filters one by one
+        if (filters.yearLevel) {
+            filtered = filtered.filter(user => user.yearLevel === filters.yearLevel);
+        }
+    
+       if (filters.program) {
+    filtered = filtered.filter(user => user.program === filters.program);
+}
+
+        if (filters.batch) {
+            filtered = filtered.filter(user => user.batch === filters.batch);
+        }
+    
+        if (filters.status) {
+            filtered = filtered.filter(user => user.status === filters.status);
+        }
+    
+        
+        setFilteredUsers(filtered);
+    };
+    // Fetch departments for display
     const fetchDepartments = useCallback(async () => {
         try {
             const token = localStorage.getItem('token');
@@ -57,29 +112,46 @@ export default function AdminDepartmentalStudents() {
         }
     }, [department_code]);
 
+    // Run fetch functions on mount or when the department_code changes
     useEffect(() => {
         fetchDepartments();
         fetchUsers();
     }, [fetchDepartments, fetchUsers]);
 
-    
-return (
-    <div>
-        <AdminNavigation />
-        <AdminInfo />
+    return (
+        <div>
+            <AdminNavigation />
+            <AdminInfo />
 
             {/* Title Section */}
             <div style={{ width: '90%', margin: '0 auto', display: 'flex', justifyContent: 'flex-start' }}>
-                <h6 className="settings-title" style={{ fontFamily: 'Poppins, sans-serif', color: '#242424', fontSize: '40px', fontWeight: 'bold', marginTop: '20px', marginLeft: '50px' }}> {departmentName || department_code || 'USER MANAGEMENT'} </h6>
+                <h6 className="settings-title" style={{ fontFamily: 'Poppins, sans-serif', color: '#242424', fontSize: '40px', fontWeight: 'bold', marginTop: '20px', marginLeft: '50px' }}>
+                    {departmentName || department_code || 'USER MANAGEMENT'}
+                </h6>
             </div>
-            
+
             {/* Search And Filter Section */}
-            <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'center', marginTop: '10px', marginLeft: '50px', padding: '0 20px', gap: '2px'}}>
-            <div style={{ flex: '1 1 70%', minWidth: '300px' }}><SFforDepartmentalTable /></div>
+            <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'center', marginTop: '10px', marginLeft: '50px', padding: '0 20px', gap: '2px' }}>
+                <div style={{ flex: '1 1 70%', minWidth: '300px' }}>
+                    <SFforDepartmentalTable onSearch={handleSearch} onFilterChange={handleFilterChange} />
+                </div>
                 <button
                     onClick={() => window.location.href = "http://localhost:3000/register-student"}
-                    style={{ backgroundColor: '#FAD32E', color: 'white', fontWeight: '900', padding: '12px 15px', border: 'none', borderRadius: '10px', marginLeft: '5px', cursor: 'pointer', display: 'flex', alignItems: 'center', boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)' }}>
-                        Add Student
+                    style={{
+                        backgroundColor: '#FAD32E',
+                        color: 'white',
+                        fontWeight: '900',
+                        padding: '12px 15px',
+                        border: 'none',
+                        borderRadius: '10px',
+                        marginLeft: '5px',
+                        cursor: 'pointer',
+                        display: 'flex',
+                        alignItems: 'center',
+                        boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
+                    }}
+                >
+                    Add Student
                     <FaPlus style={{ marginLeft: '10px' }} />
                 </button>
                 <ImportDepartmentalCSV />
@@ -98,7 +170,12 @@ return (
                 </ol>
             </nav>
 
-            <DepartmentalStudentsTable />
+            {/* Departmental Students Table */}
+            <DepartmentalStudentsTable 
+                filteredUsers={filteredUsers}  // Pass the filtered users here
+                filters={filters}      // Pass the filters as well
+                searchQuery={searchQuery}  // Pass the current search query
+            />
         </div>
     );
 }

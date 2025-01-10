@@ -39,7 +39,7 @@ const ViewAnnouncementModal = ({ show, onHide, announcement }) => {
         <Modal show={show} onHide={onHide} size="lg" backdrop="static">
             <Modal.Header>
                 <Button variant="link" onClick={onHide} style={{ position: 'absolute', top: '5px', right: '20px', textDecoration: 'none', fontSize: '30px', color: '#a9a9a9' }}>×</Button>
-                <Modal.Title style={{ fontSize: '40px', marginBottom: '10px', marginLeft: '120px', marginRight: '120px' }}>VIEW ANNOUNCEMENT</Modal.Title>
+                <Modal.Title style={{ fontSize: '40px', marginBottom: '10px', textAlign: 'center', width: '100%' }}>VIEW ANNOUNCEMENT</Modal.Title>
             </Modal.Header>
             <Modal.Body>
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', rowGap: '10px', marginLeft: '20px', marginRight: '20px' }}>

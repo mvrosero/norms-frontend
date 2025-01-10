@@ -4,163 +4,161 @@ import { IoFilter } from 'react-icons/io5';
 import axios from 'axios';
 import '../../../styles/SearchAndFilter.css';
 
-export default function SFforDepartmentalTable({ onSearch }) {
-    const [searchQuery, setSearchQuery] = useState('');
-    const [yearLevel, setYearLevel] = useState('');
-    const [program, setProgram] = useState('');
-    const [batch, setBatch] = useState('');
-    const [status, setStatus] = useState('');
-    const [isFilterOpen, setIsFilterOpen] = useState(false);
-    const [isFilterActive, setIsFilterActive] = useState(false);
-    const [programs, setPrograms] = useState([]); // State for storing program options
-    const [searchTerm, setSearchTerm] = useState('');
-    const [filterCriteria, setFilterCriteria] = useState('');
+export default function SFforDepartmentalTable({ onSearch, onFilterChange }) {
+  const [searchQuery, setSearchQuery] = useState('');
+  const [yearLevel, setYearLevel] = useState('');
+  const [program, setProgram] = useState('');
+  const [batch, setBatch] = useState('');
+  const [status, setStatus] = useState('');
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
+  const [isFilterActive, setIsFilterActive] = useState(false);
+  const [programs, setPrograms] = useState([]);
+  const [allUsers, setAllUsers] = useState([]);
 
-    const currentYear = new Date().getFullYear();
-    const years = Array.from({ length: 31 }, (_, index) => currentYear - 5 + index);
+  const currentYear = new Date().getFullYear();
+  const years = Array.from({ length: 31 }, (_, index) => currentYear - 5 + index);
 
-    // Fetch programs dynamically
-    useEffect(() => {
-        axios
-            .get('http://localhost:9000/programs')
-            .then((response) => {
-                setPrograms(response.data);
-            })
-            .catch((error) => {
-                console.error('Error fetching programs:', error);
-            });
-    }, []);
+  // Fetch programs dynamically
+  useEffect(() => {
+    axios
+      .get('http://localhost:9000/programs')
+      .then((response) => {
+        setPrograms(response.data);
+      })
+      .catch((error) => {
+        console.error('Error fetching programs:', error);
+      });
+  }, []);
 
-    // Handle the search input change and call the onSearch function
-    const handleInputChange = (e) => {
-        const query = e.target.value;
-        setSearchQuery(query);
-        // Call the onSearch function with current values of the filters
-        onSearch(query, { yearLevel, program, batch, status });
-    };
+  // Handle search input change
+  const handleInputChange = (e) => {
+    const query = e.target.value;
+    setSearchQuery(query);
+    triggerSearch(query);
+  };
 
-    // Handle filter changes and call the onSearch function
-    const handleFilterChange = (filter, value) => {
-        switch (filter) {
-            case 'yearLevel':
-                setYearLevel(value);
-                break;
-            case 'program':
-                setProgram(value);
-                break;
-            case 'batch':
-                setBatch(value);
-                break;
-            case 'status':
-                setStatus(value);
-                break;
-            default:
-                break;
-        }
-        // Call the onSearch function with the updated filter values
-        onSearch(searchQuery, { yearLevel: value, program, batch, status });
-    };
+  // Trigger search with current query and filters
+  const triggerSearch = (query) => {
+    onSearch(query, { yearLevel, program, batch, status });
+  };
 
-    const toggleFilterDropdown = () => {
-        setIsFilterOpen(!isFilterOpen);
-        setIsFilterActive(!isFilterActive);
-    };
+  // Handle filter changes
+  const handleFilterChange = (field, value) => {
+    const updatedFilters = { yearLevel, program, batch, status, [field]: value };
 
-    const clearFilters = () => {
-        setYearLevel('');
-        setProgram('');
-        setBatch('');
-        setStatus('');
-        // Call the onSearch function with an empty set of filters
-        onSearch(searchQuery, { yearLevel: '', program: '', batch: '', status: '' });
-    };
+    // Update individual filter states
+    if (field === 'yearLevel') setYearLevel(value);
+    if (field === 'program') setProgram(value);
+    if (field === 'batch') setBatch(value);
+    if (field === 'status') setStatus(value);
 
-    return (
-        <div className="searchAndFilterContainer">
-            <div className="searchAndFilterWrapper">
-                <input
-                    type="text"
-                    placeholder="Search..."
-                    value={searchQuery}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    className="searchInput"
-                />
-                <button
-                    onClick={toggleFilterDropdown}
-                    className={`filterButton ${isFilterActive ? 'active' : ''}`}
-                >
-                    <IoFilter className={`filterIcon ${isFilterActive ? 'active' : ''}`} />
-                </button>
-                <button
-                    onClick={() => onSearch(searchQuery, { yearLevel, program, batch, status })}
-                    className="searchButton"
-                >
-                    <FaSearch className="searchIcon" />
-                </button>
-            </div>
+    onFilterChange(updatedFilters); // Pass updated filters to the parent
+    triggerSearch(searchQuery); // Trigger search with updated filters
+  };
 
-            {isFilterOpen && (
-                <div className="filterDropdownWrapper">
-                    <div className="filterOption">
-                        <select
-                            value={yearLevel}
-                            onChange={(e) => setFilterCriteria('yearLevel', e.target.value)}
-                            className="filterSelect"
-                        >
-                            <option value="">Year Level</option>
-                            <option value="First Year">First Year</option>
-                            <option value="Second Year">Second Year</option>
-                            <option value="Third Year">Third Year</option>
-                            <option value="Fourth Year">Fourth Year</option>
-                            <option value="Fifth Year">Fifth Year</option>
-                        </select>
-                    </div>
-                    <div className="filterOption">
-                        <select
-                            value={program}
-                            onChange={(e) => setFilterCriteria('program', e.target.value)}
-                            className="filterSelect"
-                        >
-                            <option value="">Program</option>
-                            {programs.map((program) => (
-                                <option key={program.program_id} value={program.program_name}>
-                                    {program.program_name}
-                                </option>
-                            ))}
-                        </select>
-                    </div>
-                    <div className="filterOption">
-                        <select
-                            id="batch"
-                            value={batch}
-                            onChange={(e) => setFilterCriteria('batch', e.target.value)}
-                            className="filterSelect"
-                        >
-                            <option value="">Select Batch</option>
-                            {years.map((year) => (
-                                <option key={year} value={year}>
-                                    {year}
-                                </option>
-                            ))}
-                        </select>
-                    </div>
-                    <div className="filterOption">
-                        <select
-                            value={status}
-                            onChange={(e) => setFilterCriteria('status', e.target.value)}
-                            className="filterSelect"
-                        >
-                            <option value="">Status</option>
-                            <option value="active">Active</option>
-                            <option value="inactive">Inactive</option>
-                        </select>
-                    </div>
+  // Toggle filter dropdown visibility
+  const toggleFilterDropdown = () => {
+    setIsFilterOpen(!isFilterOpen);
+    setIsFilterActive(!isFilterActive);
+  };
 
-                    <button className="clearButton" onClick={clearFilters}>
-                        Clear
-                    </button>
-                </div>
-            )}
+  // Clear all filters
+  const clearFilters = () => {
+    setYearLevel('');
+    setProgram('');
+    setBatch('');
+    setStatus('');
+    onFilterChange({ yearLevel: '', program: '', batch: '', status: '' });
+  };
+
+  return (
+    <div className="searchAndFilterContainer">
+      <div className="searchAndFilterWrapper">
+        <input
+          type="text"
+          placeholder="Search..."
+          value={searchQuery}
+          onChange={handleInputChange}
+          className="searchInput"
+        />
+        <button
+          onClick={toggleFilterDropdown}
+          className={`filterButton ${isFilterActive ? 'active' : ''}`}
+        >
+          <IoFilter className={`filterIcon ${isFilterActive ? 'active' : ''}`} />
+        </button>
+        <button
+          onClick={() => triggerSearch(searchQuery)} // Trigger search with current query and filters
+          className="searchButton"
+        >
+          <FaSearch className="searchIcon" />
+        </button>
+      </div>
+
+      {isFilterOpen && (
+        <div className="filterDropdownWrapper">
+          <div className="filterOption">
+            <select
+              value={yearLevel}
+              onChange={(e) => handleFilterChange('yearLevel', e.target.value)}
+              className="filterSelect"
+            >
+              <option value="">Year Level</option>
+              <option value="First Year">First Year</option>
+              <option value="Second Year">Second Year</option>
+              <option value="Third Year">Third Year</option>
+              <option value="Fourth Year">Fourth Year</option>
+              <option value="Fifth Year">Fifth Year</option>
+            </select>
+          </div>
+
+          <div className="filterOption">
+            <select
+              value={program}
+              onChange={(e) => handleFilterChange('program', e.target.value)}
+              className="filterSelect"
+            >
+              <option value="">Program</option>
+              {programs.map((program) => (
+                <option key={program.program_id} value={program.program_name}>
+                  {program.program_name}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="filterOption">
+            <select
+              value={batch}
+              onChange={(e) => handleFilterChange('batch', e.target.value)}
+              className="filterSelect"
+            >
+              <option value="">Select Batch</option>
+              {years.map((year) => (
+                <option key={year} value={year}>
+                  {year}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="filterOption">
+            <select
+              value={status}
+              onChange={(e) => handleFilterChange('status', e.target.value)}
+              className="filterSelect"
+            >
+              <option value="">Status</option>
+              <option value="active">Active</option>
+              <option value="inactive">Inactive</option>
+            </select>
+          </div>
+
+          <button className="clearButton" onClick={clearFilters}>
+            Clear
+          </button>
         </div>
-    );
+      )}
+    </div>
+  );
 }

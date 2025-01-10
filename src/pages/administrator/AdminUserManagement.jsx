@@ -12,6 +12,8 @@ import UserDropdownButton from '../../elements/general/buttons/UserDropdownButto
 
 export default function AdminUserManagement() {
     const [selectedComponent, setSelectedComponent] = useState('students');
+    const [searchQuery, setSearchQuery] = useState('');
+    const [filterOption, setFilterOption] = useState('all');
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -26,18 +28,23 @@ export default function AdminUserManagement() {
         setSelectedComponent(event.target.value);
     };
 
-return (
-    <div>
-        <AdminNavigation />
-        <AdminInfo />
+    const handleSearch = (query, filter) => {
+        setSearchQuery(query);
+        setFilterOption(filter);
+    };
+
+    return (
+        <div>
+            <AdminNavigation />
+            <AdminInfo />
             <h6 className="page-title"> USER MANAGEMENT </h6>
             <div style={{ display: 'flex', marginTop: '20px', alignItems: 'center' }}>
                 <div style={{ width: '750px', marginLeft: '100px' }}>
-                    <SearchAndFilter />
+                    <SearchAndFilter onSearch={handleSearch} />
                 </div>
                 <UserDropdownButton />
-                {selectedComponent === 'students' && <ImportStudentsCSV />} {/* Show Import Students CSV component */}
-                {selectedComponent === 'employees' && <ImportEmployeesCSV />} {/* Show Import Employees CSV component */}
+                {selectedComponent === 'students' && <ImportStudentsCSV />}
+                {selectedComponent === 'employees' && <ImportEmployeesCSV />}
             </div>
 
             {/* Radio buttons for selecting user type */}
@@ -79,8 +86,12 @@ return (
             </div>
 
             {/* Display the tables based on selected radio button */}
-            {selectedComponent === 'students' && <StudentsTable />} {/* Show Students Table */}
-            {selectedComponent === 'employees' && <EmployeesTable />} {/* Show Employees Table */}
+            {selectedComponent === 'students' && (
+                <StudentsTable searchQuery={searchQuery} filterOption={filterOption} />
+            )}
+            {selectedComponent === 'employees' && (
+                <EmployeesTable searchQuery={searchQuery} filterOption={filterOption} />
+            )}
         </div>
     );
 }

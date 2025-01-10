@@ -8,6 +8,7 @@ import PersonIcon from '@mui/icons-material/Person';
 import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 
+
 import BatchStudentsToolbar from '../toolbars/BatchStudentsToolbar';
 import ViewStudentModal from '../modals/ViewStudentModal';
 import EditStudentModal from '../modals/EditStudentModal';
@@ -22,7 +23,7 @@ const StudentsTable = () => {
   const [selectedUser, setSelectedUser] = useState(null);
   const [selectedStudentIds, setSelectedStudentIds] = useState([]);
   const [selectAll, setSelectAll] = useState(false);
-
+  const [searchQuery, setSearchQuery] = useState(""); 
 
   // Pagination State
   const [currentPage, setCurrentPage] = useState(1);
@@ -92,6 +93,18 @@ const StudentsTable = () => {
   const handleUpdateModalClose = () => setShowUpdateModal(false);
 
 
+
+  const handleSearchChange = (e) => {
+    setSearchQuery(e.target.value); // Update search query
+  };
+  const filteredUsers = users.filter((user) => {
+    const fullName = `${user.first_name} ${user.middle_name || ''} ${user.last_name} ${user.suffix || ''}`;
+    return (
+      fullName.toLowerCase().includes(searchQuery.toLowerCase()) || // Search by full name
+      user.student_idnumber.toLowerCase().includes(searchQuery.toLowerCase()) // Search by ID number
+    );
+  });
+
   // Handle batch update
   const handleBatchUpdate = (updates) => {
     axios
@@ -153,7 +166,7 @@ const StudentsTable = () => {
   // Pagination logic
   const indexOfLastUser = currentPage * rowsPerPage;
   const indexOfFirstUser = indexOfLastUser - rowsPerPage;
-  const currentUsers = users.slice(indexOfFirstUser, indexOfLastUser);
+  const currentUsers = filteredUsers.slice(indexOfFirstUser, indexOfLastUser);
   const totalPages = Math.ceil(users.length / rowsPerPage);
 
   const handlePaginationChange = (pageNumber) => {
@@ -251,6 +264,7 @@ const renderPagination = () => {
 
 // Render the students table
 const renderTable = () => {
+  
     return (
       <Table bordered hover responsive style={{ borderRadius: '20px', marginBottom: '20px', marginLeft: '110px' }}>
         <thead>

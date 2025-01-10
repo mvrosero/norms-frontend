@@ -244,7 +244,7 @@ return (
               <thead>
                 <tr>
                 <th style={{ width: '5%' }}>No.</th>
-                  <th style={{ width: '20%' }}>
+                  <th style={{ width: '18%' }}>
                     <button style={{ cursor: 'pointer', display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100%' }}
                             onClick={handleSortDate}
                         >
@@ -257,7 +257,6 @@ return (
                     </button>
                   </th>
                   <th style={{ width: '13%' }}>Category</th>
-                  <th>Subc</th>
                   <th>Offense</th>
                   <th style={{ width: '25%' }}>Sanctions</th>
                   <th style={{ width: '10%' }}>Action</th>
@@ -269,7 +268,6 @@ return (
                     <td style={{ textAlign: 'center' }}>{index + 1}</td>
                     <td style={{ textAlign: 'center' }}>{new Date(record.created_at).toLocaleString()}</td>
                     <td>{record.category_name}</td>
-                    <td>{subcategoryName}</td>
                     <td>{record.offense_name}</td>
                     <td>
                         {record.sanction_names.length > 0
@@ -285,6 +283,9 @@ return (
                 ))}
               </tbody>
             </Table>
+
+
+            
 
             {renderPagination()}
 
