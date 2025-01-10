@@ -38,10 +38,10 @@ export default function AdminUserManagement() {
     }, [navigate]);
 
 
-    
+    // Fetch users
     const fetchUsers = useCallback(async () => {
-        setLoading(true); // Start loading
-        setError(false); // Reset error state
+        setLoading(true); 
+        setError(false); 
         try {
             const token = localStorage.getItem('token');
             const headers = { Authorization: `Bearer ${token}` };
@@ -54,16 +54,14 @@ export default function AdminUserManagement() {
             setUsers(activeUsers);
             setAllUsers(activeUsers);
             setFilteredUsers(activeUsers);
-    
         } catch (error) {
             console.error('Error fetching users:', error.response || error.message || error);
-            setError(true); // Update error state
+            setError(true); 
         } finally {
-            setLoading(false); // End loading
+            setLoading(false); 
         }
     }, []);
     
-
 
     // Handle search query changes
     const handleSearch = (query) => {
@@ -74,41 +72,38 @@ export default function AdminUserManagement() {
             const userName = user.name ? user.name.toLowerCase() : ''; 
             return userName.includes(normalizedQuery);
         });
-    
         setFilteredUsers(filtered);  
     };
 
 
-        // Handle filter changes (yearLevel, program, batch, status)
-        const handleFilterChange = (filters) => {
-            console.log('Updated Filters:', filters);
-            setFilters(filters);  
-        
-            let filtered = allUsers;
-        
-            // Apply filters one by one
-            if (filters.yearLevel) {
-                filtered = filtered.filter(user => user.yearLevel === filters.yearLevel);
-            }
-        
-            if (filters.program) {
-                    filtered = filtered.filter(user => user.program === filters.program);
-                }
+    // Handle filter changes (yearLevel, program, batch, status)
+    const handleFilterChange = (filters) => {
+        console.log('Updated Filters:', filters);
+        setFilters(filters);  
     
-            if (filters.batch) {
-                filtered = filtered.filter(user => user.batch === filters.batch);
+        let filtered = allUsers;
+    
+        // Apply filters one by one
+        if (filters.yearLevel) {
+            filtered = filtered.filter(user => user.yearLevel === filters.yearLevel);
+        }
+    
+        if (filters.program) {
+                filtered = filtered.filter(user => user.program === filters.program);
             }
-        
-            if (filters.status) {
-                filtered = filtered.filter(user => user.status === filters.status);
-            }
-            setFilteredUsers(filtered);
-        };
-        useEffect(() => {
-            fetchUsers();
-        }, [fetchUsers]);
 
-
+        if (filters.batch) {
+            filtered = filtered.filter(user => user.batch === filters.batch);
+        }
+    
+        if (filters.status) {
+            filtered = filtered.filter(user => user.status === filters.status);
+        }
+        setFilteredUsers(filtered);
+    };
+    useEffect(() => {
+        fetchUsers();
+    }, [fetchUsers]);
 
 
     const handleComponentChange = (event) => {
@@ -116,12 +111,15 @@ export default function AdminUserManagement() {
     };
 
 
+return (
+    <div>
+        <AdminNavigation />
+        <AdminInfo />
 
-    return (
-        <div>
-            <AdminNavigation />
-            <AdminInfo />
+            {/* Title Section */}
             <h6 className="page-title"> USER MANAGEMENT </h6>
+
+            {/* Search And Filter Section */}
             <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'center', marginTop: '10px', marginLeft: '70px', padding: '0 20px', gap: '2px' }}>
                 <div style={{ flex: '1 1 50%', minWidth: '300px' }}>
                     {selectedComponent === 'students' && <SFforStudentsTable onSearch={handleSearch} onFilterChange={handleFilterChange}  />}
@@ -179,7 +177,9 @@ export default function AdminUserManagement() {
                 />
             )}
             {selectedComponent === 'employees' && (
-                <EmployeesTable searchQuery={searchQuery}  />
+                <EmployeesTable 
+                searchQuery={searchQuery}  
+                />
             )}
         </div>
     );

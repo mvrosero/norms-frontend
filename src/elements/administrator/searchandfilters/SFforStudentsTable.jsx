@@ -13,6 +13,7 @@ export default function SFforStudentsTable({ onSearch, onFilterChange }) {
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [isFilterActive, setIsFilterActive] = useState(false);
   const [programs, setPrograms] = useState([]);
+  const [allUsers, setAllUsers] = useState([]);
 
 
   // Generate years for the batch
@@ -34,6 +35,19 @@ export default function SFforStudentsTable({ onSearch, onFilterChange }) {
   }, []);
 
 
+    // Fetch programs dynamically
+    useEffect(() => {
+      axios
+        .get('http://localhost:9000/programs')
+        .then((response) => {
+          setPrograms(response.data);
+        })
+        .catch((error) => {
+          console.error('Error fetching programs:', error);
+        });
+    }, []);
+
+
   // Handle search input change
   const handleInputChange = (e) => {
     const query = e.target.value;
@@ -52,15 +66,14 @@ export default function SFforStudentsTable({ onSearch, onFilterChange }) {
   const handleFilterChange = (field, value) => {
     const updatedFilters = { yearLevel, program, batch, status, [field]: value };
 
-
     // Update individual filter states
     if (field === 'yearLevel') setYearLevel(value);
     if (field === 'program') setProgram(value);
     if (field === 'batch') setBatch(value);
     if (field === 'status') setStatus(value);
 
-    onFilterChange(updatedFilters);
-    triggerSearch(searchQuery);
+    onFilterChange(updatedFilters); 
+    triggerSearch(searchQuery); 
   };
 
 
@@ -80,7 +93,7 @@ export default function SFforStudentsTable({ onSearch, onFilterChange }) {
     onFilterChange({ yearLevel: '', program: '', batch: '', status: '' });
   };
 
-  
+
   return (
     <div className="searchAndFilterContainer">
       <div className="searchAndFilterWrapper">
@@ -126,9 +139,9 @@ export default function SFforStudentsTable({ onSearch, onFilterChange }) {
               className="filterSelect"
             >
               <option value="">Program</option>
-              {programs.map((prog) => (
-                <option key={prog.program_id} value={prog.program_name}>
-                  {prog.program_name}
+              {programs.map((program) => (
+                <option key={program.program_id} value={program.program_name}>
+                  {program.program_name}
                 </option>
               ))}
             </select>

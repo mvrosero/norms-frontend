@@ -23,59 +23,108 @@ export default function StudentsTable ({filters, searchQuery}) {
   const [selectedStudentIds, setSelectedStudentIds] = useState([]);
   const [selectAll, setSelectAll] = useState(false);
   const [headers, setHeaders] = useState({});
+  const [deletionStatus, setDeletionStatus] = useState(false); 
+
 
   // Pagination State
   const [currentPage, setCurrentPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(10);
 
-
   // Sorting state for full name
   const [sortOrder, setSortOrder] = useState('asc'); 
 
 
-  // Fetch the users, departments, and programs
-  const fetchUsers = useCallback(async () => {
-    try {
-      const [userResponse, departmentResponse, programResponse] = await Promise.all([
-        axios.get('http://localhost:9000/students-not-archived'),
-        axios.get('http://localhost:9000/departments'),
-        axios.get('http://localhost:9000/programs'),
-      ]);
-      setUsers(userResponse.data);
-      setDepartments(departmentResponse.data);
-      setPrograms(programResponse.data);
+// Fetch the users
+const fetchUsers = useCallback(async () => {
+  try {
+      const response = await axios.get('http://localhost:9000/students-not-archived', { headers });
+      console.log('Fetched users:', response.data);
+
+      const activeUsers = response.data.filter(user => user.status !== 'archived');
+      setUsers(activeUsers); 
+  } catch (error) {
+      console.error('Error fetching users:', error);
+      Swal.fire('Error', 'Failed to fetch users.', 'error');
+  }
+}, [headers, deletionStatus]);
+
+// Fetch the departments
+const fetchDepartments = useCallback(async () => {
+  try {
+      const response = await axios.get('http://localhost:9000/departments', { headers });
+        console.log('Fetched departments:', response.data);
+  
+        setDepartments(response.data);
     } catch (error) {
-      console.error('Error fetching data:', error);
+        console.error('Error fetching departments:', error);
+        Swal.fire('Error', 'Failed to fetch departments.', 'error');
     }
-  }, []);
+  }, [headers]);
 
-  useEffect(() => {
-    fetchUsers();
-  }, [fetchUsers]);
+// Fetch the programs
+const fetchPrograms = useCallback(async () => {
+  try {
+      const response = await axios.get('http://localhost:9000/programs', { headers });
+      console.log('Fetched programs:', response.data);
+
+      setPrograms(response.data);
+  } catch (error) {
+      console.error('Error fetching programs:', error);
+      Swal.fire('Error', 'Failed to fetch programs.', 'error');
+  }
+}, [headers]);
+
+// Use useEffect to call all the fetch functions
+useEffect(() => {
+  fetchUsers();
+  fetchDepartments();
+  fetchPrograms();
+}, [fetchUsers, fetchDepartments, fetchPrograms]);
 
 
-  // Handle selecting individual users
-  const handleSelectUser = (userId) => {
-    setSelectedStudentIds((prevSelectedIds) => {
-      if (prevSelectedIds.includes(userId)) {
-        return prevSelectedIds.filter(id => id !== userId);
+
+    // Handle selecting individual users
+    const handleSelectUser = (userId) => {
+      setSelectedStudentIds((prevSelectedIds) => {
+        if (prevSelectedIds.includes(userId)) {
+          return prevSelectedIds.filter(id => id !== userId);
+        } else {
+          return [...prevSelectedIds, userId];
+        }
+      });
+    };
+
+
+    // Handle "Select All" checkbox
+    const handleSelectAll = () => {
+      const activeUsers = users.filter(user => user.status !== 'archived');
+
+      const filteredUsers = activeUsers.filter(user => {
+          const fullName = `${user.first_name} ${user.middle_name || ''} ${user.last_name} ${user.suffix || ''}`.toLowerCase();
+          const studentId = user.student_idnumber.toLowerCase();
+          const matchesSearchQuery = fullName.includes(searchQuery.toLowerCase()) || studentId.includes(searchQuery.toLowerCase());
+
+          const matchesFilters = Object.keys(filters).every(key => {
+              if (filters[key]) {
+                  if (key === 'yearLevel' && user.year_level && user.year_level !== filters[key]) return false; 
+                  if (key === 'program' && user.program_name && user.program_name !== filters[key]) return false;  
+                  if (key === 'batch' && user.batch !== filters[key]) return false;
+                  if (key === 'status' && user.status !== filters[key]) return false;
+              }
+              return true;
+          });
+          return matchesSearchQuery && matchesFilters; 
+      });
+
+      if (selectAll) {
+          setSelectedStudentIds([]); 
       } else {
-        return [...prevSelectedIds, userId];
+          const allFilteredIds = filteredUsers.map(user => user.student_idnumber);
+          setSelectedStudentIds(allFilteredIds); 
       }
-    });
+      setSelectAll(!selectAll);
   };
 
-
-  // Handle "Select All" checkbox
-  const handleSelectAll = () => {
-    if (selectAll) {
-      setSelectedStudentIds([]);
-    } else {
-      const allIds = users.map(user => user.student_idnumber);
-      setSelectedStudentIds(allIds);
-    }
-    setSelectAll(!selectAll);
-  };
 
   const handleReadModalShow = (user) => {
     setSelectedUser(user);
@@ -264,27 +313,27 @@ const renderPagination = () => {
 const renderTable = () => {
 
 
-  const activeUsers = users.filter(user => user.status !== 'archived');
+    const activeUsers = users.filter(user => user.status !== 'archived');
 
-  // Calculate filteredUsers first
-  const filteredUsers = activeUsers.filter(user => {
-      const fullName = `${user.first_name} ${user.middle_name || ''} ${user.last_name} ${user.suffix || ''}`.toLowerCase();
-      const studentId = user.student_idnumber.toLowerCase();
-      const matchesSearchQuery = fullName.includes(searchQuery.toLowerCase()) || studentId.includes(searchQuery.toLowerCase());
-  
-      const matchesFilters = Object.keys(filters).every(key => {
-          if (filters[key]) {
-              if (key === 'yearLevel' && user.year_level && user.year_level !== filters[key]) return false;  
-              if (key === 'program' && user.program_name && user.program_name !== filters[key]) return false;  
-              if (key === 'batch' && user.batch !== filters[key]) return false;
-              if (key === 'status' && user.status !== filters[key]) return false;
-          }
-          return true;
-      });
-  
-      return matchesSearchQuery && matchesFilters; 
-  });
-  
+    // Calculate filteredUsers first
+    const filteredUsers = activeUsers.filter(user => {
+        const fullName = `${user.first_name} ${user.middle_name || ''} ${user.last_name} ${user.suffix || ''}`.toLowerCase();
+        const studentId = user.student_idnumber.toLowerCase();
+        const matchesSearchQuery = fullName.includes(searchQuery.toLowerCase()) || studentId.includes(searchQuery.toLowerCase());
+    
+        const matchesFilters = Object.keys(filters).every(key => {
+            if (filters[key]) {
+                if (key === 'yearLevel' && user.year_level && user.year_level !== filters[key]) return false;  
+                if (key === 'program' && user.program_name && user.program_name !== filters[key]) return false;  
+                if (key === 'batch' && user.batch !== filters[key]) return false;
+                if (key === 'status' && user.status !== filters[key]) return false;
+            }
+            return true;
+        });
+    
+        return matchesSearchQuery && matchesFilters; 
+    });
+    
 const currentUsers = filteredUsers.slice(indexOfFirstUser, indexOfLastUser);
 
 
@@ -336,8 +385,8 @@ const currentUsers = filteredUsers.slice(indexOfFirstUser, indexOfLastUser);
               <td>{user.student_idnumber}</td>
               <td>{`${user.first_name} ${user.middle_name || ''} ${user.last_name} ${user.suffix || ''}`}</td>
               <td>{user.year_level}</td>
-              <td>{departments.find(department => department.department_id === user.department_id)?.department_name || ''}</td>
-              <td>{programs.find(program => program.program_id === user.program_id)?.program_name || ''}</td>
+              <td>{user.department_name}</td>
+              <td>{user.program_name}</td>
               <td style={{ textAlign: 'center' }}>
                 <div style={{
                   backgroundColor: user.status === 'active' ? '#DBF0DC' : '#F0DBDB',
