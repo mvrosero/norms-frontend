@@ -273,7 +273,7 @@ return (
                         </th>
                         <th style={{ width: '13%' }}>Category</th>
                         <th>Offense</th>
-                        <th style={{ width: '25%' }}>Sanction</th>
+                        <th style={{ width: '25%' }}>Sanctions</th>
                         <th style={{ width: '10%' }}>Action</th>
                     </tr>
                 </thead>

@@ -76,7 +76,7 @@ const StudentSubcategoryRecords = () => {
             </ol>
         </nav>
 
-        <SubcategoryTable />
+        <SubcategoryTable subcategoryName={subcategoryName}/>
     </div>
   );
 };
