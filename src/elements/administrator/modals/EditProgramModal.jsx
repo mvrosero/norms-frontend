@@ -29,14 +29,15 @@ export default function EditProgramModal({ show, handleClose, handleSubmit, prog
     const handleBlur = () => {
         setActiveField(null);
     };
+
+    
     return (
         <Modal show={show} onHide={handleClose} backdrop="static">
             <Modal.Header>
-                <Button variant="link" onClick={handleClose}
-                    style={{ position: 'absolute', top: '5px', right: '20px', textDecoration: 'none', fontSize: '30px', color: '#a9a9a9' }}>
+                <Button variant="link" onClick={handleClose} style={{ position: 'absolute', top: '5px', right: '20px', textDecoration: 'none', fontSize: '30px', color: '#a9a9a9' }}>
                     ×
                 </Button>
-                <Modal.Title style={{ fontSize: '30px', marginLeft: '80px', marginRight: '80px' }}>
+                <Modal.Title style={{ fontSize: '30px', textAlign: 'center', width: '100%' }}>
                     EDIT PROGRAM
                 </Modal.Title>
             </Modal.Header>

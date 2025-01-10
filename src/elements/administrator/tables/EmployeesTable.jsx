@@ -333,7 +333,7 @@ const renderPagination = () => {
 
 const renderTable = () => {
   return (
-      <Table bordered hover responsive style={{ borderRadius: '20px', marginBottom: '20px', marginLeft: '110px' }}>
+    <Table bordered hover responsive style={{ borderRadius: '20px', marginBottom: '20px', marginLeft: '110px' }}>
         <thead>
           <tr>
             <th style={{ width: '3%' }}><input type="checkbox" checked={selectAll} onChange={handleSelectAll}/></th>

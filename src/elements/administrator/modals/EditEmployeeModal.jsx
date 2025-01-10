@@ -19,6 +19,7 @@ const EditEmployeeModal = ({ user, show, onHide, fetchUsers, headers, roles }) =
         status: user ? user.status : 'active', 
     });
   
+
     // Password visiblity
     const [isPasswordVisible, setIsPasswordVisible] = useState(false);
 
@@ -26,6 +27,8 @@ const EditEmployeeModal = ({ user, show, onHide, fetchUsers, headers, roles }) =
         setIsPasswordVisible(!isPasswordVisible);
     };
 
+
+    // Employee form data
     useEffect(() => {
         if (user) {
             setFormData({
@@ -43,6 +46,7 @@ const EditEmployeeModal = ({ user, show, onHide, fetchUsers, headers, roles }) =
         }
     }, [user]);
 
+
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData((prev) => ({
@@ -57,7 +61,6 @@ const EditEmployeeModal = ({ user, show, onHide, fetchUsers, headers, roles }) =
     const validateField = (name, value) => {
         const newErrors = { ...errors };
 
-        // Place validation here
         if (name === 'employee_idnumber') {
             const idFormat = /^\d{2}-\d{5}$/; // Matches "00-00000" format
             if (!idFormat.test(value)) {
@@ -78,7 +81,7 @@ const EditEmployeeModal = ({ user, show, onHide, fetchUsers, headers, roles }) =
         }
 
         // Validate Middle Name
-        if (name === 'middle_name' && value) { // Middle name is optional
+        if (name === 'middle_name' && value) { 
             const nameFormat = /^[A-Z][a-zA-Z .'-]*$/; // Capital letter followed by letters, spaces, dots, or dashes
             if (!nameFormat.test(value)) {
                 newErrors.middle_name = 'Middle name must start with a capital letter and can contain only letters, spaces, dots, or dashes.';
@@ -98,7 +101,7 @@ const EditEmployeeModal = ({ user, show, onHide, fetchUsers, headers, roles }) =
         }
 
         // Validate Suffix
-        if (name === 'suffix' && value) { // Suffix is optional
+        if (name === 'suffix' && value) { 
             const nameFormat = /^[A-Z][a-zA-Z .-]*$/; // Capital letter followed by letters, spaces, dots, or dashes
             if (!nameFormat.test(value)) {
                 newErrors.suffix = 'Suffix must start with a capital letter and can contain only letters, spaces, dots, or dashes.';
@@ -130,6 +133,7 @@ const EditEmployeeModal = ({ user, show, onHide, fetchUsers, headers, roles }) =
     };
 
 
+    // Handle edit employee
     const handleSubmit = (e) => {
         e.preventDefault();
         try {
@@ -146,71 +150,71 @@ const EditEmployeeModal = ({ user, show, onHide, fetchUsers, headers, roles }) =
             });
         }
     
-    
-// Basic form validation
-if (!formData.employee_idnumber || !formData.first_name || !formData.last_name || !formData.email || !formData.role_id) {
-    let missingFields = [];
+        
+    // Basic form validation
+    if (!formData.employee_idnumber || !formData.first_name || !formData.last_name || !formData.email || !formData.role_id) {
+        let missingFields = [];
 
-    // Identify missing fields
-    if (!formData.employee_idnumber) missingFields.push("Employee ID Number");
-    if (!formData.first_name) missingFields.push("First Name");
-    if (!formData.last_name) missingFields.push("Last Name");
-    if (!formData.email) missingFields.push("Email");
-    if (!formData.role_id) missingFields.push("Role");
+        // Identify missing fields
+        if (!formData.employee_idnumber) missingFields.push("Employee ID Number");
+        if (!formData.first_name) missingFields.push("First Name");
+        if (!formData.last_name) missingFields.push("Last Name");
+        if (!formData.email) missingFields.push("Email");
+        if (!formData.role_id) missingFields.push("Role");
 
-    // Create a more informative message
-    Swal.fire({
-        icon: 'error',
-        title: 'Missing Required Fields',
-        text: `Please fill in the following required fields: ${missingFields.join(", ")}.`,
-    });
-    return;
-}
         Swal.fire({
-            title: 'Are you sure you want to save the changes?',
-            text: 'You are about to update this employeee’s details.',
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#B0B0B0',
-            confirmButtonText: 'Yes, update it!',
-        }).then(async (result) => {
-            if (result.isConfirmed) {
-                try {
-                    const response = await axios.put(
-                        `http://localhost:9000/employee/${user.user_id}`,
-                        formData,
-                        { headers }
-                    );
-    
-                    if (response.status === 200) {
-                        Swal.fire({
-                            icon: 'success',
-                            text: 'User updated successfully!',
-                        }).then(() => {
-                            onHide();
-                            fetchUsers();
-                        });
-                    } else {
-                        const errorMessage = response.data.message || 'Failed to update user. Please try again later.';
+            icon: 'error',
+            title: 'Missing Required Fields',
+            text: `Please fill in the following required fields: ${missingFields.join(", ")}.`,
+        });
+        return;
+    }
+            Swal.fire({
+                title: 'Are you sure you want to save the changes?',
+                text: 'You are about to update this employeee’s details.',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#B0B0B0',
+                confirmButtonText: 'Yes, update it!',
+            }).then(async (result) => {
+                if (result.isConfirmed) {
+                    try {
+                        const response = await axios.put(
+                            `http://localhost:9000/employee/${user.user_id}`,
+                            formData,
+                            { headers }
+                        );
+        
+                        if (response.status === 200) {
+                            Swal.fire({
+                                icon: 'success',
+                                text: 'User updated successfully!',
+                            }).then(() => {
+                                onHide();
+                                fetchUsers();
+                            });
+                        } else {
+                            const errorMessage = response.data.message || 'Failed to update user. Please try again later.';
+                            Swal.fire({
+                                icon: 'error',
+                                text: errorMessage,
+                            });
+                        }
+                    } catch (error) {
+                        console.error('Error updating user:', error);
+                        const errorMessage = error.response?.data?.message || 'An error occurred while updating the user. Please try again later.';
                         Swal.fire({
                             icon: 'error',
                             text: errorMessage,
                         });
                     }
-                } catch (error) {
-                    console.error('Error updating user:', error);
-                    const errorMessage = error.response?.data?.message || 'An error occurred while updating the user. Please try again later.';
-                    Swal.fire({
-                        icon: 'error',
-                        text: errorMessage,
-                    });
                 }
-            }
-        });
-    };
+            });
+        };
 
     
+    // Handle cancel edit employee
     const handleCancel = () => {
         Swal.fire({
             title: 'Are you sure you want to cancel?',
@@ -229,13 +233,15 @@ if (!formData.employee_idnumber || !formData.first_name || !formData.last_name |
     };
 
 
+    // Date and time format
     const formatDateForInput = (date) => {
         const newDate = new Date(date);
-        newDate.setMinutes(newDate.getMinutes() - newDate.getTimezoneOffset()); // Adjust for time zone offset
-        return newDate.toISOString().split('T')[0]; // Format the date as YYYY-MM-DD
+        newDate.setMinutes(newDate.getMinutes() - newDate.getTimezoneOffset()); 
+        return newDate.toISOString().split('T')[0]; 
       };
     
 
+      // Set styles for fields and buttons
       const inputStyle = {
         backgroundColor: '#f2f2f2',
         border: '1px solid #ced4da', 
@@ -296,46 +302,26 @@ if (!formData.employee_idnumber || !formData.first_name || !formData.last_name |
         return null;
     }
 
-    return (
-        <Modal show={show} onHide={handleCancel} size="lg">
-            <Modal.Header>
-                <Button
-                    variant="link"
-                    onClick={handleCancel}
-                    style={{
-                        position: 'absolute',
-                        top: '5px',
-                        right: '20px',
-                        textDecoration: 'none',
-                        fontSize: '30px',
-                        color: '#a9a9a9',
-                    }}
-                >
-                    ×
-                </Button>
-                <Modal.Title
-                    style={{
-                        fontSize: '40px',
-                        marginBottom: '10px',
-                        marginLeft: '100px',
-                        marginRight: '100px',
-                    }}
-                >
-                    EDIT EMPLOYEE DETAILS
-                </Modal.Title>
-            </Modal.Header>
 
-            {/* Modal Body */}
+return (
+    <Modal show={show} onHide={handleCancel} size="lg" backdrop='static'>
+        <Modal.Header>
+            <Button variant="link" onClick={handleCancel} style={{ position: 'absolute', top: '5px', right: '20px', textDecoration: 'none', fontSize: '30px', color: '#a9a9a9' }}>
+                ×
+            </Button>
+            <Modal.Title style={{ fontSize: '40px', marginBottom: '10px', textAlign: 'center', width: '100%' }}>EDIT EMPLOYEE DETAILS</Modal.Title>
+        </Modal.Header>
             <Modal.Body style={{ paddingLeft: '30px', paddingRight: '30px' }}>
                 <form onSubmit={handleSubmit}>
+
                 <div>
                     <h5 
                         className="fw-bold" style={{ fontSize: '18px', color: '#0D4809', marginTop: '10px', marginBottom: '20px', fontFamily: 'Poppins, sans-serif', fontWeight: 700 }}>
                         Personal Information
                     </h5>
                 </div>
+
                     <Row className="gy-4">
-                        {/* Employee ID and Birthdate */}
                         <Col md={6}>
                             <Form.Group controlId="employee_idnumber">
                                 <Form.Label className="fw-bold">Employee ID Number</Form.Label>
@@ -363,7 +349,6 @@ if (!formData.employee_idnumber || !formData.first_name || !formData.last_name |
                             </Form.Group>
                         </Col>
 
-                        {/* First Name and Middle Name */}
                         <Col md={6}>
                             <Form.Group controlId="first_name">
                                     <Form.Label className="fw-bold">First Name</Form.Label>
@@ -391,7 +376,6 @@ if (!formData.employee_idnumber || !formData.first_name || !formData.last_name |
                             </Form.Group>
                         </Col>
 
-                        {/* Last Name and Suffix */}
                         <Col md={6}>
                             <Form.Group controlId="last_name">
                                    <Form.Label className="fw-bold">Last Name</Form.Label>
@@ -426,7 +410,6 @@ if (!formData.employee_idnumber || !formData.first_name || !formData.last_name |
                             </h5>
                         </div>
             
-                        {/* Email Address and Password */}
                         <Col md={6}>
                             <Form.Group controlId="email">
                                   <Form.Label className="fw-bold">Email Address</Form.Label>
@@ -443,15 +426,15 @@ if (!formData.employee_idnumber || !formData.first_name || !formData.last_name |
                         <Col md={6}>
                             <Form.Group controlId="password">
                                  <Form.Label className="fw-bold">Password</Form.Label>
-                                    <div style={{ position: 'relative' }}> {/* Wrapper for field and icon */}
+                                    <div style={{ position: 'relative' }}> 
                                         <Form.Control
-                                            type={isPasswordVisible ? "text" : "password"} // Toggle between plain text and masked input
+                                            type={isPasswordVisible ? "text" : "password"} 
                                             name="password"
-                                            value={formData.password || ""} // Use formData.password to manage the field's value
+                                            value={formData.password || ""} 
                                             onChange={handleChange}
                                             style={{
                                                 ...getInputStyle('password', formData, errors),
-                                                paddingRight: '2.5rem' // Add space for the eye icon
+                                                paddingRight: '40px' 
                                             }}
                                             placeholder="Enter Password"
                                             required
@@ -460,14 +443,14 @@ if (!formData.employee_idnumber || !formData.first_name || !formData.last_name |
                                         onClick={togglePasswordVisibility}
                                         style={{
                                             position: 'absolute',
-                                            right: '10px', // Position the icon inside the field, at the rightmost part
+                                            right: '10px', 
                                             top: '50%',
                                             transform: 'translateY(-50%)',
                                             cursor: 'pointer',
                                             color: '#6c757d'
                                         }}
                                         >
-                                        {isPasswordVisible ? <FaEyeSlash /> : <FaEye />} {/* Show the appropriate icon */}
+                                        {isPasswordVisible ? <FaEyeSlash /> : <FaEye />} 
                                     </span>
                                 </div>
                                     {errors.password && (
@@ -475,8 +458,6 @@ if (!formData.employee_idnumber || !formData.first_name || !formData.last_name |
                                     )}
                             </Form.Group>
                         </Col>
-
-                        {/* Role and Status */}
                         <Col md={6}>
                             <Form.Group controlId="role_id" style={{ marginBottom: '30px' }}>
                                   <Form.Label className="fw-bold">Role</Form.Label>
@@ -514,11 +495,7 @@ if (!formData.employee_idnumber || !formData.first_name || !formData.last_name |
 
                     {/* Buttons */}
                     <div className="d-flex justify-content-end mt-3">
-                       <button
-                            type="button"
-                            onClick={handleCancel} // Trigger the handleCancel function
-                            style={cancelButtonStyle} // Apply the styles
-                        >
+                       <button type="button" onClick={handleCancel} style={cancelButtonStyle}>
                             Cancel
                         </button>
                         <button type="submit" style={buttonStyle}>
@@ -530,5 +507,6 @@ if (!formData.employee_idnumber || !formData.first_name || !formData.last_name |
         </Modal>
     );
 };
+
 
 export default EditEmployeeModal;

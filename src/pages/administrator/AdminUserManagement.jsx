@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect, useCallback } from 'react';
+import axios from 'axios';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 
 import AdminNavigation from "./AdminNavigation";
 import AdminInfo from "./AdminInfo";
-import SearchAndFilter from '../general/SearchAndFilter';
+import SFforStudentsTable from '../../elements/administrator/searchandfilters/SFforStudentsTable';
 import StudentsTable from '../../elements/administrator/tables/StudentsTable';
 import EmployeesTable from '../../elements/administrator/tables/EmployeesTable';
 import ImportStudentsCSV from '../../elements/general/imports/ImportStudentsCSV'; 
@@ -12,8 +13,19 @@ import UserDropdownButton from '../../elements/general/buttons/UserDropdownButto
 
 export default function AdminUserManagement() {
     const [selectedComponent, setSelectedComponent] = useState('students');
+    const [users, setUsers] = useState([]); 
+    const [loading, setLoading] = useState(false); 
+    const [error, setError] = useState(false);
     const [searchQuery, setSearchQuery] = useState('');
-    const [filterOption, setFilterOption] = useState('all');
+    const [allUsers, setAllUsers] = useState([]);  
+    const [filteredUsers, setFilteredUsers] = useState([]);  
+    const [filters, setFilters] = useState({
+      yearLevel: '',
+      department: '',
+      program: '',
+      batch: '',
+      status: '',
+    });
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -24,25 +36,102 @@ export default function AdminUserManagement() {
         }
     }, [navigate]);
 
+
+    
+    const fetchUsers = useCallback(async () => {
+        setLoading(true); // Start loading
+        setError(false); // Reset error state
+        try {
+            const token = localStorage.getItem('token');
+            const headers = { Authorization: `Bearer ${token}` };
+    
+            const response = await axios.get(
+                'http://localhost:9000/users',
+                { headers }
+            );
+    
+            const activeUsers = response.data.filter(user => user.status !== 'archived');
+            setUsers(activeUsers);
+            setAllUsers(activeUsers);
+            setFilteredUsers(activeUsers);
+    
+        } catch (error) {
+            console.error('Error fetching users:', error.response || error.message || error);
+            setError(true); // Update error state
+        } finally {
+            setLoading(false); // End loading
+        }
+    }, []);
+    
+
+
+    // Handle search query changes
+    const handleSearch = (query) => {
+        setSearchQuery(query);
+        const normalizedQuery = query ? query.toLowerCase() : '';
+    
+        const filtered = allUsers.filter(user => {
+            const userName = user.name ? user.name.toLowerCase() : ''; 
+            return userName.includes(normalizedQuery);
+        });
+    
+        setFilteredUsers(filtered);  
+    };
+
+
+        // Handle filter changes (yearLevel, program, batch, status)
+        const handleFilterChange = (filters) => {
+            console.log('Updated Filters:', filters);
+            setFilters(filters);  
+        
+            let filtered = allUsers;
+        
+            // Apply filters one by one
+            if (filters.yearLevel) {
+                filtered = filtered.filter(user => user.yearLevel === filters.yearLevel);
+            }
+
+            if (filters.department) {
+                filtered = filtered.filter(user => user.department === filters.department);
+            }
+        
+            if (filters.program) {
+                    filtered = filtered.filter(user => user.program === filters.program);
+                }
+    
+            if (filters.batch) {
+                filtered = filtered.filter(user => user.batch === filters.batch);
+            }
+        
+            if (filters.status) {
+                filtered = filtered.filter(user => user.status === filters.status);
+            }
+            setFilteredUsers(filtered);
+        };
+        useEffect(() => {
+            fetchUsers();
+        }, [fetchUsers]);
+
+
+
+
     const handleComponentChange = (event) => {
         setSelectedComponent(event.target.value);
     };
 
-    const handleSearch = (query, filter) => {
-        setSearchQuery(query);
-        setFilterOption(filter);
-    };
+
 
     return (
         <div>
             <AdminNavigation />
             <AdminInfo />
             <h6 className="page-title"> USER MANAGEMENT </h6>
-            <div style={{ display: 'flex', marginTop: '20px', alignItems: 'center' }}>
-                <div style={{ width: '750px', marginLeft: '100px' }}>
-                    <SearchAndFilter onSearch={handleSearch} />
+            <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'center', marginTop: '10px', marginLeft: '70px', padding: '0 20px', gap: '2px' }}>
+                <div style={{ flex: '1 1 50%', minWidth: '300px' }}>
+                    {selectedComponent === 'students' && <SFforStudentsTable onSearch={handleSearch} onFilterChange={handleFilterChange}  />}
+                    {selectedComponent === 'employees' && <ImportEmployeesCSV />}
                 </div>
-                <UserDropdownButton />
+                <UserDropdownButton/>
                 {selectedComponent === 'students' && <ImportStudentsCSV />}
                 {selectedComponent === 'employees' && <ImportEmployeesCSV />}
             </div>
@@ -87,10 +176,14 @@ export default function AdminUserManagement() {
 
             {/* Display the tables based on selected radio button */}
             {selectedComponent === 'students' && (
-                <StudentsTable searchQuery={searchQuery} filterOption={filterOption} />
+                <StudentsTable 
+                    filteredUsers={filteredUsers}  
+                    filters={filters}      
+                    searchQuery={searchQuery} 
+                />
             )}
             {selectedComponent === 'employees' && (
-                <EmployeesTable searchQuery={searchQuery} filterOption={filterOption} />
+                <EmployeesTable searchQuery={searchQuery}  />
             )}
         </div>
     );

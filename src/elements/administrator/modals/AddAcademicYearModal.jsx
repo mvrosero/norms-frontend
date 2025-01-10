@@ -36,7 +36,7 @@ const AddAcademicYearModal = ({ show, handleClose, handleSubmit, formData, handl
                     ×
                 </Button>
                 <Modal.Title
-                    style={{ fontSize: '30px', marginLeft: '40px', marginRight: '40px' }}> ADD ACADEMIC YEAR </Modal.Title>
+                    style={{ fontSize: '30px', textAlign: 'center', width: '100%' }}> ADD ACADEMIC YEAR </Modal.Title>
             </Modal.Header>
             <Modal.Body>
                 <Form onSubmit={handleSubmit}>

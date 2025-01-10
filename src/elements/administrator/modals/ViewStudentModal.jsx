@@ -49,26 +49,14 @@ const ViewStudentModal = ({ show, onHide, user, departments, programs }) => {
     };
 
 
-    return (
-        <Modal show={show} onHide={onHide} size="lg">
-            <Modal.Header>
-                <Button
-                    variant="link"
-                    onClick={onHide}
-                    style={{
-                        position: 'absolute',
-                        top: '5px',
-                        right: '20px',
-                        textDecoration: 'none',
-                        fontSize: '30px',
-                        color: '#a9a9a9',
-                    }}
-                >
-                    ×
-                </Button>
-                <Modal.Title style={{ fontSize: '40px', marginBottom: '10px', marginLeft: '100px', marginRight: '100px' }}>VIEW STUDENT DETAILS</Modal.Title>
-            </Modal.Header>
-
+return (
+    <Modal show={show} onHide={onHide} size="lg" backdrop='static'>
+        <Modal.Header>
+            <Button variant="link" onClick={onHide} style={{ position: 'absolute', top: '5px', right: '20px', textDecoration: 'none', fontSize: '30px', color: '#a9a9a9' }}>
+                ×
+            </Button>
+            <Modal.Title style={{ fontSize: '40px', marginBottom: '10px', textAlign: 'center', width: '100%' }}>VIEW STUDENT DETAILS</Modal.Title>
+        </Modal.Header>
             <Modal.Body>
                 {user ? (
                     <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', rowGap: '10px', marginLeft: '60px', marginRight: '20px' }}>
@@ -85,8 +73,8 @@ const ViewStudentModal = ({ show, onHide, user, departments, programs }) => {
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 style={{
-                                    textDecoration: 'underline', // Underlines the text
-                                    color: '#4682B4', // Lighter blue color (SteelBlue)
+                                    textDecoration: 'underline', 
+                                    color: '#4682B4', 
                                 }}
                             >
                                 {user.email}
@@ -115,5 +103,6 @@ const ViewStudentModal = ({ show, onHide, user, departments, programs }) => {
         </Modal>
     );
 };
+
 
 export default ViewStudentModal;

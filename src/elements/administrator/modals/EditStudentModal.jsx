@@ -21,18 +21,19 @@ const EditStudentModal = ({ user, show, onHide, fetchUsers, headers, departments
         program_id: user ? user.program_id : '',
         status: user ? user.status : 'active',
     });
-
     const [filteredPrograms, setFilteredPrograms] = useState([]);
-    const [isPasswordVisible, setIsPasswordVisible] = useState(false);  // State to toggle password visibility
+    const [isPasswordVisible, setIsPasswordVisible] = useState(false); 
+
 
     // Toggle password visibility
     const togglePasswordVisibility = () => {
         setIsPasswordVisible(!isPasswordVisible);
     };
     
+
+    // Student form data
     useEffect(() => {
         if (formData.department_id) {
-            // Fetch programs based on selected department_id
             axios
                 .get(`http://localhost:9000/programs/${formData.department_id}`)
                 .then((response) => {
@@ -44,7 +45,6 @@ const EditStudentModal = ({ user, show, onHide, fetchUsers, headers, departments
                 });
         }
     }, [formData.department_id]);
-
     useEffect(() => {
         if (user) {
             setFormData({
@@ -100,7 +100,7 @@ const EditStudentModal = ({ user, show, onHide, fetchUsers, headers, departments
         }
 
         // Validate Middle Name
-        if (name === 'middle_name' && value) { // Middle name is optional
+        if (name === 'middle_name' && value) { 
             const nameFormat = /^[A-Z][a-zA-Z .'-]*$/; // Capital letter followed by letters, spaces, dots, or dashes
             if (!nameFormat.test(value)) {
                 newErrors.middle_name = 'Middle name must start with a capital letter and can contain only letters, spaces, dots, or dashes.';
@@ -120,7 +120,7 @@ const EditStudentModal = ({ user, show, onHide, fetchUsers, headers, departments
         }
 
         // Validate Suffix
-        if (name === 'suffix' && value) { // Suffix is optional
+        if (name === 'suffix' && value) { 
             const nameFormat = /^[A-Z][a-zA-Z .-]*$/; // Capital letter followed by letters, spaces, dots, or dashes
             if (!nameFormat.test(value)) {
                 newErrors.suffix = 'Suffix must start with a capital letter and can contain only letters, spaces, dots, or dashes.';
@@ -152,6 +152,7 @@ const EditStudentModal = ({ user, show, onHide, fetchUsers, headers, departments
         };
 
 
+    // Handle edit student
     const handleSubmit = (e) => {
         e.preventDefault();
         try {
@@ -169,73 +170,73 @@ const EditStudentModal = ({ user, show, onHide, fetchUsers, headers, departments
         }
     
     
-// Basic form validation
-if (!formData.student_idnumber || !formData.first_name || !formData.last_name || !formData.email || !formData.year_level || !formData.batch || !formData.department_id || !formData.program_id) {
-    let missingFields = [];
+    // Basic form validation
+    if (!formData.student_idnumber || !formData.first_name || !formData.last_name || !formData.email || !formData.year_level || !formData.batch || !formData.department_id || !formData.program_id) {
+        let missingFields = [];
 
-    // Identify missing fields
-    if (!formData.student_idnumber) missingFields.push("Student ID Number");
-    if (!formData.first_name) missingFields.push("First Name");
-    if (!formData.last_name) missingFields.push("Last Name");
-    if (!formData.email) missingFields.push("Email");
-    if (!formData.year_level) missingFields.push("Year Level");
-    if (!formData.batch) missingFields.push("Batch");
-    if (!formData.department_id) missingFields.push("Department");
-    if (!formData.program_id) missingFields.push("Program");
+        // Identify missing fields
+        if (!formData.student_idnumber) missingFields.push("Student ID Number");
+        if (!formData.first_name) missingFields.push("First Name");
+        if (!formData.last_name) missingFields.push("Last Name");
+        if (!formData.email) missingFields.push("Email");
+        if (!formData.year_level) missingFields.push("Year Level");
+        if (!formData.batch) missingFields.push("Batch");
+        if (!formData.department_id) missingFields.push("Department");
+        if (!formData.program_id) missingFields.push("Program");
 
-    // Create a more informative message
-    Swal.fire({
-        icon: 'error',
-        title: 'Missing Required Fields',
-        text: `Please fill in the following required fields: ${missingFields.join(", ")}.`,
-    });
-    return;
-}
         Swal.fire({
-            title: 'Are you sure you want to save the changes?',
-            text: 'You are about to update this student’s details.',
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#B0B0B0',
-            confirmButtonText: 'Yes, update it!',
-        }).then(async (result) => {
-            if (result.isConfirmed) {
-                try {
-                    const response = await axios.put(
-                        `http://localhost:9000/student/${user.user_id}`,
-                        formData,
-                        { headers }
-                    );
-    
-                    if (response.status === 200) {
-                        Swal.fire({
-                            icon: 'success',
-                            text: 'User updated successfully!',
-                        }).then(() => {
-                            onHide();
-                            fetchUsers();
-                        });
-                    } else {
-                        const errorMessage = response.data.message || 'Failed to update user. Please try again later.';
+            icon: 'error',
+            title: 'Missing Required Fields',
+            text: `Please fill in the following required fields: ${missingFields.join(", ")}.`,
+        });
+        return;
+    }
+            Swal.fire({
+                title: 'Are you sure you want to save the changes?',
+                text: 'You are about to update this student’s details.',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#B0B0B0',
+                confirmButtonText: 'Yes, update it!',
+            }).then(async (result) => {
+                if (result.isConfirmed) {
+                    try {
+                        const response = await axios.put(
+                            `http://localhost:9000/student/${user.user_id}`,
+                            formData,
+                            { headers }
+                        );
+        
+                        if (response.status === 200) {
+                            Swal.fire({
+                                icon: 'success',
+                                text: 'User updated successfully!',
+                            }).then(() => {
+                                onHide();
+                                fetchUsers();
+                            });
+                        } else {
+                            const errorMessage = response.data.message || 'Failed to update user. Please try again later.';
+                            Swal.fire({
+                                icon: 'error',
+                                text: errorMessage,
+                            });
+                        }
+                    } catch (error) {
+                        console.error('Error updating user:', error);
+                        const errorMessage = error.response?.data?.message || 'An error occurred while updating the user. Please try again later.';
                         Swal.fire({
                             icon: 'error',
                             text: errorMessage,
                         });
                     }
-                } catch (error) {
-                    console.error('Error updating user:', error);
-                    const errorMessage = error.response?.data?.message || 'An error occurred while updating the user. Please try again later.';
-                    Swal.fire({
-                        icon: 'error',
-                        text: errorMessage,
-                    });
                 }
-            }
-        });
-    };
+            });
+        };
     
 
+    // Handle cancel edit student
     const handleCancel = () => {
         Swal.fire({
             title: 'Are you sure you want to cancel?',
@@ -259,13 +260,16 @@ if (!formData.student_idnumber || !formData.first_name || !formData.last_name ||
     for (let year = 2018; year <= 2030; year++) {
         batchYears.push(year);
     }
+
     // Date and time format
     const formatDateForInput = (date) => {
         const newDate = new Date(date);
-        newDate.setMinutes(newDate.getMinutes() - newDate.getTimezoneOffset()); // Adjust for time zone offset
-        return newDate.toISOString().split('T')[0]; // Format the date as YYYY-MM-DD
+        newDate.setMinutes(newDate.getMinutes() - newDate.getTimezoneOffset()); 
+        return newDate.toISOString().split('T')[0]; 
     };
 
+
+    // Set styles for fields and buttons
     const inputStyle = {
         backgroundColor: '#f2f2f2',
         border: '1px solid #ced4da', 
@@ -295,7 +299,6 @@ if (!formData.student_idnumber || !formData.first_name || !formData.last_name ||
         return baseStyle; 
     };
     
-
     const buttonStyle = {
         backgroundColor: '#3B71CA',
         color: '#FFFFFF',
@@ -327,37 +330,18 @@ if (!formData.student_idnumber || !formData.first_name || !formData.last_name ||
         return null;
     }
 
-    return (
-        <Modal show={show} onHide={handleCancel} size="lg">
-            <Modal.Header>
-                <Button
-                    variant="link"
-                    onClick={handleCancel}
-                    style={{
-                        position: 'absolute',
-                        top: '5px',
-                        right: '20px',
-                        textDecoration: 'none',
-                        fontSize: '30px',
-                        color: '#a9a9a9',
-                    }}
-                >
-                    ×
-                </Button>
-                <Modal.Title
-                    style={{
-                        fontSize: '40px',
-                        marginBottom: '10px',
-                        marginLeft: '120px',
-                        marginRight: '120px',
-                    }}
-                >
-                    EDIT STUDENT DETAILS
-                </Modal.Title>
-            </Modal.Header>
 
-            <Modal.Body style={{ paddingLeft: '30px', paddingRight: '30px' }}>
+return (
+    <Modal show={show} onHide={handleCancel} size="lg" backdrop='static'>
+        <Modal.Header>
+            <Button variant="link" onClick={handleCancel} style={{ position: 'absolute', top: '5px', right: '20px', textDecoration: 'none', fontSize: '30px', color: '#a9a9a9' }}>
+                ×
+            </Button>
+            <Modal.Title style={{ fontSize: '40px', marginBottom: '10px', textAlign: 'center', width: '100%' }}>EDIT STUDENT DETAILS</Modal.Title>
+        </Modal.Header>
+         <Modal.Body style={{ paddingLeft: '30px', paddingRight: '30px' }}>
             <form onSubmit={handleSubmit}>
+            
             <div>
                 <h5 
                     className="fw-bold" style={{ fontSize: '18px', color: '#0D4809', marginTop: '10px', marginBottom: '20px', fontFamily: 'Poppins, sans-serif', fontWeight: 700 }}>
@@ -379,7 +363,6 @@ if (!formData.student_idnumber || !formData.first_name || !formData.last_name ||
                             {errors.student_idnumber && (<div style={{ color: 'red', fontSize: '12px' }}>{errors.student_idnumber}</div>)}
                     </Form.Group>
                 </Col>
-                
                 <Col md={6}>
                 <Form.Group controlId="birthdate">
                     <Form.Label className="fw-bold">Birthdate</Form.Label>
@@ -490,7 +473,6 @@ if (!formData.student_idnumber || !formData.first_name || !formData.last_name ||
                         </Form.Select>
                     </Form.Group>
                 </Col>
-
                 <Col md={6}>
                     <Form.Group controlId="department_id">
                             <Form.Label className="fw-bold">Department</Form.Label>
@@ -549,40 +531,40 @@ if (!formData.student_idnumber || !formData.first_name || !formData.last_name ||
                     </Form.Group>
                 </Col>
                 <Col md={6}>
-            <Form.Group controlId="password">
-                <Form.Label className="fw-bold">Password</Form.Label>
-                <div style={{ position: 'relative' }}> {/* Wrapper for field and icon */}
-                    <Form.Control
-                        type={isPasswordVisible ? "text" : "password"} // Toggle between plain text and masked input
-                        name="password"
-                        value={formData.password || ""} // Use formData.password to manage the field's value
-                        onChange={handleChange}
-                        style={{
-                            ...getInputStyle('password', formData, errors),
-                            paddingRight: '2.5rem' // Add space for the eye icon
-                        }}
-                        placeholder="Enter Password"
-                        required
-                    />
-                    <span
-                        onClick={togglePasswordVisibility}
-                        style={{
-                            position: 'absolute',
-                            right: '10px', // Position the icon inside the field, at the rightmost part
-                            top: '50%',
-                            transform: 'translateY(-50%)',
-                            cursor: 'pointer',
-                            color: '#6c757d'
-                        }}
-                    >
-                        {isPasswordVisible ? <FaEyeSlash /> : <FaEye />} {/* Show the appropriate icon */}
-                    </span>
-                </div>
-                {errors.password && (
-                    <div style={{ color: 'red', fontSize: '12px' }}>{errors.password}</div>
-                )}
-            </Form.Group>
-        </Col>
+                    <Form.Group controlId="password">
+                        <Form.Label className="fw-bold">Password</Form.Label>
+                        <div style={{ position: 'relative' }}>
+                            <Form.Control
+                                type={isPasswordVisible ? "text" : "password"}
+                                name="password"
+                                value={formData.password || ""} 
+                                onChange={handleChange}
+                                style={{
+                                    ...getInputStyle('password', formData, errors),
+                                    paddingRight: '40px' 
+                                }}
+                                placeholder="Enter Password"
+                                required
+                            />
+                            <span
+                                onClick={togglePasswordVisibility}
+                                style={{
+                                    position: 'absolute',
+                                    right: '10px', 
+                                    top: '50%',
+                                    transform: 'translateY(-50%)',
+                                    cursor: 'pointer',
+                                    color: '#6c757d'
+                                }}
+                            >
+                                {isPasswordVisible ? <FaEyeSlash /> : <FaEye />} 
+                            </span>
+                        </div>
+                        {errors.password && (
+                            <div style={{ color: 'red', fontSize: '12px' }}>{errors.password}</div>
+                        )}
+                    </Form.Group>
+                </Col>
                 <Col md={6}>
                     <Form.Group controlId="status" style={{ marginBottom: '30px' }}>
                         <Form.Label className="fw-bold">Status</Form.Label>
@@ -599,14 +581,10 @@ if (!formData.student_idnumber || !formData.first_name || !formData.last_name ||
                     </Form.Group>
                 </Col>
             </Row>
-
+            
             {/* Buttons */}
             <div className="d-flex justify-content-end mt-3">
-                <button
-                    type="button"
-                    onClick={handleCancel} // Trigger the handleCancel function
-                    style={cancelButtonStyle} // Apply the styles
-                >
+                <button type="button" onClick={handleCancel} style={cancelButtonStyle}>
                     Cancel
                 </button>
                 <button type="submit" style={buttonStyle}>
@@ -616,7 +594,7 @@ if (!formData.student_idnumber || !formData.first_name || !formData.last_name ||
         </form>
     </Modal.Body>
 </Modal>
-    );
+);
 };
 
 

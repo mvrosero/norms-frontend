@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Modal, Form, Button, Row } from 'react-bootstrap';
 import '../../../styles/style.css'
 
+
 const inputStyle = {
     backgroundColor: '#f2f2f2',
     border: '1px solid #ced4da',
@@ -24,14 +25,14 @@ const EditAcademicYearModal = ({ show, handleClose, handleSubmit, formData, hand
     const handleFocus = (field) => setActiveField(field);
     const handleBlur = () => setActiveField(null);
 
+    
     return (
         <Modal show={show} onHide={handleClose} backdrop="static">
             <Modal.Header>
-                <Button variant="link" onClick={handleClose}
-                    style={{ position: 'absolute', top: '5px', right: '20px', textDecoration: 'none', fontSize: '30px', color: '#a9a9a9' }}>
+                <Button variant="link" onClick={handleClose} style={{ position: 'absolute', top: '5px', right: '20px', textDecoration: 'none', fontSize: '30px', color: '#a9a9a9' }}>
                     ×
                 </Button>
-                <Modal.Title style={{ fontSize: '30px', marginLeft: '35px', marginRight: '35px' }}>
+                <Modal.Title style={{ fontSize: '30px', textAlign: 'center', width: '100%' }}>
                     EDIT ACADEMIC YEAR
                 </Modal.Title>
             </Modal.Header>

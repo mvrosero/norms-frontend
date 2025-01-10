@@ -264,7 +264,6 @@ const renderPagination = () => {
 
 // Render the students table
 const renderTable = () => {
-  
     return (
       <Table bordered hover responsive style={{ borderRadius: '20px', marginBottom: '20px', marginLeft: '110px' }}>
         <thead>
