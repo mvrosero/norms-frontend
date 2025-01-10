@@ -109,7 +109,7 @@ return (
                 </div>
 
                 {/* Mission and Vision Section */}
-                <div>
+                <div style={{ textAlign: 'justify' }}>
                     <h6 style={titleStyle}>Mission</h6>
                     <div style={contentContainerStyle}>
                         <p style={contentStyle}>
@@ -120,7 +120,7 @@ return (
                         </p>
                     </div>
                 </div>
-                <div style={{ marginBottom: '15px' }}>
+                <div style={{ marginBottom: '15px', textAlign: 'justify' }}>
                     <h6 style={titleStyle}>Vision</h6>
                     <div style={contentContainerStyle}>
                         <p style={contentStyle}>

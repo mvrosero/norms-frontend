@@ -21,9 +21,10 @@ export default function StudentNavigation() {
   const iconSize = "24px";
   const [activeMenuItem, setActiveMenuItem] = React.useState(null);
 
+
   const handleMenuItemClick = (menuItem) => {
     setActiveMenuItem(menuItem);
-    let path = menuItem.toLowerCase().replace(/\s+/g, '-'); // Replace spaces with dashes
+    let path = menuItem.toLowerCase().replace(/\s+/g, '-'); 
     if (menuItem === "My Records") {
       path = "student-myrecords";
     }  else if (menuItem === "About and Contact") {
@@ -38,6 +39,7 @@ export default function StudentNavigation() {
     navigate(`/${path}`);
   };
 
+
   React.useEffect(() => {
     const pageName = location.pathname.split("/").pop().replace('-', ' ');
     setActiveMenuItem(pageName);
@@ -46,6 +48,7 @@ export default function StudentNavigation() {
   const getItemColor = (menuItem) => {
     return activeMenuItem === menuItem ? "#134E0F" : "#b1b1b1";
   };
+
 
   return (
     <>
@@ -96,7 +99,6 @@ export default function StudentNavigation() {
                         },
                       },
                     }}
-
                     rootStyles={{
                       ["&>ul"]: {
                         gap: "4px",

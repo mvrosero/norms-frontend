@@ -8,10 +8,9 @@ import StudentInfo from './StudentInfo';
 
 export default function StudentSettings() {
     const navigate = useNavigate();
-    const user_id = localStorage.getItem('user_id'); // Retrieve user_id from local storage
+    const user_id = localStorage.getItem('user_id'); 
 
     const handleNavigation = (path) => {
-        // Only add user_id for the '/account-settings' path
         const fullPath = path === '/account-settings' && user_id ? `${path}/${user_id}` : path;
         navigate(fullPath);
     };
@@ -29,25 +28,25 @@ export default function StudentSettings() {
         maxWidth: '100%',
         display: 'flex',
         alignItems: 'center',
-        position: 'relative', // Added relative positioning
+        position: 'relative'
     };
 
     const containerHoverStyle = {
         backgroundColor: '#e2e6ea',
-        boxShadow: '0 2px 5px rgba(0, 0, 0, 0.1)',
+        boxShadow: '0 2px 5px rgba(0, 0, 0, 0.1)'
     };
 
     const iconStyle = {
         fontSize: '35px',
         marginLeft: '20px',
-        marginRight: '30px',
+        marginRight: '30px'
     };
 
     const textStyle = {
         fontSize: '20px',
         fontWeight: '500',
         marginLeft: '10px',
-        flex: 1, // Ensure text takes up space for arrow to be positioned correctly
+        flex: 1
     };
 
     const arrowStyle = {
@@ -56,13 +55,14 @@ export default function StudentSettings() {
         position: 'absolute',
         right: '20px',
         top: '50%',
-        transform: 'translateY(-50%)',
+        transform: 'translateY(-50%)'
     };
 
-    return (
-        <div style={{ marginLeft: '100px' }}>
-            <StudentNavigation />
-            <StudentInfo />
+
+return (
+    <div style={{ marginLeft: '100px' }}>
+        <StudentNavigation />
+        <StudentInfo />
             <h6 className="page-title"> SETTINGS </h6>
             <div className="container mt-4">
                 <div className="row">

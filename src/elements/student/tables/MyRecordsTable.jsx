@@ -58,7 +58,7 @@ const MyRecordsTable = () => {
                 const semestersResponse = await axios.get('http://localhost:9000/semesters');
                 setSemesters(semestersResponse.data);
 
-                // Fetch subcategories (newly added)
+                // Fetch subcategories 
                 const subcategoriesResponse = await axios.get('http://localhost:9000/subcategories');
                     setSubcategories(subcategoriesResponse.data);
                 } catch (error) {
@@ -135,8 +135,6 @@ const MyRecordsTable = () => {
     };
 
 
-
-
     const buttonStyles = {
         borderRadius: '20px',
         background: 'linear-gradient(45deg, #015901, #006637, #4AA616)',
@@ -148,21 +146,21 @@ const MyRecordsTable = () => {
     };
 
 
-      // Pagination Logic
-      const indexOfLastRecord = currentPage * rowsPerPage;
-      const indexOfFirstRecord = indexOfLastRecord - rowsPerPage;
-      const currentRecords = records.slice(indexOfFirstRecord, indexOfLastRecord);
-      const totalPages = Math.ceil(records.length / rowsPerPage);
-  
-      const handlePaginationChange = (pageNumber) => setCurrentPage(pageNumber);
-      const handleRowsPerPageChange = (e) => {
-          setRowsPerPage(Number(e.target.value));
-          setCurrentPage(1);
-      };
-  
-      const renderPagination = () => {
-          const pageNumbers = Array.from({ length: totalPages }, (_, i) => i + 1);
-      
+// Pagination Logic
+const indexOfLastRecord = currentPage * rowsPerPage;
+const indexOfFirstRecord = indexOfLastRecord - rowsPerPage;
+const currentRecords = records.slice(indexOfFirstRecord, indexOfLastRecord);
+const totalPages = Math.ceil(records.length / rowsPerPage);
+
+const handlePaginationChange = (pageNumber) => setCurrentPage(pageNumber);
+const handleRowsPerPageChange = (e) => {
+    setRowsPerPage(Number(e.target.value));
+    setCurrentPage(1);
+};
+
+const renderPagination = () => {
+    const pageNumbers = Array.from({ length: totalPages }, (_, i) => i + 1);
+
           const buttonStyle = {
           width: '30px', 
           height: '30px', 
@@ -254,6 +252,7 @@ const MyRecordsTable = () => {
         );
     };  
 
+    
 return (
     <div>
            <Table bordered hover responsive style={{ borderRadius: '20px', marginTop: '10px', marginBottom: '20px', marginLeft: '110px' }}>

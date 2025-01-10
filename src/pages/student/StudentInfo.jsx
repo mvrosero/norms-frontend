@@ -43,6 +43,7 @@ const StudentInfo = ({ role }) => {
     }
   }, [studentId]);
 
+
   const toggleDropdown = () => {
     setIsDropdownOpen(!isDropdownOpen);
   };
@@ -55,6 +56,7 @@ const StudentInfo = ({ role }) => {
   const handleSettings = () => {
     navigate('/student-settings');
   };
+
 
   return (
     <div className="profile-container">
@@ -91,6 +93,7 @@ const StudentInfo = ({ role }) => {
     </div>
   );
 };
+
 
 StudentInfo.propTypes = {
   role: PropTypes.string.isRequired,

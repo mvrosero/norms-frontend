@@ -34,6 +34,7 @@ const ViewAnnouncementModal = ({ show, onHide, announcement }) => {
         });
     };
 
+    
     return (
         <Modal show={show} onHide={onHide} size="lg" backdrop="static">
             <Modal.Header>
