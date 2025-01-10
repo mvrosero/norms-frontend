@@ -14,19 +14,18 @@ export default function AdminDepartmentalStudents() {
     const [departmentName, setDepartmentName] = useState('');
     const [users, setUsers] = useState([]); 
     const [searchQuery, setSearchQuery] = useState('');
-    const [allUsers, setAllUsers] = useState([]);  // All users before any filtering
-    const [filteredUsers, setFilteredUsers] = useState([]);  // Filtered users for the table
+    const [allUsers, setAllUsers] = useState([]);  
+    const [filteredUsers, setFilteredUsers] = useState([]);  
     const [filters, setFilters] = useState({
       yearLevel: '',
       program: '',
       batch: '',
       status: '',
     });
-
     const { department_code } = useParams();
     const navigate = useNavigate();
 
-    // Handle authorization check
+
     useEffect(() => {
         const token = localStorage.getItem('token');
         const roleId = localStorage.getItem('role_id');
@@ -46,14 +45,15 @@ export default function AdminDepartmentalStudents() {
                 { headers }
             );
             const activeUsers = response.data.filter(user => user.status !== 'archived');
-            setUsers(activeUsers);  // Active users
-            setAllUsers(activeUsers);  // Store all users for future filtering
-            setFilteredUsers(activeUsers);  // Set initial filtered users to all users
+            setUsers(activeUsers);  
+            setAllUsers(activeUsers);  
+            setFilteredUsers(activeUsers);  
         } catch (error) {
             console.error('Error fetching users:', error);
             alert('Failed to fetch users.');
         }
     }, [department_code]);
+
 
     // Handle search query changes
     const handleSearch = (query) => {
@@ -61,17 +61,18 @@ export default function AdminDepartmentalStudents() {
         const normalizedQuery = query ? query.toLowerCase() : '';
     
         const filtered = allUsers.filter(user => {
-            const userName = user.name ? user.name.toLowerCase() : '';  // Ensure name is defined
+            const userName = user.name ? user.name.toLowerCase() : ''; 
             return userName.includes(normalizedQuery);
         });
     
-        setFilteredUsers(filtered);  // Correct function call here
+        setFilteredUsers(filtered);  
     };
+
 
     // Handle filter changes (yearLevel, program, batch, status)
     const handleFilterChange = (filters) => {
         console.log('Updated Filters:', filters);
-        setFilters(filters);  // Update filter state
+        setFilters(filters);  
     
         let filtered = allUsers;
     
@@ -80,9 +81,9 @@ export default function AdminDepartmentalStudents() {
             filtered = filtered.filter(user => user.yearLevel === filters.yearLevel);
         }
     
-       if (filters.program) {
-    filtered = filtered.filter(user => user.program === filters.program);
-}
+        if (filters.program) {
+                filtered = filtered.filter(user => user.program === filters.program);
+            }
 
         if (filters.batch) {
             filtered = filtered.filter(user => user.batch === filters.batch);
@@ -91,11 +92,11 @@ export default function AdminDepartmentalStudents() {
         if (filters.status) {
             filtered = filtered.filter(user => user.status === filters.status);
         }
-    
-        
         setFilteredUsers(filtered);
     };
-    // Fetch departments for display
+
+
+    // Fetch departments 
     const fetchDepartments = useCallback(async () => {
         try {
             const token = localStorage.getItem('token');
@@ -111,17 +112,16 @@ export default function AdminDepartmentalStudents() {
             console.error('Error fetching departments:', error);
         }
     }, [department_code]);
-
-    // Run fetch functions on mount or when the department_code changes
     useEffect(() => {
         fetchDepartments();
         fetchUsers();
     }, [fetchDepartments, fetchUsers]);
 
-    return (
-        <div>
-            <AdminNavigation />
-            <AdminInfo />
+
+return (
+    <div>
+        <AdminNavigation />
+        <AdminInfo />
 
             {/* Title Section */}
             <div style={{ width: '90%', margin: '0 auto', display: 'flex', justifyContent: 'flex-start' }}>
@@ -135,23 +135,9 @@ export default function AdminDepartmentalStudents() {
                 <div style={{ flex: '1 1 70%', minWidth: '300px' }}>
                     <SFforDepartmentalTable onSearch={handleSearch} onFilterChange={handleFilterChange} />
                 </div>
-                <button
-                    onClick={() => window.location.href = "http://localhost:3000/register-student"}
-                    style={{
-                        backgroundColor: '#FAD32E',
-                        color: 'white',
-                        fontWeight: '900',
-                        padding: '12px 15px',
-                        border: 'none',
-                        borderRadius: '10px',
-                        marginLeft: '5px',
-                        cursor: 'pointer',
-                        display: 'flex',
-                        alignItems: 'center',
-                        boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
-                    }}
-                >
-                    Add Student
+                <button onClick={() => window.location.href = "http://localhost:3000/register-student"}
+                        style={{ backgroundColor: '#FAD32E', color: 'white', fontWeight: '900', padding: '12px 15px', border: 'none', borderRadius: '10px', marginLeft: '5px', cursor: 'pointer', display: 'flex', alignItems: 'center', boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)' }}>
+                        Add Student
                     <FaPlus style={{ marginLeft: '10px' }} />
                 </button>
                 <ImportDepartmentalCSV />
@@ -172,9 +158,9 @@ export default function AdminDepartmentalStudents() {
 
             {/* Departmental Students Table */}
             <DepartmentalStudentsTable 
-                filteredUsers={filteredUsers}  // Pass the filtered users here
-                filters={filters}      // Pass the filters as well
-                searchQuery={searchQuery}  // Pass the current search query
+                filteredUsers={filteredUsers}  
+                filters={filters}      
+                searchQuery={searchQuery} 
             />
         </div>
     );

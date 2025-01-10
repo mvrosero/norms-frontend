@@ -107,16 +107,38 @@ useEffect(() => {
         });
     };
 
-    // Handle "Select All" checkbox
-    const handleSelectAll = () => {
-        if (selectAll) {
-        setSelectedStudentIds([]);
-        } else {
-        const allIds = users.map(user => user.student_idnumber);
-        setSelectedStudentIds(allIds);
-        }
-        setSelectAll(!selectAll);
-    };
+// Handle "Select All" checkbox
+const handleSelectAll = () => {
+    // Filter users based on the current filters and search query
+    const activeUsers = users.filter(user => user.status !== 'archived');
+
+    const filteredUsers = activeUsers.filter(user => {
+        const fullName = `${user.first_name} ${user.middle_name || ''} ${user.last_name} ${user.suffix || ''}`.toLowerCase();
+        const studentId = user.student_idnumber.toLowerCase();
+        const matchesSearchQuery = fullName.includes(searchQuery.toLowerCase()) || studentId.includes(searchQuery.toLowerCase());
+
+        const matchesFilters = Object.keys(filters).every(key => {
+            if (filters[key]) {
+                if (key === 'yearLevel' && user.year_level && user.year_level !== filters[key]) return false;  // Use user.year_level
+                if (key === 'program' && user.program_name && user.program_name !== filters[key]) return false;  // Use user.program_name
+                if (key === 'batch' && user.batch !== filters[key]) return false;
+                if (key === 'status' && user.status !== filters[key]) return false;
+            }
+            return true;
+        });
+
+        return matchesSearchQuery && matchesFilters; // Return true if both search and filter match
+    });
+
+    if (selectAll) {
+        setSelectedStudentIds([]); // Deselect all filtered users
+    } else {
+        const allFilteredIds = filteredUsers.map(user => user.student_idnumber);
+        setSelectedStudentIds(allFilteredIds); // Select all filtered users
+    }
+    setSelectAll(!selectAll);
+};
+
 
 
     
