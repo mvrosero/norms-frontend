@@ -2,7 +2,7 @@ import React from 'react';
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
 
-const ViewRecordModal = ({ show, onHide, record, getCategoryName, getOffenseName, getSubcategoryName, getSanctionNames, getAcademicYearName, getSemesterName }) => {
+const ViewViolationRecordModal = ({ show, onHide, record, getCategoryName, getOffenseName, getSubcategoryName, getSanctionNames, getAcademicYearName, getSemesterName }) => {
     return (
         <Modal show={show} onHide={onHide} size="lg" backdrop="static" >
             <Modal.Header>
@@ -56,4 +56,4 @@ const ViewRecordModal = ({ show, onHide, record, getCategoryName, getOffenseName
 };
 
 
-export default ViewRecordModal;
+export default ViewViolationRecordModal;

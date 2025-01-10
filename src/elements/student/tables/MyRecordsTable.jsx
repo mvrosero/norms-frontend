@@ -3,7 +3,7 @@ import axios from 'axios';
 import { Table, Button } from 'react-bootstrap';
 import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
-import ViewRecordModal from '../modals/ViewRecordModal';
+import ViewViolationRecordModal from '../modals/ViewViolationRecordModal';
 
 const MyRecordsTable = () => {
     const [records, setRecords] = useState([]);
@@ -299,7 +299,7 @@ return (
 
             {/* View Record Modal */}
             {selectedRecord && (
-                <ViewRecordModal 
+                <ViewViolationRecordModal 
                     show={selectedRecord !== null} 
                     onHide={() => setSelectedRecord(null)} 
                     record={selectedRecord}
