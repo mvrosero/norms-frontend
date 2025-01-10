@@ -20,6 +20,18 @@ export default function SFforStudentsTable({ onSearch, onFilterChange }) {
   const years = Array.from({ length: 31 }, (_, index) => currentYear - 5 + index);
 
 
+  // Fetch programs from the backend
+  useEffect(() => {
+    const fetchPrograms = async () => {
+      try {
+        const response = await axios.get('http://localhost:9000/programs'); 
+        setPrograms(response.data);
+      } catch (error) {
+        console.error('Error fetching programs:', error);
+      }
+    };
+    fetchPrograms();
+  }, []);
 
 
   // Handle search input change
@@ -29,14 +41,17 @@ export default function SFforStudentsTable({ onSearch, onFilterChange }) {
     triggerSearch(query);
   };
 
+
   // Trigger search with current query and filters
   const triggerSearch = (query) => {
     onSearch(query, { yearLevel, program, batch, status });
   };
 
+
   // Handle filter changes
   const handleFilterChange = (field, value) => {
     const updatedFilters = { yearLevel, program, batch, status, [field]: value };
+
 
     // Update individual filter states
     if (field === 'yearLevel') setYearLevel(value);
@@ -48,11 +63,13 @@ export default function SFforStudentsTable({ onSearch, onFilterChange }) {
     triggerSearch(searchQuery);
   };
 
+
   // Toggle filter dropdown visibility
   const toggleFilterDropdown = () => {
     setIsFilterOpen(!isFilterOpen);
     setIsFilterActive(!isFilterActive);
   };
+
 
   // Clear all filters
   const clearFilters = () => {
@@ -63,6 +80,7 @@ export default function SFforStudentsTable({ onSearch, onFilterChange }) {
     onFilterChange({ yearLevel: '', program: '', batch: '', status: '' });
   };
 
+  
   return (
     <div className="searchAndFilterContainer">
       <div className="searchAndFilterWrapper">

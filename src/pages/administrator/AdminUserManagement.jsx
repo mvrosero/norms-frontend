@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
-import { useParams, Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 import AdminNavigation from "./AdminNavigation";
 import AdminInfo from "./AdminInfo";
@@ -28,6 +28,7 @@ export default function AdminUserManagement() {
     });
     const navigate = useNavigate();
 
+
     useEffect(() => {
         const token = localStorage.getItem('token');
         const roleId = localStorage.getItem('role_id');
@@ -49,7 +50,6 @@ export default function AdminUserManagement() {
                 'http://localhost:9000/users',
                 { headers }
             );
-    
             const activeUsers = response.data.filter(user => user.status !== 'archived');
             setUsers(activeUsers);
             setAllUsers(activeUsers);
@@ -89,10 +89,6 @@ export default function AdminUserManagement() {
             // Apply filters one by one
             if (filters.yearLevel) {
                 filtered = filtered.filter(user => user.yearLevel === filters.yearLevel);
-            }
-
-            if (filters.department) {
-                filtered = filtered.filter(user => user.department === filters.department);
             }
         
             if (filters.program) {

@@ -14,7 +14,7 @@ import ViewStudentModal from '../modals/ViewStudentModal';
 import EditStudentModal from '../modals/EditStudentModal';
 import "../../../styles/Students.css";
 
-export default function DepartmentalStudentsTable({filters, searchQuery }) {
+export default function DepartmentalStudentsTable({filters, searchQuery}) {
     const { department_code } = useParams(); 
     const [users, setUsers] = useState([]);
     const [departments, setDepartments] = useState([]);

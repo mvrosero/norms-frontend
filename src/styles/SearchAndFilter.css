@@ -29,11 +29,17 @@
     padding: 12px;
     width: 750px;
     background-color: #ffffff;
-    box-shadow: inset 1px 0 5px 1px rgba(0, 0, 0, 0.2);
+    box-shadow: inset 1px 0 5px 1px rgba(0, 0, 0, 0.2); /* Default shadow */
     border-radius: 10px 0 0 10px;
     border: none;
     outline: none;
+    transition: box-shadow 0.3s ease; /* Smooth transition for focus state */
 }
+
+.searchInput:focus {
+    box-shadow: inset 1px 0px 5px 1px rgba(0, 0, 0, 0.3); 
+}
+
 
 .searchButton {
     padding: 11px 14px;

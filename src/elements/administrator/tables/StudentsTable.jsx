@@ -8,13 +8,12 @@ import PersonIcon from '@mui/icons-material/Person';
 import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 
-
 import BatchStudentsToolbar from '../toolbars/BatchStudentsToolbar';
 import ViewStudentModal from '../modals/ViewStudentModal';
 import EditStudentModal from '../modals/EditStudentModal';
 import "../../../styles/Students.css";
 
-const StudentsTable = () => {
+export default function StudentsTable ({filters, searchQuery}) {
   const [users, setUsers] = useState([]);
   const [departments, setDepartments] = useState([]);
   const [programs, setPrograms] = useState([]);
@@ -23,7 +22,7 @@ const StudentsTable = () => {
   const [selectedUser, setSelectedUser] = useState(null);
   const [selectedStudentIds, setSelectedStudentIds] = useState([]);
   const [selectAll, setSelectAll] = useState(false);
-  const [searchQuery, setSearchQuery] = useState(""); 
+  const [headers, setHeaders] = useState({});
 
   // Pagination State
   const [currentPage, setCurrentPage] = useState(1);
@@ -93,18 +92,6 @@ const StudentsTable = () => {
   const handleUpdateModalClose = () => setShowUpdateModal(false);
 
 
-
-  const handleSearchChange = (e) => {
-    setSearchQuery(e.target.value); // Update search query
-  };
-  const filteredUsers = users.filter((user) => {
-    const fullName = `${user.first_name} ${user.middle_name || ''} ${user.last_name} ${user.suffix || ''}`;
-    return (
-      fullName.toLowerCase().includes(searchQuery.toLowerCase()) || // Search by full name
-      user.student_idnumber.toLowerCase().includes(searchQuery.toLowerCase()) // Search by ID number
-    );
-  });
-
   // Handle batch update
   const handleBatchUpdate = (updates) => {
     axios
@@ -163,107 +150,146 @@ const StudentsTable = () => {
   };
   
 
-  // Pagination logic
-  const indexOfLastUser = currentPage * rowsPerPage;
-  const indexOfFirstUser = indexOfLastUser - rowsPerPage;
-  const currentUsers = filteredUsers.slice(indexOfFirstUser, indexOfLastUser);
-  const totalPages = Math.ceil(users.length / rowsPerPage);
+// Pagination logic
+const indexOfLastUser = currentPage * rowsPerPage;
+const indexOfFirstUser = indexOfLastUser - rowsPerPage;
+const totalPages = Math.ceil(users.length / rowsPerPage);
 
-  const handlePaginationChange = (pageNumber) => {
-    setCurrentPage(pageNumber);
-  };
+const handlePaginationChange = (pageNumber) => {
+  setCurrentPage(pageNumber);
+};
 
-  const handleRowsPerPageChange = (e) => {
-    setRowsPerPage(Number(e.target.value));
-    setCurrentPage(1);
-  };
+const handleRowsPerPageChange = (e) => {
+  setRowsPerPage(Number(e.target.value));
+  setCurrentPage(1);
+};
 
 const renderPagination = () => {
   const pageNumbers = Array.from({ length: totalPages }, (_, i) => i + 1);
-
+  
   const buttonStyle = {
-    width: '30px', 
-    height: '30px', 
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    border: '1px solid #a0a0a0',
-    backgroundColor: '#ebebeb',
-    color: '#4a4a4a',
-    fontSize: '0.75rem',
-    cursor: 'pointer',
+      width: '30px', 
+      height: '30px', 
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      border: '1px solid #a0a0a0',
+      backgroundColor: '#ebebeb',
+      color: '#4a4a4a',
+      fontSize: '0.75rem', 
+      cursor: 'pointer',
   };
-
+  
   const activeButtonStyle = {
-    ...buttonStyle,
-    backgroundColor: '#a0a0a0',
-    color: '#f1f1f1',
+      ...buttonStyle,
+      backgroundColor: '#a0a0a0',
+      color: '#f1f1f1',
   };
-
+  
   const disabledButtonStyle = {
-    ...buttonStyle,
-    backgroundColor: '#ebebeb',
-    color: '#a1a1a1',
-    cursor: 'not-allowed',
+      ...buttonStyle,
+      backgroundColor: '#ebebeb',
+      color: '#a1a1a1',
+      cursor: 'not-allowed',
   };
-
+  
   return (
-    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '15px', fontSize: '14px', color: '#4a4a4a'}}>
-        {/* Results per Page */}
-        <div>
-            <label htmlFor="rowsPerPage" style={{ marginLeft: '120px', marginRight: '5px' }}>Results per page:</label>
-            <select id="rowsPerPage" value={rowsPerPage} onChange={handleRowsPerPageChange}
-                style={{ fontSize: '14px', padding: '5px 25px', border: '1px solid #ccc', borderRadius: '3px' }}>
-                {Array.from({ length: 10 }, (_, i) => (i + 1) * 10).map((value) => (
-                    <option key={value} value={value}> {value} </option>))}
-            </select>
-        </div>
-
-        {/* Pagination Info and Buttons */}
-        <div style={{ display: 'flex', alignItems: 'center', marginRight: '25px' }}>
-            {/* Page Info */}
-            <div style={{ marginRight: '10px' }}>Page {currentPage} of {totalPages}</div>
-
-            {/* Pagination Buttons */}
-            <div style={{ display: 'flex' }}>
-                <button onClick={() =>
-                    currentPage > 1 && handlePaginationChange(currentPage - 1) }
-                    disabled={currentPage === 1}
-                    style={{
-                        ...buttonStyle,
-                        borderTopLeftRadius: '10px',
-                        borderBottomLeftRadius: '10px',
-                        ...(currentPage === 1 ? disabledButtonStyle : {}),
-                    }}
-                >
-                    ❮
-                </button>
-                {pageNumbers.map((number) => (
-                    <button key={number} onClick={() => handlePaginationChange(number)} style={number === currentPage ? activeButtonStyle : buttonStyle}>
-                        {number}
-                    </button>
-                ))}
-                <button
-                    onClick={() => currentPage < totalPages && handlePaginationChange(currentPage + 1)}
-                    disabled={currentPage === totalPages}
-                    style={{
-                        ...buttonStyle,
-                        borderTopRightRadius: '10px',
-                        borderBottomRightRadius: '10px',
-                        ...(currentPage === totalPages ? disabledButtonStyle : {}),
-                    }}
-                >
-                    ❯
-                </button>
-            </div>
-        </div>
-    </div>
-);
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '15px', fontSize: '14px', color: '#4a4a4a'}}>
+          {/* Results per Page */}
+          <div>
+              <label htmlFor="rowsPerPage" style={{ marginLeft: '120px', marginRight: '5px' }}>Results per page:</label>
+              <select
+                  id="rowsPerPage"
+                  value={rowsPerPage}
+                  onChange={handleRowsPerPageChange}
+                  style={{ fontSize: '14px', padding: '5px 25px', border: '1px solid #ccc', borderRadius: '3px' }}>
+                  {Array.from({ length: 10 }, (_, i) => (i + 1) * 10).map((value) => (
+                      <option key={value} value={value}> {value} </option>))}
+              </select>
+          </div>
+  
+          {/* Pagination Info and Buttons */}
+          <div style={{ display: 'flex', alignItems: 'center', marginRight: '25px' }}>
+              {/* Page Info */}
+              <div style={{ marginRight: '10px' }}>Page {currentPage} of {totalPages}</div>
+  
+              {/* Pagination Buttons */}
+              <div style={{ display: 'flex' }}>
+                  <button
+                      onClick={() =>
+                          currentPage > 1 && handlePaginationChange(currentPage - 1)
+                      }
+                      disabled={currentPage === 1}
+                      style={{
+                          ...buttonStyle,
+                          borderTopLeftRadius: '10px',
+                          borderBottomLeftRadius: '10px',
+                          ...(currentPage === 1 ? disabledButtonStyle : {}),
+                      }}
+                  >
+                      ❮
+                  </button>
+                  {pageNumbers.map((number) => (
+                      <button
+                          key={number}
+                          onClick={() => handlePaginationChange(number)}
+                          style={number === currentPage ? activeButtonStyle : buttonStyle}
+                      >
+                          {number}
+                      </button>
+                  ))}
+                  <button
+                      onClick={() =>
+                          currentPage < totalPages && handlePaginationChange(currentPage + 1)
+                      }
+                      disabled={currentPage === totalPages}
+                      style={{
+                          ...buttonStyle,
+                          borderTopRightRadius: '10px',
+                          borderBottomRightRadius: '10px',
+                          ...(currentPage === totalPages ? disabledButtonStyle : {}),
+                      }}
+                  >
+                      ❯
+                  </button>
+              </div>
+          </div>
+      </div>
+  );
 };
+
 
 
 // Render the students table
 const renderTable = () => {
+
+
+  const activeUsers = users.filter(user => user.status !== 'archived');
+
+  // Calculate filteredUsers first
+  const filteredUsers = activeUsers.filter(user => {
+      const fullName = `${user.first_name} ${user.middle_name || ''} ${user.last_name} ${user.suffix || ''}`.toLowerCase();
+      const studentId = user.student_idnumber.toLowerCase();
+      const matchesSearchQuery = fullName.includes(searchQuery.toLowerCase()) || studentId.includes(searchQuery.toLowerCase());
+  
+      const matchesFilters = Object.keys(filters).every(key => {
+          if (filters[key]) {
+              if (key === 'yearLevel' && user.year_level && user.year_level !== filters[key]) return false;  
+              if (key === 'program' && user.program_name && user.program_name !== filters[key]) return false;  
+              if (key === 'batch' && user.batch !== filters[key]) return false;
+              if (key === 'status' && user.status !== filters[key]) return false;
+          }
+          return true;
+      });
+  
+      return matchesSearchQuery && matchesFilters; 
+  });
+  
+const currentUsers = filteredUsers.slice(indexOfFirstUser, indexOfLastUser);
+
+
+
+
     return (
       <Table bordered hover responsive style={{ borderRadius: '20px', marginBottom: '20px', marginLeft: '110px' }}>
         <thead>
@@ -303,7 +329,8 @@ const renderTable = () => {
           </tr>
         </thead>
         <tbody>
-          {currentUsers.map(user => (
+        {filteredUsers &&filteredUsers.length > 0 ? (
+          currentUsers.map(user => (
             <tr key={user.student_idnumber}>
               <td> <input type="checkbox" checked={selectedStudentIds.includes(user.student_idnumber)} onChange={() => handleSelectUser(user.student_idnumber)}/> </td>
               <td>{user.student_idnumber}</td>
@@ -343,7 +370,12 @@ const renderTable = () => {
                 </div>
               </td>
             </tr>
-          ))}
+                    ))
+                  ) : (
+                      <tr>
+                          <td colSpan="7">No users found</td>
+                      </tr>
+                  )}
         </tbody>
       </Table>
     );
@@ -386,4 +418,4 @@ return (
 };
 
 
-export default StudentsTable;
+
