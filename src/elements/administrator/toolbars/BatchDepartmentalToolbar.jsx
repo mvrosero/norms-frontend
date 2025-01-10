@@ -18,6 +18,7 @@ const BatchDepartmentalToolbar = ({ selectedItemsCount, selectedStudentIds }) =>
   const [successMessage, setSuccessMessage] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+
   const handleClose = () => {
     setIsVisible(false);
   };
@@ -146,7 +147,7 @@ const BatchDepartmentalToolbar = ({ selectedItemsCount, selectedStudentIds }) =>
   };
 
 
-   // Handle the cancel departmental toolbar
+  // Handle the cancel departmental toolbar
   const handleCancel = () => {
     Swal.fire({
       title: 'Are you sure you want to cancel?',
@@ -188,6 +189,7 @@ const BatchDepartmentalToolbar = ({ selectedItemsCount, selectedStudentIds }) =>
           </button>
         </div>
       </div>
+
 
       <Modal show={isModalVisible} onHide={handleModalClose} size="lg">
         <Modal.Header>
