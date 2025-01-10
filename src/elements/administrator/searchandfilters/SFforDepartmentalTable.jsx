@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
 import { FaSearch } from 'react-icons/fa';
 import { IoFilter } from 'react-icons/io5';
 import axios from 'axios';
 import '../../../styles/SearchAndFilter.css';
 
 export default function SFforDepartmentalTable({ onSearch, onFilterChange }) {
+  const { department_code } = useParams(); 
   const [searchQuery, setSearchQuery] = useState('');
   const [yearLevel, setYearLevel] = useState('');
   const [program, setProgram] = useState('');
@@ -21,7 +23,7 @@ export default function SFforDepartmentalTable({ onSearch, onFilterChange }) {
   // Fetch programs dynamically
   useEffect(() => {
     axios
-      .get('http://localhost:9000/programs')
+      .get(`http://localhost:9000/programs-by-department/${department_code}`)
       .then((response) => {
         setPrograms(response.data);
       })

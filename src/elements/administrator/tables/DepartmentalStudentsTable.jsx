@@ -40,56 +40,60 @@ export default function DepartmentalStudentsTable({filters, searchQuery }) {
     const [sortOrder, setSortOrder] = useState('asc'); 
 
 
-    // Fetch the students
-    const fetchUsers = useCallback(async () => {
-        try {
-            const response = await axios.get(`http://localhost:9000/admin-usermanagement/${department_code}`, { headers });
-            console.log('Fetched users:', response.data);
-    
-            const activeUsers = response.data.filter(user => user.status !== 'archived');
-            setUsers(activeUsers); 
-        } catch (error) {
-            console.error('Error fetching users:', error);
-            Swal.fire('Error', 'Failed to fetch users.', 'error');
-        }
-    }, [headers, department_code, deletionStatus]);
-    
+// Fetch the users
+const fetchUsers = useCallback(async () => {
+    try {
+        const response = await axios.get(`http://localhost:9000/admin-usermanagement/${department_code}`, { headers });
+        console.log('Fetched users:', response.data);
 
-    // Fetch the departments
-    const fetchDepartments = useCallback(async () => {  
-        try {
-            const response = await axios.get('http://localhost:9000/departments', { headers });
-            setDepartments(response.data);
-    
-            const normalizedDepartmentCode = department_code.toUpperCase();
-    
-            const department = response.data.find(d => d.department_code.toUpperCase() === normalizedDepartmentCode);
-            if (department) {
-                setDepartmentName(department.department_name);
-            } else {
-                console.log('Department not found for code:', department_code);
-            }
-        } catch (error) {
-            console.error('Error fetching departments:', error);
-        }
-    }, [headers, department_code]);
-    
-       
-    // Fetch the programs
-    const fetchPrograms = useCallback(async () => {  
-        try {
-            const response = await axios.get('http://localhost:9000/programs', { headers });
-            setPrograms(response.data);
-        } catch (error) {
-            console.error('Error fetching programs:', error);
-        }
-    }, [headers]);
+        const activeUsers = response.data.filter(user => user.status !== 'archived');
+        setUsers(activeUsers); 
+    } catch (error) {
+        console.error('Error fetching users:', error);
+        Swal.fire('Error', 'Failed to fetch users.', 'error');
+    }
+}, [headers, department_code, deletionStatus]);
 
-    useEffect(() => {
-        fetchUsers();
-        fetchDepartments();
-        fetchPrograms();
-    }, [fetchUsers, fetchDepartments, fetchPrograms]);   
+// Fetch the programs based on the selected department
+const fetchProgramsByDepartment = useCallback(async () => {
+    try {
+        const response = await axios.get(`http://localhost:9000/programs-by-department/${department_code}`, { headers });
+        console.log('Fetched programs for department:', response.data);
+
+        setPrograms(response.data); // Set the programs for the selected department
+    } catch (error) {
+        console.error('Error fetching programs:', error);
+        Swal.fire('Error', 'Failed to fetch programs.', 'error');
+    }
+}, [headers, department_code]);
+
+// Fetch the departments
+const fetchDepartments = useCallback(async () => {  
+    try {
+        const response = await axios.get('http://localhost:9000/departments', { headers });
+        setDepartments(response.data);
+
+        const normalizedDepartmentCode = department_code.toUpperCase();
+
+        const department = response.data.find(d => d.department_code.toUpperCase() === normalizedDepartmentCode);
+        if (department) {
+            setDepartmentName(department.department_name);
+        } else {
+            console.log('Department not found for code:', department_code);
+        }
+    } catch (error) {
+        console.error('Error fetching departments:', error);
+    }
+}, [headers, department_code]);
+
+useEffect(() => {
+    fetchUsers(); // Fetch users based on the department code
+    fetchDepartments(); // Fetch department details
+    fetchProgramsByDepartment(); // Fetch programs based on the department code
+}, [fetchUsers, fetchDepartments, fetchProgramsByDepartment]);  
+ 
+    
+    
 
 
     // Handle selecting individual users
