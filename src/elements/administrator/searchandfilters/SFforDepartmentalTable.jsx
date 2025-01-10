@@ -17,8 +17,10 @@ export default function SFforDepartmentalTable({ onSearch, onFilterChange }) {
   const [programs, setPrograms] = useState([]);
   const [allUsers, setAllUsers] = useState([]);
 
+  // Generate years for the batch
   const currentYear = new Date().getFullYear();
   const years = Array.from({ length: 31 }, (_, index) => currentYear - 5 + index);
+
 
   // Fetch programs dynamically
   useEffect(() => {
@@ -32,6 +34,7 @@ export default function SFforDepartmentalTable({ onSearch, onFilterChange }) {
       });
   }, []);
 
+
   // Handle search input change
   const handleInputChange = (e) => {
     const query = e.target.value;
@@ -39,10 +42,12 @@ export default function SFforDepartmentalTable({ onSearch, onFilterChange }) {
     triggerSearch(query);
   };
 
+
   // Trigger search with current query and filters
   const triggerSearch = (query) => {
     onSearch(query, { yearLevel, program, batch, status });
   };
+
 
   // Handle filter changes
   const handleFilterChange = (field, value) => {
@@ -54,15 +59,17 @@ export default function SFforDepartmentalTable({ onSearch, onFilterChange }) {
     if (field === 'batch') setBatch(value);
     if (field === 'status') setStatus(value);
 
-    onFilterChange(updatedFilters); // Pass updated filters to the parent
-    triggerSearch(searchQuery); // Trigger search with updated filters
+    onFilterChange(updatedFilters); 
+    triggerSearch(searchQuery); 
   };
+
 
   // Toggle filter dropdown visibility
   const toggleFilterDropdown = () => {
     setIsFilterOpen(!isFilterOpen);
     setIsFilterActive(!isFilterActive);
   };
+
 
   // Clear all filters
   const clearFilters = () => {
@@ -73,27 +80,16 @@ export default function SFforDepartmentalTable({ onSearch, onFilterChange }) {
     onFilterChange({ yearLevel: '', program: '', batch: '', status: '' });
   };
 
-  return (
-    <div className="searchAndFilterContainer">
+
+return (
+  <div className="searchAndFilterContainer">
       <div className="searchAndFilterWrapper">
-        <input
-          type="text"
-          placeholder="Search..."
-          value={searchQuery}
-          onChange={handleInputChange}
-          className="searchInput"
-        />
-        <button
-          onClick={toggleFilterDropdown}
-          className={`filterButton ${isFilterActive ? 'active' : ''}`}
-        >
-          <IoFilter className={`filterIcon ${isFilterActive ? 'active' : ''}`} />
+        <input type="text" placeholder="Search..." value={searchQuery} onChange={handleInputChange} className="searchInput"/>
+        <button onClick={toggleFilterDropdown} className={`filterButton ${isFilterActive ? 'active' : ''}`}>
+            <IoFilter className={`filterIcon ${isFilterActive ? 'active' : ''}`} />
         </button>
-        <button
-          onClick={() => triggerSearch(searchQuery)} // Trigger search with current query and filters
-          className="searchButton"
-        >
-          <FaSearch className="searchIcon" />
+        <button onClick={() => triggerSearch(searchQuery)} className="searchButton">
+            <FaSearch className="searchIcon" />
         </button>
       </div>
 
