@@ -35,19 +35,6 @@ export default function SFforStudentsTable({ onSearch, onFilterChange }) {
   }, []);
 
 
-    // Fetch programs dynamically
-    useEffect(() => {
-      axios
-        .get('http://localhost:9000/programs')
-        .then((response) => {
-          setPrograms(response.data);
-        })
-        .catch((error) => {
-          console.error('Error fetching programs:', error);
-        });
-    }, []);
-
-
   // Handle search input change
   const handleInputChange = (e) => {
     const query = e.target.value;
@@ -97,21 +84,12 @@ export default function SFforStudentsTable({ onSearch, onFilterChange }) {
   return (
     <div className="searchAndFilterContainer">
       <div className="searchAndFilterWrapper">
-        <input
-          type="text"
-          placeholder="Search..."
-          value={searchQuery}
-          onChange={handleInputChange}
-          className="searchInput"
-        />
-        <button
-          onClick={toggleFilterDropdown}
-          className={`filterButton ${isFilterActive ? 'active' : ''}`}
-        >
-          <IoFilter className={`filterIcon ${isFilterActive ? 'active' : ''}`} />
+        <input type="text" placeholder="Search..." value={searchQuery} onChange={handleInputChange} className="searchInput"/>
+        <button onClick={toggleFilterDropdown} className={`filterButton ${isFilterActive ? 'active' : ''}`}>
+            <IoFilter className={`filterIcon ${isFilterActive ? 'active' : ''}`} />
         </button>
         <button onClick={() => triggerSearch(searchQuery)} className="searchButton">
-          <FaSearch className="searchIcon" />
+            <FaSearch className="searchIcon" />
         </button>
       </div>
 
