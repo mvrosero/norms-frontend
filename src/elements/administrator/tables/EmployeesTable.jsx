@@ -14,7 +14,7 @@ import ViewEmployeeModal from '../modals/ViewEmployeeModal';
 import BatchEmployeesToolbar from '../toolbars/BatchEmployeesToolbar';
 import "../../../styles/Employees.css";
 
-const EmployeesTable = () => {
+export default function ({filters, searchQuery}) {
     const [users, setUsers] = useState([]);
     const [roles, setRoles] = useState([]);
     const [showReadModal, setShowReadModal] = useState(false);
@@ -44,7 +44,6 @@ const EmployeesTable = () => {
         }
     }, [headers, deletionStatus]);
 
-
     // Fetch the roles
     const fetchRoles = useCallback(async () => {
         try {
@@ -55,11 +54,11 @@ const EmployeesTable = () => {
             console.error('Error fetching roles:', error.response ? error.response.data : error.message);
         }
     }, [headers]);
-    
     useEffect(() => {
         fetchUsers();
         fetchRoles();  
     }, [fetchUsers, fetchRoles]); 
+
 
     const handleReadModalShow = (user) => {
         setSelectedUser(user);
@@ -68,12 +67,6 @@ const EmployeesTable = () => {
 
     const handleReadModalClose = () => {
         setShowReadModal(false);
-    };
-
-    const getRoleName = (roleId) => {
-        const role = roles.find((r) => r.role_id === roleId);
-        console.log('Role ID:', roleId, 'Role Name:', role ? role.role_name : 'Not Found'); 
-        return role ? role.role_name : 'Unknown Role';
     };
 
     const handleUpdateModalShow = (user) => {
@@ -131,16 +124,32 @@ const EmployeesTable = () => {
     });
   };
 
-  // Handle "Select All" checkbox
-  const handleSelectAll = () => {
-      if (selectAll) {
-          setSelectedEmployeeIds([]);
-      } else {
-          const allIds = users.map(user => user.employee_idnumber);
-          setSelectedEmployeeIds(allIds);
-      }
-      setSelectAll(!selectAll);
-      };
+// Handle "Select All" checkbox
+const handleSelectAll = () => {
+  const filteredUsers = users.filter(user => {
+      const fullName = `${user.first_name} ${user.middle_name || ''} ${user.last_name} ${user.suffix || ''}`.toLowerCase();
+      const employeeId = user.employee_idnumber.toLowerCase();
+      const matchesSearchQuery = fullName.includes(searchQuery.toLowerCase()) || employeeId.includes(searchQuery.toLowerCase());
+
+      const matchesFilters = Object.keys(filters).every(key => {
+          if (filters[key]) {
+              if (key === 'role' && user.role_name !== filters[key]) return false;
+              if (key === 'status' && user.status !== filters[key]) return false;
+          }
+          return true;
+      });
+      return matchesSearchQuery && matchesFilters; 
+  });
+
+  if (selectAll) {
+      setSelectedEmployeeIds([]); 
+  } else {
+      const allFilteredIds = filteredUsers.map(user => user.employee_idnumber);
+      setSelectedEmployeeIds(allFilteredIds); 
+  }
+  setSelectAll(!selectAll);
+};
+
 
       const handleBatchDelete = async () => {
       const isConfirm = await Swal.fire({
@@ -176,24 +185,6 @@ const EmployeesTable = () => {
   };
     
 
-  // Handle the batch update
-  const handleBatchUpdate = (updates) => {
-    axios
-      .put('http://localhost:9000/employees', {
-        employee_ids: selectedEmployeeIds,
-        updates,
-      })
-      .then((response) => {
-        Swal.fire('Success', 'Batch update successful', 'success');
-        fetchUsers(); 
-        setShowUpdateModal(false); 
-      })
-      .catch((error) => {
-        Swal.fire('Error', error.response?.data?.error || 'Failed to update employees', 'error');
-      });
-  };
-
-
    // Sort users based on full name
     const handleSort = (key) => {
       let direction = 'asc';
@@ -219,119 +210,136 @@ const EmployeesTable = () => {
   };
 
 
-  // Pagination logic
-  const indexOfLastUser = currentPage * rowsPerPage;
-  const indexOfFirstUser = indexOfLastUser - rowsPerPage;
-  const currentUsers = users.slice(indexOfFirstUser, indexOfLastUser);
-  const totalPages = Math.ceil(users.length / rowsPerPage);
+// Pagination logic
+const indexOfLastUser = currentPage * rowsPerPage;
+const indexOfFirstUser = indexOfLastUser - rowsPerPage;
+const totalPages = Math.ceil(users.length / rowsPerPage);
 
-  const handlePaginationChange = (pageNumber) => {
-    setCurrentPage(pageNumber);
-  };
+const handlePaginationChange = (pageNumber) => {
+  setCurrentPage(pageNumber);
+};
 
-  const handleRowsPerPageChange = (e) => {
-    setRowsPerPage(Number(e.target.value));
-    setCurrentPage(1);
-  };
+const handleRowsPerPageChange = (e) => {
+  setRowsPerPage(Number(e.target.value));
+  setCurrentPage(1);
+};
 
 const renderPagination = () => {
   const pageNumbers = Array.from({ length: totalPages }, (_, i) => i + 1);
-
+  
   const buttonStyle = {
-    width: '30px', 
-    height: '30px', 
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    border: '1px solid #a0a0a0',
-    backgroundColor: '#ebebeb',
-    color: '#4a4a4a',
-    fontSize: '0.75rem', 
-    cursor: 'pointer',
+      width: '30px', 
+      height: '30px', 
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      border: '1px solid #a0a0a0',
+      backgroundColor: '#ebebeb',
+      color: '#4a4a4a',
+      fontSize: '0.75rem', 
+      cursor: 'pointer',
   };
-
+  
   const activeButtonStyle = {
-    ...buttonStyle,
-    backgroundColor: '#a0a0a0',
-    color: '#f1f1f1',
+      ...buttonStyle,
+      backgroundColor: '#a0a0a0',
+      color: '#f1f1f1',
   };
-
+  
   const disabledButtonStyle = {
-    ...buttonStyle,
-    backgroundColor: '#ebebeb',
-    color: '#a1a1a1',
-    cursor: 'not-allowed',
+      ...buttonStyle,
+      backgroundColor: '#ebebeb',
+      color: '#a1a1a1',
+      cursor: 'not-allowed',
   };
-
+  
   return (
-    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '15px', fontSize: '14px', color: '#4a4a4a'}}>
-        {/* Results per Page */}
-        <div>
-            <label htmlFor="rowsPerPage" style={{ marginLeft: '120px', marginRight: '5px' }}>Results per page:</label>
-            <select
-                id="rowsPerPage"
-                value={rowsPerPage}
-                onChange={handleRowsPerPageChange}
-                style={{ fontSize: '14px', padding: '5px 25px', border: '1px solid #ccc', borderRadius: '3px' }}
-                >
-                {Array.from({ length: 10 }, (_, i) => (i + 1) * 10).map((value) => (
-                    <option key={value} value={value}> {value} </option>
-                ))}
-            </select>
-        </div>
-
-        {/* Pagination Info and Buttons */}
-        <div style={{ display: 'flex', alignItems: 'center', marginRight: '25px' }}>
-            {/* Page Info */}
-            <div style={{ marginRight: '10px' }}>Page {currentPage} of {totalPages}</div>
-
-            {/* Pagination Buttons */}
-            <div style={{ display: 'flex' }}>
-                <button
-                    onClick={() =>
-                        currentPage > 1 && handlePaginationChange(currentPage - 1)
-                    }
-                    disabled={currentPage === 1}
-                    style={{
-                        ...buttonStyle,
-                        borderTopLeftRadius: '10px',
-                        borderBottomLeftRadius: '10px',
-                        ...(currentPage === 1 ? disabledButtonStyle : {}),
-                    }}
-                >
-                    ❮
-                </button>
-                {pageNumbers.map((number) => (
-                    <button
-                        key={number}
-                        onClick={() => handlePaginationChange(number)}
-                        style={number === currentPage ? activeButtonStyle : buttonStyle}
-                    >
-                        {number}
-                    </button>
-                ))}
-                <button
-                    onClick={() =>
-                        currentPage < totalPages && handlePaginationChange(currentPage + 1)
-                    }
-                    disabled={currentPage === totalPages}
-                    style={{
-                        ...buttonStyle,
-                        borderTopRightRadius: '10px',
-                        borderBottomRightRadius: '10px',
-                        ...(currentPage === totalPages ? disabledButtonStyle : {}),
-                    }}
-                >
-                    ❯
-                </button>
-            </div>
-        </div>
-    </div>
-);
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '15px', fontSize: '14px', color: '#4a4a4a'}}>
+          {/* Results per Page */}
+          <div>
+              <label htmlFor="rowsPerPage" style={{ marginLeft: '120px', marginRight: '5px' }}>Results per page:</label>
+              <select
+                  id="rowsPerPage"
+                  value={rowsPerPage}
+                  onChange={handleRowsPerPageChange}
+                  style={{ fontSize: '14px', padding: '5px 25px', border: '1px solid #ccc', borderRadius: '3px' }}>
+                  {Array.from({ length: 5 }, (_, i) => (i + 1) * 5).map((value) => (
+                      <option key={value} value={value}> {value} </option>))}
+              </select>
+          </div>
+  
+          {/* Pagination Info and Buttons */}
+          <div style={{ display: 'flex', alignItems: 'center', marginRight: '25px' }}>
+              {/* Page Info */}
+              <div style={{ marginRight: '10px' }}>Page {currentPage} of {totalPages}</div>
+  
+              {/* Pagination Buttons */}
+              <div style={{ display: 'flex' }}>
+                  <button
+                      onClick={() =>
+                          currentPage > 1 && handlePaginationChange(currentPage - 1)
+                      }
+                      disabled={currentPage === 1}
+                      style={{
+                          ...buttonStyle,
+                          borderTopLeftRadius: '10px',
+                          borderBottomLeftRadius: '10px',
+                          ...(currentPage === 1 ? disabledButtonStyle : {}),
+                      }}
+                  >
+                      ❮
+                  </button>
+                  {pageNumbers.map((number) => (
+                      <button
+                          key={number}
+                          onClick={() => handlePaginationChange(number)}
+                          style={number === currentPage ? activeButtonStyle : buttonStyle}
+                      >
+                          {number}
+                      </button>
+                  ))}
+                  <button
+                      onClick={() =>
+                          currentPage < totalPages && handlePaginationChange(currentPage + 1)
+                      }
+                      disabled={currentPage === totalPages}
+                      style={{
+                          ...buttonStyle,
+                          borderTopRightRadius: '10px',
+                          borderBottomRightRadius: '10px',
+                          ...(currentPage === totalPages ? disabledButtonStyle : {}),
+                      }}
+                  >
+                      ❯
+                  </button>
+              </div>
+          </div>
+      </div>
+  );
 };
 
 
 const renderTable = () => {
+
+    // Calculate filteredUsers directly from users
+    const filteredUsers = users.filter(user => {
+      const fullName = `${user.first_name} ${user.middle_name || ''} ${user.last_name} ${user.suffix || ''}`.toLowerCase();
+      const employeeId = user.employee_idnumber.toLowerCase();
+      const matchesSearchQuery = fullName.includes(searchQuery.toLowerCase()) || employeeId.includes(searchQuery.toLowerCase());
+
+      const matchesFilters = Object.keys(filters).every(key => {
+          if (filters[key]) {  
+              if (key === 'role' && user.role_name !== filters[key]) return false;
+              if (key === 'status' && user.status !== filters[key]) return false;
+          }
+          return true;
+      });
+      return matchesSearchQuery && matchesFilters; 
+    });
+
+    const currentUsers = filteredUsers.slice(indexOfFirstUser, indexOfLastUser);
+
+
   return (
     <Table bordered hover responsive style={{ borderRadius: '20px', marginBottom: '20px', marginLeft: '110px' }}>
         <thead>
@@ -366,14 +374,15 @@ const renderTable = () => {
             <th style={{ width: '13%' }}>Actions</th>
           </tr>
         </thead>
-        <tbody>
-          {currentUsers.map(user => (
+      <tbody>
+        {filteredUsers &&filteredUsers.length > 0 ? (
+          currentUsers.map(user => (
             <tr key={user.employee_idnumber}>
               <td><input type="checkbox" checked={selectedEmployeeIds.includes(user.employee_idnumber)} onChange={() => handleSelectUser(user.employee_idnumber)}/>
               </td>
               <td>{user.employee_idnumber}</td>
               <td>{`${user.first_name} ${user.middle_name} ${user.last_name} ${user.suffix}`}</td>
-              <td>{getRoleName(user.role_id)}</td>
+              <td>{user.role_name}</td>
               <td style={{ textAlign: 'center' }}>
                 <div
                   style={{
@@ -413,7 +422,12 @@ const renderTable = () => {
                 </div>
               </td>
             </tr>
-          ))}
+              ))
+            ) : (
+                <tr>
+                    <td colSpan="7">No users found</td>
+                </tr>
+            )}
         </tbody>
       </Table>
     );
@@ -424,36 +438,36 @@ return (
       <div>
           {selectedEmployeeIds.length > 0 && (
           <BatchEmployeesToolbar
-          selectedItemsCount={selectedEmployeeIds.length}
-          selectedEmployeeIds={selectedEmployeeIds}
+              selectedItemsCount={selectedEmployeeIds.length}
+              selectedEmployeeIds={selectedEmployeeIds}
               onDelete={handleBatchDelete}
           />
       )}
 
-      {renderTable()}
+          {renderTable()}
 
-      {renderPagination()}
+          {renderPagination()}
 
-      {/* View Employee Modal */}
-      <ViewEmployeeModal
-            show={showReadModal}
-            onHide={handleReadModalClose}
-            user={selectedUser}
-            roles={roles}
-        />
+          {/* View Employee Modal */}
+          <ViewEmployeeModal
+                show={showReadModal}
+                onHide={handleReadModalClose}
+                user={selectedUser}
+                roles={roles}
+            />
 
-      {/* Edit Employee Modal */}
-      <EditEmployeeModal
-            show={showUpdateModal}
-            onHide={handleUpdateModalClose} 
-            user={selectedUser}
-            fetchUsers={fetchUsers}
-            headers={headers}
-            roles={roles}
-        />
+          {/* Edit Employee Modal */}
+          <EditEmployeeModal
+                show={showUpdateModal}
+                onHide={handleUpdateModalClose} 
+                user={selectedUser}
+                fetchUsers={fetchUsers}
+                headers={headers}
+                roles={roles}
+            />
       </div>
     );
 }
 
 
-export default EmployeesTable;
+

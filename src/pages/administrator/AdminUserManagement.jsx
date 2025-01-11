@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import AdminNavigation from "./AdminNavigation";
 import AdminInfo from "./AdminInfo";
 import SFforStudentsTable from '../../elements/administrator/searchandfilters/SFforStudentsTable';
+import SFforEmployeesTable from '../../elements/administrator/searchandfilters/SFforEmployeesTable';
 import StudentsTable from '../../elements/administrator/tables/StudentsTable';
 import EmployeesTable from '../../elements/administrator/tables/EmployeesTable';
 import ImportStudentsCSV from '../../elements/general/imports/ImportStudentsCSV'; 
@@ -25,6 +26,7 @@ export default function AdminUserManagement() {
       program: '',
       batch: '',
       status: '',
+      role: ''
     });
     const navigate = useNavigate();
 
@@ -76,7 +78,7 @@ export default function AdminUserManagement() {
     };
 
 
-    // Handle filter changes (yearLevel, program, batch, status)
+    // Handle filter changes (yearLevel, program, batch, status, and role)
     const handleFilterChange = (filters) => {
         console.log('Updated Filters:', filters);
         setFilters(filters);  
@@ -98,6 +100,10 @@ export default function AdminUserManagement() {
     
         if (filters.status) {
             filtered = filtered.filter(user => user.status === filters.status);
+        }
+
+        if (filters.role) {
+            filtered = filtered.filter(user => user.role === filters.role);
         }
         setFilteredUsers(filtered);
     };
@@ -123,7 +129,7 @@ return (
             <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'center', marginTop: '10px', marginLeft: '70px', padding: '0 20px', gap: '2px' }}>
                 <div style={{ flex: '1 1 50%', minWidth: '300px' }}>
                     {selectedComponent === 'students' && <SFforStudentsTable onSearch={handleSearch} onFilterChange={handleFilterChange}  />}
-                    {selectedComponent === 'employees' && <ImportEmployeesCSV />}
+                    {selectedComponent === 'employees' && <SFforEmployeesTable onSearch={handleSearch} onFilterChange={handleFilterChange}/>}
                 </div>
                 <UserDropdownButton/>
                 {selectedComponent === 'students' && <ImportStudentsCSV />}
@@ -178,7 +184,9 @@ return (
             )}
             {selectedComponent === 'employees' && (
                 <EmployeesTable 
-                searchQuery={searchQuery}  
+                    filteredUsers={filteredUsers}  
+                    filters={filters}  
+                    searchQuery={searchQuery}  
                 />
             )}
         </div>
