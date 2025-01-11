@@ -140,8 +140,7 @@
     flex-direction: column; /* Stack the search bar and filter dropdown vertically */
     justify-content: flex-start; /* Align items to the left */
     align-items: flex-start; /* Align everything to the left */
-    width: 100%;
-    padding: 0 20px; /* Add padding to prevent edges from touching the screen */
+    width: 100%; /* Add padding to prevent edges from touching the screen */
     margin: 20px 0; /* Add margin for spacing */
 }
 

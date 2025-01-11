@@ -14,17 +14,17 @@ import ViewStudentModal from '../modals/ViewStudentModal';
 import EditStudentModal from '../modals/EditStudentModal';
 import "../../../styles/Students.css";
 
-const ArchivesTable = () => {
+export default function ArchivesTable ({filters, searchQuery}) {
     const [users, setUsers] = useState([]);
     const [departments, setDepartments] = useState([]);
     const [programs, setPrograms] = useState([]);
     const [showReadModal, setShowReadModal] = useState(false);
     const [showUpdateModal, setShowUpdateModal] = useState(false);
-    const [headers, setHeaders] = useState({});
-    const [deletionStatus, setDeletionStatus] = useState(false);
     const [selectedUser, setSelectedUser] = useState(null);
     const [selectedStudentIds, setSelectedStudentIds] = useState([]);
     const [selectAll, setSelectAll] = useState(false);
+    const [headers, setHeaders] = useState({});
+    const [deletionStatus, setDeletionStatus] = useState(false); 
 
 
     // Pagination State
@@ -126,31 +126,7 @@ const ArchivesTable = () => {
     };
 
 
-    // Handle selecting individual users
-    const handleSelectUser = (userId) => {
-        setSelectedStudentIds((prevSelectedIds) => {
-        if (prevSelectedIds.includes(userId)) {
-            return prevSelectedIds.filter(id => id !== userId);
-        } else {
-            return [...prevSelectedIds, userId];
-        }
-        });
-    };
-
-
-    // Handle "Select All" checkbox
-    const handleSelectAll = () => {
-      if (selectAll) {
-          setSelectedStudentIds([]);
-      } else {
-          const allIds = users.map(user => user.student_idnumber);
-          setSelectedStudentIds(allIds);
-      }
-      setSelectAll(!selectAll);
-      };
-
-
-    // Handle the batch delete students
+      // Handle the batch delete students
       const handleBatchDelete = async () => {
         const isConfirm = await Swal.fire({
             title: 'Are you sure you want to delete these users?',
@@ -183,6 +159,49 @@ const ArchivesTable = () => {
                 text: 'Failed to delete selected students. Please try again.'
             });
         }
+    };
+
+
+    // Handle selecting individual users
+    const handleSelectUser = (userId) => {
+        setSelectedStudentIds((prevSelectedIds) => {
+        if (prevSelectedIds.includes(userId)) {
+            return prevSelectedIds.filter(id => id !== userId);
+        } else {
+            return [...prevSelectedIds, userId];
+        }
+        });
+    };
+
+
+    // Handle "Select All" checkbox
+    const handleSelectAll = () => {
+        const filteredUsers = users.filter(user => {
+            if (user.status !== 'archived') return false; // Filter for archived users only
+        
+            const fullName = `${user.first_name} ${user.middle_name || ''} ${user.last_name} ${user.suffix || ''}`.toLowerCase();
+            const studentId = user.student_idnumber.toLowerCase();
+            const matchesSearchQuery = fullName.includes(searchQuery.toLowerCase()) || studentId.includes(searchQuery.toLowerCase());
+        
+            // Apply additional filters (yearLevel, department, program, batch)
+            const matchesFilters = Object.keys(filters).every(key => {
+                if (filters[key]) {
+                    if (key === 'yearLevel' && user.year_level && user.year_level !== filters[key]) return false;
+                    if (key === 'department' && user.department_name !== filters[key]) return false;
+                    if (key === 'program' && user.program_name && user.program_name !== filters[key]) return false;
+                    if (key === 'batch' && user.batch !== filters[key]) return false;
+                }
+                return true;
+            });
+            return matchesSearchQuery && matchesFilters; 
+        });
+        if (selectAll) {
+            setSelectedStudentIds([]); 
+        } else {
+            const allFilteredIds = filteredUsers.map(user => user.student_idnumber);
+            setSelectedStudentIds(allFilteredIds); 
+        }
+        setSelectAll(!selectAll);
     };
     
     
@@ -225,121 +244,147 @@ const ArchivesTable = () => {
 };
     
 
-  // Pagination logic
-  const indexOfLastUser = currentPage * rowsPerPage;
-  const indexOfFirstUser = indexOfLastUser - rowsPerPage;
-  const currentUsers = users.slice(indexOfFirstUser, indexOfLastUser);
-  const totalPages = Math.ceil(users.length / rowsPerPage);
+ // Pagination logic
+const indexOfLastUser = currentPage * rowsPerPage;
+const indexOfFirstUser = indexOfLastUser - rowsPerPage;
+const totalPages = Math.ceil(users.length / rowsPerPage);
 
-  const handlePaginationChange = (pageNumber) => {
-    setCurrentPage(pageNumber);
-  };
+const handlePaginationChange = (pageNumber) => {
+  setCurrentPage(pageNumber);
+};
 
-  const handleRowsPerPageChange = (e) => {
-    setRowsPerPage(Number(e.target.value));
-    setCurrentPage(1);
-  };
+const handleRowsPerPageChange = (e) => {
+  setRowsPerPage(Number(e.target.value));
+  setCurrentPage(1);
+};
 
 const renderPagination = () => {
   const pageNumbers = Array.from({ length: totalPages }, (_, i) => i + 1);
-
+  
   const buttonStyle = {
-    width: '30px', 
-    height: '30px', 
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    border: '1px solid #a0a0a0',
-    backgroundColor: '#ebebeb',
-    color: '#4a4a4a',
-    fontSize: '0.75rem', 
-    cursor: 'pointer',
+      width: '30px', 
+      height: '30px', 
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      border: '1px solid #a0a0a0',
+      backgroundColor: '#ebebeb',
+      color: '#4a4a4a',
+      fontSize: '0.75rem', 
+      cursor: 'pointer',
   };
-
+  
   const activeButtonStyle = {
-    ...buttonStyle,
-    backgroundColor: '#a0a0a0',
-    color: '#f1f1f1',
+      ...buttonStyle,
+      backgroundColor: '#a0a0a0',
+      color: '#f1f1f1',
   };
-
+  
   const disabledButtonStyle = {
-    ...buttonStyle,
-    backgroundColor: '#ebebeb',
-    color: '#a1a1a1',
-    cursor: 'not-allowed',
+      ...buttonStyle,
+      backgroundColor: '#ebebeb',
+      color: '#a1a1a1',
+      cursor: 'not-allowed',
   };
-
+  
   return (
-    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '15px', fontSize: '14px', color: '#4a4a4a'}}>
-        {/* Results per Page */}
-        <div>
-            <label htmlFor="rowsPerPage" style={{ marginLeft: '120px', marginRight: '5px' }}>Results per page:</label>
-            <select
-                id="rowsPerPage"
-                value={rowsPerPage}
-                onChange={handleRowsPerPageChange}
-                style={{ fontSize: '14px', padding: '5px 25px', border: '1px solid #ccc', borderRadius: '3px' }}>
-                {Array.from({ length: 10 }, (_, i) => (i + 1) * 10).map((value) => (
-                    <option key={value} value={value}> {value} </option>))}
-            </select>
-        </div>
-
-        {/* Pagination Info and Buttons */}
-        <div style={{ display: 'flex', alignItems: 'center', marginRight: '25px' }}>
-            {/* Page Info */}
-            <div style={{ marginRight: '10px' }}>Page {currentPage} of {totalPages}</div>
-
-            {/* Pagination Buttons */}
-            <div style={{ display: 'flex' }}>
-                <button
-                    onClick={() =>
-                        currentPage > 1 && handlePaginationChange(currentPage - 1)
-                    }
-                    disabled={currentPage === 1}
-                    style={{
-                        ...buttonStyle,
-                        borderTopLeftRadius: '10px',
-                        borderBottomLeftRadius: '10px',
-                        ...(currentPage === 1 ? disabledButtonStyle : {}),
-                    }}
-                >
-                    ❮
-                </button>
-                {pageNumbers.map((number) => (
-                    <button
-                        key={number}
-                        onClick={() => handlePaginationChange(number)}
-                        style={number === currentPage ? activeButtonStyle : buttonStyle}
-                    >
-                        {number}
-                    </button>
-                ))}
-                <button
-                    onClick={() =>
-                        currentPage < totalPages && handlePaginationChange(currentPage + 1)
-                    }
-                    disabled={currentPage === totalPages}
-                    style={{
-                        ...buttonStyle,
-                        borderTopRightRadius: '10px',
-                        borderBottomRightRadius: '10px',
-                        ...(currentPage === totalPages ? disabledButtonStyle : {}),
-                    }}
-                >
-                    ❯
-                </button>
-            </div>
-        </div>
-    </div>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '15px', fontSize: '14px', color: '#4a4a4a'}}>
+          {/* Results per Page */}
+          <div>
+              <label htmlFor="rowsPerPage" style={{ marginLeft: '120px', marginRight: '5px' }}>Results per page:</label>
+              <select
+                  id="rowsPerPage"
+                  value={rowsPerPage}
+                  onChange={handleRowsPerPageChange}
+                  style={{ fontSize: '14px', padding: '5px 25px', border: '1px solid #ccc', borderRadius: '3px' }}>
+                  {Array.from({ length: 10 }, (_, i) => (i + 1) * 10).map((value) => (
+                      <option key={value} value={value}> {value} </option>))}
+              </select>
+          </div>
+  
+          {/* Pagination Info and Buttons */}
+          <div style={{ display: 'flex', alignItems: 'center', marginRight: '25px' }}>
+              {/* Page Info */}
+              <div style={{ marginRight: '10px' }}>Page {currentPage} of {totalPages}</div>
+  
+              {/* Pagination Buttons */}
+              <div style={{ display: 'flex' }}>
+                  <button
+                      onClick={() =>
+                          currentPage > 1 && handlePaginationChange(currentPage - 1)
+                      }
+                      disabled={currentPage === 1}
+                      style={{
+                          ...buttonStyle,
+                          borderTopLeftRadius: '10px',
+                          borderBottomLeftRadius: '10px',
+                          ...(currentPage === 1 ? disabledButtonStyle : {}),
+                      }}
+                  >
+                      ❮
+                  </button>
+                  {pageNumbers.map((number) => (
+                      <button
+                          key={number}
+                          onClick={() => handlePaginationChange(number)}
+                          style={number === currentPage ? activeButtonStyle : buttonStyle}
+                      >
+                          {number}
+                      </button>
+                  ))}
+                  <button
+                      onClick={() =>
+                          currentPage < totalPages && handlePaginationChange(currentPage + 1)
+                      }
+                      disabled={currentPage === totalPages}
+                      style={{
+                          ...buttonStyle,
+                          borderTopRightRadius: '10px',
+                          borderBottomRightRadius: '10px',
+                          ...(currentPage === totalPages ? disabledButtonStyle : {}),
+                      }}
+                  >
+                      ❯
+                  </button>
+              </div>
+          </div>
+      </div>
   );
 };
 
 
+
 // Render the archives table
 const renderTable = () => {
-        return (
-                <Table bordered hover responsive style={{ borderRadius: '20px', marginBottom: '20px', marginLeft: '110px' }}>
-                    <thead>
+
+    const filteredUsers = users.filter(user => {
+        if (user.status !== 'archived') return false; // Filter for archived users only
+    
+        const fullName = `${user.first_name} ${user.middle_name || ''} ${user.last_name} ${user.suffix || ''}`.toLowerCase();
+        const studentId = user.student_idnumber.toLowerCase();
+        const matchesSearchQuery = fullName.includes(searchQuery.toLowerCase()) || studentId.includes(searchQuery.toLowerCase());
+    
+        // Apply additional filters (yearLevel, department, program, batch)
+        const matchesFilters = Object.keys(filters).every(key => {
+            if (filters[key]) {
+                if (key === 'yearLevel' && user.year_level && user.year_level !== filters[key]) return false;
+                if (key === 'department' && user.department_name !== filters[key]) return false;
+                if (key === 'program' && user.program_name && user.program_name !== filters[key]) return false;
+                if (key === 'batch' && user.batch !== filters[key]) return false;
+            }
+            return true;
+        });
+    
+        return matchesSearchQuery && matchesFilters; 
+    });
+    
+    const currentUsers = filteredUsers.slice(indexOfFirstUser, indexOfLastUser);
+
+    
+    
+    return (
+            <Table bordered hover responsive style={{ borderRadius: '20px', marginBottom: '20px', marginLeft: '110px' }}>
+                <thead>
                         <tr>
                             <th style={{ width: '3%' }}> <input type="checkbox" checked={selectAll} onChange={handleSelectAll}/> </th>
                             <th style={{ textAlign: 'center', padding: '0', verticalAlign: 'middle', width: '11%' }}>
@@ -376,14 +421,15 @@ const renderTable = () => {
                         </tr>
                     </thead>
                     <tbody>
-                    {currentUsers.map(user => (
+                    {filteredUsers?.length > 0 ? (
+                    currentUsers.map(user => (
                         <tr key={user.student_idnumber}>
                             <td> <input type="checkbox" checked={selectedStudentIds.includes(user.student_idnumber)} onChange={() => handleSelectUser(user.student_idnumber)}/> </td>
                             <td>{user.student_idnumber}</td>
                             <td>{`${user.first_name} ${user.middle_name || ''} ${user.last_name} ${user.suffix || ''}`}</td>
                             <td>{user.year_level}</td>
-                            <td>{departments.find(department => department.department_id === user.department_id)?.department_name || ''}</td>
-                            <td>{programs.find(program => program.program_id === user.program_id)?.program_name || ''}</td>
+                            <td>{user.department_name}</td>
+                            <td>{user.program_name}</td>
                             <td style={{ textAlign: 'center' }}>
                                 <div style={{
                                     backgroundColor: 
@@ -425,7 +471,12 @@ const renderTable = () => {
                                 </div>
                             </td>
                         </tr>
-                        ))}
+                            ))
+                        ) : (
+                            <tr>
+                                <td colSpan="7">No users found</td>
+                            </tr>
+                        )}
                     </tbody>
                 </Table>
                 );
@@ -469,4 +520,3 @@ const renderTable = () => {
 };
 
 
-export default ArchivesTable;

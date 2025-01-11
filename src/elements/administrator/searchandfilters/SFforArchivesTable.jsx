@@ -6,14 +6,16 @@ import '../../../styles/SearchAndFilter.css';
 
 export default function SFforArchivesTable({ onSearch, onFilterChange }) {
   const [searchQuery, setSearchQuery] = useState('');
-  const [department, setDepartment] = useState('');
   const [yearLevel, setYearLevel] = useState('');
+  const [department, setDepartment] = useState('');
   const [program, setProgram] = useState('');
   const [batch, setBatch] = useState('');
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [isFilterActive, setIsFilterActive] = useState(false);
   const [departments, setDepartments] = useState([]);
   const [programs, setPrograms] = useState([]);
+  const [allPrograms, setAllPrograms] = useState([]); 
+  const [filteredPrograms, setFilteredPrograms] = useState([]);
   const [allUsers, setAllUsers] = useState([]);
 
 
@@ -36,18 +38,28 @@ export default function SFforArchivesTable({ onSearch, onFilterChange }) {
   }, []);
 
 
-  // Fetch programs from the backend
+  // Fetch all programs from the backend
   useEffect(() => {
     const fetchPrograms = async () => {
       try {
-        const response = await axios.get('http://localhost:9000/programs'); 
-        setPrograms(response.data);
+        const response = await axios.get('http://localhost:9000/programs');
+        setAllPrograms(response.data);
       } catch (error) {
         console.error('Error fetching programs:', error);
       }
     };
     fetchPrograms();
   }, []);
+
+  // Filter programs based on selected department
+  useEffect(() => {
+    if (department) {
+      const filtered = allPrograms.filter((program) => program.department_name === department);
+      setFilteredPrograms(filtered);
+    } else {
+      setFilteredPrograms(allPrograms); // Reset when no department is selected
+    }
+  }, [department, allPrograms]);
 
 
   // Handle search input change
@@ -60,17 +72,17 @@ export default function SFforArchivesTable({ onSearch, onFilterChange }) {
 
   // Trigger search with current query and filters
   const triggerSearch = (query) => {
-    onSearch(query, { department, yearLevel, program, batch });
+    onSearch(query, { yearLevel, department, program, batch });
   };
 
 
   // Handle filter changes
   const handleFilterChange = (field, value) => {
-    const updatedFilters = { department, yearLevel, program, batch, [field]: value };
+    const updatedFilters = { yearLevel, department, program, batch, [field]: value };
 
     // Update individual filter states
-    if (field === 'department') setYearLevel(value);
     if (field === 'yearLevel') setYearLevel(value);
+    if (field === 'department') setDepartment(value);
     if (field === 'program') setProgram(value);
     if (field === 'batch') setBatch(value);
 
@@ -88,11 +100,11 @@ export default function SFforArchivesTable({ onSearch, onFilterChange }) {
 
   // Clear all filters
   const clearFilters = () => {
-    setDepartment('');
     setYearLevel('');
+    setDepartment('');
     setProgram('');
     setBatch('');
-    onFilterChange({ department: '', yearLevel: '', program: '', batch: '' });
+    onFilterChange({ yearLevel: '', department: '', program: '', batch: '' });
   };
 
 
@@ -138,34 +150,34 @@ export default function SFforArchivesTable({ onSearch, onFilterChange }) {
         </div>
   
         <div className="filterOption">
-          <select
-            value={department}
-            onChange={(e) => handleFilterChange('department', e.target.value)}
-            className="filterSelect"
-          >
-            <option value="">Department</option>
-            {departments.map((department) => (
-              <option key={department.department_id} value={department.department_name}>
-                {department.department_name}
-              </option>
-            ))}
-          </select>
-        </div>
-  
-        <div className="filterOption">
-          <select
-            value={program}
-            onChange={(e) => handleFilterChange('program', e.target.value)}
-            className="filterSelect"
-          >
-            <option value="">Program</option>
-            {programs.map((program) => (
-              <option key={program.program_id} value={program.program_name}>
-                {program.program_name}
-              </option>
-            ))}
-          </select>
-        </div>
+            <select
+              value={department}
+              onChange={(e) => handleFilterChange('department', e.target.value)}
+              className="filterSelect"
+            >
+              <option value="">Department</option>
+              {departments.map((department) => (
+                <option key={department.department_id} value={department.department_name}>
+                  {department.department_name}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="filterOption">
+            <select
+              value={program}
+              onChange={(e) => handleFilterChange('program', e.target.value)}
+              className="filterSelect"
+            >
+              <option value="">Program</option>
+              {filteredPrograms.map((program) => (
+                <option key={program.program_id} value={program.program_name}>
+                  {program.program_name}
+                </option>
+              ))}
+            </select>
+          </div>
   
         <div className="filterOption">
           <select

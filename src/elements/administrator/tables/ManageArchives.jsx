@@ -106,14 +106,18 @@ return (
 
 
             {/* Search And Filter Section */}
-            <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'center', marginTop: '10px', marginLeft: '70px', padding: '0 20px', gap: '2px', width: '100%' }}>
+            <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'center', marginTop: '10px', marginLeft: '120px', width: '91%' }}>
                 <div style={{ flex: '1 1 100%', width: '100%' }}>
                     <SFforArchivesTable onSearch={handleSearch} onFilterChange={handleFilterChange} />
                 </div>
             </div>
             
             {/* Table Section */} 
-            <ArchivesTable />
+            <ArchivesTable 
+                filteredUsers={filteredUsers}  
+                filters={filters}      
+                searchQuery={searchQuery}   
+            />
         </div>
     );
 }
