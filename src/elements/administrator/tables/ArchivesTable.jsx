@@ -46,7 +46,6 @@ export default function ArchivesTable ({filters, searchQuery}) {
         }
     }, [headers]);
 
-
     // Fetch the departments
     const fetchDepartments = useCallback(async () => {
         try {
@@ -58,7 +57,6 @@ export default function ArchivesTable ({filters, searchQuery}) {
         }
     }, [headers]);
 
-
     // Fetch the programs
     const fetchPrograms = useCallback(async () => {
         try {
@@ -69,7 +67,6 @@ export default function ArchivesTable ({filters, searchQuery}) {
             Swal.fire('Error', 'Failed to fetch programs.', 'error');
         }
     }, [headers]);
-
     useEffect(() => {
         fetchUsers();
         fetchDepartments();
@@ -126,39 +123,39 @@ export default function ArchivesTable ({filters, searchQuery}) {
     };
 
 
-      // Handle the batch delete students
-      const handleBatchDelete = async () => {
-        const isConfirm = await Swal.fire({
-            title: 'Are you sure you want to delete these users?',
-            text: 'Deleting these users will also affect all associated data.',
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#d33',
-            cancelButtonColor: '#B0B0B0',
-            confirmButtonText: 'Yes, delete it'
-        }).then((result) => result.isConfirmed);
-    
-        if (!isConfirm) return;
-    
-        try {
-            await axios.delete('http://localhost:9000/students', {
-                data: { student_ids: selectedStudentIds },
-                headers
-            });
-            Swal.fire({
-                icon: 'success',
-                text: 'Successfully deleted selected students.'
-            });
-            window.location.reload();
+    // Handle the batch delete students
+    const handleBatchDelete = async () => {
+    const isConfirm = await Swal.fire({
+        title: 'Are you sure you want to delete these users?',
+        text: 'Deleting these users will also affect all associated data.',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#B0B0B0',
+        confirmButtonText: 'Yes, delete it'
+    }).then((result) => result.isConfirmed);
 
-            setSelectedStudentIds([]);  
-        } catch (error) {
-            console.error('Error deleting students:', error.response?.data || error.message);
-            Swal.fire({
-                icon: 'error',
-                text: 'Failed to delete selected students. Please try again.'
-            });
-        }
+    if (!isConfirm) return;
+
+    try {
+        await axios.delete('http://localhost:9000/students', {
+            data: { student_ids: selectedStudentIds },
+            headers
+        });
+        Swal.fire({
+            icon: 'success',
+            text: 'Successfully deleted selected students.'
+        });
+        window.location.reload();
+
+        setSelectedStudentIds([]);  
+    } catch (error) {
+        console.error('Error deleting students:', error.response?.data || error.message);
+        Swal.fire({
+            icon: 'error',
+            text: 'Failed to delete selected students. Please try again.'
+        });
+    }
     };
 
 
@@ -177,7 +174,7 @@ export default function ArchivesTable ({filters, searchQuery}) {
     // Handle "Select All" checkbox
     const handleSelectAll = () => {
         const filteredUsers = users.filter(user => {
-            if (user.status !== 'archived') return false; // Filter for archived users only
+            if (user.status !== 'archived') return false; 
         
             const fullName = `${user.first_name} ${user.middle_name || ''} ${user.last_name} ${user.suffix || ''}`.toLowerCase();
             const studentId = user.student_idnumber.toLowerCase();
@@ -353,12 +350,10 @@ const renderPagination = () => {
 };
 
 
-
 // Render the archives table
 const renderTable = () => {
 
-    const filteredUsers = users.filter(user => {
-        if (user.status !== 'archived') return false; // Filter for archived users only
+    const filteredUsers = users.filter(user => { if (user.status !== 'archived') return false; 
     
         const fullName = `${user.first_name} ${user.middle_name || ''} ${user.last_name} ${user.suffix || ''}`.toLowerCase();
         const studentId = user.student_idnumber.toLowerCase();
@@ -374,148 +369,146 @@ const renderTable = () => {
             }
             return true;
         });
-    
         return matchesSearchQuery && matchesFilters; 
     });
     
     const currentUsers = filteredUsers.slice(indexOfFirstUser, indexOfLastUser);
 
     
-    
-    return (
-            <Table bordered hover responsive style={{ borderRadius: '20px', marginBottom: '20px', marginLeft: '110px' }}>
-                <thead>
-                        <tr>
-                            <th style={{ width: '3%' }}> <input type="checkbox" checked={selectAll} onChange={handleSelectAll}/> </th>
-                            <th style={{ textAlign: 'center', padding: '0', verticalAlign: 'middle', width: '11%' }}>
-                              <button
-                                  style={{ border: 'none', background: 'none', cursor: 'pointer', display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center', width: '100%' }}
-                                  onClick={handleSortIdNumber}
-                                  >
-                                  <span style={{ textAlign: 'center' }}>ID Number</span>
-                                  {sortOrder === 'asc' ? (
-                                  <ArrowDropUpIcon style={{ marginLeft: '5px' }} />
-                                  ) : (
-                                  <ArrowDropDownIcon style={{ marginLeft: '5px' }} />
-                                  )}
-                              </button>
-                            </th>
-                            <th style={{ textAlign: 'center', padding: '0', verticalAlign: 'middle' }}>
-                                <button
-                                    style={{ border: 'none', background: 'none', cursor: 'pointer', display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center', width: '100%' }}
-                                    onClick={handleSortFullName}
-                                    >
-                                    <span style={{ textAlign: 'center' }}>Full Name</span>
-                                    {sortOrder === 'asc' ? (
-                                    <ArrowDropUpIcon style={{ marginLeft: '5px' }} />
-                                    ) : (
-                                    <ArrowDropDownIcon style={{ marginLeft: '5px' }} />
-                                    )}
-                                </button>
-                            </th>
-                            <th style={{ width: '10%' }}>Year Level</th>
-                            <th>Department</th>
-                            <th>Program</th>
-                            <th style={{ width: '13%' }}>Status</th>
-                            <th style={{ width: '13%' }}>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                    {filteredUsers?.length > 0 ? (
-                    currentUsers.map(user => (
-                        <tr key={user.student_idnumber}>
-                            <td> <input type="checkbox" checked={selectedStudentIds.includes(user.student_idnumber)} onChange={() => handleSelectUser(user.student_idnumber)}/> </td>
-                            <td>{user.student_idnumber}</td>
-                            <td>{`${user.first_name} ${user.middle_name || ''} ${user.last_name} ${user.suffix || ''}`}</td>
-                            <td>{user.year_level}</td>
-                            <td>{user.department_name}</td>
-                            <td>{user.program_name}</td>
-                            <td style={{ textAlign: 'center' }}>
+return (
+        <Table bordered hover responsive style={{ borderRadius: '20px', marginBottom: '20px', marginLeft: '110px' }}>
+            <thead>
+                    <tr>
+                        <th style={{ width: '3%' }}> <input type="checkbox" checked={selectAll} onChange={handleSelectAll}/> </th>
+                        <th style={{ textAlign: 'center', padding: '0', verticalAlign: 'middle', width: '11%' }}>
+                            <button
+                                style={{ border: 'none', background: 'none', cursor: 'pointer', display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center', width: '100%' }}
+                                onClick={handleSortIdNumber}
+                                >
+                                <span style={{ textAlign: 'center' }}>ID Number</span>
+                                {sortOrder === 'asc' ? (
+                                <ArrowDropUpIcon style={{ marginLeft: '5px' }} />
+                                ) : (
+                                <ArrowDropDownIcon style={{ marginLeft: '5px' }} />
+                                )}
+                            </button>
+                        </th>
+                        <th style={{ textAlign: 'center', padding: '0', verticalAlign: 'middle' }}>
+                            <button
+                                style={{ border: 'none', background: 'none', cursor: 'pointer', display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center', width: '100%' }}
+                                onClick={handleSortFullName}
+                                >
+                                <span style={{ textAlign: 'center' }}>Full Name</span>
+                                {sortOrder === 'asc' ? (
+                                <ArrowDropUpIcon style={{ marginLeft: '5px' }} />
+                                ) : (
+                                <ArrowDropDownIcon style={{ marginLeft: '5px' }} />
+                                )}
+                            </button>
+                        </th>
+                        <th style={{ width: '10%' }}>Year Level</th>
+                        <th>Department</th>
+                        <th>Program</th>
+                        <th style={{ width: '13%' }}>Status</th>
+                        <th style={{ width: '13%' }}>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {filteredUsers?.length > 0 ? (
+                currentUsers.map(user => (
+                    <tr key={user.student_idnumber}>
+                        <td> <input type="checkbox" checked={selectedStudentIds.includes(user.student_idnumber)} onChange={() => handleSelectUser(user.student_idnumber)}/> </td>
+                        <td>{user.student_idnumber}</td>
+                        <td>{`${user.first_name} ${user.middle_name || ''} ${user.last_name} ${user.suffix || ''}`}</td>
+                        <td>{user.year_level}</td>
+                        <td>{user.department_name}</td>
+                        <td>{user.program_name}</td>
+                        <td style={{ textAlign: 'center' }}>
+                            <div style={{
+                                backgroundColor: 
+                                    user.status === 'active' ? '#DBF0DC' :
+                                    user.status === 'archived' ? '#E0E0E0' : '#F0DBDB',
+                                color: 
+                                    user.status === 'active' ? '#30A530' :
+                                    user.status === 'archived' ? '#6C757D' : '#D9534F',
+                                fontWeight: '600',
+                                fontSize: '14px',
+                                borderRadius: '30px',
+                                padding: '5px 20px',
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                            }}>
                                 <div style={{
+                                    width: '8px',
+                                    height: '8px',
+                                    borderRadius: '50%',
                                     backgroundColor: 
-                                        user.status === 'active' ? '#DBF0DC' :
-                                        user.status === 'archived' ? '#E0E0E0' : '#F0DBDB',
-                                    color: 
                                         user.status === 'active' ? '#30A530' :
                                         user.status === 'archived' ? '#6C757D' : '#D9534F',
-                                    fontWeight: '600',
-                                    fontSize: '14px',
-                                    borderRadius: '30px',
-                                    padding: '5px 20px',
-                                    display: 'inline-flex',
-                                    alignItems: 'center',
-                                }}>
-                                    <div style={{
-                                        width: '8px',
-                                        height: '8px',
-                                        borderRadius: '50%',
-                                        backgroundColor: 
-                                            user.status === 'active' ? '#30A530' :
-                                            user.status === 'archived' ? '#6C757D' : '#D9534F',
-                                        marginRight: '7px',
-                                    }} />
-                                    {user.status}
-                                </div>
-                            </td>
-                            <td>
-                                <div className="d-flex justify-content-around">
-                                    <Button className='btn btn-secondary btn-sm' onClick={() => handleReadModalShow(user)}>
-                                        <PersonIcon />
-                                    </Button>
-                                    <Button className='btn btn-success btn-sm' onClick={() => handleUpdateModalShow(user)}>
-                                        <EditIcon />
-                                    </Button>      
-                                    <Button className="btn btn-danger btn-sm" onClick={() => deleteUser(user.user_id)}>
-                                        <DeleteIcon />
-                                    </Button>
-                                </div>
-                            </td>
+                                    marginRight: '7px',
+                                }} />
+                                {user.status}
+                            </div>
+                        </td>
+                        <td>
+                            <div className="d-flex justify-content-around">
+                                <Button className='btn btn-secondary btn-sm' onClick={() => handleReadModalShow(user)}>
+                                    <PersonIcon />
+                                </Button>
+                                <Button className='btn btn-success btn-sm' onClick={() => handleUpdateModalShow(user)}>
+                                    <EditIcon />
+                                </Button>      
+                                <Button className="btn btn-danger btn-sm" onClick={() => deleteUser(user.user_id)}>
+                                    <DeleteIcon />
+                                </Button>
+                            </div>
+                        </td>
+                    </tr>
+                        ))
+                    ) : (
+                        <tr>
+                            <td colSpan="7">No users found</td>
                         </tr>
-                            ))
-                        ) : (
-                            <tr>
-                                <td colSpan="7">No users found</td>
-                            </tr>
-                        )}
-                    </tbody>
-                </Table>
-                );
-            };
+                    )}
+                </tbody>
+            </Table>
+            );
+        };
   
   
-    return (
-        <div>
-            {selectedStudentIds.length > 0 && (
-                <BatchArchivesToolbar
-                selectedItemsCount={selectedStudentIds.length}
-                selectedStudentIds={selectedStudentIds}
-                onDelete={handleBatchDelete}
-                />
-            )}  
-
-            {renderTable()}
-
-            {renderPagination()}
-
-            {/* View Student Modal */}
-            <ViewStudentModal
-                show={showReadModal}
-                onHide={handleReadModalClose}
-                user={selectedUser}
-                departments={departments}
-                programs={programs}
+return (
+    <div>
+        {selectedStudentIds.length > 0 && (
+            <BatchArchivesToolbar
+            selectedItemsCount={selectedStudentIds.length}
+            selectedStudentIds={selectedStudentIds}
+            onDelete={handleBatchDelete}
             />
+        )}  
 
-            {/* Edit Student Modal */}
-            <EditStudentModal
-                show={showUpdateModal}
-                onHide={handleUpdateModalClose} 
-                user={selectedUser}
-                fetchUsers={fetchUsers}
-                departments={departments} 
-                programs={programs} 
-            />
-        </div>
+        {renderTable()}
+
+        {renderPagination()}
+
+        {/* View Student Modal */}
+        <ViewStudentModal
+            show={showReadModal}
+            onHide={handleReadModalClose}
+            user={selectedUser}
+            departments={departments}
+            programs={programs}
+        />
+
+        {/* Edit Student Modal */}
+        <EditStudentModal
+            show={showUpdateModal}
+            onHide={handleUpdateModalClose} 
+            user={selectedUser}
+            fetchUsers={fetchUsers}
+            departments={departments} 
+            programs={programs} 
+        />
+    </div>
     );
 };
 
