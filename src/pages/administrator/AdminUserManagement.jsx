@@ -47,10 +47,7 @@ export default function AdminUserManagement() {
         try {
             const token = localStorage.getItem('token');
             const headers = { Authorization: `Bearer ${token}` };
-    
-            const response = await axios.get(
-                'http://localhost:9000/users',
-                { headers }
+            const response = await axios.get('http://localhost:9000/users', { headers }
             );
             const activeUsers = response.data.filter(user => user.status !== 'archived');
             setUsers(activeUsers);

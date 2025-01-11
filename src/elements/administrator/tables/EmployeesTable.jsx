@@ -113,45 +113,8 @@ export default function ({filters, searchQuery}) {
     };
 
 
-  // Handle selecting individual users
-  const handleSelectUser = (userId) => {
-    setSelectedEmployeeIds((prevSelectedIds) => {
-      if (prevSelectedIds.includes(userId)) {
-        return prevSelectedIds.filter(id => id !== userId);
-      } else {
-        return [...prevSelectedIds, userId];
-      }
-    });
-  };
-
-// Handle "Select All" checkbox
-const handleSelectAll = () => {
-  const filteredUsers = users.filter(user => {
-      const fullName = `${user.first_name} ${user.middle_name || ''} ${user.last_name} ${user.suffix || ''}`.toLowerCase();
-      const employeeId = user.employee_idnumber.toLowerCase();
-      const matchesSearchQuery = fullName.includes(searchQuery.toLowerCase()) || employeeId.includes(searchQuery.toLowerCase());
-
-      const matchesFilters = Object.keys(filters).every(key => {
-          if (filters[key]) {
-              if (key === 'role' && user.role_name !== filters[key]) return false;
-              if (key === 'status' && user.status !== filters[key]) return false;
-          }
-          return true;
-      });
-      return matchesSearchQuery && matchesFilters; 
-  });
-
-  if (selectAll) {
-      setSelectedEmployeeIds([]); 
-  } else {
-      const allFilteredIds = filteredUsers.map(user => user.employee_idnumber);
-      setSelectedEmployeeIds(allFilteredIds); 
-  }
-  setSelectAll(!selectAll);
-};
-
-
-      const handleBatchDelete = async () => {
+    // Handle the batch delete employee
+    const handleBatchDelete = async () => {
       const isConfirm = await Swal.fire({
           title: 'Are you sure you want to delete these users?',
           text: "Deleting these users will also affect all associated data.",
@@ -183,7 +146,44 @@ const handleSelectAll = () => {
           });
       }
   };
-    
+
+
+  // Handle selecting individual users
+  const handleSelectUser = (userId) => {
+    setSelectedEmployeeIds((prevSelectedIds) => {
+      if (prevSelectedIds.includes(userId)) {
+        return prevSelectedIds.filter(id => id !== userId);
+      } else {
+        return [...prevSelectedIds, userId];
+      }
+    });
+  };
+
+  // Handle "Select All" checkbox
+  const handleSelectAll = () => {
+    const filteredUsers = users.filter(user => {
+        const fullName = `${user.first_name} ${user.middle_name || ''} ${user.last_name} ${user.suffix || ''}`.toLowerCase();
+        const employeeId = user.employee_idnumber.toLowerCase();
+        const matchesSearchQuery = fullName.includes(searchQuery.toLowerCase()) || employeeId.includes(searchQuery.toLowerCase());
+
+        const matchesFilters = Object.keys(filters).every(key => {
+            if (filters[key]) {
+                if (key === 'role' && user.role_name !== filters[key]) return false;
+                if (key === 'status' && user.status !== filters[key]) return false;
+            }
+            return true;
+        });
+        return matchesSearchQuery && matchesFilters; 
+    });
+    if (selectAll) {
+        setSelectedEmployeeIds([]); 
+    } else {
+        const allFilteredIds = filteredUsers.map(user => user.employee_idnumber);
+        setSelectedEmployeeIds(allFilteredIds); 
+    }
+    setSelectAll(!selectAll);
+  };
+
 
    // Sort users based on full name
     const handleSort = (key) => {
@@ -323,25 +323,26 @@ const renderTable = () => {
 
     // Calculate filteredUsers directly from users
     const filteredUsers = users.filter(user => {
-      const fullName = `${user.first_name} ${user.middle_name || ''} ${user.last_name} ${user.suffix || ''}`.toLowerCase();
-      const employeeId = user.employee_idnumber.toLowerCase();
-      const matchesSearchQuery = fullName.includes(searchQuery.toLowerCase()) || employeeId.includes(searchQuery.toLowerCase());
 
-      const matchesFilters = Object.keys(filters).every(key => {
-          if (filters[key]) {  
-              if (key === 'role' && user.role_name !== filters[key]) return false;
-              if (key === 'status' && user.status !== filters[key]) return false;
-          }
-          return true;
+        const fullName = `${user.first_name} ${user.middle_name || ''} ${user.last_name} ${user.suffix || ''}`.toLowerCase();
+        const employeeId = user.employee_idnumber.toLowerCase();
+        const matchesSearchQuery = fullName.includes(searchQuery.toLowerCase()) || employeeId.includes(searchQuery.toLowerCase());
+
+        const matchesFilters = Object.keys(filters).every(key => {
+            if (filters[key]) {  
+                if (key === 'role' && user.role_name !== filters[key]) return false;
+                if (key === 'status' && user.status !== filters[key]) return false;
+            }
+            return true;
+        });
+        return matchesSearchQuery && matchesFilters; 
       });
-      return matchesSearchQuery && matchesFilters; 
-    });
 
     const currentUsers = filteredUsers.slice(indexOfFirstUser, indexOfLastUser);
 
 
-  return (
-    <Table bordered hover responsive style={{ borderRadius: '20px', marginBottom: '20px', marginLeft: '110px' }}>
+return (
+  <Table bordered hover responsive style={{ borderRadius: '20px', marginBottom: '20px', marginLeft: '110px' }}>
         <thead>
           <tr>
             <th style={{ width: '3%' }}><input type="checkbox" checked={selectAll} onChange={handleSelectAll}/></th>
@@ -442,7 +443,7 @@ return (
               selectedEmployeeIds={selectedEmployeeIds}
               onDelete={handleBatchDelete}
           />
-      )}
+          )}
 
           {renderTable()}
 
