@@ -92,91 +92,102 @@ export default function SFforArchivesTable({ onSearch, onFilterChange }) {
     setYearLevel('');
     setProgram('');
     setBatch('');
-    setStatus('');
     onFilterChange({ department: '', yearLevel: '', program: '', batch: '' });
   };
 
 
   return (
-    <div className="searchAndFilterContainer">
-      <div className="searchAndFilterWrapper">
-        <input type="text" placeholder="Search..." value={searchQuery} onChange={handleInputChange} className="searchInput"/>
-        <button onClick={toggleFilterDropdown} className={`filterButton ${isFilterActive ? 'active' : ''}`}>
-            <IoFilter className={`filterIcon ${isFilterActive ? 'active' : ''}`} />
-        </button>
-        <button onClick={() => triggerSearch(searchQuery)} className="searchButton">
-            <FaSearch className="searchIcon" />
+    <div className="fullWidthSearchContainer">
+    <div className="fullWidthSearchAndFilterWrapper">
+      <input 
+        type="text" 
+        placeholder="Search..." 
+        value={searchQuery} 
+        onChange={handleInputChange} 
+        className="fullWidthSearchInput"
+      />
+      <button 
+        onClick={toggleFilterDropdown} 
+        className={`filterButton ${isFilterActive ? 'active' : ''}`}
+      >
+        <IoFilter className={`filterIcon ${isFilterActive ? 'active' : ''}`} />
+      </button>
+      <button 
+        onClick={() => triggerSearch(searchQuery)} 
+        className="searchButton"
+      >
+        <FaSearch className="searchIcon" />
+      </button>
+    </div>
+  
+    {isFilterOpen && (
+      <div className="filterDropdownWrapper">
+        <div className="filterOption">
+          <select
+            value={yearLevel}
+            onChange={(e) => handleFilterChange('yearLevel', e.target.value)}
+            className="filterSelect"
+          >
+            <option value="">Year Level</option>
+            <option value="First Year">First Year</option>
+            <option value="Second Year">Second Year</option>
+            <option value="Third Year">Third Year</option>
+            <option value="Fourth Year">Fourth Year</option>
+            <option value="Fifth Year">Fifth Year</option>
+          </select>
+        </div>
+  
+        <div className="filterOption">
+          <select
+            value={department}
+            onChange={(e) => handleFilterChange('department', e.target.value)}
+            className="filterSelect"
+          >
+            <option value="">Department</option>
+            {departments.map((department) => (
+              <option key={department.department_id} value={department.department_name}>
+                {department.department_name}
+              </option>
+            ))}
+          </select>
+        </div>
+  
+        <div className="filterOption">
+          <select
+            value={program}
+            onChange={(e) => handleFilterChange('program', e.target.value)}
+            className="filterSelect"
+          >
+            <option value="">Program</option>
+            {programs.map((program) => (
+              <option key={program.program_id} value={program.program_name}>
+                {program.program_name}
+              </option>
+            ))}
+          </select>
+        </div>
+  
+        <div className="filterOption">
+          <select
+            value={batch}
+            onChange={(e) => handleFilterChange('batch', e.target.value)}
+            className="filterSelect"
+          >
+            <option value="">Select Batch</option>
+            {years.map((year) => (
+              <option key={year} value={year}>
+                {year}
+              </option>
+            ))}
+          </select>
+        </div>
+  
+        <button className="clearButton" onClick={clearFilters}>
+          Clear
         </button>
       </div>
-
-      {isFilterOpen && (
-        <div className="filterDropdownWrapper">
-          <div className="filterOption">
-            <select
-              value={yearLevel}
-              onChange={(e) => handleFilterChange('yearLevel', e.target.value)}
-              className="filterSelect"
-            >
-              <option value="">Year Level</option>
-              <option value="First Year">First Year</option>
-              <option value="Second Year">Second Year</option>
-              <option value="Third Year">Third Year</option>
-              <option value="Fourth Year">Fourth Year</option>
-              <option value="Fifth Year">Fifth Year</option>
-            </select>
-          </div>
-
-          <div className="filterOption">
-            <select
-              value={department}
-              onChange={(e) => handleFilterChange('department', e.target.value)}
-              className="filterSelect"
-            >
-              <option value="">Program</option>
-              {departments.map((department) => (
-                <option key={department.department_id} value={department.department_name}>
-                  {department.department_name}
-                </option>
-              ))}
-            </select>
-          </div>
-
-
-          <div className="filterOption">
-            <select
-              value={program}
-              onChange={(e) => handleFilterChange('program', e.target.value)}
-              className="filterSelect"
-            >
-              <option value="">Program</option>
-              {programs.map((program) => (
-                <option key={program.program_id} value={program.program_name}>
-                  {program.program_name}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <div className="filterOption">
-            <select
-              value={batch}
-              onChange={(e) => handleFilterChange('batch', e.target.value)}
-              className="filterSelect"
-            >
-              <option value="">Select Batch</option>
-              {years.map((year) => (
-                <option key={year} value={year}>
-                  {year}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <button className="clearButton" onClick={clearFilters}>
-            Clear
-          </button>
-        </div>
-      )}
-    </div>
+    )}
+  </div>
+  
   );
 }

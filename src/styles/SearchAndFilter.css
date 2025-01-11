@@ -124,3 +124,111 @@
 .clearButton:hover {
     text-decoration: underline;
 }
+
+
+
+
+
+
+
+
+
+
+/* Full-width search container */
+.fullWidthSearchContainer {
+    display: flex;
+    flex-direction: column; /* Stack the search bar and filter dropdown vertically */
+    justify-content: flex-start; /* Align items to the left */
+    align-items: flex-start; /* Align everything to the left */
+    width: 100%;
+    padding: 0 20px; /* Add padding to prevent edges from touching the screen */
+    margin: 20px 0; /* Add margin for spacing */
+}
+
+.fullWidthSearchAndFilterWrapper {
+        display: flex;
+        width: 96%; /* Ensure the dropdown wrapper takes up full width */
+    }
+
+/* Full-width search input */
+.fullWidthSearchInput {
+    padding: 12px;
+    width: 100%; /* Make the search input occupy the full width */
+    max-width: 1500px; /* Increase max-width for a longer search bar */
+    background-color: #ffffff;
+    box-shadow: inset 1px 0 5px 1px rgba(0, 0, 0, 0.2);
+    border-radius: 10px 0 0 10px;
+    border: none;
+    outline: none;
+    transition: box-shadow 0.3s ease;
+}
+
+/* Focus state for search input */
+.fullWidthSearchInput:focus {
+    box-shadow: inset 1px 0px 5px 1px rgba(0, 0, 0, 0.3);
+}
+
+/* Full-width search button */
+.fullWidthSearchButton {
+    padding: 12px 20px;
+    background-color: #FAD32E;
+    color: #fff;
+    border: none;
+    border-radius: 0 10px 10px 0;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Search icon */
+.fullWidthSearchIcon {
+    width: 24px;
+    height: 24px;
+}
+
+/* Full-width filter dropdown */
+.fullWidthFilterDropdownWrapper {
+    display: flex;
+    flex-wrap: wrap; /* Allow filters to wrap to next line if necessary */
+    gap: 20px;
+    margin-top: 20px;
+    width: 100%; /* Full width */
+    padding: 0 20px; /* Add padding to match the search container */
+}
+
+/* Full-width filter option */
+.fullWidthFilterOption {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    width: 100%; /* Full width per filter */
+    max-width: 200px; /* Optional: limit the width of each filter */
+}
+
+/* Filter select input */
+.fullWidthFilterSelect {
+    width: 100%; 
+    padding: 8px;
+    font-size: 14px;
+    border-radius: 0;
+    border: 1px solid #ccc;
+    color: #000;
+}
+
+/* Clear button for filters */
+.fullWidthClearButton {
+    background: none;
+    color: #3B3B3B;
+    border: none;
+    font-weight: bold;
+    cursor: pointer;
+    padding: 8px 14px;
+    font-size: 14px;
+    margin-top: 20px;
+}
+
+/* Hover state for clear button */
+.fullWidthClearButton:hover {
+    text-decoration: underline;
+}
