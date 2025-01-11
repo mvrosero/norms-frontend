@@ -9,14 +9,15 @@ import DeleteIcon from '@mui/icons-material/Delete';
 
 import AdminNavigation from '../../../pages/administrator/AdminNavigation';
 import AdminInfo from '../../../pages/administrator/AdminInfo';
-import SearchAndFilter from '../../../pages/general/SearchAndFilter';
 import AddDepartmentModal from '../modals/AddDepartmentModal';
 import EditDepartmentModal from '../modals/EditDepartmentModal';
+import SFforSettingsTable from '../searchandfilters/SFforSettingsTable';
 import folderBackground from '../../../components/images/folder_background.png';
 
 export default function ManageDepartments() {
     const navigate = useNavigate();
     const [departments, setDepartments] = useState([]);
+    const [filteredDepartments, setFilteredDepartments] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [showDepartmentModal, setShowDepartmentModal] = useState(false);
@@ -27,10 +28,10 @@ export default function ManageDepartments() {
         status: '',
     });
     const [editDepartmentId, setEditDepartmentId] = useState(null);
+    const [searchQuery, setSearchQuery] = useState('');
+    const [filteredItems, setFilteredItems] = useState([]);  
 
-    useEffect(() => {
-        fetchDepartments();
-    }, []);
+
 
 
     // Fetch departments
@@ -40,12 +41,45 @@ export default function ManageDepartments() {
                 headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
             });
             setDepartments(response.data);
+            setFilteredDepartments(response.data);  // Initially, show all departments
             setLoading(false);
         } catch (error) {
             setError('Failed to fetch departments');
             setLoading(false);
         }
     };
+    useEffect(() => {
+        fetchDepartments();
+    }, []);
+
+
+
+
+
+        // Handle search query changes
+        const handleSearch = (query) => {
+            setSearchQuery(query);
+            const normalizedQuery = query ? query.toLowerCase() : '';
+        
+            const filtered = departments.filter(user => {
+            });
+            setFilteredItems(filtered);  
+        };
+
+        // Handle filtering departments based on search input
+        const handleFilterChange = (filters) => {
+            const filtered = departments.filter(department => {
+                return (
+                    (filters.status ? department.status.toLowerCase() === filters.status.toLowerCase() : true)
+                );
+            });
+            setFilteredDepartments(filtered);
+        };
+
+
+
+
+
 
 
     const handleCreateNewDepartment = () => {
@@ -202,7 +236,7 @@ return (
     
                 {/* Search and Add Button */}
                 <div style={{  marginLeft: '30px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                    <div style={{ width: '850px' }}><SearchAndFilter /></div>
+                    <div style={{ width: '850px' }}><SFforSettingsTable onSearch={handleSearch} onFilterChange={handleFilterChange}/></div>
                     <button
                         onClick={handleCreateNewDepartment}
                         style={{ backgroundColor: '#FAD32E', color: 'white', fontWeight: '900', padding: '12px 18px', borderRadius: '10px', cursor: 'pointer', display: 'flex', alignItems: 'center' }}>
@@ -224,7 +258,7 @@ return (
                             </tr>
                         </thead>
                         <tbody>
-                            {departments.map((department, index) => (
+                        {filteredDepartments.map((department, index) => (
                                 <tr key={department.department_id}>
                                     <td style={{ textAlign: 'center' }}>{index + 1}</td>
                                     <td style={{ textAlign: 'center' }}>{department.department_code}</td>

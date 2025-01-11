@@ -4,7 +4,7 @@ import { IoFilter } from 'react-icons/io5';
 import axios from 'axios';
 import '../../../styles/SearchAndFilter.css';
 
-export default function SFforProgramsTable({ onSearch, onFilterChange }) {
+export default function SFforSettingsTable({ onSearch, onFilterChange }) {
   const [searchQuery, setSearchQuery] = useState('');
   const [status, setStatus] = useState('');
   const [isFilterOpen, setIsFilterOpen] = useState(false);
