@@ -37,7 +37,6 @@ export default function SFforArchivesTable({ onSearch, onFilterChange }) {
     fetchDepartments();
   }, []);
 
-
   // Fetch all programs from the backend
   useEffect(() => {
     const fetchPrograms = async () => {
@@ -57,7 +56,7 @@ export default function SFforArchivesTable({ onSearch, onFilterChange }) {
       const filtered = allPrograms.filter((program) => program.department_name === department);
       setFilteredPrograms(filtered);
     } else {
-      setFilteredPrograms(allPrograms); // Reset when no department is selected
+      setFilteredPrograms(allPrograms); 
     }
   }, [department, allPrograms]);
 
@@ -111,24 +110,12 @@ export default function SFforArchivesTable({ onSearch, onFilterChange }) {
   return (
     <div className="fullWidthSearchContainer">
     <div className="fullWidthSearchAndFilterWrapper">
-      <input 
-        type="text" 
-        placeholder="Search..." 
-        value={searchQuery} 
-        onChange={handleInputChange} 
-        className="fullWidthSearchInput"
-      />
-      <button 
-        onClick={toggleFilterDropdown} 
-        className={`filterButton ${isFilterActive ? 'active' : ''}`}
-      >
-        <IoFilter className={`filterIcon ${isFilterActive ? 'active' : ''}`} />
-      </button>
-      <button 
-        onClick={() => triggerSearch(searchQuery)} 
-        className="searchButton"
-      >
-        <FaSearch className="searchIcon" />
+      <input type="text" placeholder="Search..." value={searchQuery} onChange={handleInputChange} className="fullWidthSearchInput"/>
+      <button onClick={toggleFilterDropdown} className={`filterButton ${isFilterActive ? 'active' : ''}`}>
+          <IoFilter className={`filterIcon ${isFilterActive ? 'active' : ''}`} />
+      </button> 
+      <button onClick={() => triggerSearch(searchQuery)} className="searchButton">
+          <FaSearch className="searchIcon" />
       </button>
     </div>
   
@@ -200,6 +187,5 @@ export default function SFforArchivesTable({ onSearch, onFilterChange }) {
       </div>
     )}
   </div>
-  
   );
 }
