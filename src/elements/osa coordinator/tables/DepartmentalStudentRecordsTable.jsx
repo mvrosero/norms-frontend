@@ -1,16 +1,17 @@
+
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import axios from 'axios';
 import { Table } from 'react-bootstrap';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
 
+import { FaPlus } from 'react-icons/fa';
 import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
-import { FaPlus } from 'react-icons/fa';
 
 import CoordinatorNavigation from '../../../pages/osa coordinator/CoordinatorNavigation';
 import CoordinatorInfo from '../../../pages/osa coordinator/CoordinatorInfo';
-import SearchAndFilter from '../../../pages/general/SearchAndFilter';
+import SFforDepartmentalTable from '../../general/searchandfilters/SFforDepartmentalTable';
 import DepartmentalCreateViolationModal from '../modals/DepartmentalCreateViolationModal';
 
 const DepartmentalStudentRecordsTable = () => {
@@ -20,6 +21,7 @@ const DepartmentalStudentRecordsTable = () => {
     const [departments, setDepartments] = useState([]);
     const [programs, setPrograms] = useState([]);
     const [departmentName, setDepartmentName] = useState('');
+    
     const [showReadModal, setShowReadModal] = useState(false);
     const [selectedUser, setSelectedUser] = useState(null);
     const [deletionStatus, setDeletionStatus] = useState(false);
@@ -367,8 +369,8 @@ return (
             </div>
 
             {/* Search And Filter Section */}
-            <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'center', marginTop: '10px', marginLeft: '70px', padding: '0 20px' }}>
-                <div style={{ flex: '1 1 70%', minWidth: '300px' }}> <SearchAndFilter /> </div>
+            <div style={{  marginTop: '10px', marginLeft: '60px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <div style={{ width: '920px' }}> <SFforDepartmentalTable /> </div>
                 <button 
                     onClick={handleCreateViolation} 
                     style={{ backgroundColor: '#FAD32E', color: 'white', fontWeight: '900', padding: '12px 15px', border: 'none', borderRadius: '10px', cursor: 'pointer', display: 'flex', alignItems: 'center', boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)' }}>

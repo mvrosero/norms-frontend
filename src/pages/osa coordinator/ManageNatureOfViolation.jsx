@@ -9,14 +9,14 @@ import DeleteIcon from '@mui/icons-material/Delete';
 
 import CoordinatorNavigation from './CoordinatorNavigation';
 import CoordinatorInfo from './CoordinatorInfo';
-import SearchAndFilter from '../general/SearchAndFilter';
+import SFforSettingsTable from '../../elements/general/searchandfilters/SFforSettingsTable';
 import AddViolationNatureModal from '../../elements/osa coordinator/modals/AddViolationNatureModal';
 import EditViolationNatureModal from '../../elements/osa coordinator/modals/EditViolationNatureModal';
 import folderBackground from '../../../src/components/images/folder_background.png';
 
 export default function ManageViolationNature() {
-    const navigate = useNavigate();
     const [natures, setNatures] = useState([]);
+    const [filteredNatures, setFilteredNatures] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [showNatureModal, setShowNatureModal] = useState(false);
@@ -27,6 +27,10 @@ export default function ManageViolationNature() {
         nature_name: '',
         status: '' 
     });
+    const [allItems, setAllItems] = useState([]);  
+    const [searchQuery, setSearchQuery] = useState('');
+    const [filters, setFilters] = useState({ status: '' });
+    const navigate = useNavigate();
 
 
     // Pagination state
@@ -42,9 +46,6 @@ export default function ManageViolationNature() {
         }
     }, [navigate]);
 
-    useEffect(() => {
-        fetchNatures();
-    }, []);
 
     // Fetch nature of violations
     const fetchNatures = async () => {
@@ -52,7 +53,9 @@ export default function ManageViolationNature() {
             const response = await axios.get('http://localhost:9000/violation-natures', {
                 headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
             });
-            setNatures(response.data); // Changed to setNatures
+            setNatures(response.data); 
+            setAllItems(response.data);  
+            setFilteredNatures(response.data); 
             setLoading(false);
         } catch (error) {
             setError('Failed to fetch violation natures');
@@ -60,8 +63,36 @@ export default function ManageViolationNature() {
         }
     };
 
-    if (loading) return <p>Loading...</p>;
-    if (error) return <p>{error}</p>;
+
+    // Handle search query changes
+    const handleSearch = (query) => {
+        setSearchQuery(query);
+    };
+
+    // Handle filter changes (status)
+    const handleFilterChange = (filters) => {
+        console.log('Updated Filters:', filters);
+        setFilters(filters);
+    };
+
+    // Apply search query and filters to violationnature
+    useEffect(() => {
+        const filtered = allItems.filter(violation_nature => {
+            const normalizedQuery = searchQuery.toLowerCase();
+            const matchesQuery = 
+                violation_nature.nature_code.toLowerCase().includes(normalizedQuery) ||
+                violation_nature.nature_name.toLowerCase().includes(normalizedQuery);
+
+            const matchesStatus = filters.status ? violation_nature.status === filters.status : true;
+
+            return matchesQuery && matchesStatus;
+        });
+        setFilteredNatures(filtered);
+    }, [searchQuery, filters, allItems]);
+    useEffect(() => {
+        fetchNatures();
+    }, []);
+
 
     const handleCreateNewNature = () => {
         setShowNatureModal(true);
@@ -222,11 +253,10 @@ export default function ManageViolationNature() {
     // Pagination logic
     const indexOfLastNature = currentPage * naturesPerPage;
     const indexOfFirstNature = indexOfLastNature - naturesPerPage;
-    const currentNatures = natures.slice(indexOfFirstNature, indexOfLastNature);
-
+    const currentNatures = filteredNatures.slice(indexOfFirstNature, indexOfLastNature);
+    
     const paginate = (pageNumber) => setCurrentPage(pageNumber);
-
-    const totalPages = Math.ceil(natures.length / naturesPerPage);
+    const totalPages = Math.ceil(filteredNatures.length / naturesPerPage);
 
     const buttonStyle = {
         width: '30px', 
@@ -296,7 +326,7 @@ return (
 
             {/* Search and Add Button */}
             <div style={{  marginTop: '10px', marginLeft: '30px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <div style={{ width: '850px' }}><SearchAndFilter /></div>
+                <div style={{ width: '850px' }}><SFforSettingsTable onSearch={handleSearch} onFilterChange={handleFilterChange}/></div>
                 <button
                     onClick={handleCreateNewNature}
                     style={{
@@ -328,7 +358,8 @@ return (
                         </tr>
                     </thead>
                     <tbody>
-                        {currentNatures.map((nature, index) => (
+                        {filteredNatures.length > 0 ? (
+                            currentNatures.map((nature, index) => (
                             <tr key={nature.nature_id}>
                                 <td style={{ textAlign: 'center' }}>{index + 1}</td>
                                 <td style={{ textAlign: 'center' }}>{nature.nature_code}</td>
@@ -345,7 +376,12 @@ return (
                                     />
                                 </td>
                             </tr>
-                        ))}
+                            ))
+                        ) : (
+                            <tr>
+                                <td colSpan="5" style={{ textAlign: 'center' }}>No nature of violations found</td>
+                            </tr>
+                        )}
                     </tbody>
                 </table>
                            
