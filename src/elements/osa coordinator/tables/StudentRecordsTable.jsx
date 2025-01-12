@@ -8,11 +8,11 @@ import "../../../styles/Students.css"
 import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 
-const StudentRecordsTable = ({ searchQuery }) => {
+const StudentRecordsTable = ({filters, searchQuery}) => {
     const [users, setUsers] = useState([]);
     const [departments, setDepartments] = useState([]);
     const [programs, setPrograms] = useState([]);
-    const [deletionStatus, setDeletionStatus] = useState(false); 
+    const [deletionStatus, setDeletionStatus] = useState(false);
     const navigate = useNavigate();
 
     const headers = useMemo(() => {
@@ -56,7 +56,7 @@ const StudentRecordsTable = ({ searchQuery }) => {
         } catch (error) {
             console.error('Error fetching users:', error);
         }
-    }, [headers, searchQuery]);
+    }, [headers, deletionStatus]);
 
 
      // Fetch the departments
@@ -85,6 +85,7 @@ const StudentRecordsTable = ({ searchQuery }) => {
         fetchDepartments();
         fetchPrograms();
     }, [fetchUsers, fetchDepartments, fetchPrograms]);
+
 
     const getDepartmentName = (departmentId) => {
         const department = departments.find((d) => d.department_id === departmentId);
@@ -265,6 +266,29 @@ const StudentRecordsTable = ({ searchQuery }) => {
 
 // Render student records table
 const renderTable = () => {
+
+    const activeUsers = users.filter(user => user.status !== 'archived');
+
+        // Calculate filteredUsers first
+        const filteredUsers = activeUsers.filter(user => {
+            const fullName = `${user.first_name} ${user.middle_name || ''} ${user.last_name} ${user.suffix || ''}`.toLowerCase();
+            const studentId = user.student_idnumber.toLowerCase();
+            const matchesSearchQuery = fullName.includes(searchQuery.toLowerCase()) || studentId.includes(searchQuery.toLowerCase());
+        
+            const matchesFilters = Object.keys(filters).every(key => {
+                if (filters[key]) {
+                    if (key === 'yearLevel' && user.year_level && user.year_level !== filters[key]) return false;  
+                    if (key === 'program' && user.program_name && user.program_name !== filters[key]) return false;  
+                    if (key === 'batch' && user.batch !== filters[key]) return false;
+                    if (key === 'status' && user.status !== filters[key]) return false;
+                }
+                return true;
+            });
+            return matchesSearchQuery && matchesFilters; 
+        });
+        
+        const currentUsers = filteredUsers.slice(indexOfFirstUser, indexOfLastUser);
+
     return ( 
         <Table bordered hover style={{ borderRadius: '20px', marginLeft: '110px', marginTop: '10px' }}>
         <thead style={{ backgroundColor: '#f8f9fa' }}> 
@@ -301,37 +325,45 @@ const renderTable = () => {
             </tr>
         </thead>
         <tbody>
-            {currentUsers.map((user, index) => (
+        {filteredUsers && filteredUsers.length > 0 ? (
+            currentUsers.map((user, index) => ( 
                 <tr key={index}>
-                    <td style={{ textAlign: 'center' }}>{index + 1}</td>
-                    <td>{user.student_idnumber}</td>
-                    <td>
-                        <a href="#"
-                            onClick={() => handleRedirect(user.student_idnumber)}
-                            style={{ textDecoration: 'none', color: 'black', cursor: 'pointer', transition: 'color 0.3s ease, text-decoration 0.3s ease' }}
-                            onMouseEnter={(e) => {
-                                e.target.style.textDecoration = 'underline'; 
-                                e.target.style.color = '#007bff';  
-                            }}
-                            onMouseLeave={(e) => {
-                                e.target.style.textDecoration = 'none'; 
-                                e.target.style.color = 'black';  
-                            }}
-                        >
-                            {`${user.first_name} ${user.middle_name} ${user.last_name} ${user.suffix}`}
-                        </a>
-                        </td>
-                    <td>{user.year_level}</td>
-                    <td>{getDepartmentName(user.department_id)}</td>
-                    <td>{getProgramName(user.program_id)}</td>
-                    <td style={{ textAlign: 'center' }}>
-                        <div style={{ backgroundColor: user.status === 'active' ? '#DBF0DC' : '#F0DBDB', color: user.status === 'active' ? '#30A530' : '#D9534F', fontWeight: '600', fontSize: '14px', borderRadius: '30px', padding: '5px 20px', display: 'inline-flex', alignItems: 'center' }}>
-                            <div style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: user.status === 'active' ? '#30A530' : '#D9534F', marginRight: '7px' }} />
-                            {user.status}
-                        </div>
-                    </td>
+                <td style={{ textAlign: 'center' }}>{index + 1}</td>
+                <td>{user.student_idnumber}</td>
+                <td>
+                    <a
+                    href="#"
+                    onClick={() => handleRedirect(user.student_idnumber)}
+                    style={{ textDecoration: 'none', color: 'black', cursor: 'pointer', transition: 'color 0.3s ease, text-decoration 0.3s ease' }}
+                    onMouseEnter={(e) => {
+                        e.target.style.textDecoration = 'underline'; 
+                        e.target.style.color = '#007bff';  
+                    }}
+                    onMouseLeave={(e) => {
+                        e.target.style.textDecoration = 'none'; 
+                        e.target.style.color = 'black';  
+                    }}
+                    >
+                    {`${user.first_name} ${user.middle_name} ${user.last_name} ${user.suffix}`}
+                    </a>
+                </td>
+                <td>{user.year_level}</td>
+                <td>{getDepartmentName(user.department_id)}</td>
+                <td>{getProgramName(user.program_id)}</td>
+                <td style={{ textAlign: 'center' }}>
+                    <div style={{ backgroundColor: user.status === 'active' ? '#DBF0DC' : '#F0DBDB', color: user.status === 'active' ? '#30A530' : '#D9534F', fontWeight: '600', fontSize: '14px', borderRadius: '30px', padding: '5px 20px', display: 'inline-flex', alignItems: 'center' }}>
+                    <div style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: user.status === 'active' ? '#30A530' : '#D9534F', marginRight: '7px' }} />
+                    {user.status}
+                    </div>
+                </td>
                 </tr>
-            ))}
+            ))
+            ) : (
+            <tr>
+                <td colSpan="7" style={{ textAlign: 'center' }}>No users found</td>
+            </tr>
+            )}
+
         </tbody>
     </Table>
     );
