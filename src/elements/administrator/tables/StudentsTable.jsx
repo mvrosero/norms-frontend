@@ -22,6 +22,8 @@ export default function StudentsTable ({filters, searchQuery}) {
   const [selectedUser, setSelectedUser] = useState(null);
   const [selectedStudentIds, setSelectedStudentIds] = useState([]);
   const [selectAll, setSelectAll] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [headers, setHeaders] = useState({});
   const [deletionStatus, setDeletionStatus] = useState(false); 
 
@@ -42,11 +44,16 @@ export default function StudentsTable ({filters, searchQuery}) {
 
         const activeUsers = response.data.filter(user => user.status !== 'archived');
         setUsers(activeUsers); 
+        setLoading(false);
     } catch (error) {
+      
+       
         console.error('Error fetching users:', error);
         Swal.fire('Error', 'Failed to fetch users.', 'error');
     }
   }, [headers, deletionStatus]);
+
+
 
   // Fetch the departments
   const fetchDepartments = useCallback(async () => {

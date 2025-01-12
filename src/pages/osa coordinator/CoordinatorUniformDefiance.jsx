@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { FaEye } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 
 import CoordinatorNavigation from './CoordinatorNavigation';
 import CoordinatorInfo from './CoordinatorInfo';
-import SearchAndFilter from '../general/SearchAndFilter';
+import SFforUniformDefiance from '../../elements/osa coordinator/searchandfilters/SFforUniformDefiance';
 import UniformDefianceTable from '../../elements/osa coordinator/tables/UniformDefianceTable';
 
 export default function CoordinatorUniformDefiance() {
@@ -32,11 +32,11 @@ return (
             <h6 className="page-title">UNIFORM DEFIANCE</h6>
 
             {/* Search And Filter Section */}
-            <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'center', marginTop: '10px', marginLeft: '70px', padding: '0 20px' }}>
-                <div style={{ flex: '1 1 70%', minWidth: '300px' }}> <SearchAndFilter setSearchQuery={setSearchQuery} /> </div>
+            <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'center', marginTop: '10px', marginLeft: '100px', padding: '0 20px' }}>
+                <div style={{ flex: '1 1 70%', minWidth: '300px' }}> <SFforUniformDefiance setSearchQuery={setSearchQuery} /> </div>
                 <button 
                     onClick={handleViewHistory} 
-                    style={{ backgroundColor: '#FAD32E', color: 'white', fontWeight: '900', padding: '12px 30px', border: 'none', borderRadius: '10px', cursor: 'pointer', display: 'flex', alignItems: 'center', boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)' }}>
+                    style={{ backgroundColor: '#FAD32E', color: 'white', fontWeight: '900', padding: '12px 30px', border: 'none', borderRadius: '10px', cursor: 'pointer', display: 'flex', alignItems: 'center', boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)', marginRight: '30px' }}>
                         View History
                     <FaEye style={{ marginLeft: '10px' }} />
                 </button>

@@ -9,7 +9,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 
 import CoordinatorNavigation from './CoordinatorNavigation';
 import CoordinatorInfo from './CoordinatorInfo';
-import SFforOffensesTable from '../../elements/general/searchandfilters/SFforOffensesTable';
+import SFforOffensesTable from '../../elements/osa coordinator/searchandfilters/SFforOffensesTable';
 import AddOffenseModal from '../../elements/osa coordinator/modals/AddOffenseModal';
 import EditOffenseModal from '../../elements/osa coordinator/modals/EditOffenseModal';
 import folderBackground from '../../../src/components/images/folder_background.png';
