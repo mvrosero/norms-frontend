@@ -44,7 +44,7 @@ const ExportDefianceHistoryCSV = () => {
                     backgroundColor: '#FAD32E',
                     color: 'white',
                     fontWeight: '900',
-                    padding: '12px 25px',
+                    padding: '12px 30px',
                     border: 'none',
                     borderRadius: '10px',
                     cursor: loading ? 'not-allowed' : 'pointer', 

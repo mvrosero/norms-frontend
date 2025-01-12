@@ -35,7 +35,6 @@ export default function CoordinatorUniformDefiance() {
         navigate('/uniformdefiance-history'); 
     };
 
-
     // Fetch uniform defiances
     const fetchDefiances = useCallback(async () => {
         setLoading(true); 
@@ -69,7 +68,7 @@ export default function CoordinatorUniformDefiance() {
         setFilteredDefiances(filtered);
     };
 
-    
+
     // Handle filter changes 
     const handleFilterChange = (filters) => {
         console.log('Updated Filters:', filters);
@@ -99,6 +98,7 @@ export default function CoordinatorUniformDefiance() {
                 return defianceDate <= filterEndDate;
             });
         }
+
         setFilteredDefiances(filtered);
     };
     useEffect(() => {

@@ -8,8 +8,9 @@ import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import ViewHistoryModal from '../modals/ViewHistoryModal';
 
-const UniformDefianceHistoryTable = ({ searchQuery }) => {
+const UniformDefianceHistoryTable = ({filters, searchQuery}) => {
     const [defiances, setDefiances] = useState([]);
+    const [natures, setNatures] = useState([]);
     const [showModal, setShowModal] = useState(false); 
     const [selectedRecord, setSelectedRecord] = useState(null); 
     const navigate = useNavigate();
@@ -30,38 +31,50 @@ const UniformDefianceHistoryTable = ({ searchQuery }) => {
     }, []);
 
 
+    // Fetch the employees
+    const fetchEmployeeName = async (employee_idnumber) => {
+        try {
+            const response = await axios.get(`http://localhost:9000/employees/${employee_idnumber}`, { headers });
+            return response.data.name;
+        } catch (error) {
+            console.error('Error fetching employee name:', error);
+            return 'Unknown';
+        }
+    };
+
+    // Fetch the students
+    const fetchNatures = useCallback(async () => {
+        try {
+            const response = await axios.get('http://localhost:9000/violation-natures', { headers });
+            setNatures(response.data);
+        } catch (error) {
+            console.error('Error fetching nature of violations:', error);
+            Swal.fire('Error', 'Failed to fetch nature of violations.', 'error');
+        }
+    }, [headers]);
+
+
     // Fetch the uniform defiances
     const fetchDefiances = useCallback(async () => {
         try {
-            let response;
-            if (searchQuery) {
-                response = await axios.get('http://localhost:9000/uniform_defiances', { headers });
+            let response = await axios.get('http://localhost:9000/uniform_defiances', { headers });
+            let data = response.data;
 
-                const fuse = new Fuse(response.data, {
-                    keys: ['slip_id', 'student_idnumber', 'violation_nature', 'photo_video_filename', 'status', 'submitted_by'],
-                    includeScore: true,
-                    threshold: 0.4,
-                });
+            data = data.filter(defiance => defiance.status !== 'pending');
 
-                const searchResults = fuse.search(searchQuery);
-                const filteredDefiances = searchResults
-                    .map(result => result.item)
-                    .filter(defiance => defiance.status !== 'pending');
-
-                setDefiances(filteredDefiances);
-            } else {
-                response = await axios.get('http://localhost:9000/uniform_defiances', { headers });
-                const nonPendingDefiances = response.data.filter(defiance => defiance.status !== 'pending');
-                setDefiances(nonPendingDefiances);
-            }
+            const updatedData = await Promise.all(data.map(async (defiance) => {
+                const fullName = await fetchEmployeeName(defiance.submitted_by);
+                return { ...defiance, submitted_by: fullName };
+            }));
+            setDefiances(data);
         } catch (error) {
             console.error('Error fetching defiances:', error);
         }
-    }, [headers, searchQuery]);
-
+    }, [headers]);
     useEffect(() => {
         fetchDefiances();
-    }, [fetchDefiances]);
+        fetchNatures();
+    }, [fetchNatures, fetchDefiances]);
 
 
     // Handle redirect to selected uniform defiance slip
@@ -298,6 +311,25 @@ const UniformDefianceHistoryTable = ({ searchQuery }) => {
 
 // Render uniform defiance history table
 const renderTable = () => {
+
+    const filteredDefiances = defiances.filter(defiance => {
+         
+        const nature = defiance.nature_name.toLowerCase(); 
+        const matchesSearchQuery = nature.includes(searchQuery.toLowerCase());
+    
+        const matchesFilters = Object.keys(filters).every(key => {
+          if (filters[key]) {  
+            if (key === 'nature' && nature !== filters[key].toLowerCase()) return false;
+            if (key === 'status' && defiance.status !== filters[key]) return false;
+            if (key === 'filterDate' && new Date(defiance.created_at).getTime() !== new Date(filters[key]).getTime()) return false;
+          }
+          return true;
+        });
+        return matchesSearchQuery && matchesFilters; 
+      });
+    
+      const currentDefiances = filteredDefiances.slice(indexOfFirstDefiance, indexOfLastDefiance);
+
         return (
             <Table bordered hover style={{ borderRadius: '20px', marginLeft: '110px', marginTop: '10px' }}>
                     <thead>
@@ -339,7 +371,8 @@ const renderTable = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        {currentDefiances.map((defiance, index) => (
+                        {filteredDefiances?.length > 0 ? (
+                        currentDefiances.map((defiance, index) => (
                             <tr key={index}>
                                 <td style={{ textAlign: 'center' }}>{defiance.slip_id}</td>
                                 <td>{new Date(defiance.updated_at).toLocaleString()}</td> 
@@ -359,7 +392,12 @@ const renderTable = () => {
                                 </td>
                                 <td style={{ textAlign: 'center' }}>{renderStatus(defiance.status)}</td>
                             </tr>
-                        ))}
+                                ))
+                            ) : (
+                                <tr>
+                                    <td colSpan="6" style={{ textAlign: 'center' }}>No uniform defiances found</td>
+                                </tr>
+                            )}
                     </tbody>
                 </Table>
                 );
