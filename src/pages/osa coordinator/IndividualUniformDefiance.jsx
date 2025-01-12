@@ -7,7 +7,7 @@ import defaultProfile from '../../components/images/default_profile.jpg';
 
 import CoordinatorNavigation from './CoordinatorNavigation';
 import CoordinatorInfo from './CoordinatorInfo';
-import SearchAndFilter from '../general/SearchAndFilter';
+import SFforDefianceHistory from '../../elements/osa coordinator/searchandfilters/SFforIndividualDefiance';
 import AddUniformDefianceModal from '../../elements/osa coordinator/modals/AddUniformDefianceModal';
 import ViewIndividualUniformDefianceModal from '../../elements/osa coordinator/modals/ViewIndividualUniformDefianceModal';
 import IndividualUniformDefianceTable from '../../elements/osa coordinator/tables/IndividualUniformDefianceTable';
@@ -18,11 +18,18 @@ const IndividualUniformDefiance = () => {
     const [defiances, setDefiances] = useState([]);
     const [selectedRecord, setSelectedRecord] = useState(null);
     const [showAddViolationModal, setShowAddViolationModal] = useState(false);
-    const [searchQuery, setSearchQuery] = useState('');
     const [employees, setEmployees] = useState({});
     const location = useLocation();
-    const navigate = useNavigate();
     const { student_idnumber } = useParams();  
+    const [searchQuery, setSearchQuery] = useState('');
+    const [allDefiances, setAllDefiances] = useState([]);  
+    const [filteredDefiances, setFilteredDefiances] = useState([]);  
+    const [filters, setFilters] = useState({
+      nature_name: '',
+      filterDate: ''
+    });
+    const navigate = useNavigate();
+
 
     const headers = useMemo(() => {
         const token = localStorage.getItem('token');
@@ -74,6 +81,10 @@ const IndividualUniformDefiance = () => {
             await fetchStudentInfo();
             const response = await axios.get(`http://localhost:9000/uniform_defiances/${student_idnumber}`, { headers });
 
+            setDefiances(response.data);
+            setAllDefiances(response.data);
+            setFilteredDefiances(response.data);
+
             const nonPendingDefiances = response.data.filter(defiance => defiance.status !== 'Pending');
             setDefiances(nonPendingDefiances);
 
@@ -102,6 +113,49 @@ const IndividualUniformDefiance = () => {
         setShowAddViolationModal(false);
         await fetchDefiances(); 
     };
+
+
+
+    // Handle search query changes
+    const handleSearch = (query) => {
+    setSearchQuery(query);
+    const normalizedQuery = query ? query.trim().toLowerCase() : '';
+
+    const filtered = allDefiances.filter(defiance => {
+        const nature_name = defiance.nature_name ? defiance.nature_name.trim().toLowerCase() : '';
+        return nature_name.includes(normalizedQuery);
+    });
+        setFilteredDefiances(filtered);
+    };
+
+
+    const handleFilterChange = (filters) => {
+        console.log('Updated Filters:', filters);
+        setFilters(filters);  
+    
+        let filtered = allDefiances;
+    
+        // Apply 'nature_name' filter
+        if (filters.nature_name) {
+            filtered = filtered.filter(defiance => defiance.nature_name === filters.nature_name);
+        }
+    
+        // Apply filter for the selected date (created_at comparison)
+        if (filters.filterDate) {
+            filtered = filtered.filter(defiance => {
+                const defianceDate = new Date(defiance.created_at);
+                const filterSelectedDate = new Date(filters.filterDate);
+    
+                // Compare only the date part (ignoring time part)
+                return defianceDate.getFullYear() === filterSelectedDate.getFullYear() &&
+                       defianceDate.getMonth() === filterSelectedDate.getMonth() &&
+                       defianceDate.getDate() === filterSelectedDate.getDate();
+            });
+        }
+        setFilteredDefiances(filtered);
+    };
+
+    
 
 return (
     <>
@@ -133,29 +187,34 @@ return (
                         {/* Display student information in two columns */}
                         <div style={{ marginLeft: '20px', fontSize: '16px' }}>
                             <div style={{ display: 'flex', flexWrap: 'wrap', marginBottom: '12px' }}>
-                                <div style={{ width: '50%' }}>
+                                <div style={{ width: '60%' }}>
                                     <p><strong>Student ID Number:</strong> {studentInfo.student_idnumber}</p>
                                 </div>
-                                <div style={{ width: '50%', whiteSpace: 'nowrap', }}>
+                                <div style={{ width: '40%', whiteSpace: 'nowrap', }}>
                                     <p><strong>Department:</strong> {studentInfo.department_name}</p>
                                 </div>
                             </div>
                             <div style={{ display: 'flex', flexWrap: 'wrap', marginBottom: '12px' }}>
-                                <div style={{ width: '50%' }}>
+                                <div style={{ width: '60%' }}>
                                     <p><strong>Name:</strong> {`${studentInfo.first_name} ${studentInfo.middle_name} ${studentInfo.last_name} ${studentInfo.suffix}`.trim()}</p>
                                 </div>
-                                <div style={{ width: '50%', whiteSpace: 'nowrap', }}>
+                                <div style={{ width: '40%', whiteSpace: 'nowrap', }}>
                                     <p><strong>Program:</strong> {studentInfo.program_name}</p>
                                 </div>
                             </div>
-                            <div style={{ display: 'flex', flexWrap: 'wrap' }}>
-                                <div style={{ width: '50%' }}>
+                            <div style={{ display: 'flex', flexWrap: 'wrap', marginBottom: '12px' }}>
+                                <div style={{ width: '60%' }}>
                                     <div style={{ display: 'flex', alignItems: 'center' }}>
                                         <p style={{ marginRight: '10px' }}> <strong>Email:</strong> </p>
                                         <a href={`https://mail.google.com/mail/?view=cm&fs=1&to=${studentInfo.email}`} target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'underline', color: '#4682B4' }}> {studentInfo.email} </a></div>
                                 </div>
-                                <div style={{ width: '50%' }}>
+                                <div style={{ width: '40%' }}>
                                     <p><strong>Year Level:</strong> {studentInfo.year_level}</p>
+                                </div>
+                            </div>
+                            <div style={{ display: 'flex', flexWrap: 'wrap' }}>
+                                <div style={{ width: '70%', whiteSpace: 'nowrap', }}>
+                                    <p><strong>Status:</strong><div style={{ backgroundColor: studentInfo.status === 'active' ? '#DBF0DC' : '#F0DBDB', color: studentInfo.status === 'active' ? '#30A530' : '#D9534F', fontWeight: '600', fontSize: '14px', borderRadius: '30px', padding: '5px 20px', display: 'inline-flex', alignItems: 'center', marginLeft: '10px' }}> {studentInfo.status} </div> </p>
                                 </div>
                             </div>
                         </div>
@@ -165,13 +224,13 @@ return (
 
             {/* Search And Filter Section */}
             <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'center', marginLeft: '60px', padding: '0 20px' }}>
-                <div style={{ flex: '1 1 70%', minWidth: '300px' }}> <SearchAndFilter /> </div>
+                <div style={{ flex: '1 1 70%', minWidth: '300px' }}> <SFforDefianceHistory onSearch={handleSearch} onFilterChange={handleFilterChange}/> </div>
                 <Button
-                    onClick={() => setShowAddViolationModal(true)} // Show modal on click
+                    onClick={() => setShowAddViolationModal(true)} 
                     title="Add Record"
                     style={{ marginRight: '10px', backgroundColor: '#FAD32E', color: 'white', fontWeight: '900', padding: '12px 15px', border: 'none', borderRadius: '10px', cursor: 'pointer', display: 'flex', alignItems: 'center', boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)' }}>
-                    Add Violation
-                    <FaPlus style={{ marginLeft: '10px' }} />
+                        Add Violation
+                        <FaPlus style={{ marginLeft: '10px' }} />
                 </Button>
                 <ExportIndividualDefianceCSV student_idnumber={student_idnumber} />
             </div>
@@ -184,6 +243,9 @@ return (
                 )} 
                 employees={employees}
                 handleShowDetailsModal={handleShowDetailsModal}
+                filteredDefiances={filteredDefiances}  
+                filters={filters}  
+                searchQuery={searchQuery}
             />
             </div>
 

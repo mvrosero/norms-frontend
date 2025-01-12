@@ -54,20 +54,24 @@ export default function CoordinatorUniformDefiance() {
         }
     }, []);
 
-
+    
     // Handle search query changes
     const handleSearch = (query) => {
         setSearchQuery(query);
-        const normalizedQuery = query ? query.trim().toLowerCase() : '';
-
+        const normalizedQuery = query ? query.toLowerCase() : '';
+    
         const filtered = allDefiances.filter(defiance => {
-            const nature_name = defiance.nature_name ? defiance.nature_name.trim().toLowerCase() : '';
+            // Normalize and check only the nature_name field
+            const nature_name = defiance.nature_name ? defiance.nature_name.toLowerCase() : ''; 
+    
+            // Match query against nature_name only
             return nature_name.includes(normalizedQuery);
         });
-
+    
         setFilteredDefiances(filtered);
     };
-
+    
+    
 
     // Handle filter changes 
     const handleFilterChange = (filters) => {

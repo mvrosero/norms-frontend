@@ -110,7 +110,6 @@ return (
                         filteredDefiances={filteredDefiances}  
                         filters={filters}  
                         searchQuery={searchQuery}               
-                        
                     />
             </div>
     );

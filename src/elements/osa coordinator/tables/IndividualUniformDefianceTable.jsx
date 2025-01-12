@@ -1,14 +1,19 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
+import axios from 'axios';
 import { Table } from 'react-bootstrap';
+import Swal from 'sweetalert2';
+import { useNavigate, Link } from 'react-router-dom';
 import { useParams } from 'react-router-dom';
 import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 
-const IndividualUniformDefianceTable = ({ handleShowDetailsModal }) => {
+const IndividualUniformDefianceTable = ({ handleShowDetailsModal, filters, searchQuery }) => {
     const { student_idnumber } = useParams();  
     const [defiances, setDefiances] = useState([]);
+    const [natures, setNatures] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const navigate = useNavigate();
 
     
     // Pagination state
@@ -18,6 +23,12 @@ const IndividualUniformDefianceTable = ({ handleShowDetailsModal }) => {
     // Sorting states
     const [sortOrderSlipId, setSortOrderSlipId] = useState('asc'); 
     const [sortOrderDate, setSortOrderDate] = useState('asc'); 
+
+
+    const headers = useMemo(() => {
+        const token = localStorage.getItem('token');
+        return token ? { Authorization: `Bearer ${token}` } : {};
+    }, []);
 
 
     // Fetch the uniform defiances
@@ -42,6 +53,21 @@ const IndividualUniformDefianceTable = ({ handleShowDetailsModal }) => {
             fetchDefiances();
         }
     }, [student_idnumber]);
+
+
+    // Fetch the students
+    const fetchNatures = useCallback(async () => {
+        try {
+            const response = await axios.get('http://localhost:9000/violation-natures', { headers });
+            setNatures(response.data);
+        } catch (error) {
+            console.error('Error fetching nature of violations:', error);
+            Swal.fire('Error', 'Failed to fetch nature of violations.', 'error');
+        }
+    }, [headers]);
+
+
+
 
 
     // Set the styles for the status
@@ -225,23 +251,28 @@ const IndividualUniformDefianceTable = ({ handleShowDetailsModal }) => {
     );
 };
 
-
 // Render the individual uniform defiances table
-    const renderTable = () => {
-        if (loading) {
-            return <div>Loading...</div>;
-        }
+const renderTable = () => {
 
-        if (error) {
-            return <div>Error: {error}</div>;
-        }
+    const filteredDefiances = defiances.filter(defiance => {
 
-        if (approvedDefiances.length === 0) {
-            return <div>No data available.</div>;
-        }
+        const nature = defiance.nature_name.toLowerCase(); 
+        const matchesSearchQuery = nature.includes(searchQuery.toLowerCase());
 
-        return (
-            <div style={{ paddingTop: '10px' }}>
+        const matchesFilters = Object.keys(filters).every(key => {
+            if (filters[key]) {  
+                if (key === 'nature' && nature !== filters[key].toLowerCase()) return false;
+                if (key === 'filterDate' && new Date(defiance.created_at).getTime() !== new Date(filters[key]).getTime()) return false;
+            }
+            return true;
+        });
+        return matchesSearchQuery && matchesFilters; 
+    });
+
+    const currentDefiances = filteredDefiances.slice(indexOfFirstDefiance, indexOfLastDefiance);
+
+    return (
+        <div style={{ paddingTop: '10px' }}>
             <Table bordered hover responsive style={{ borderRadius: '20px', marginBottom: '20px', marginLeft: '110px' }}>
                 <thead>
                     <tr>
@@ -249,7 +280,7 @@ const IndividualUniformDefianceTable = ({ handleShowDetailsModal }) => {
                             <button
                                 style={{ border: 'none', background: 'none', cursor: 'pointer', display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center', width: '100%' }}
                                 onClick={handleSortSlipId}
-                                >
+                            >
                                 <span style={{ textAlign: 'center' }}>ID</span>
                                 {sortOrderSlipId === 'asc' ? (
                                     <ArrowDropUpIcon style={{ marginLeft: '5px' }} />
@@ -259,9 +290,10 @@ const IndividualUniformDefianceTable = ({ handleShowDetailsModal }) => {
                             </button>
                         </th>
                         <th style={{ width: '23%' }}>
-                            <button style={{ border: 'none', background: 'none', cursor: 'pointer', display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center', width: '100%' }}
+                            <button
+                                style={{ border: 'none', background: 'none', cursor: 'pointer', display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center', width: '100%' }}
                                 onClick={handleSortDate}
-                                >
+                            >
                                 <span>Date</span>
                                 {sortOrderDate === 'asc' ? (
                                     <ArrowDropUpIcon style={{ marginLeft: '5px' }} />
@@ -277,69 +309,76 @@ const IndividualUniformDefianceTable = ({ handleShowDetailsModal }) => {
                     </tr>
                 </thead>
                 <tbody>
-                    {currentDefiances.map((defiance, index) => {
-                        const getOrdinalWord = (num) => {
-                            const ordinalWords = [
-                                "first", "second", "third", "fourth", "fifth", "sixth", "seventh", "eighth", "ninth", "tenth", 
-                                "eleventh", "twelfth", "thirteenth", "fourteenth", "fifteenth", "sixteenth", "seventeenth", "eighteenth", "nineteenth",
-                                "twentieth", "twenty-first", "twenty-second", "twenty-third", "twenty-fourth", "twenty-fifth", 
-                                "twenty-sixth", "twenty-seventh", "twenty-eighth", "twenty-ninth", "thirtieth", "thirty-first"
-                            ];
-                            return ordinalWords[num - 1] || num;  
-                        };
+                    {filteredDefiances?.length > 0 ? (
+                        currentDefiances.map((defiance, index) => {
 
-                        const count = sortOrderDate === 'asc' 
-                            ? currentDefiances.length - index  
-                            : index + 1; 
+                            const getOrdinalWord = (num) => {
+                                const ordinalWords = [
+                                    "first", "second", "third", "fourth", "fifth", "sixth", "seventh", "eighth", "ninth", "tenth", 
+                                    "eleventh", "twelfth", "thirteenth", "fourteenth", "fifteenth", "sixteenth", "seventeenth", "eighteenth", "nineteenth",
+                                    "twentieth", "twenty-first", "twenty-second", "twenty-third", "twenty-fourth", "twenty-fifth", 
+                                    "twenty-sixth", "twenty-seventh", "twenty-eighth", "twenty-ninth", "thirtieth", "thirty-first"
+                                ];
+                                return ordinalWords[num - 1] || num;  
+                            };
 
-                        const ordinalCount = getOrdinalWord(count);
+                            const count = sortOrderDate === 'asc' 
+                                ? currentDefiances.length - index  
+                                : index + 1; 
 
-                        let countColor, countTextColor;
-                        if (count === 1) {
-                            countColor = '#FFF9C4';
-                            countTextColor = '#DBC907'; 
-                        } else if (count === 2) {
-                            countColor = '#FFDCC4'; 
-                            countTextColor = '#FF6700'; 
-                        } else {
-                            countColor = '#FFCDD2'; 
-                            countTextColor = '#D32F2F'; 
-                        }
+                            const ordinalCount = getOrdinalWord(count);
 
-                        return (
-                            <tr key={defiance.slip_id}>
-                                <td style={{ textAlign: 'center' }}>{defiance.slip_id}</td>
-                                <td>{new Date(defiance.updated_at).toLocaleString()}</td>
-                                <td>{defiance.nature_name}</td>
-                                <td style={{ textAlign: 'center' }}>
-                                    <div onClick={() => handleShowDetailsModal(defiance)} style={{ cursor: 'pointer', color: '#000000', textDecoration: 'underline', fontWeight: 'bold' }}>
-                                        View
-                                    </div>
-                                </td>
-                                <td style={{ textAlign: 'center' }}>{renderStatus(defiance.status)}</td>
-                                <td style={{ textAlign: 'center' }}>
-                                    <div style={{ borderRadius: '30px', padding: '5px 20px', backgroundColor: countColor, color: countTextColor, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontSize: '14px', fontWeight: '600', width: '80px' }}>
-                                        {ordinalCount}
-                                    </div>
-                                </td>
-                            </tr>
-                        );
-                    })}
+                            let countColor, countTextColor;
+                            if (count === 1) {
+                                countColor = '#FFF9C4';
+                                countTextColor = '#DBC907'; 
+                            } else if (count === 2) {
+                                countColor = '#FFDCC4'; 
+                                countTextColor = '#FF6700'; 
+                            } else {
+                                countColor = '#FFCDD2'; 
+                                countTextColor = '#D32F2F'; 
+                            }
+
+                            return (
+                                <tr key={defiance.slip_id}>
+                                    <td style={{ textAlign: 'center' }}>{defiance.slip_id}</td>
+                                    <td>{new Date(defiance.updated_at).toLocaleString()}</td>
+                                    <td>{defiance.nature_name}</td>
+                                    <td style={{ textAlign: 'center' }}>
+                                        <div onClick={() => handleShowDetailsModal(defiance)} style={{ cursor: 'pointer', color: '#000000', textDecoration: 'underline', fontWeight: 'bold' }}>
+                                            View
+                                        </div>
+                                    </td>
+                                    <td style={{ textAlign: 'center' }}>{renderStatus(defiance.status)}</td>
+                                    <td style={{ textAlign: 'center' }}>
+                                        <div style={{ borderRadius: '30px', padding: '5px 20px', backgroundColor: countColor, color: countTextColor, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontSize: '14px', fontWeight: '600', width: '80px' }}>
+                                            {ordinalCount}
+                                        </div>
+                                    </td>
+                                </tr>
+                            );
+                        })
+                    ) : (
+                        <tr>
+                            <td colSpan="6" style={{ textAlign: 'center' }}>No uniform defiances found</td>
+                        </tr>
+                    )}
                 </tbody>
             </Table>
         </div>
-        );
-    };
-
-
-    // Render the individual uniform defiances table
-    return (
-        <div>
-            {renderTable()}
-            {renderPagination()}
-        </div>
     );
 };
+
+
+// Render the individual uniform defiances table
+return (
+    <div>
+        {renderTable()}
+        {renderPagination()}
+    </div>
+);
+}
 
 
 export default IndividualUniformDefianceTable;

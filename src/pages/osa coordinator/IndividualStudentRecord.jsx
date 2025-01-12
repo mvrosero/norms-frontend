@@ -96,29 +96,34 @@ return (
                         {/* Display student information in two columns */}
                         <div style={{ marginLeft: '20px', fontSize: '16px' }}>
                             <div style={{ display: 'flex', flexWrap: 'wrap', marginBottom: '12px' }}>
-                                <div style={{ width: '50%' }}>
+                                <div style={{ width: '60%' }}>
                                     <p><strong>Student ID Number:</strong> {studentInfo.student_idnumber}</p>
                                 </div>
-                                <div style={{ width: '50%', whiteSpace: 'nowrap', }}>
+                                <div style={{ width: '40%', whiteSpace: 'nowrap', }}>
                                     <p><strong>Department:</strong> {studentInfo.department_name}</p>
                                 </div>
                             </div>
                             <div style={{ display: 'flex', flexWrap: 'wrap', marginBottom: '12px' }}>
-                                <div style={{ width: '50%' }}>
+                                <div style={{ width: '60%' }}>
                                     <p><strong>Name:</strong> {`${studentInfo.first_name} ${studentInfo.middle_name} ${studentInfo.last_name} ${studentInfo.suffix}`.trim()}</p>
                                 </div>
-                                <div style={{ width: '50%', whiteSpace: 'nowrap', }}>
+                                <div style={{ width: '40%', whiteSpace: 'nowrap', }}>
                                     <p><strong>Program:</strong> {studentInfo.program_name}</p>
                                 </div>
                             </div>
-                            <div style={{ display: 'flex', flexWrap: 'wrap' }}>
-                                <div style={{ width: '50%' }}>
+                            <div style={{ display: 'flex', flexWrap: 'wrap', marginBottom: '12px' }}>
+                                <div style={{ width: '60%' }}>
                                     <div style={{ display: 'flex', alignItems: 'center' }}>
                                         <p style={{ marginRight: '10px' }}> <strong>Email:</strong> </p>
                                         <a href={`https://mail.google.com/mail/?view=cm&fs=1&to=${studentInfo.email}`} target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'underline', color: '#4682B4' }}> {studentInfo.email} </a></div>
                                 </div>
-                                <div style={{ width: '50%' }}>
+                                <div style={{ width: '40%' }}>
                                     <p><strong>Year Level:</strong> {studentInfo.year_level}</p>
+                                </div>
+                            </div>
+                            <div style={{ display: 'flex', flexWrap: 'wrap' }}>
+                                <div style={{ width: '70%', whiteSpace: 'nowrap', }}>
+                                    <p><strong>Status:</strong><div style={{ backgroundColor: studentInfo.status === 'active' ? '#DBF0DC' : '#F0DBDB', color: studentInfo.status === 'active' ? '#30A530' : '#D9534F', fontWeight: '600', fontSize: '14px', borderRadius: '30px', padding: '5px 20px', display: 'inline-flex', alignItems: 'center', marginLeft: '10px' }}> {studentInfo.status} </div> </p>
                                 </div>
                             </div>
                         </div>
