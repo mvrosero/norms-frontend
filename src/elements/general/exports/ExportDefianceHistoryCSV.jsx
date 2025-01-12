@@ -16,11 +16,14 @@ const ExportDefianceHistoryCSV = () => {
 
             // Check if the response is a valid CSV file (could be based on content-type)
             if (response.data.type === 'text/csv') {
-                // Create a URL for the file
+                // Generate a timestamp for the file name
+                const now = new Date();
+                const timestamp = now.toISOString().replace(/T/, '_').replace(/:/g, '/').split('.')[0];
+
                 const fileURL = URL.createObjectURL(response.data);
                 const link = document.createElement('a');
                 link.href = fileURL;
-                link.download = 'uniform_defiances_history.csv'; // Set the file name
+                link.download = `uniform_defiances_history(${timestamp}).csv`; // Set the file name
                 link.click(); // Trigger the download
 
                 Swal.fire('Success', 'CSV file exported successfully!', 'success');

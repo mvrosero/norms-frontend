@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import Swal from 'sweetalert2';
-import { Modal, Button } from 'react-bootstrap';
+import { Button } from 'react-bootstrap';
 import FileDownloadRoundedIcon from '@mui/icons-material/FileDownloadRounded';
 
 
@@ -23,11 +23,15 @@ const ExportIndividualDefianceCSV = ({ student_idnumber }) => {
 
             // Check if the response is a valid CSV file (could be based on content-type)
             if (response.data.type === 'text/csv') {
+                // Generate a timestamp for the file name
+                const now = new Date();
+                const timestamp = now.toISOString().replace(/T/, '_').replace(/:/g, '/').split('.')[0];
+
                 // Create a URL for the file
                 const fileURL = URL.createObjectURL(response.data);
                 const link = document.createElement('a');
                 link.href = fileURL;
-                link.download = `individual_uniform_defiances_${student_idnumber}.csv`; // Set the file name
+                link.download = `individual_uniform_defiances(${student_idnumber})-(${timestamp}).csv`; // Set the file name
                 link.click(); // Trigger the download
 
                 Swal.fire('Success', 'CSV file exported successfully!', 'success');

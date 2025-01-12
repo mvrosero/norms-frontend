@@ -105,7 +105,7 @@ return (
             <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'center', marginTop: '10px', marginLeft: '100px', padding: '0 20px' }}>
                 <div style={{ flex: '1 1 80%', minWidth: '300px' }}>  
                     <SFforDefianceHistory onSearch={handleSearch} onFilterChange={handleFilterChange}/> </div>
-                    <ExportDefianceHistoryCSV /> </div>
+                    <ExportDefianceHistoryCSV filteredDefiances={filteredDefiances}/> </div>
                     <UniformDefianceHistoryTable   
                         filteredDefiances={filteredDefiances}  
                         filters={filters}  
