@@ -409,7 +409,7 @@ return (
                         <th style={{ width: '10%' }}>Year Level</th>
                         <th>Department</th>
                         <th>Program</th>
-                        <th style={{ width: '13%' }}>Status</th>
+                        <th style={{ width: '8%' }}>Batch</th>
                         <th style={{ width: '13%' }}>Actions</th>
                     </tr>
                 </thead>
@@ -423,33 +423,7 @@ return (
                         <td>{user.year_level}</td>
                         <td>{user.department_name}</td>
                         <td>{user.program_name}</td>
-                        <td style={{ textAlign: 'center' }}>
-                            <div style={{
-                                backgroundColor: 
-                                    user.status === 'active' ? '#DBF0DC' :
-                                    user.status === 'archived' ? '#E0E0E0' : '#F0DBDB',
-                                color: 
-                                    user.status === 'active' ? '#30A530' :
-                                    user.status === 'archived' ? '#6C757D' : '#D9534F',
-                                fontWeight: '600',
-                                fontSize: '14px',
-                                borderRadius: '30px',
-                                padding: '5px 20px',
-                                display: 'inline-flex',
-                                alignItems: 'center',
-                            }}>
-                                <div style={{
-                                    width: '8px',
-                                    height: '8px',
-                                    borderRadius: '50%',
-                                    backgroundColor: 
-                                        user.status === 'active' ? '#30A530' :
-                                        user.status === 'archived' ? '#6C757D' : '#D9534F',
-                                    marginRight: '7px',
-                                }} />
-                                {user.status}
-                            </div>
-                        </td>
+                        <td style={{ textAlign: 'center' }}>{user.batch}</td>
                         <td>
                             <div className="d-flex justify-content-around">
                                 <Button className='btn btn-secondary btn-sm' onClick={() => handleReadModalShow(user)}>
@@ -467,7 +441,7 @@ return (
                         ))
                     ) : (
                         <tr>
-                            <td colSpan="7">No users found</td>
+                            <td colSpan="8" style={{ textAlign: 'center' }}>No users found</td>
                         </tr>
                     )}
                 </tbody>

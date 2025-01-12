@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Swal from 'sweetalert2';
@@ -15,7 +15,6 @@ import SFforSettingsTable from '../searchandfilters/SFforSettingsTable';
 import folderBackground from '../../../components/images/folder_background.png';
 
 export default function ManageDepartments() {
-    const navigate = useNavigate();
     const [departments, setDepartments] = useState([]);
     const [filteredDepartments, setFilteredDepartments] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -27,59 +26,64 @@ export default function ManageDepartments() {
         department_name: '',
         status: '',
     });
+    const [allItems, setAllItems] = useState([]);  
     const [editDepartmentId, setEditDepartmentId] = useState(null);
     const [searchQuery, setSearchQuery] = useState('');
-    const [filteredItems, setFilteredItems] = useState([]);  
-
-
+    const [filters, setFilters] = useState({ status: '' });
+    const navigate = useNavigate();
 
 
     // Fetch departments
-    const fetchDepartments = async () => {
+    const fetchDepartments = useCallback(async () => {
+        setLoading(true); 
+        setError(null); 
         try {
-            const response = await axios.get('http://localhost:9000/departments', {
-                headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
-            });
+            const token = localStorage.getItem('token');
+            const headers = { Authorization: `Bearer ${token}` };
+            const response = await axios.get('http://localhost:9000/departments', { headers });
             setDepartments(response.data);
-            setFilteredDepartments(response.data);  // Initially, show all departments
+            setAllItems(response.data);  
+            setFilteredDepartments(response.data);  
             setLoading(false);
         } catch (error) {
-            setError('Failed to fetch departments');
+            console.error('Error fetching departments:', error.response || error.message || error);
+            setError(true); 
             setLoading(false);
         }
-    };
-    useEffect(() => {
-        fetchDepartments();
     }, []);
 
 
+    // Handle search query changes
+    const handleSearch = (query) => {
+        setSearchQuery(query);
+    };
 
+    // Handle filter changes (status)
+    const handleFilterChange = (filters) => {
+        console.log('Updated Filters:', filters);
+        setFilters(filters);
+    };
 
+    // Apply search query and filters to departments
+    useEffect(() => {
+        const filtered = allItems.filter(department => {
+            const normalizedQuery = searchQuery.toLowerCase();
+            const matchesQuery = 
+                department.department_code.toLowerCase().includes(normalizedQuery) ||
+                department.department_name.toLowerCase().includes(normalizedQuery);
 
-        // Handle search query changes
-        const handleSearch = (query) => {
-            setSearchQuery(query);
-            const normalizedQuery = query ? query.toLowerCase() : '';
-        
-            const filtered = departments.filter(user => {
-            });
-            setFilteredItems(filtered);  
-        };
+            const matchesStatus = filters.status ? department.status === filters.status : true;
 
-        // Handle filtering departments based on search input
-        const handleFilterChange = (filters) => {
-            const filtered = departments.filter(department => {
-                return (
-                    (filters.status ? department.status.toLowerCase() === filters.status.toLowerCase() : true)
-                );
-            });
-            setFilteredDepartments(filtered);
-        };
+            return matchesQuery && matchesStatus;
+        });
 
+        setFilteredDepartments(filtered);
+    }, [searchQuery, filters, allItems]);
 
-
-
-
+    // Fetch departments on initial render
+    useEffect(() => {
+        fetchDepartments();
+    }, [fetchDepartments]);
 
 
     const handleCreateNewDepartment = () => {
@@ -165,9 +169,6 @@ export default function ManageDepartments() {
         });
     };
     
-    if (loading) return <p>Loading...</p>;
-    if (error) return <p>{error}</p>;
-
 
     // Set the styles for the status
     const renderStatus = (status) => {
@@ -258,7 +259,8 @@ return (
                             </tr>
                         </thead>
                         <tbody>
-                        {filteredDepartments.map((department, index) => (
+                        {filteredDepartments.length > 0 ? (
+                            filteredDepartments.map((department, index) => (
                                 <tr key={department.department_id}>
                                     <td style={{ textAlign: 'center' }}>{index + 1}</td>
                                     <td style={{ textAlign: 'center' }}>{department.department_code}</td>
@@ -275,7 +277,12 @@ return (
                                         />
                                     </td>
                                 </tr>
-                            ))}
+                                    ))
+                                ) : (
+                                    <tr>
+                                        <td colSpan="5" style={{ textAlign: 'center' }}>No departments found</td>
+                                    </tr>
+                                )}
                         </tbody>
                     </table>
                 </div>

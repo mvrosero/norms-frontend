@@ -396,7 +396,7 @@ const renderTable = () => {
               ))
             ) : (
                 <tr>
-                    <td colSpan="7">No users found</td>
+                    <td colSpan="8" style={{ textAlign: 'center' }}>No users found</td>
                 </tr>
             )}
         </tbody>

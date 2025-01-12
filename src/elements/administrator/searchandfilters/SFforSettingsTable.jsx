@@ -9,7 +9,6 @@ export default function SFforSettingsTable({ onSearch, onFilterChange }) {
   const [status, setStatus] = useState('');
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [isFilterActive, setIsFilterActive] = useState(false);
-  const [allUsers, setAllUsers] = useState([]);
 
 
   // Handle search input change
@@ -55,7 +54,7 @@ export default function SFforSettingsTable({ onSearch, onFilterChange }) {
   return (
     <div className="searchAndFilterContainer">
       <div className="searchAndFilterWrapper">
-        <input type="text" placeholder="Search..." value={searchQuery} onChange={handleInputChange} className="searchInput"/>
+        <input type="text" placeholder="Search..." value={searchQuery} onChange={handleInputChange} className="searchInput" style={{ color: '#333' }}/>
         <button onClick={toggleFilterDropdown} className={`filterButton ${isFilterActive ? 'active' : ''}`}>
             <IoFilter className={`filterIcon ${isFilterActive ? 'active' : ''}`} />
         </button>
