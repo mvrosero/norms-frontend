@@ -19,15 +19,21 @@ const ImportStudentsCSV = () => {
                     'Content-Type': 'multipart/form-data',
                 },
             });
-
-            // Use SweetAlert for success notification
             Swal.fire('Success', response.data.message, 'success');
         } catch (error) {
-            console.error('Error importing CSV:', error);
-            Swal.fire('Error', 'Failed to import CSV. Please try again.', 'error');
+            if (error.response) {
+                if (error.response.data.error) {
+                    Swal.fire('Error', error.response.data.error, 'error');
+                } else {
+                    Swal.fire('Error', 'An unknown error occurred while processing the file.', 'error');
+                }
+            } else {
+                Swal.fire('Error', 'Failed to import CSV. Please try again.', 'error');
+            }
         }
     };
 
+    
     return (
         <div style={{ padding: '15px' }}>
             <input
@@ -58,5 +64,6 @@ const ImportStudentsCSV = () => {
         </div>
     );
 };
+
 
 export default ImportStudentsCSV;

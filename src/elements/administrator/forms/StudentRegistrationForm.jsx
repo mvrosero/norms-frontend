@@ -84,7 +84,7 @@ export default function StudentRegistrationForm() {
     useEffect(() => {
         if (department_id) {
             axios
-                .get(`http://localhost:9000/programs/${department_id}`)
+                .get(`http://localhost:9000/active-programs/${department_id}`)
                 .then((response) => {
                     setFilteredPrograms(response.data); 
                 })
@@ -460,7 +460,7 @@ return (
                                 <label htmlFor="department" className="label">Department:</label>
                                 <select id="department" className="short-select" value={department_id} onChange={(e) => setDepartment(e.target.value)} required style={{ marginRight: '20px' }}>
                                     <option value="" disabled>Select Department</option>
-                                    {departments.map(department => (
+                                    {departments.filter(department => department.status === 'active').map(department => (
                                         <option key={department.department_id} value={department.department_id}>{department.department_name}</option>
                                     ))}
                                 </select>

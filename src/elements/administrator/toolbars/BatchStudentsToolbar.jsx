@@ -66,7 +66,7 @@ const BatchStudentsToolbar = ({ selectedItemsCount, selectedStudentIds }) => {
   useEffect(() => {
     if (departmentId) {
       axios
-        .get(`http://localhost:9000/programs/${departmentId}`)
+        .get(`http://localhost:9000/active-programs/${departmentId}`)
         .then((response) => {
           setFilteredPrograms(response.data);  
         })
@@ -251,10 +251,8 @@ const BatchStudentsToolbar = ({ selectedItemsCount, selectedStudentIds }) => {
                     style={{ backgroundColor: '#f2f2f2', border: '1px solid #ced4da'}}
                   >
                     <option value="">Select Department</option>
-                    {departments.map((department) => (
-                      <option key={department.department_id} value={department.department_id}>
-                        {department.department_name}
-                      </option>
+                    {departments.filter(department => department.status === 'active').map(department => (
+                        <option key={department.department_id} value={department.department_id}>{department.department_name}</option>
                     ))}
                   </Form.Control>
                 </Form.Group>

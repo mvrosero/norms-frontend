@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from 'react-router-dom';
 import Card from 'react-bootstrap/Card';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUser } from '@fortawesome/free-solid-svg-icons';
@@ -33,50 +32,18 @@ const departments = [
 
 export default function AdminDashboard() {
   const [userCounts, setUserCounts] = useState({});
-  const navigate = useNavigate();
 
   useEffect(() => {
     const token = localStorage.getItem('token');
-    
-    if (!token) {
-      console.error("Token is required to access the dashboard.");
-      navigate('/admin-login'); 
-      return;
-    }
-  
-    // Check user status by making a request using the token
-    axios.get('http://localhost:9000/employees', {
-      headers: { Authorization: `Bearer ${token}` }
-    })
-    .then((response) => {
-      const { status } = response.data;
-  
-      // If the account status is 'inactive', remove the token and redirect
-      if (status === 'inactive') {
-        console.error("Your account is inactive. Access is restricted.");
-        localStorage.removeItem('token'); 
-        navigate('/account-limited'); 
-        return; 
-      }
-  
-      // Check if the role is correct
-      const roleId = localStorage.getItem('role_id');
-      if (roleId !== '1') {
-        console.error("Invalid role. Access is restricted.");
-        navigate('/admin-login'); 
-        return;
-      }
-  
+    const roleId = localStorage.getItem('role_id');
+    if (token && roleId === '1') {
       fetchUserCounts(token);
-    })
-    .catch((error) => {
-      console.error('Error fetching user status:', error);
-      localStorage.removeItem('token'); 
-      navigate('/admin-login'); 
-    });
-  }, [navigate]);
-  
-  
+    } else {
+      console.error("Token is required for accessing the dashboard or invalid role.");
+    }
+  }, []);
+
+
   const fetchUserCounts = async (token) => {
     try {
       const response = await axios.get(`http://localhost:9000/user-counts`, {

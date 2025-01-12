@@ -6,7 +6,7 @@ import DescriptionIcon from '@mui/icons-material/Description';
 
 const ImportDepartmentalCSV = () => {
     const [file, setFile] = useState(null);
-    const { department_code } = useParams(); // Get department_code from the URL
+    const { department_code } = useParams(); 
 
     const handleFileChange = async (event) => {
         const selectedFile = event.target.files[0];
@@ -21,15 +21,17 @@ const ImportDepartmentalCSV = () => {
                     'Content-Type': 'multipart/form-data',
                 },
             });
-
-            // Use SweetAlert for success notification
             Swal.fire('Success', response.data.message, 'success');
         } catch (error) {
-            console.error('Error importing CSV:', error);
-            Swal.fire('Error', 'Failed to import CSV. Please try again.', 'error');
+            if (error.response) {
+                Swal.fire('Error', error.response.data.error, 'error');
+            } else {
+                Swal.fire('Error', 'Failed to import CSV. Please try again.', 'error');
+            }
         }
     };
 
+    
     return (
         <div style={{ padding: '15px' }}>
             <input
@@ -61,5 +63,6 @@ const ImportDepartmentalCSV = () => {
         </div>
     );
 };
+
 
 export default ImportDepartmentalCSV;

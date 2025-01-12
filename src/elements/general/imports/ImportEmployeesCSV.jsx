@@ -1,8 +1,8 @@
-// ImportEmployeesCSV.js
 import React, { useState } from 'react';
 import axios from 'axios';
 import Swal from 'sweetalert2';
 import DescriptionIcon from '@mui/icons-material/Description';
+
 
 const ImportEmployeesCSV = () => {
     const [file, setFile] = useState(null);
@@ -10,25 +10,31 @@ const ImportEmployeesCSV = () => {
     const handleFileChange = async (event) => {
         const selectedFile = event.target.files[0];
         if (!selectedFile) return;
-
+    
         const formData = new FormData();
         formData.append('file', selectedFile);
-
+    
         try {
             const response = await axios.post('http://localhost:9000/importcsv-employee', formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                 },
             });
-
-            // SweetAlert for success notification
             Swal.fire('Success', response.data.message, 'success');
         } catch (error) {
-            console.error('Error importing CSV:', error);
-            Swal.fire('Error', 'Failed to import CSV. Please try again.', 'error');
+            if (error.response) {
+                if (error.response.data.error) {
+                    Swal.fire('Error', error.response.data.error, 'error');
+                } else {
+                    Swal.fire('Error', 'An unknown error occurred while processing the file.', 'error');
+                }
+            } else {
+                Swal.fire('Error', 'Failed to import CSV. Please try again.', 'error');
+            }
         }
     };
-
+    
+    
     return (
         <div style={{ padding: '15px' }}>
             <input
@@ -59,5 +65,6 @@ const ImportEmployeesCSV = () => {
         </div>
     );
 };
+
 
 export default ImportEmployeesCSV;

@@ -41,7 +41,7 @@ export default function AdminNavigation() {
 
   // Function to get the icon color for the collapsed sidebar
   const getCollapsedIconColor = (menuItem) => {
-    return activeMenuItem === menuItem ? "#134E0F" : "initial";
+    return activeMenuItem === menuItem ? "#134E0F" : "#b1b1b1";
   };
 
   return (
@@ -108,7 +108,7 @@ export default function AdminNavigation() {
                     </div>
 
                     <MenuItem
-                      icon={<MdSpaceDashboard style={{ fontSize: iconSize, color: getItemColor("Dashboard") }} />}
+                      icon={<MdSpaceDashboard style={{ fontSize: iconSize, color: collapsed ? getCollapsedIconColor("Dashboard") : getItemColor("Dashboard") }} />}
                       onClick={() => handleMenuItemClick("Dashboard")}
                       active={activeMenuItem === "Dashboard"}
                     >

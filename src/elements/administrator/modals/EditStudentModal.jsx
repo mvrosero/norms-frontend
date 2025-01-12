@@ -35,7 +35,7 @@ const EditStudentModal = ({ user, show, onHide, fetchUsers, headers, departments
     useEffect(() => {
         if (formData.department_id) {
             axios
-                .get(`http://localhost:9000/programs/${formData.department_id}`)
+                .get(`http://localhost:9000/active-programs/${formData.department_id}`)
                 .then((response) => {
                     setFilteredPrograms(response.data); 
                 })
@@ -482,11 +482,10 @@ return (
                                 onChange={handleChange}
                                 style={inputStyle}
                             >
-                                {departments.map((department) => (
-                                    <option key={department.department_id} value={department.department_id}>
-                                        {department.department_name}
-                                    </option>
-                                ))}
+                                <option value="">Select Department</option>
+                                    {departments.filter(department => department.status === 'active').map(department => (
+                                <option key={department.department_id} value={department.department_id}>{department.department_name}</option>
+                            ))}
                             </Form.Select>
                         </Form.Group>
                 </Col>

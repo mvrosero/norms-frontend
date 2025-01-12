@@ -20,27 +20,18 @@ const AdminLogin = () => {
                 employee_idnumber,
                 password
             });
-    
-            console.log('Server Response:', response.data);
+            console.log('Server Response:', response.data); 
     
             if (response.status === 200 && response.data.hasOwnProperty('token')) {
-                const { token, role_id, user_id, employee_idnumber: loggedInEmployeeIdNumber, is_active } = response.data;
+                const { token, role_id, user_id, employee_idnumber: loggedInEmployeeIdNumber } = response.data;
     
-                // Check if user is active based on the 'is_active' field
-                if (!is_active) {  
-                    navigate('/account-limited'); 
-                    return; 
-                }
-    
-                // Proceed with login if the user is active
                 localStorage.setItem('token', token);
                 localStorage.setItem('role_id', role_id);
                 localStorage.setItem('user_id', user_id);
-                localStorage.setItem('employee_idnumber', loggedInEmployeeIdNumber);
+                localStorage.setItem('employee_idnumber', employee_idnumber); 
     
-                // Prevent redirection if the role is not admin
-                if (role_id === 1) {
-                    navigate('/admin-dashboard'); 
+                if (role_id === 1) {  
+                    navigate('/admin-dashboard');
                     Swal.fire({
                         icon: 'success',
                         title: 'Login Successful',
