@@ -77,7 +77,7 @@ return (
                         </p>
 
                         <p style={{ fontWeight: 'bold' }}>Role:</p>
-                        <p>{getRoleName(user.role_id)}</p>
+                        <p>{user.role_name}</p>
 
                         <p style={{ fontWeight: 'bold' }}>Status:</p>
                         <p>{renderStatus(user.status)}</p>

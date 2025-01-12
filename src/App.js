@@ -11,6 +11,7 @@ import BirthdateVerification from './pages/general/BirthdateVerification';
 import Handbook from './pages/general/Handbook';
 import LandingPage from './pages/general/LandingPage';
 import AccountSettings from './pages/general/AccountSettings';
+import AccountLimited from './pages/general/AccountLimited';
 
 /*login*/
 import LoginSelectionPage from './pages/general/LoginSelection';
@@ -92,6 +93,7 @@ function App() {
                 <Route path='/handbook' element={<Handbook />} />
                 <Route path='/' element={<LandingPage />} />
                 <Route path='/account-settings/:user_id' element={<AccountSettings />} />
+                <Route path='/account-limited' element={<AccountLimited />} />
 
                 <Route path='/login-selection' element={<LoginSelectionPage/>} /> 
                 <Route path='/admin-login' element={<AdminLogin />} />

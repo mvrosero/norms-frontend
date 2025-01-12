@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from 'react-router-dom';
 import Card from 'react-bootstrap/Card';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUser } from '@fortawesome/free-solid-svg-icons';
@@ -32,17 +33,55 @@ const departments = [
 
 export default function AdminDashboard() {
   const [userCounts, setUserCounts] = useState({});
+  const navigate = useNavigate();
 
   useEffect(() => {
     const token = localStorage.getItem('token');
-    const roleId = localStorage.getItem('role_id');
-    if (token && roleId === '1') {
-      fetchUserCounts(token);
-    } else {
-      console.error("Token is required for accessing the dashboard or invalid role.");
+    
+    // If there's no token at all, redirect immediately
+    if (!token) {
+      console.error("Token is required to access the dashboard.");
+      navigate('/admin-login'); // Redirect to login page if no token exists
+      return;
     }
-  }, []);
-
+  
+    // Check user status by making a request using the token
+    axios.get('http://localhost:9000/employees', {
+      headers: { Authorization: `Bearer ${token}` }
+    })
+    .then((response) => {
+      const { status } = response.data;
+  
+      // If the account status is 'inactive', remove the token and redirect
+      if (status === 'inactive') {
+        console.error("Your account is inactive. Access is restricted.");
+        localStorage.removeItem('token'); // Remove token to prevent further access
+        navigate('/account-limited'); // Redirect to account-limited page
+        return; // Exit early to prevent further checks
+      }
+  
+      // Now that we know the user is active, check if the role is correct
+      const roleId = localStorage.getItem('role_id');
+      if (roleId !== '1') {
+        console.error("Invalid role. Access is restricted.");
+        navigate('/login'); // Redirect to login page if role is not '1'
+        return;
+      }
+  
+      // Proceed with fetching user counts or any dashboard-related actions
+      fetchUserCounts(token);
+    })
+    .catch((error) => {
+      console.error('Error fetching user status:', error);
+      localStorage.removeItem('token'); // Optionally clear the token if there’s an error
+      navigate('/login'); // Redirect to login in case of any errors with the request
+    });
+  
+  }, [navigate]);
+  
+  
+  
+  
 
   const fetchUserCounts = async (token) => {
     try {

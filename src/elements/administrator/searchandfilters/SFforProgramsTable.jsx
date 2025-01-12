@@ -99,7 +99,6 @@ export default function SFforProgramsTable({ onSearch, onFilterChange }) {
             </select>
           </div>
           
-
           <div className="filterOption">
             <select
               value={status}
