@@ -138,7 +138,13 @@ export default function ManageDepartments() {
             setShowEditModal(false);
             fetchDepartments();
         } catch (error) {
-            Swal.fire('Error', 'Failed to update department', 'error');
+            const errorMessage = error.response?.data?.error || 'An error occurred while saving the department. Please try again later!';
+            
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: errorMessage,
+            });
         }
     };
 

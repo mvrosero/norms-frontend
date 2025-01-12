@@ -1,8 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Swal from 'sweetalert2';
-import { Button } from 'react-bootstrap';
 
 import { FaPlus } from 'react-icons/fa';
 import EditIcon from '@mui/icons-material/Edit';
@@ -10,13 +9,17 @@ import DeleteIcon from '@mui/icons-material/Delete';
 
 import AdminNavigation from '../../../pages/administrator/AdminNavigation';
 import AdminInfo from '../../../pages/administrator/AdminInfo';
-import SearchAndFilter from '../../../pages/general/SearchAndFilter';
+import SFforSettingsTable from '../searchandfilters/SFforSettingsTable';
 import AddAcademicYearModal from '../modals/AddAcademicYearModal'; 
 import EditAcademicYearModal from '../modals/EditAcademicYearModal';
 import folderBackground from '../../../components/images/folder_background.png';
 
 export default function ManageAcademicYears() {
     const [academicYears, setAcademicYears] = useState([]);
+    const [allItems, setAllItems] = useState([]);  
+    const [filteredAcademicYears, setFilteredAcademicYears] = useState([]);
+    const [searchQuery, setSearchQuery] = useState('');
+    const [filters, setFilters] = useState({ status: '' });
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [showAddModal, setShowAddModal] = useState(false); 
@@ -41,21 +44,60 @@ export default function ManageAcademicYears() {
 
 
     // Fetch academic years
-    const fetchAcademicYears = async () => {
+    const fetchAcademicYears = useCallback(async () => {
+        setLoading(true); 
+        setError(null); 
         try {
-            const response = await axios.get('http://localhost:9000/academic_years', {
-                headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
-            });
+            const token = localStorage.getItem('token');
+            const headers = { Authorization: `Bearer ${token}` };
+            const response = await axios.get('http://localhost:9000/academic_years', { headers });
             setAcademicYears(response.data);
+            setAllItems(response.data);  
+            setFilteredAcademicYears(response.data);  
             setLoading(false);
         } catch (error) {
-            setError('Failed to fetch academic years.');
+            console.error('Error fetching academic years:', error.response || error.message || error);
+            setError(true); 
             setLoading(false);
         }
-    };
+    }, []);
 
-    if (loading) return <p>Loading...</p>;
-    if (error) return <p>{error}</p>;
+
+        // Handle search query changes
+        const handleSearch = (query) => {
+            setSearchQuery(query);
+        };
+    
+        // Handle filter changes (status)
+        const handleFilterChange = (filters) => {
+            console.log('Updated Filters:', filters);
+            setFilters(filters);
+        };
+    
+        // Apply search query and filters to academic years
+        useEffect(() => {
+            const filtered = allItems.filter(academic_year => {
+                const normalizedQuery = searchQuery.toLowerCase();
+
+                // Check if searchQuery is a number (for searching years)
+                const isNumberQuery = !isNaN(Number(searchQuery));
+
+                const matchesQuery = 
+                    academic_year.acadyear_code.toLowerCase().includes(normalizedQuery) ||
+                    (isNumberQuery && 
+                        (academic_year.start_year.toString().includes(searchQuery) || 
+                        academic_year.end_year.toString().includes(searchQuery))
+                    );
+    
+                const matchesStatus = filters.status ? academic_year.status === filters.status : true;
+    
+                return matchesQuery && matchesStatus;
+            });
+            setFilteredAcademicYears(filtered);
+        }, [searchQuery, filters, allItems]);
+        useEffect(() => {
+            fetchAcademicYears();
+        }, [fetchAcademicYears]);
 
 
     const handleOpenAddModal = () => setShowAddModal(true); 
@@ -114,10 +156,12 @@ export default function ManageAcademicYears() {
             handleCloseAddModal();
             handleCloseEditModal();
         } catch (error) {
+            const errorMessage = error.response?.data?.error || 'An error occurred while saving the academic year. Please try again later!';
+            
             Swal.fire({
                 icon: 'error',
                 title: 'Oops...',
-                text: 'An error occurred while saving the academic year. Please try again later!',
+                text: errorMessage,
             });
         }
     };
@@ -221,7 +265,7 @@ return (
 
                 {/* Search and Add Button */}
                 <div style={{ marginTop: '5px', marginLeft: '30px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                    <div style={{ width: '850px' }}><SearchAndFilter /></div>
+                    <div style={{ width: '850px' }}><SFforSettingsTable onSearch={handleSearch} onFilterChange={handleFilterChange}/></div>
                     <button 
                         onClick={handleOpenAddModal} 
                         style={{
@@ -255,7 +299,8 @@ return (
                             </tr>
                         </thead>
                         <tbody>
-                            {academicYears.map((year, index) => (
+                        {filteredAcademicYears.length > 0 ? (
+                            filteredAcademicYears.map((year, index) => (
                                 <tr key={year.acadyear_id}>
                                     <td style={{ textAlign: 'center' }}>{index + 1}</td>
                                     <td>{year.acadyear_code}</td>
@@ -273,7 +318,12 @@ return (
                                         />
                                     </td>
                                 </tr>
-                            ))}
+                                    ))
+                                ) : (
+                                    <tr>
+                                        <td colSpan="6" style={{ textAlign: 'center' }}>No academic years found</td>
+                                    </tr>
+                                )}
                         </tbody>
                     </table>
                 </div>
