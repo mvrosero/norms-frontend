@@ -9,14 +9,14 @@ import DeleteIcon from '@mui/icons-material/Delete';
 
 import CoordinatorNavigation from './CoordinatorNavigation';
 import CoordinatorInfo from './CoordinatorInfo';
-import SearchAndFilter from '../general/SearchAndFilter';
+import SFforSettingsTable from '../../elements/general/searchandfilters/SFforSettingsTable';
 import AddSubcategoryModal from '../../elements/osa coordinator/modals/AddSubcategoryModal';
 import EditSubcategoryModal from '../../elements/osa coordinator/modals/EditSubcategoryModal';
 import folderBackground from '../../../src/components/images/folder_background.png';
 
 export default function ManageSubcategories() {
-    const navigate = useNavigate();
     const [subcategories, setSubcategories] = useState([]);
+    const [filteredSubcategories, setFilteredSubcategories] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [showSubcategoryModal, setShowSubcategoryModal] = useState(false);
@@ -27,6 +27,10 @@ export default function ManageSubcategories() {
         subcategory_name: '',
         status: ''
     });
+    const [allItems, setAllItems] = useState([]);  
+    const [searchQuery, setSearchQuery] = useState('');
+    const [filters, setFilters] = useState({ status: '' });
+    const navigate = useNavigate();
 
 
     // Pagination state
@@ -42,9 +46,6 @@ export default function ManageSubcategories() {
         }
     }, [navigate]);
 
-    useEffect(() => {
-        fetchSubcategories();
-    }, []);
 
     // Fetch subcategories
     const fetchSubcategories = async () => {
@@ -53,6 +54,8 @@ export default function ManageSubcategories() {
                 headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
             });
             setSubcategories(response.data);
+            setAllItems(response.data);  
+            setFilteredSubcategories(response.data); 
             setLoading(false);
         } catch (error) {
             setError('Failed to fetch subcategories');
@@ -60,8 +63,36 @@ export default function ManageSubcategories() {
         }
     };
 
-    if (loading) return <p>Loading...</p>;
-    if (error) return <p>{error}</p>;
+    
+    // Handle search query changes
+    const handleSearch = (query) => {
+        setSearchQuery(query);
+    };
+
+    // Handle filter changes (status)
+    const handleFilterChange = (filters) => {
+        console.log('Updated Filters:', filters);
+        setFilters(filters);
+    };
+
+    // Apply search query and filters to subcategory
+    useEffect(() => {
+        const filtered = allItems.filter(subcategory => {
+            const normalizedQuery = searchQuery.toLowerCase();
+            const matchesQuery = 
+                subcategory.subcategory_code.toLowerCase().includes(normalizedQuery) ||
+                subcategory.subcategory_name.toLowerCase().includes(normalizedQuery);
+
+            const matchesStatus = filters.status ? subcategory.status === filters.status : true;
+
+            return matchesQuery && matchesStatus;
+        });
+        setFilteredSubcategories(filtered);
+    }, [searchQuery, filters, allItems]);
+    useEffect(() => {
+        fetchSubcategories();
+    }, []);
+
 
     const handleCreateNewSubcategory = () => {
         setShowSubcategoryModal(true);
@@ -194,7 +225,6 @@ export default function ManageSubcategories() {
             backgroundColor = '#EDEDED';
             textColor = '#6C757D'; 
         }
-
         return (
             <div style={{
                 backgroundColor,
@@ -222,11 +252,12 @@ export default function ManageSubcategories() {
     // Pagination logic
     const indexOfLastSubcategory = currentPage * subcategoriesPerPage;
     const indexOfFirstSubcategory = indexOfLastSubcategory - subcategoriesPerPage;
-    const currentSubcategories = subcategories.slice(indexOfFirstSubcategory, indexOfLastSubcategory);
+    const currentSubcategories = filteredSubcategories.slice(indexOfFirstSubcategory, indexOfLastSubcategory);
 
     const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
-    const totalPages = Math.ceil(subcategories.length / subcategoriesPerPage);
+    const totalPages = Math.ceil(filteredSubcategories.length / subcategoriesPerPage);
+
 
     const buttonStyle = {
         width: '30px', 
@@ -296,7 +327,7 @@ return (
 
             {/* Search and Add Button */}
             <div style={{  marginTop: '10px', marginLeft: '30px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <div style={{ width: '850px' }}><SearchAndFilter /></div>
+                <div style={{ width: '850px' }}><SFforSettingsTable onSearch={handleSearch} onFilterChange={handleFilterChange}/></div>
                 <button
                     onClick={handleCreateNewSubcategory}
                     style={{ backgroundColor: '#FAD32E', color: 'white', fontWeight: '900', padding: '12px 18px', borderRadius: '10px', cursor: 'pointer', display: 'flex', alignItems: 'center' }}>
@@ -318,7 +349,8 @@ return (
                         </tr>
                     </thead>
                     <tbody>
-                        {currentSubcategories.map((subcategory, index) => (
+                        {filteredSubcategories.length > 0 ? (
+                            currentSubcategories.map((subcategory, index) => (
                             <tr key={subcategory.subcategory_id}>
                                 <td style={{ textAlign: 'center' }}>{ (currentPage - 1) * subcategoriesPerPage + (index + 1) }</td>
                                 <td>{subcategory.subcategory_code}</td>
@@ -335,7 +367,12 @@ return (
                                     />
                                 </td>
                             </tr>
-                        ))}
+                            ))
+                        ) : (
+                            <tr>
+                                <td colSpan="5" style={{ textAlign: 'center' }}>No subcategories found</td>
+                            </tr>
+                        )}
                     </tbody>
                 </table>
 
