@@ -73,7 +73,7 @@ export default function SFforProgramsTable({ onSearch, onFilterChange }) {
   return (
     <div className="searchAndFilterContainer">
       <div className="searchAndFilterWrapper">
-        <input type="text" placeholder="Search..." value={searchQuery} onChange={handleInputChange} className="searchInput"/>
+        <input type="text" placeholder="Search..." value={searchQuery} onChange={handleInputChange} className="searchInput" style={{ color: '#333' }}/>
         <button onClick={toggleFilterDropdown} className={`filterButton ${isFilterActive ? 'active' : ''}`}>
             <IoFilter className={`filterIcon ${isFilterActive ? 'active' : ''}`} />
         </button>

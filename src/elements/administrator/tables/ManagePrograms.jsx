@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Swal from 'sweetalert2';
@@ -9,7 +9,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 
 import AdminNavigation from '../../../pages/administrator/AdminNavigation';
 import AdminInfo from '../../../pages/administrator/AdminInfo';
-import SearchAndFilter from '../../../pages/general/SearchAndFilter';
+import SFforProgramsTable from '../searchandfilters/SFforProgramsTable';
 import AddProgramModal from '../../../elements/administrator/modals/AddProgramModal';
 import EditProgramModal from '../../../elements/administrator/modals/EditProgramModal';
 import folderBackground from '../../../components/images/folder_background.png';
@@ -18,6 +18,10 @@ export default function ManagePrograms() {
     const navigate = useNavigate();
     const [programs, setPrograms] = useState([]);
     const [departments, setDepartments] = useState([]);
+    const [allItems, setAllItems] = useState([]);  
+    const [filteredPrograms, setFilteredPrograms] = useState([]);
+    const [searchQuery, setSearchQuery] = useState('');
+    const [filters, setFilters] = useState({ status: '' });
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [showProgramModal, setShowProgramModal] = useState(false);
@@ -46,26 +50,64 @@ export default function ManagePrograms() {
             fetchDepartments(); 
         }
     }, [navigate]);
-
     useEffect(() => {
         fetchPrograms();
     }, []);
 
 
-    // Fetch programs
-    const fetchPrograms = async () => {
+    // Fetch academic years
+    const fetchPrograms = useCallback(async () => {
+        setLoading(true); 
+        setError(null); 
         try {
-            const response = await axios.get('http://localhost:9000/programs', {
-                headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
-            });
+            const token = localStorage.getItem('token');
+            const headers = { Authorization: `Bearer ${token}` };
+            const response = await axios.get('http://localhost:9000/programs', { headers });
             setPrograms(response.data);
+            setAllItems(response.data);  
+            setFilteredPrograms(response.data);  
             setLoading(false);
         } catch (error) {
-            setError('Failed to fetch programs');
+            console.error('Error fetching programs:', error.response || error.message || error);
+            setError(true); 
             setLoading(false);
         }
+    }, []);
+
+
+    // Handle search query changes
+    const handleSearch = (query) => {
+        setSearchQuery(query);
     };
 
+    // Handle filter changes (status)
+    const handleFilterChange = (filters) => {
+        console.log('Updated Filters:', filters);
+        setFilters(filters);
+    };
+
+    // Apply search query and filters to academic years
+    useEffect(() => {
+        const filtered = allItems.filter(program => {
+            const normalizedQuery = searchQuery.toLowerCase();
+    
+            // Check if the program matches the search query in various fields
+            const matchesQuery = 
+                program.program_code.toLowerCase().includes(normalizedQuery) ||
+                program.program_name.toLowerCase().includes(normalizedQuery) ||
+                program.department_name.toLowerCase().includes(normalizedQuery);
+    
+            // Apply filters (status, department, etc.) if they exist
+            const matchesStatus = filters.status ? program.status === filters.status : true;
+            const matchesDepartment = filters.department ? program.department_name.toLowerCase().includes(filters.department.toLowerCase()) : true;
+
+    
+            // Combine all filter conditions
+            return matchesQuery && matchesStatus && matchesDepartment;
+        });
+        setFilteredPrograms(filtered);
+    }, [searchQuery, filters, allItems]);
+        
 
     // Fetch departments
     const fetchDepartments = async () => {
@@ -80,9 +122,6 @@ export default function ManagePrograms() {
             setLoading(false);
         }
     };
-
-    if (loading) return <p>Loading...</p>;
-    if (error) return <p>{error}</p>;
 
 
     const handleCreateNewProgram = () => {
@@ -257,10 +296,11 @@ export default function ManagePrograms() {
     // Pagination logic
     const indexOfLastProgram = currentPage * programsPerPage;
     const indexOfFirstProgram = indexOfLastProgram - programsPerPage;
-    const currentPrograms = programs.slice(indexOfFirstProgram, indexOfLastProgram);
+    const currentPrograms = filteredPrograms.slice(indexOfFirstProgram, indexOfLastProgram);
     const paginate = (pageNumber) => setCurrentPage(pageNumber);
-    const totalPages = Math.ceil(programs.length / programsPerPage);
+    const totalPages = Math.ceil(filteredPrograms.length / programsPerPage);
 
+    // Pagination button styles
     const buttonStyle = {
         width: '30px', 
         height: '30px', 
@@ -287,12 +327,13 @@ export default function ManagePrograms() {
         cursor: 'not-allowed',
     };
 
+    // Handle pagination change with filtered data
     const handlePaginationChange = (pageNumber) => {
         if (pageNumber >= 1 && pageNumber <= totalPages) {
             setCurrentPage(pageNumber);  
         }
     };
-    
+
     const pageNumbers = [];
     for (let i = 1; i <= totalPages; i++) {
         pageNumbers.push(i);
@@ -329,7 +370,7 @@ return (
 
                 {/* Search and Add Button */}
                 <div style={{  marginTop: '10px', marginLeft: '30px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                    <div style={{ width: '850px' }}><SearchAndFilter /></div>
+                    <div style={{ width: '850px' }}><SFforProgramsTable onSearch={handleSearch} onFilterChange={handleFilterChange}/></div>
                     <button
                         onClick={handleCreateNewProgram}
                         style={{ backgroundColor: '#FAD32E', color: 'white', fontWeight: '900', padding: '12px 18px', borderRadius: '10px', cursor: 'pointer', display: 'flex', alignItems: 'center'}}>
@@ -352,7 +393,8 @@ return (
                         </tr>
                     </thead>
                     <tbody>
-                        {currentPrograms.map((program, index) => (
+                    {filteredPrograms.length > 0 ? (
+                        currentPrograms.map((program, index) => (
                             <tr key={program.program_id} style={{ backgroundColor: index % 2 === 0 ? 'white' : '#f2f2f2' }}>
                                 <td style={{ textAlign: 'center' }}>{ (currentPage - 1) * programsPerPage + (index + 1) }</td>
                                 <td>{program.program_code}</td>
@@ -370,7 +412,12 @@ return (
                                         />
                                 </td>
                             </tr>
-                        ))}
+                                ))
+                            ) : (
+                                <tr>
+                                    <td colSpan="6" style={{ textAlign: 'center' }}>No programs found</td>
+                                </tr>
+                            )}
                     </tbody>
                 </table>
 
