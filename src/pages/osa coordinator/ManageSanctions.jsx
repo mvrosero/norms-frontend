@@ -96,6 +96,7 @@ export default function ManageSanctions() {
     }, []);
 
 
+    
     const handleCreateNewSanction = () => {
         setShowSanctionModal(true);
     };

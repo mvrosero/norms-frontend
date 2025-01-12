@@ -14,13 +14,14 @@ import { IoMdAttach } from "react-icons/io";
 import '../../styles/style.css';
 import CoordinatorNavigation from './CoordinatorNavigation';
 import CoordinatorInfo from './CoordinatorInfo';
-import SearchAndFilter from '../general/SearchAndFilter';
+import SFforManagementTable from '../../elements/general/searchandfilters/SFforManagementTable';
 import ViewAnnouncementModal from '../../elements/osa coordinator/modals/ViewAnnouncementModal';
 
 export default function CoordinatorAnnouncements() {
     const navigate = useNavigate();
     const fileInputRef = useRef(null);
     const [announcements, setAnnouncements] = useState([]);
+    const [filteredAnnouncements, setFilteredAnnouncements] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [showAnnouncementModal, setShowAnnouncementModal] = useState(false);
@@ -39,6 +40,8 @@ export default function CoordinatorAnnouncements() {
     const [isFocused, setIsFocused] = useState(false);
     const [focusedElement, setFocusedElement] = useState(null); 
     const [sortOrder, setSortOrder] = useState('asc');
+    const [allItems, setAllItems] = useState([]);  
+    const [searchQuery, setSearchQuery] = useState('');
 
 
     // Maximum text area length 
@@ -56,9 +59,6 @@ export default function CoordinatorAnnouncements() {
     };
 
 
-    useEffect(() => {
-        fetchAnnouncements();
-    }, []);
 
     const fetchAnnouncements = async () => {
         try {
@@ -66,12 +66,40 @@ export default function CoordinatorAnnouncements() {
                 headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
             });
             setAnnouncements(response.data);
+            setAllItems(response.data);  
+            setFilteredAnnouncements(response.data); 
             setLoading(false);
         } catch (error) {
             setError('Failed to fetch announcements');
+        } finally {
             setLoading(false);
         }
     };
+
+
+    // Handle search query changes
+    const handleSearch = (query) => {
+        setSearchQuery(query);
+    };
+
+    // Apply search query to announcements
+    useEffect(() => {
+        const filtered = allItems.filter(announcement => {
+            const normalizedQuery = searchQuery.toLowerCase();
+            const matchesQuery = 
+                announcement.title.toLowerCase().includes(normalizedQuery) ||
+                announcement.content.toLowerCase().includes(normalizedQuery);  
+
+            return matchesQuery;
+        });
+        setFilteredAnnouncements(filtered);
+    }, [searchQuery, allItems]);
+
+    useEffect(() => {
+        fetchAnnouncements();
+    }, []);
+
+
 
     const handleCreateNewAnnouncement = () => {
         setEditing(null);
@@ -468,11 +496,11 @@ return (
 
 
             {/* Search And Filter Section */}
-            <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px', marginLeft: '60px', padding: '0 20px' }}>
-                <div style={{ flex: '1 1 70%', minWidth: '300px' }}> <SearchAndFilter /> </div>
+            <div style={{ display: 'flex', alignItems: 'center', marginTop: '10px', marginLeft: '120px' }}>
+                <div style={{ flex: '1 1 50%' }}> <SFforManagementTable onSearch={handleSearch}/> </div>
                 <Button
                     onClick={handleCreateNewAnnouncement}
-                    style={{ backgroundColor: '#FAD32E', color: 'white', fontWeight: '900', padding: '12px 15px', border: 'none', borderRadius: '10px', cursor: 'pointer', marginLeft: '10px', display: 'flex', alignItems: 'center', boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)' }}>
+                    style={{ backgroundColor: '#FAD32E', color: 'white', fontWeight: '900', marginRight: '80px', padding: '12px 15px', border: 'none', borderRadius: '10px', cursor: 'pointer', display: 'flex', alignItems: 'center', boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)' }}>
                     Add Announcement
                     <FaPlus style={{ marginLeft: '10px' }} />
                 </Button>
@@ -482,7 +510,7 @@ return (
             {/* Pinned Announcements Section */}
             <text style={{ fontSize: '20px', fontWeight: '600', marginLeft: '120px' }}>Pinned Announcements</text>
             <Row xs={1} md={1} lg={1} className="g-4" style={{ marginTop: '2px', marginBottom: '40px', marginLeft: '100px', marginRight: '20px' }}>
-                {announcements.filter(a => a.status === 'pinned').map(a => (
+                {filteredAnnouncements.filter(a => a.status === 'pinned').map(a => (
                     <Col key={a.announcement_id}>
                         <Card style={{ backgroundColor: (activeAnnouncement === a.announcement_id || hoveredAnnouncement === a.announcement_id) ? '#ebebeb' : '', cursor: 'pointer', transition: 'background-color 0.3s ease' }}
                             onMouseOut={() => setActiveAnnouncement(null)}
@@ -566,7 +594,7 @@ return (
                 </button>
             </div>
             <Row xs={1} md={1} lg={1} className="g-4" style={{ marginTop: '2px', marginBottom: '40px', marginLeft: '100px', marginRight: '20px' }}>
-                {sortAnnouncements(announcements.filter(a => a.status !== 'pinned')).map(a => (
+                {sortAnnouncements(filteredAnnouncements.filter(a => a.status !== 'pinned')).map(a => (
                     <Col key={a.announcement_id}>
                         <Card
                             style={{ backgroundColor: (activeAnnouncement === a.announcement_id || hoveredAnnouncement === a.announcement_id) ? '#ebebeb' : '', cursor: 'pointer',transition: 'background-color 0.3s ease' }}
