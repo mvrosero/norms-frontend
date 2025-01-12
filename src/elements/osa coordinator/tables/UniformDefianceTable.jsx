@@ -4,14 +4,16 @@ import { Button, Table } from 'react-bootstrap';
 import Swal from 'sweetalert2';
 import { useNavigate } from 'react-router';
 import Fuse from 'fuse.js';
+
 import CheckIcon from '@mui/icons-material/Check';
 import CloseIcon from '@mui/icons-material/Close';
 import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import ViewUniformDefianceModal from '../modals/ViewUniformDefianceModal';
 
-const UniformDefianceTable = ({ searchQuery }) => {
+const UniformDefianceTable = ({filters, searchQuery}) => {
     const [defiances, setDefiances] = useState([]);
+    const [natures, setNatures] = useState([]);
     const [showDetailsModal, setShowDetailsModal] = useState(false);
     const [selectedRecord, setSelectedRecord] = useState(null);
     const navigate = useNavigate();
@@ -42,6 +44,17 @@ const UniformDefianceTable = ({ searchQuery }) => {
         }
     };
 
+    // Fetch the students
+    const fetchNatures = useCallback(async () => {
+        try {
+            const response = await axios.get('http://localhost:9000/violation-natures', { headers });
+            setNatures(response.data);
+        } catch (error) {
+            console.error('Error fetching nature of violations:', error);
+            Swal.fire('Error', 'Failed to fetch nature of violations.', 'error');
+        }
+    }, [headers]);
+
 
     // Fetch the uniform defiances
     const fetchDefiances = useCallback(async () => {
@@ -55,30 +68,16 @@ const UniformDefianceTable = ({ searchQuery }) => {
                 const fullName = await fetchEmployeeName(defiance.submitted_by);
                 return { ...defiance, submitted_by: fullName };
             }));
-
-            if (searchQuery) {
-                const fuse = new Fuse(updatedData, {
-                    keys: ['slip_id', 'student_idnumber', 'violation_nature', 'status', 'submitted_by'],
-                    includeScore: true,
-                    threshold: 0.4,
-                });
-
-                const searchResults = fuse.search(searchQuery);
-                data = searchResults.map(result => result.item);
-            } else {
-                data = updatedData;
-            }
-
             setDefiances(data);
         } catch (error) {
             console.error('Error fetching defiances:', error);
         }
-    }, [headers, searchQuery]);
-
+    }, [headers]);
     useEffect(() => {
         fetchDefiances();
-    }, [fetchDefiances]);
-    
+        fetchNatures();
+    }, [fetchNatures, fetchDefiances]);
+
 
      // Handle redirect to selected uniform defiance slip
     const handleRedirect = async (slip_id) => {
@@ -296,6 +295,25 @@ const UniformDefianceTable = ({ searchQuery }) => {
 
 // Render uniform defiance table
 const renderTable = () => {
+
+        const filteredDefiances = defiances.filter(defiance => {
+         
+          const nature = defiance.nature_name.toLowerCase(); 
+          const matchesSearchQuery = nature.includes(searchQuery.toLowerCase());
+      
+          const matchesFilters = Object.keys(filters).every(key => {
+            if (filters[key]) {  
+              if (key === 'nature' && defiance.nature_name !== filters[key]) return false;
+              if (key === 'startDate' && new Date(defiance.startDate).getTime() !== new Date(filters[key]).getTime()) return false;
+              if (key === 'endDate' && new Date(defiance.endDate).getTime() !== new Date(filters[key]).getTime()) return false;
+            }
+            return true;
+          });
+          return matchesSearchQuery && matchesFilters; 
+        });
+      
+        const currentDefiances = filteredDefiances.slice(indexOfFirstDefiance, indexOfLastDefiance);
+
         return (
             <Table bordered hover style={{ borderRadius: '20px', marginLeft: '110px', marginTop: '10px' }}>
                 <thead style={{ backgroundColor: '#f8f9fa' }}>
@@ -337,7 +355,8 @@ const renderTable = () => {
                     </tr>
                 </thead>
                 <tbody>
-                    {currentDefiances.map((defiance, index) => (
+                {filteredDefiances?.length > 0 ? (
+                currentDefiances.map((defiance, index) => (
                         <tr key={index}>
                             <td style={{ textAlign: 'center' }}>{defiance.slip_id}</td>
                             <td>{new Date(defiance.created_at).toLocaleString()}</td> 
@@ -367,7 +386,12 @@ const renderTable = () => {
                                 </div>
                             </td>
                         </tr>
-                    ))}
+                        ))
+                    ) : (
+                        <tr>
+                            <td colSpan="6" style={{ textAlign: 'center' }}>No uniform defiances found</td>
+                        </tr>
+                    )}
                 </tbody>
             </Table>
             );

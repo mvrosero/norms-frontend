@@ -12,14 +12,12 @@ export default function SFforUniformDefiance({ onSearch, onFilterChange }) {
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [isFilterActive, setIsFilterActive] = useState(false);
   const [natures, setNatures] = useState([]);
-  const [allNatures, setAllNatures] = useState([]);
 
-
-  // Fetch programs from the backend
+  // Fetch natures from the backend
   useEffect(() => {
     const fetchNatures = async () => {
       try {
-        const response = await axios.get('http://localhost:9000/violation-natures'); 
+        const response = await axios.get('http://localhost:9000/violation-natures');
         setNatures(response.data);
       } catch (error) {
         console.error('Error fetching natures:', error);
@@ -28,7 +26,6 @@ export default function SFforUniformDefiance({ onSearch, onFilterChange }) {
     fetchNatures();
   }, []);
 
-
   // Handle search input change
   const handleInputChange = (e) => {
     const query = e.target.value;
@@ -36,33 +33,27 @@ export default function SFforUniformDefiance({ onSearch, onFilterChange }) {
     triggerSearch(query);
   };
 
-
   // Trigger search with current query and filters
   const triggerSearch = (query) => {
-    onSearch(query, { nature, startDate, endDate });
+    onSearch(query, { nature });
   };
-
 
   // Handle filter changes
   const handleFilterChange = (field, value) => {
-    const updatedFilters = { nature, startDate, endDate, [field]: value };
-
-    // Update individual filter states
     if (field === 'nature') setNature(value);
     if (field === 'startDate') setStartDate(value);
     if (field === 'endDate') setEndDate(value);
 
-    onFilterChange(updatedFilters); 
-    triggerSearch(searchQuery); 
+    const updatedFilters = { nature, startDate, endDate, [field]: value };
+    onFilterChange(updatedFilters);
+    triggerSearch(searchQuery);
   };
-
 
   // Toggle filter dropdown visibility
   const toggleFilterDropdown = () => {
     setIsFilterOpen(!isFilterOpen);
     setIsFilterActive(!isFilterActive);
   };
-
 
   // Clear all filters
   const clearFilters = () => {
@@ -72,16 +63,22 @@ export default function SFforUniformDefiance({ onSearch, onFilterChange }) {
     onFilterChange({ nature: '', startDate: '', endDate: '' });
   };
 
-
   return (
     <div className="searchAndFilterContainer">
       <div className="searchAndFilterWrapper">
-        <input type="text" placeholder="Search..." value={searchQuery} onChange={handleInputChange} className="searchInput"/>
-        <button onClick={toggleFilterDropdown} className={`filterButton ${isFilterActive ? 'active' : ''}`}>
-            <IoFilter className={`filterIcon ${isFilterActive ? 'active' : ''}`} />
+        <input
+          type="text"
+          placeholder="Search..."
+          value={searchQuery}
+          onChange={handleInputChange}
+          className="searchInput"
+          aria-label="Search input"
+        />
+        <button onClick={toggleFilterDropdown} className={`filterButton ${isFilterActive ? 'active' : ''}`} aria-label="Filter">
+          <IoFilter className={`filterIcon ${isFilterActive ? 'active' : ''}`} />
         </button>
-        <button onClick={() => triggerSearch(searchQuery)} className="searchButton">
-            <FaSearch className="searchIcon" />
+        <button onClick={() => triggerSearch(searchQuery)} className="searchButton" aria-label="Search">
+          <FaSearch className="searchIcon" />
         </button>
       </div>
 
@@ -90,8 +87,9 @@ export default function SFforUniformDefiance({ onSearch, onFilterChange }) {
           <div className="filterOption">
             <select
               value={nature}
-              onChange={(e) => handleFilterChange('nature_name', e.target.value)} 
+              onChange={(e) => handleFilterChange('nature', e.target.value)}
               className="filterSelect"
+              aria-label="Nature of Violation"
             >
               <option value="">Nature of Violation</option>
               {natures.map((nature) => (
@@ -108,6 +106,7 @@ export default function SFforUniformDefiance({ onSearch, onFilterChange }) {
               value={startDate}
               onChange={(e) => handleFilterChange('startDate', e.target.value)}
               className="filterSelect"
+              aria-label="Start Date"
             />
           </div>
 
@@ -117,10 +116,11 @@ export default function SFforUniformDefiance({ onSearch, onFilterChange }) {
               value={endDate}
               onChange={(e) => handleFilterChange('endDate', e.target.value)}
               className="filterSelect"
+              aria-label="End Date"
             />
           </div>
 
-          <button className="clearButton" onClick={clearFilters}>
+          <button className="clearButton" onClick={clearFilters} aria-label="Clear Filters">
             Clear
           </button>
         </div>
@@ -128,3 +128,8 @@ export default function SFforUniformDefiance({ onSearch, onFilterChange }) {
     </div>
   );
 }
+
+
+
+
+
