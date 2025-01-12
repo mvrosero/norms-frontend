@@ -9,14 +9,14 @@ import DeleteIcon from '@mui/icons-material/Delete';
 
 import CoordinatorNavigation from './CoordinatorNavigation';
 import CoordinatorInfo from './CoordinatorInfo';
-import SearchAndFilter from '../general/SearchAndFilter';
+import SFforSettingsTable from '../../elements/general/searchandfilters/SFforSettingsTable';
 import AddSanctionModal from '../../elements/osa coordinator/modals/AddSanctionModal';
 import EditSanctionModal from '../../elements/osa coordinator/modals/EditSanctionModal';
 import folderBackground from '../../../src/components/images/folder_background.png';
 
 export default function ManageSanctions() {
-    const navigate = useNavigate();
     const [sanctions, setSanctions] = useState([]);
+    const [filteredSanctions, setFilteredSanctions] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [showSanctionModal, setShowSanctionModal] = useState(false);
@@ -28,6 +28,10 @@ export default function ManageSanctions() {
         sanction_name: '',
         status: ''
     });
+    const [allItems, setAllItems] = useState([]);  
+    const [searchQuery, setSearchQuery] = useState('');
+    const [filters, setFilters] = useState({ status: '' });
+    const navigate = useNavigate();
 
 
     // Pagination state
@@ -43,9 +47,6 @@ export default function ManageSanctions() {
         }
     }, [navigate]);
 
-    useEffect(() => {
-        fetchSanctions();
-    }, []);
     
     // Fetch sanctions
     const fetchSanctions = async () => {
@@ -54,6 +55,9 @@ export default function ManageSanctions() {
                 headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` },
             });
             setSanctions(response.data);
+            setAllItems(response.data);  
+            setFilteredSanctions(response.data); 
+            setLoading(false);
         } catch (error) {
             setError('Failed to fetch sanctions');
         } finally {
@@ -61,8 +65,35 @@ export default function ManageSanctions() {
         }
     };
 
-    if (loading) return <p>Loading...</p>;
-    if (error) return <p>{error}</p>;
+       
+    // Handle search query changes
+    const handleSearch = (query) => {
+        setSearchQuery(query);
+    };
+
+    // Handle filter changes (status)
+    const handleFilterChange = (filters) => {
+        console.log('Updated Filters:', filters);
+        setFilters(filters);
+    };
+
+    // Apply search query and filters to sanctions
+    useEffect(() => {
+        const filtered = allItems.filter(sanction => {
+            const normalizedQuery = searchQuery.toLowerCase();
+            const matchesQuery = 
+                sanction.sanction_code.toLowerCase().includes(normalizedQuery) ||
+                sanction.sanction_name.toLowerCase().includes(normalizedQuery);
+
+            const matchesStatus = filters.status ? sanction.status === filters.status : true;
+
+            return matchesQuery && matchesStatus;
+        });
+        setFilteredSanctions(filtered);
+    }, [searchQuery, filters, allItems]);
+    useEffect(() => {
+        fetchSanctions();
+    }, []);
 
 
     const handleCreateNewSanction = () => {
@@ -223,11 +254,12 @@ export default function ManageSanctions() {
     // Pagination logic
     const indexOfLastSanction = currentPage * sanctionsPerPage;
     const indexOfFirstSanction = indexOfLastSanction - sanctionsPerPage;
-    const currentSanctions = sanctions.slice(indexOfFirstSanction, indexOfLastSanction);
+    const currentSanctions = filteredSanctions.slice(indexOfFirstSanction, indexOfLastSanction);
 
     const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
-    const totalPages = Math.ceil(sanctions.length / sanctionsPerPage);
+    const totalPages = Math.ceil(filteredSanctions.length / sanctionsPerPage);
+
 
     const buttonStyle = {
         width: '30px', 
@@ -297,7 +329,7 @@ return (
 
             {/* Search and Add Button */}
             <div style={{  marginTop: '10px', marginLeft: '30px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <div style={{ width: '850px' }}><SearchAndFilter /></div>
+                <div style={{ width: '850px' }}><SFforSettingsTable onSearch={handleSearch} onFilterChange={handleFilterChange}/></div>
                 <button
                     onClick={handleCreateNewSanction}
                     style={{
@@ -329,7 +361,8 @@ return (
                         </tr>
                     </thead>
                     <tbody>
-                        {currentSanctions.map((sanction, index) => (
+                        {filteredSanctions.length > 0 ? (
+                            currentSanctions.map((sanction, index) => (
                             <tr key={sanction.sanction_id}>
                                 <td style={{ textAlign: 'center' }}>{ (currentPage - 1) * sanctionsPerPage + (index + 1) }</td>
                                 <td>{sanction.sanction_code}</td>
@@ -346,7 +379,12 @@ return (
                                     />
                                 </td>
                             </tr>
-                        ))}
+                                ))
+                            ) : (
+                                <tr>
+                                    <td colSpan="5" style={{ textAlign: 'center' }}>No sanctions found</td>
+                                </tr>
+                            )}
                     </tbody>
                 </table>
              

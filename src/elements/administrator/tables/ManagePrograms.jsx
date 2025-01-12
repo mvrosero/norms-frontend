@@ -55,7 +55,7 @@ export default function ManagePrograms() {
     }, []);
 
 
-    // Fetch academic years
+    // Fetch programs
     const fetchPrograms = useCallback(async () => {
         setLoading(true); 
         setError(null); 

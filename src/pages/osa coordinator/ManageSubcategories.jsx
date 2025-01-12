@@ -367,12 +367,12 @@ return (
                                     />
                                 </td>
                             </tr>
-                            ))
-                        ) : (
-                            <tr>
-                                <td colSpan="5" style={{ textAlign: 'center' }}>No subcategories found</td>
-                            </tr>
-                        )}
+                                ))
+                            ) : (
+                                <tr>
+                                    <td colSpan="5" style={{ textAlign: 'center' }}>No subcategories found</td>
+                                </tr>
+                            )}
                     </tbody>
                 </table>
 

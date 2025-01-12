@@ -9,14 +9,14 @@ import DeleteIcon from '@mui/icons-material/Delete';
 
 import CoordinatorNavigation from './CoordinatorNavigation';
 import CoordinatorInfo from './CoordinatorInfo';
-import SearchAndFilter from '../general/SearchAndFilter';
+import SFforOffensesTable from '../../elements/general/searchandfilters/SFforOffensesTable';
 import AddOffenseModal from '../../elements/osa coordinator/modals/AddOffenseModal';
 import EditOffenseModal from '../../elements/osa coordinator/modals/EditOffenseModal';
 import folderBackground from '../../../src/components/images/folder_background.png';
 
 export default function ManageOffenses() {
-    const navigate = useNavigate();
     const [offenses, setOffenses] = useState([]);
+    const [filteredOffenses, setFilteredOffenses] = useState([]);
     const [categories, setCategories] = useState([]);
     const [subcategories, setSubcategories] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -33,6 +33,14 @@ export default function ManageOffenses() {
         subcategory_id: '',
         subcategory_name: ''
     });
+    const [allItems, setAllItems] = useState([]);  
+    const [searchQuery, setSearchQuery] = useState('');
+    const [filters, setFilters] = useState({ 
+        category: '',
+        subcategory: '',
+        status: '' 
+    });
+    const navigate = useNavigate();
 
 
     // Pagination state
@@ -48,12 +56,10 @@ export default function ManageOffenses() {
         } else {
             fetchCategories(); 
             fetchSubcategories();  
+            fetchOffenses();
         }
     }, [navigate]);
     
-    useEffect(() => {
-        fetchOffenses();
-    }, []);
     
     // Fetch offenses
     const fetchOffenses = async () => {
@@ -61,9 +67,13 @@ export default function ManageOffenses() {
             const response = await axios.get('http://localhost:9000/offenses', {
                 headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
             });
+            console.log('Fetched Offenses:', response.data);
             setOffenses(response.data);
+            setAllItems(response.data);  
+            setFilteredOffenses(response.data); 
             setLoading(false);
         } catch (error) {
+            console.error('Error fetching offenses:', error);
             setError('Failed to fetch offenses');
             setLoading(false);
         }
@@ -89,7 +99,7 @@ export default function ManageOffenses() {
             const response = await axios.get('http://localhost:9000/subcategories', {
                 headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
             });
-            setSubcategories(response.data); // Assuming setSubcategories exists for state
+            setSubcategories(response.data); 
             setLoading(false);
         } catch (error) {
             setError('Failed to fetch subcategories');
@@ -98,6 +108,40 @@ export default function ManageOffenses() {
     };
 
 
+    // Handle search query changes
+    const handleSearch = (query) => {
+    setSearchQuery(query);
+    };
+
+    // Handle filter changes (status)
+    const handleFilterChange = (filters) => {
+        console.log('Updated Filters:', filters);
+        setFilters(filters);
+    };
+
+    // Apply search query and filters to offense
+    useEffect(() => {
+            const filtered = allItems.filter(offense => {
+                const normalizedQuery = searchQuery.toLowerCase();
+        
+                // Check if the offense matches the search query in various fields
+                const matchesQuery = 
+                    offense.offense_code.toLowerCase().includes(normalizedQuery) ||
+                    offense.offense_name.toLowerCase().includes(normalizedQuery) ||
+                    offense.category_name.toLowerCase().includes(normalizedQuery);
+            
+                // Apply filters (status, category, subcategory, etc.)
+                const matchesStatus = filters.status ? offense.status === filters.status : true;
+                const matchesCategory = filters.category ? offense.category_name === filters.category : true;
+                const matchesSubcategory = filters.subcategory ? offense.subcategory_name === filters.subcategory : true;
+        
+                // Combine all filter conditions
+                return matchesQuery && matchesStatus && matchesCategory && matchesSubcategory;
+            });
+            setFilteredOffenses(filtered);
+        }, [searchQuery, filters, allItems]);
+        
+    
     const handleCreateNewOffense = () => setShowOffenseModal(true);
 
     const handleCloseOffenseModal = () => {
@@ -215,7 +259,7 @@ export default function ManageOffenses() {
     };
 
 
-     // Handle the delete offense
+    // Handle the delete offense
     const handleDeleteOffense = (id) => {
         Swal.fire({
             title: 'Are you sure you want to delete this offense?',
@@ -287,11 +331,11 @@ export default function ManageOffenses() {
     // Pagination logic
     const indexOfLastOffense = currentPage * offensesPerPage;
     const indexOfFirstOffense = indexOfLastOffense - offensesPerPage;
-    const currentOffenses = offenses.slice(indexOfFirstOffense, indexOfLastOffense);
+    const currentOffenses = filteredOffenses.slice(indexOfFirstOffense, indexOfLastOffense);
 
     const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
-    const totalPages = Math.ceil(offenses.length / offensesPerPage);
+    const totalPages = Math.ceil(filteredOffenses.length / offensesPerPage);
 
     const buttonStyle = {
         width: '30px', 
@@ -361,7 +405,7 @@ return (
 
             {/* Search and Add Button */}
             <div style={{  marginTop: '10px', marginLeft: '30px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <div style={{ width: '850px' }}><SearchAndFilter /></div>
+                <div style={{ width: '850px' }}><SFforOffensesTable onSearch={handleSearch} onFilterChange={handleFilterChange}/></div>
                 <button
                     onClick={handleCreateNewOffense}
                     style={{
@@ -394,7 +438,8 @@ return (
                         </tr>
                     </thead>
                     <tbody>
-                        {currentOffenses.map((offense, index) => (
+                        {filteredOffenses.length > 0 ? (
+                            currentOffenses.map((offense, index) => (
                             <tr key={offense.offense_id}>
                                 <td style={{ textAlign: 'center' }}>{ (currentPage - 1) * offensesPerPage + (index + 1) }</td>
                                 <td>{offense.offense_code}</td>
@@ -412,7 +457,12 @@ return (
                                     />
                                 </td>
                             </tr>
-                        ))}
+                                ))
+                            ) : (
+                                <tr>
+                                    <td colSpan="5" style={{ textAlign: 'center' }}>No offenses found</td>
+                                </tr>
+                            )}
                     </tbody>
                 </table>
                 
