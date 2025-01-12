@@ -27,9 +27,9 @@ const AdminLogin = () => {
                 const { token, role_id, user_id, employee_idnumber: loggedInEmployeeIdNumber, is_active } = response.data;
     
                 // Check if user is active based on the 'is_active' field
-                if (!is_active) {  // If 'is_active' is false or inactive
-                    navigate('/account-limited'); // Redirect to account-limited page
-                    return; // Prevent further code execution and stop login
+                if (!is_active) {  
+                    navigate('/account-limited'); 
+                    return; 
                 }
     
                 // Proceed with login if the user is active
@@ -40,7 +40,7 @@ const AdminLogin = () => {
     
                 // Prevent redirection if the role is not admin
                 if (role_id === 1) {
-                    navigate('/admin-dashboard'); // Redirect to admin dashboard for admins
+                    navigate('/admin-dashboard'); 
                     Swal.fire({
                         icon: 'success',
                         title: 'Login Successful',

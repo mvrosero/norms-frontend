@@ -2,7 +2,7 @@ import React from "react";
 import { GrSystem } from "react-icons/gr";
 import styled from '@emotion/styled';
 
-// Styles for the view button
+
 const ViewButton = styled.button`
   border-radius: 20px;
   background: linear-gradient(45deg, #015901, #006637, #4aa616);

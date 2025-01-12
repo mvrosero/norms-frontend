@@ -38,10 +38,9 @@ export default function AdminDashboard() {
   useEffect(() => {
     const token = localStorage.getItem('token');
     
-    // If there's no token at all, redirect immediately
     if (!token) {
       console.error("Token is required to access the dashboard.");
-      navigate('/admin-login'); // Redirect to login page if no token exists
+      navigate('/admin-login'); 
       return;
     }
   
@@ -55,34 +54,29 @@ export default function AdminDashboard() {
       // If the account status is 'inactive', remove the token and redirect
       if (status === 'inactive') {
         console.error("Your account is inactive. Access is restricted.");
-        localStorage.removeItem('token'); // Remove token to prevent further access
-        navigate('/account-limited'); // Redirect to account-limited page
-        return; // Exit early to prevent further checks
+        localStorage.removeItem('token'); 
+        navigate('/account-limited'); 
+        return; 
       }
   
-      // Now that we know the user is active, check if the role is correct
+      // Check if the role is correct
       const roleId = localStorage.getItem('role_id');
       if (roleId !== '1') {
         console.error("Invalid role. Access is restricted.");
-        navigate('/login'); // Redirect to login page if role is not '1'
+        navigate('/admin-login'); 
         return;
       }
   
-      // Proceed with fetching user counts or any dashboard-related actions
       fetchUserCounts(token);
     })
     .catch((error) => {
       console.error('Error fetching user status:', error);
-      localStorage.removeItem('token'); // Optionally clear the token if there’s an error
-      navigate('/login'); // Redirect to login in case of any errors with the request
+      localStorage.removeItem('token'); 
+      navigate('/admin-login'); 
     });
-  
   }, [navigate]);
   
   
-  
-  
-
   const fetchUserCounts = async (token) => {
     try {
       const response = await axios.get(`http://localhost:9000/user-counts`, {
