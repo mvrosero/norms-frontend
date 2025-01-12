@@ -43,7 +43,6 @@ export default function SFforSettingsTable({ onSearch, onFilterChange }) {
     setIsFilterActive(!isFilterActive);
   };
 
-
   // Clear all filters
   const clearFilters = () => {
     setStatus('');
