@@ -9,14 +9,14 @@ import { FaPlus } from 'react-icons/fa';
 
 import CoordinatorNavigation from './CoordinatorNavigation';
 import CoordinatorInfo from './CoordinatorInfo';
-import SearchAndFilter from '../general/SearchAndFilter';
+import SFforSettingsTable from '../../elements/general/searchandfilters/SFforSettingsTable';
 import AddCategoryModal from '../../elements/osa coordinator/modals/AddCategoryModal';
 import EditCategoryModal from '../../elements/osa coordinator/modals/EditCategoryModal';
 import folderBackground from '../../../src/components/images/folder_background.png';
 
 export default function ManageCategories() {
-    const navigate = useNavigate();
     const [categories, setCategories] = useState([]);
+    const [filteredCategories, setFilteredCategories] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [showCategoryModal, setShowCategoryModal] = useState(false);
@@ -26,6 +26,10 @@ export default function ManageCategories() {
         category_name: '',
         status: ''
     });
+    const [allItems, setAllItems] = useState([]);  
+    const [searchQuery, setSearchQuery] = useState('');
+    const [filters, setFilters] = useState({ status: '' });
+    const navigate = useNavigate();
 
 
     useEffect(() => {
@@ -37,10 +41,6 @@ export default function ManageCategories() {
         }
     }, [navigate]);
 
-    useEffect(() => {
-        fetchCategories();
-    }, []);
-
 
     // Fetch categories
     const fetchCategories = async () => {
@@ -49,6 +49,8 @@ export default function ManageCategories() {
                 headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
             });
             setCategories(response.data);
+            setAllItems(response.data);  
+            setFilteredCategories(response.data); 
             setLoading(false);
         } catch (error) {
             setError('Failed to fetch categories');
@@ -56,8 +58,35 @@ export default function ManageCategories() {
         }
     };
 
-    if (loading) return <p>Loading...</p>;
-    if (error) return <p>{error}</p>;
+
+   // Handle search query changes
+   const handleSearch = (query) => {
+    setSearchQuery(query);
+};
+
+    // Handle filter changes (status)
+    const handleFilterChange = (filters) => {
+        console.log('Updated Filters:', filters);
+        setFilters(filters);
+    };
+
+    // Apply search query and filters to category
+    useEffect(() => {
+        const filtered = allItems.filter(category => {
+            const normalizedQuery = searchQuery.toLowerCase();
+            const matchesQuery = 
+                category.category_name.toLowerCase().includes(normalizedQuery);
+
+            const matchesStatus = filters.status ? category.status === filters.status : true;
+
+            return matchesQuery && matchesStatus;
+        });
+        setFilteredCategories(filtered);
+    }, [searchQuery, filters, allItems]);
+    useEffect(() => {
+        fetchCategories();
+    }, []);
+
 
     const handleCreateNewCategory = () => {
         setShowCategoryModal(true);
@@ -247,7 +276,7 @@ return (
 
             {/* Search and Add Button */}
             <div style={{  marginTop: '10px', marginLeft: '30px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <div style={{ width: '850px' }}><SearchAndFilter /></div>
+                <div style={{ width: '850px' }}><SFforSettingsTable onSearch={handleSearch} onFilterChange={handleFilterChange} /></div>
                 <button
                     onClick={handleCreateNewCategory}
                     style={{ backgroundColor: '#FAD32E', color: 'white', fontWeight: '900', padding: '12px 18px', borderRadius: '10px', cursor: 'pointer', display: 'flex', alignItems: 'center' }}>
@@ -268,7 +297,8 @@ return (
                         </tr>
                     </thead>
                     <tbody>
-                        {categories.map((category, index) => (
+                        {filteredCategories.length > 0 ? (
+                            filteredCategories.map((category, index) => (
                             <tr key={category.category_id}>
                                 <td style={{ textAlign: 'center'}}>{(index + 1)}</td>
                                 <td style={{ paddingLeft: '20px'}}>{category.category_name}</td>
@@ -284,7 +314,12 @@ return (
                                     />
                                 </td>
                             </tr>
-                        ))}
+                                ))
+                            ) : (
+                                <tr>
+                                    <td colSpan="4" style={{ textAlign: 'center' }}>No categories found</td>
+                                </tr>
+                            )}
                     </tbody>
                 </table>
             </div>
