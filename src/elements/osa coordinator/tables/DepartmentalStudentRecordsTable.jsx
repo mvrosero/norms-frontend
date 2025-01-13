@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import axios from 'axios';
 import { Table } from 'react-bootstrap';
@@ -14,25 +13,27 @@ import CoordinatorInfo from '../../../pages/osa coordinator/CoordinatorInfo';
 import SFforDepartmentalTable from '../../general/searchandfilters/SFforDepartmentalTable';
 import DepartmentalCreateViolationModal from '../modals/DepartmentalCreateViolationModal';
 
-const DepartmentalStudentRecordsTable = () => {
-    const { department_code } = useParams(); 
-    const navigate = useNavigate(); 
-    const [users, setUsers] = useState([]);
+export default function DepartmentalStudentRecordsTable() {
     const [departments, setDepartments] = useState([]);
-    const [programs, setPrograms] = useState([]);
     const [departmentName, setDepartmentName] = useState('');
-    
     const [showReadModal, setShowReadModal] = useState(false);
     const [selectedUser, setSelectedUser] = useState(null);
     const [deletionStatus, setDeletionStatus] = useState(false);
     const [showViolationModal, setShowViolationModal] = useState(false); 
+    const [users, setUsers] = useState([]); 
+    const [searchQuery, setSearchQuery] = useState('');
+    const [allUsers, setAllUsers] = useState([]);  
+    const [filteredUsers, setFilteredUsers] = useState([]);  
+    const [filters, setFilters] = useState({
+      yearLevel: '',
+      program: '',
+      batch: '',
+      status: '',
+    });
+    const { department_code } = useParams();
+    const navigate = useNavigate();
 
-    const headers = useMemo(() => {
-        const token = localStorage.getItem('token');
-        return token ? { Authorization: `Bearer ${token}` } : {};
-    }, []);
-
-
+ 
     // Pagination state
     const [currentPage, setCurrentPage] = useState(1);
     const [rowsPerPage, setRowsPerPage] = useState(10);
@@ -41,66 +42,96 @@ const DepartmentalStudentRecordsTable = () => {
     const [sortOrder, setSortOrder] = useState('asc'); 
 
 
-    // Fetch the students
+    useEffect(() => {
+        const token = localStorage.getItem('token');
+        const roleId = localStorage.getItem('role_id');
+        if (!token || roleId !== '2') {
+            navigate('/unauthorized');
+        }
+    }, [navigate]);
+
+    // Fetch users from the department
     const fetchUsers = useCallback(async () => {
         try {
-            const response = await axios.get(`http://localhost:9000/coordinator-studentrecords/${department_code}`, { headers });
-            
-            if (response.data.length === 0) {
-                setUsers([]);
-            } else {
-                setUsers(response.data);
-            }
-        } catch (error) {
-            if (error.response && error.response.status === 404) {
-                setUsers([]); 
-            } else {
-                console.error('Error fetching users:', error);
-                Swal.fire('Error', 'Failed to fetch users.', 'error');
-            }
-        }
-    }, [headers, department_code, deletionStatus]);
-    
+            const token = localStorage.getItem('token');
+            const headers = { Authorization: `Bearer ${token}` };
 
-    // Fetch the departments
+            const response = await axios.get(
+                `http://localhost:9000/coordinator-studentrecords/${department_code}`,
+                { headers }
+            );
+            const activeUsers = response.data.filter(user => user.status !== 'archived');
+            setUsers(activeUsers);  
+            setAllUsers(activeUsers);  
+            setFilteredUsers(activeUsers);  
+        } catch (error) {
+            console.error('Error fetching users:', error);
+            alert('Failed to fetch users.');
+        }
+    }, [department_code]);
+
+
+    // Handle search query changes
+    const handleSearch = (query) => {
+        setSearchQuery(query);
+        const normalizedQuery = query ? query.toLowerCase() : '';
+    
+        const filtered = allUsers.filter(user => {
+            const userName = user.name ? user.name.toLowerCase() : ''; 
+            return userName.includes(normalizedQuery);
+        });
+    
+        setFilteredUsers(filtered);  
+    };
+
+
+    // Handle filter changes (yearLevel, program, batch, status)
+    const handleFilterChange = (filters) => {
+        console.log('Updated Filters:', filters);
+        setFilters(filters);  
+    
+        let filtered = allUsers;
+    
+        // Apply filters one by one
+        if (filters.yearLevel) {
+            filtered = filtered.filter(user => user.yearLevel === filters.yearLevel);
+        }
+    
+        if (filters.program) {
+                filtered = filtered.filter(user => user.program === filters.program);
+            }
+
+        if (filters.batch) {
+            filtered = filtered.filter(user => user.batch === filters.batch);
+        }
+    
+        if (filters.status) {
+            filtered = filtered.filter(user => user.status === filters.status);
+        }
+        setFilteredUsers(filtered);
+    };
+
+
+    // Fetch departments 
     const fetchDepartments = useCallback(async () => {
         try {
+            const token = localStorage.getItem('token');
+            const headers = { Authorization: `Bearer ${token}` };
+
             const response = await axios.get('http://localhost:9000/departments', { headers });
             setDepartments(response.data);
 
-            const normalizedDepartmentCode = department_code.toUpperCase();
+            const normalizedDepartmentCode = department_code?.toUpperCase();
             const department = response.data.find(d => d.department_code.toUpperCase() === normalizedDepartmentCode);
-            if (department) {
-                setDepartmentName(department.department_name);
-            } else {
-                console.log('Department not found for code:', department_code);
-            }
+            setDepartmentName(department ? department.department_name : 'Unknown Department');
         } catch (error) {
             console.error('Error fetching departments:', error);
         }
-    }, [headers, department_code]);
-
-
-    // Fetch the student programs
-    const fetchPrograms = useCallback(async () => {
-        try {
-            const response = await axios.get('http://localhost:9000/programs', { headers });
-            setPrograms(response.data);
-        } catch (error) {
-            console.error('Error fetching programs:', error);
-        }
-    }, [headers]);
-
+    }, [department_code]);
     useEffect(() => {
-        fetchUsers();
         fetchDepartments();
-        fetchPrograms();
-    }, [fetchUsers, fetchDepartments, fetchPrograms]);
-
-    const getProgramName = (programId) => {
-        const program = programs.find(p => p.program_id === programId);
-        return program ? program.program_name : '';
-    };
+        fetchUsers();
+    }, [fetchDepartments, fetchUsers]);
 
 
     // Handle redirect to selected student
@@ -287,6 +318,30 @@ const DepartmentalStudentRecordsTable = () => {
 
 // Render the student records table
 const renderTable = () => {
+
+        const activeUsers = users.filter(user => user.status !== 'archived');
+
+        // Calculate filteredUsers first
+        const filteredUsers = activeUsers.filter(user => {
+            const fullName = `${user.first_name} ${user.middle_name || ''} ${user.last_name} ${user.suffix || ''}`.toLowerCase();
+            const studentId = user.student_idnumber.toLowerCase();
+            const matchesSearchQuery = fullName.includes(searchQuery.toLowerCase()) || studentId.includes(searchQuery.toLowerCase());
+        
+            const matchesFilters = Object.keys(filters).every(key => {
+                if (filters[key]) {
+                    if (key === 'yearLevel' && user.year_level && user.year_level !== filters[key]) return false;  
+                    if (key === 'program' && user.program_name && user.program_name !== filters[key]) return false;  
+                    if (key === 'batch' && user.batch !== filters[key]) return false;
+                    if (key === 'status' && user.status !== filters[key]) return false;
+                }
+                return true;
+            });
+            return matchesSearchQuery && matchesFilters; 
+        });
+        
+        const currentUsers = filteredUsers.slice(indexOfFirstUser, indexOfLastUser);
+
+
     return (
         <Table bordered hover responsive style={{ borderRadius: '20px', marginBottom: '20px', marginLeft: '110px' }}>
         <thead>
@@ -322,7 +377,8 @@ const renderTable = () => {
             </tr>
         </thead>
         <tbody>
-            {currentUsers.map((user, index) => (
+        {filteredUsers && filteredUsers.length > 0 ? (
+            currentUsers.map((user, index) => ( 
                 <tr key={index}>
                     <td style={{ textAlign: 'center' }}>{index + 1}</td>
                     <td>{user.student_idnumber}</td>
@@ -343,7 +399,7 @@ const renderTable = () => {
                         </a>
                     </td>
                     <td>{user.year_level}</td>
-                    <td>{getProgramName(user.program_id)}</td>
+                    <td>{user.program_name}</td>
                     <td style={{ textAlign: 'center' }}>
                         <div style={{ backgroundColor: user.status === 'active' ? '#DBF0DC' : '#F0DBDB', color: user.status === 'active' ? '#30A530' : '#D9534F', fontWeight: '600', fontSize: '14px', borderRadius: '30px', padding: '5px 20px', display: 'inline-flex', alignItems: 'center' }}>
                             <div style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: user.status === 'active' ? '#30A530' : '#D9534F', marginRight: '7px' }} />
@@ -351,7 +407,12 @@ const renderTable = () => {
                         </div>
                     </td>
                 </tr>
-            ))}
+                    ))
+                ) : (
+                <tr>
+                    <td colSpan="6" style={{ textAlign: 'center' }}>No users found</td>
+                </tr>
+                )}
         </tbody>
     </Table>
   );
@@ -370,7 +431,7 @@ return (
 
             {/* Search And Filter Section */}
             <div style={{  marginTop: '10px', marginLeft: '60px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <div style={{ width: '920px' }}> <SFforDepartmentalTable /> </div>
+                <div style={{ width: '920px' }}> <SFforDepartmentalTable onSearch={handleSearch} onFilterChange={handleFilterChange}/> </div>
                 <button 
                     onClick={handleCreateViolation} 
                     style={{ backgroundColor: '#FAD32E', color: 'white', fontWeight: '900', padding: '12px 15px', border: 'none', borderRadius: '10px', cursor: 'pointer', display: 'flex', alignItems: 'center', boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)' }}>
@@ -408,4 +469,3 @@ return (
 };
 
 
-export default DepartmentalStudentRecordsTable;

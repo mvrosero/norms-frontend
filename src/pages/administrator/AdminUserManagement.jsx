@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 
 import AdminNavigation from "./AdminNavigation";
 import AdminInfo from "./AdminInfo";
-import SFforStudentsTable from '../../elements/administrator/searchandfilters/SFforStudentsTable';
+import SFforStudentsTable from '../../elements/general/searchandfilters/SFforStudentsTable';
 import SFforEmployeesTable from '../../elements/administrator/searchandfilters/SFforEmployeesTable';
 import StudentsTable from '../../elements/administrator/tables/StudentsTable';
 import EmployeesTable from '../../elements/administrator/tables/EmployeesTable';

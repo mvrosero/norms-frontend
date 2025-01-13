@@ -6,7 +6,7 @@ import { FaPlus } from 'react-icons/fa';
 import CoordinatorNavigation from './CoordinatorNavigation';
 import CoordinatorInfo from './CoordinatorInfo';
 import StudentRecordsTable from '../../elements/osa coordinator/tables/StudentRecordsTable';
-import SFforStudentsTable from '../../elements/administrator/searchandfilters/SFforStudentsTable';
+import SFforStudentsTable from '../../elements/general/searchandfilters/SFforStudentsTable';
 import CreateViolationModal from '../../elements/osa coordinator/modals/CreateViolationModal';
 
 export default function CoordinatorStudentRecords() {
