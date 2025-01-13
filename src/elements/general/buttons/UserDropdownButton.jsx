@@ -7,9 +7,9 @@ function UserDropdownButton() {
   const handleOptionClick = (option) => {
     setIsOpen(false);
     if (option === 'Student') {
-      window.location.href = 'http://localhost:3000/register-student';
+      window.location.href = 'https://test-backend-api-2.onrender.com/register-student';
     } else if (option === 'Employee') {
-      window.location.href = 'http://localhost:3000/register-employee';
+      window.location.href = 'https://test-backend-api-2.onrender.com/register-employee';
     }
   };
 

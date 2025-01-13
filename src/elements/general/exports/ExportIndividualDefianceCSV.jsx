@@ -17,7 +17,7 @@ const ExportIndividualDefianceCSV = ({ student_idnumber }) => {
         setLoading(true); // Start loading
 
         try {
-            const response = await axios.get(`http://localhost:9000/uniform_defiances/export/${student_idnumber}`, {
+            const response = await axios.get(`https://test-backend-api-2.onrender.com/uniform_defiances/export/${student_idnumber}`, {
                 responseType: 'blob', // Handle the file download
             });
 

@@ -30,7 +30,7 @@ export default function StudentAnnouncements() {
         if (!token || roleId !== '3') {
             navigate('/unauthorized', { replace: true });
         } else {
-            axios.get('http://localhost:9000/announcements', {
+            axios.get('https://test-backend-api-2.onrender.com/announcements', {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }
@@ -194,7 +194,7 @@ return (
                                                 return isImage ? (
                                                     <Card.Img
                                                         variant="top"
-                                                        src={`http://localhost:9000/uploads/${firstFile}`}
+                                                        src={`https://test-backend-api-2.onrender.com/uploads/${firstFile}`}
                                                         alt="Announcement Image"
                                                         style={{ maxHeight: '250px', maxWidth: '250px', marginTop: '20px', marginBottom: '20px', marginLeft: '20px', marginRight: '50px' }}
                                                     />
@@ -262,7 +262,7 @@ return (
                                             return isImage ? (
                                                 <Card.Img
                                                     variant="top"
-                                                    src={`http://localhost:9000/uploads/${firstFile}`}
+                                                    src={`https://test-backend-api-2.onrender.com/uploads/${firstFile}`}
                                                     alt="Announcement Image"
                                                     style={{ maxHeight: '100px', maxWidth: '100px' }}
                                                 />

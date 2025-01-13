@@ -22,7 +22,7 @@ export default function SFforViolationsTable({ onSearch, onFilterChange }) {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const response = await axios.get('http://localhost:9000/categories'); 
+        const response = await axios.get('https://test-backend-api-2.onrender.com/categories'); 
         setCategories(response.data);
       } catch (error) {
         console.error('Error fetching categories:', error);
@@ -36,7 +36,7 @@ export default function SFforViolationsTable({ onSearch, onFilterChange }) {
     useEffect(() => {
         const fetchOffenses = async () => {
         try {
-            const response = await axios.get('http://localhost:9000/offenses-by-category');
+            const response = await axios.get('https://test-backend-api-2.onrender.com/offenses-by-category');
             setOffenses(response.data);
         } catch (error) {
             console.error('Error fetching offenses by category:', error);
@@ -50,7 +50,7 @@ export default function SFforViolationsTable({ onSearch, onFilterChange }) {
   useEffect(() => {
     const fetchAcadYears = async () => {
       try {
-        const response = await axios.get('http://localhost:9000/academicyears'); 
+        const response = await axios.get('https://test-backend-api-2.onrender.com/academicyears'); 
         setAcadYears(response.data);
       } catch (error) {
         console.error('Error fetching academic years:', error);
@@ -64,7 +64,7 @@ export default function SFforViolationsTable({ onSearch, onFilterChange }) {
   useEffect(() => {
     const fetchSemesters = async () => {
       try {
-        const response = await axios.get('http://localhost:9000/semesters'); 
+        const response = await axios.get('https://test-backend-api-2.onrender.com/semesters'); 
         setSemesters(response.data);
       } catch (error) {
         console.error('Error fetching semesters:', error);

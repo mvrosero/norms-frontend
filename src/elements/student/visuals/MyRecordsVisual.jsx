@@ -22,7 +22,7 @@ const MyRecordsVisual = () => {
   useEffect(() => {
     const fetchSubcategories = async () => {
       try {
-        const response = await fetch('http://localhost:9000/subcategories');
+        const response = await fetch('https://test-backend-api-2.onrender.com/subcategories');
         if (!response.ok) {
           throw new Error('Failed to fetch subcategories');
         }
@@ -47,7 +47,7 @@ const MyRecordsVisual = () => {
   return (
     <div style={{ padding: '10px', display: 'flex', flexDirection: 'column', gap: '20px' }}>
       {subcategories.map((subcategory, index) => (
-        <Link key={index} to={`http://localhost:3000/student-myrecords/${subcategory.subcategory_name.replace(/\s+/g, '-')}`} style={{ textDecoration: 'none' }}>
+        <Link key={index} to={`https://test-backend-api-2.onrender.com/student-myrecords/${subcategory.subcategory_name.replace(/\s+/g, '-')}`} style={{ textDecoration: 'none' }}>
             <div style={{ width: '1050px', backgroundColor: 'white', border: '1px solid #818181', borderRadius: '5px', padding: '20px', marginLeft: '90px', cursor: 'pointer' }}>
                     <h3 style={{ fontFamily: 'Poppins, sans-serif', color: '#242424', fontSize: '20px', margin: '0 0 10px 0' }}>
                         {subcategory.subcategory_name}

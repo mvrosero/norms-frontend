@@ -10,7 +10,7 @@ const ExportDefianceHistoryCSV = () => {
         setLoading(true); // Start loading
 
         try {
-            const response = await axios.get('http://localhost:9000/uniform_defiances-history/export', {
+            const response = await axios.get('https://test-backend-api-2.onrender.com/uniform_defiances-history/export', {
                 responseType: 'blob', // Handle the file download
             });
 

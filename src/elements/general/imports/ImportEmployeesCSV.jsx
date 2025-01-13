@@ -15,7 +15,7 @@ const ImportEmployeesCSV = () => {
         formData.append('file', selectedFile);
     
         try {
-            const response = await axios.post('http://localhost:9000/importcsv-employee', formData, {
+            const response = await axios.post('https://test-backend-api-2.onrender.com/importcsv-employee', formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                 },

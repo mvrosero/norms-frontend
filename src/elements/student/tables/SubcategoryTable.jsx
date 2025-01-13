@@ -40,7 +40,7 @@ const SubcategoryTable = () => {
         }
         // Fetch violation records
         const response = await axios.get(
-          `http://localhost:9000/student-myrecords/subcategory/${studentId}`
+          `https://test-backend-api-2.onrender.com/student-myrecords/subcategory/${studentId}`
         );
         setRecords(response.data);
       } catch (err) {

@@ -41,7 +41,7 @@ export default function AccountSettings() {
     useEffect(() => {
         const fetchProfilePhoto = async () => {
             try {
-                const response = await axios.get(`http://localhost:9000/view-profile-photo/${userId}`, {
+                const response = await axios.get(`https://test-backend-api-2.onrender.com/view-profile-photo/${userId}`, {
                     headers: {
                         'Authorization': `Bearer ${localStorage.getItem('token')}` 
                     },
@@ -104,7 +104,7 @@ export default function AccountSettings() {
             const formDataToSend = new FormData();
             formDataToSend.append('profile_photo_filename', profileFormData.profile_photo_filename);
     
-            const response = await axios.post(`http://localhost:9000/upload-profile-photo/${userId}`, formDataToSend, {
+            const response = await axios.post(`https://test-backend-api-2.onrender.com/upload-profile-photo/${userId}`, formDataToSend, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                     'Authorization': `Bearer ${localStorage.getItem('token')}` 
@@ -142,7 +142,7 @@ export default function AccountSettings() {
     // Handle delete profile photo
     const handleDeleteProfilePhoto = async () => {
         try {
-            const response = await axios.delete(`http://localhost:9000/delete-profile-photo/${userId}`, {
+            const response = await axios.delete(`https://test-backend-api-2.onrender.com/delete-profile-photo/${userId}`, {
                 headers: {
                     'Authorization': `Bearer ${localStorage.getItem('token')}` 
                 }
@@ -180,7 +180,7 @@ export default function AccountSettings() {
             return;
         }
         try {
-            const response = await axios.put(`http://localhost:9000/password-change/${userId}`, {
+            const response = await axios.put(`https://test-backend-api-2.onrender.com/password-change/${userId}`, {
                 current_password: passwordFormData.current_password,
                 new_password: passwordFormData.new_password
             }, {

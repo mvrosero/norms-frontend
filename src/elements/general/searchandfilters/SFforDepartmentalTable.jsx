@@ -25,7 +25,7 @@ export default function SFforDepartmentalTable({ onSearch, onFilterChange }) {
   // Fetch programs dynamically
   useEffect(() => {
     axios
-      .get(`http://localhost:9000/programs-by-department/${department_code}`)
+      .get(`https://test-backend-api-2.onrender.com/programs-by-department/${department_code}`)
       .then((response) => {
         setPrograms(response.data);
       })

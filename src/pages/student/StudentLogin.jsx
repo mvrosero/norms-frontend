@@ -17,7 +17,7 @@ const StudentLogin = () => {
     const handleLogin = async (e) => {
         e.preventDefault();
         try {
-            const response = await axios.post('http://localhost:9000/student-login', {
+            const response = await axios.post('https://test-backend-api-2.onrender.com/student-login', {
                 student_idnumber,
                 password
             });

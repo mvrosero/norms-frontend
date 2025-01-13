@@ -24,7 +24,7 @@ const BirthdateVerification = () => {
             const formattedBirthdate = `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
 
             // Fetch user info
-            const response = await axios.get(`http://localhost:9000/user/${userId}`);
+            const response = await axios.get(`https://test-backend-api-2.onrender.com/user/${userId}`);
             const userInfo = response.data;
 
             if (userInfo.birthdate === formattedBirthdate) {

@@ -16,7 +16,7 @@ const ImportDepartmentalCSV = () => {
         formData.append('file', selectedFile);
 
         try {
-            const response = await axios.post(`http://localhost:9000/admin-usermanagement/${department_code}`, formData, {
+            const response = await axios.post(`https://test-backend-api-2.onrender.com/admin-usermanagement/${department_code}`, formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                 },

@@ -6,7 +6,7 @@ const ViewAnnouncementModal = ({ show, onHide, announcement }) => {
     const renderFileTiles = (files) => {
         return files.map((file, index) => {
             const fileExtension = file.split('.').pop().toLowerCase();
-            const fileUrl = `http://localhost:9000/uploads/${file.trim()}`;
+            const fileUrl = `https://test-backend-api-2.onrender.com/uploads/${file.trim()}`;
             const isImage = ['jpg', 'jpeg', 'png', 'gif'].includes(fileExtension);
     
             if (isImage) {

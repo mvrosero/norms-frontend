@@ -25,7 +25,7 @@ export default function SFforStudentsTable({ onSearch, onFilterChange }) {
   useEffect(() => {
     const fetchPrograms = async () => {
       try {
-        const response = await axios.get('http://localhost:9000/programs'); 
+        const response = await axios.get('https://test-backend-api-2.onrender.com/programs'); 
         setPrograms(response.data);
       } catch (error) {
         console.error('Error fetching programs:', error);

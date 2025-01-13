@@ -29,7 +29,7 @@ const StudentSubcategoryRecords = () => {
       const token = localStorage.getItem('token');
       const headers = { Authorization: `Bearer ${token}` };
 
-      const response = await axios.get('http://localhost:9000/subcategories', { headers });
+      const response = await axios.get('https://test-backend-api-2.onrender.com/subcategories', { headers });
       setSubcategories(response.data);
 
       const subcategory = response.data.find(s => s.subcategory_name === subcategory_name());

@@ -35,31 +35,31 @@ const MyRecordsTable = () => {
                 }
 
                 // Fetch records
-                const recordsResponse = await axios.get(`http://localhost:9000/myrecords/${studentIdNumber}`);
+                const recordsResponse = await axios.get(`https://test-backend-api-2.onrender.com/myrecords/${studentIdNumber}`);
                 setRecords(recordsResponse.data);
 
                 // Fetch categories
-                const categoriesResponse = await axios.get('http://localhost:9000/categories');
+                const categoriesResponse = await axios.get('https://test-backend-api-2.onrender.com/categories');
                 setCategories(categoriesResponse.data);
 
                 // Fetch offenses
-                const offensesResponse = await axios.get('http://localhost:9000/offenses');
+                const offensesResponse = await axios.get('https://test-backend-api-2.onrender.com/offenses');
                 setOffenses(offensesResponse.data);
 
                 // Fetch sanctions
-                const sanctionsResponse = await axios.get('http://localhost:9000/sanctions');
+                const sanctionsResponse = await axios.get('https://test-backend-api-2.onrender.com/sanctions');
                 setSanctions(sanctionsResponse.data);
 
                 // Fetch academic years
-                const academicYearsResponse = await axios.get('http://localhost:9000/academic_years');
+                const academicYearsResponse = await axios.get('https://test-backend-api-2.onrender.com/academic_years');
                 setAcademicYears(academicYearsResponse.data);
 
                 // Fetch semesters
-                const semestersResponse = await axios.get('http://localhost:9000/semesters');
+                const semestersResponse = await axios.get('https://test-backend-api-2.onrender.com/semesters');
                 setSemesters(semestersResponse.data);
 
                 // Fetch subcategories 
-                const subcategoriesResponse = await axios.get('http://localhost:9000/subcategories');
+                const subcategoriesResponse = await axios.get('https://test-backend-api-2.onrender.com/subcategories');
                     setSubcategories(subcategoriesResponse.data);
                 } catch (error) {
                     setError(error.message || 'An error occurred');
