@@ -40,7 +40,7 @@ const SecurityCreateSlip = () => {
     useEffect(() => {
         const fetchStudents = async () => {
             try {
-                const response = await axios.get('http://localhost:9000/students');
+                const response = await axios.get('https://test-backend-api-2.onrender.com/students');
                 const activeStudents = response.data.filter(student => student.status === 'active');
                 const studentOptions = activeStudents.map(student => ({
                     value: student.student_idnumber,
@@ -56,7 +56,7 @@ const SecurityCreateSlip = () => {
         // Fetch nature of violation
         const fetchViolationOptions = async () => {
             try {
-                const response = await axios.get('http://localhost:9000/violation-natures');
+                const response = await axios.get('https://test-backend-api-2.onrender.com/violation-natures');
                 const options = response.data.map(violation => ({
                     value: violation.nature_id,
                     label: violation.nature_name
@@ -121,7 +121,7 @@ const SecurityCreateSlip = () => {
                 });
                 const employee_idnumber = localStorage.getItem('employee_idnumber');
                 formDataToSend.append('submitted_by', employee_idnumber);
-                const response = await axios.post('http://localhost:9000/create-uniformdefiance', formDataToSend, {
+                const response = await axios.post('https://test-backend-api-2.onrender.com/create-uniformdefiance', formDataToSend, {
                     headers: {
                         'Content-Type': 'multipart/form-data',
                         'Authorization': `Bearer ${localStorage.getItem('token')}`

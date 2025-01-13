@@ -36,7 +36,7 @@ const UniformDefianceTable = ({}) => {
                     throw new Error('Employee ID number not found in local storage');
                 }
 
-                const response = await axios.get(`http://localhost:9000/uniform_defiances/submitted_by/${employeeIdNumber}`);
+                const response = await axios.get(`https://test-backend-api-2.onrender.com/uniform_defiances/submitted_by/${employeeIdNumber}`);
                 setRecords(response.data);
             } catch (error) {
                 setError(error.message || 'An error occurred');
@@ -52,7 +52,7 @@ const UniformDefianceTable = ({}) => {
      // Fetch the employee
     const fetchEmployeeName = async (employeeIdNumber) => {
         try {
-            const response = await axios.get(`http://localhost:9000/employees/${employeeIdNumber}`);
+            const response = await axios.get(`https://test-backend-api-2.onrender.com/employees/${employeeIdNumber}`);
             return response.data.name;
         } catch (error) {
             console.error('Error fetching employee data:', error);
@@ -87,7 +87,7 @@ const UniformDefianceTable = ({}) => {
                 <div>
                     {filenames.map((filename, index) => {
                         const fileExtension = filename.split('.').pop().toLowerCase();
-                        const fileUrl = `http://localhost:9000/uploads/${filename}`;
+                        const fileUrl = `https://test-backend-api-2.onrender.com/uploads/${filename}`;
 
                         if (fileExtension === 'mp4' || fileExtension === 'avi' || fileExtension === 'mov') {
                             return (

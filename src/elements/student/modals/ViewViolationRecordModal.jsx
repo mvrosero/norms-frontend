@@ -47,7 +47,7 @@ const ViewViolationRecordModal = ({ show, onHide, record, getCategoryName, getOf
                     <p style={{ fontWeight: 'bold' }}>Sanctions:</p>
                     <p>{getSanctionNames(record.sanction_ids)}</p>
 
-                    <p style={{ fontWeight: 'bold' }}>Description:</p>
+                    <p style={{ fontWeight: 'bold', textAlign: 'justify' }}>Description:</p>
                     <p>{record.description}</p>
                 </div>
             </Modal.Body>
