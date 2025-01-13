@@ -78,7 +78,7 @@ const CoordinatorDashboard = () => {
 
   const fetchUserCounts = async (token) => {
     try {
-      const response = await axios.get(`http://localhost:9000/user-counts-notarchived`, {
+      const response = await axios.get(`https://test-backend-api-2.onrender.com/user-counts-notarchived`, {
         headers: {
           Authorization: `Bearer ${token}`
         }

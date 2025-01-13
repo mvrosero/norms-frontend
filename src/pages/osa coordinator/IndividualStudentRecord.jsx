@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { FaPlus } from 'react-icons/fa'; 
-import SearchAndFilter from '../general/SearchAndFilter';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Button } from 'react-bootstrap';
+import { FaPlus } from 'react-icons/fa'; 
 
 import CoordinatorNavigation from './CoordinatorNavigation';
 import CoordinatorInfo from './CoordinatorInfo';
+import SFforViolationsTable from '../../elements/general/searchandfilters/SFforViolationsTable';
 import IndividualStudentRecordTable from '../../elements/osa coordinator/tables/IndividualStudentRecordTable';
 import AddViolationModal from '../../elements/osa coordinator/modals/AddViolationModal';
 import defaultProfile from '../../components/images/default_profile.jpg';
@@ -23,18 +23,18 @@ export default function IndividualStudentRecord() {
     // Fetch the student information
     const fetchStudentInfo = async (student_idnumber) => {
         try {
-            const studentResponse = await axios.get(`http://localhost:9000/student/${student_idnumber}`);
+            const studentResponse = await axios.get(`https://test-backend-api-2.onrender.com/student/${student_idnumber}`);
             const studentData = studentResponse.data[0];
             setStudentInfo(studentData);
 
             const photoFilename = studentData?.profile_photo_filename;
             if (photoFilename) {
-                const photoUrl = `http://localhost:9000/uploads/profile_photo/${photoFilename}`;
+                const photoUrl = `https://test-backend-api-2.onrender.com/uploads/profile_photo/${photoFilename}`;
                 setProfilePhoto(photoUrl);
             }
 
             // Fetch violation records specific to the student
-            const violationResponse = await axios.get(`http://localhost:9000/violation_record/${student_idnumber}`);
+            const violationResponse = await axios.get(`https://test-backend-api-2.onrender.com/violation_record/${student_idnumber}`);
             setViolationRecords(violationResponse.data);
         } catch (error) {
             console.error('Error fetching student info:', error);
@@ -139,7 +139,7 @@ return (
 
             {/* Search And Filter Section */}
             <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'center', marginLeft: '60px', padding: '0 20px' }}>
-                <div style={{ flex: '1 1 70%', minWidth: '300px' }}> <SearchAndFilter /> </div>
+                <div style={{ flex: '1 1 70%', minWidth: '300px' }}> <SFforViolationsTable /> </div>
                 <Button onClick={handleCreateNewRecord} title="Add Record" style={{ backgroundColor: '#FAD32E', color: 'white', fontWeight: '900', padding: '12px 20px', border: 'none', borderRadius: '10px', cursor: 'pointer', display: 'flex', alignItems: 'center', boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)' }} >
                         Add Violation
                     <FaPlus style={{ marginLeft: '10px' }} />

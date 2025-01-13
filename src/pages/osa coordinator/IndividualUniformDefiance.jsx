@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import axios from 'axios';
-import { Modal, Button } from 'react-bootstrap';
+import { Button } from 'react-bootstrap';
 import { useNavigate, useLocation, useParams } from 'react-router-dom';  
 import { FaPlus } from 'react-icons/fa';
 import defaultProfile from '../../components/images/default_profile.jpg';
