@@ -60,11 +60,15 @@ export default function UniformDefianceHistory() {
 
             const filtered = allDefiances.filter(defiance => {
                 const nature_name = defiance.nature_name ? defiance.nature_name.trim().toLowerCase() : '';
-                return nature_name.includes(normalizedQuery);
+                const studentId = defiance.student_idnumber ? defiance.student_idnumber.toString().toLowerCase() : '';
+
+                // Check if either nature_name or studentId matches the search query
+                return nature_name.includes(normalizedQuery) || studentId.includes(normalizedQuery);
             });
 
             setFilteredDefiances(filtered);
         };
+
 
 
     const handleFilterChange = (filters) => {

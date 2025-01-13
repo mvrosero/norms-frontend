@@ -213,8 +213,11 @@ return (
                                 </div>
                             </div>
                             <div style={{ display: 'flex', flexWrap: 'wrap' }}>
-                                <div style={{ width: '70%', whiteSpace: 'nowrap', }}>
+                                <div style={{ width: '60%', whiteSpace: 'nowrap', }}>
                                     <p><strong>Status:</strong><div style={{ backgroundColor: studentInfo.status === 'active' ? '#DBF0DC' : '#F0DBDB', color: studentInfo.status === 'active' ? '#30A530' : '#D9534F', fontWeight: '600', fontSize: '14px', borderRadius: '30px', padding: '5px 20px', display: 'inline-flex', alignItems: 'center', marginLeft: '10px' }}> {studentInfo.status} </div> </p>
+                                </div>
+                                <div style={{ width: '40%', whiteSpace: 'nowrap', }}>
+                                    <p><strong>Batch:</strong> {studentInfo.batch}</p>
                                 </div>
                             </div>
                         </div>

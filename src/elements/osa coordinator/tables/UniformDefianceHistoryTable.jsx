@@ -314,8 +314,9 @@ const renderTable = () => {
 
     const filteredDefiances = defiances.filter(defiance => {
          
-        const nature = defiance.nature_name.toLowerCase(); 
-        const matchesSearchQuery = nature.includes(searchQuery.toLowerCase());
+        const nature = defiance.nature_name ? defiance.nature_name.toLowerCase() : '';
+        const matchesSearchQuery = nature.includes(searchQuery.toLowerCase()) || 
+                                   defiance.student_idnumber.toString().toLowerCase().includes(searchQuery.toLowerCase());
     
         const matchesFilters = Object.keys(filters).every(key => {
           if (filters[key]) {  
