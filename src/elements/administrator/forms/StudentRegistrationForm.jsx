@@ -28,6 +28,21 @@ export default function StudentRegistrationForm() {
     const [batch, setBatch] = useState('');
     const [errors, setErrors] = useState({});
     const [filteredPrograms, setFilteredPrograms] = useState([]);
+    const [createdBy, setCreatedBy] = useState(''); // State to hold the full name or user info
+
+  
+      useEffect(() => {
+        const token = localStorage.getItem('token');
+        const roleId = localStorage.getItem('role_id');
+        const userId = localStorage.getItem('user_id'); // Extract user ID from localStorage
+      
+        if (token && roleId === '1') {
+          setCreatedBy(userId); // Directly set userId as the createdBy value
+        } else {
+          console.error('Token is required for accessing this.');
+        }
+      }, []);
+      
 
 
     // Set the styles for the fields
@@ -63,7 +78,7 @@ export default function StudentRegistrationForm() {
 
     // Fetch roles and departments
     useEffect(() => {
-        axios.get('http://localhost:9000/programs')
+        axios.get('https://test-backend-api-2.onrender.com/programs')
             .then(response => {
                 setPrograms(response.data);
             })
@@ -71,7 +86,7 @@ export default function StudentRegistrationForm() {
                 console.error('Error fetching programs', error);
             });
 
-        axios.get('http://localhost:9000/departments')
+        axios.get('https://test-backend-api-2.onrender.com/departments')
             .then(response => {
                 setDepartments(response.data);
             })
@@ -84,7 +99,7 @@ export default function StudentRegistrationForm() {
     useEffect(() => {
         if (department_id) {
             axios
-                .get(`http://localhost:9000/active-programs/${department_id}`)
+                .get(`https://test-backend-api-2.onrender.com/active-programs/${department_id}`)
                 .then((response) => {
                     setFilteredPrograms(response.data); 
                 })
@@ -221,7 +236,7 @@ export default function StudentRegistrationForm() {
             return; 
         }
         try {
-            const response = await axios.post('http://localhost:9000/register-student', {
+            const response = await axios.post('https://test-backend-api-2.onrender.com/register-student', {
                 student_idnumber,
                 first_name,
                 middle_name,
@@ -236,6 +251,7 @@ export default function StudentRegistrationForm() {
                 department_id,
                 role_id,
                 batch,
+                created_by: createdBy,
             });
             Swal.fire({
                 icon: 'success',
@@ -482,21 +498,33 @@ return (
                             <label htmlFor="email" className="label">Email Address:</label>
                             <input
                                 id="email"
-                                type="email"
+                                type="text"
                                 placeholder="username@gbox.ncf.edu.ph"
                                 value={email}
                                 onChange={(e) => {
-                                    let newValue = e.target.value;
-                                    if (!newValue.includes('@gbox.ncf.edu.ph') && newValue !== '') {
-                                        newValue = newValue.split('@')[0] + '@gbox.ncf.edu.ph'; // Add default domain
+                                    let inputValue = e.target.value;
+
+                                    if (!inputValue.includes('@gbox.ncf.edu.ph') && inputValue !== '') {
+                                        const username = inputValue.split('@')[0];
+                                        inputValue = username + '@gbox.ncf.edu.ph';
                                     }
-                                    setEmail(newValue);
-                                    validateField('email', newValue);
+                                    setEmail(inputValue);
+
+                                    // Move the cursor just before the '@' symbol
+                                    const inputElement = e.target;
+                                    const atSymbolIndex = inputValue.indexOf('@');
+                                    if (atSymbolIndex !== -1) {
+                                        requestAnimationFrame(() => {
+                                            inputElement.selectionStart = atSymbolIndex;
+                                            inputElement.selectionEnd = atSymbolIndex;
+                                        });
+                                    }
+                                    validateField('email', inputValue);
                                 }}
                                 onBlur={(e) => validateField('email', e.target.value)}
                                 style={getInputStyle('email', { email }, errors)}
                                 required
-                            />
+                                />
                             <label htmlFor="password" className="label">Password:</label>
                             <input
                                 id="password"
@@ -522,6 +550,17 @@ return (
                                     {errors.password}
                                 </div>
                             )}
+
+                        <div className="input-group" style={{ display: 'none' }}>
+                            <label htmlFor="createdBy" className="label">Created By:</label>
+                            <input
+                                id="createdBy"
+                                name="createdBy"
+                                type="text"
+                                value={createdBy} 
+                                readOnly
+                            />
+                        </div>
                     </fieldset>
                     {/* Buttons */}
                     <div className="btn-container">

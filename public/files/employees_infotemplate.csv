@@ -1,0 +1,2 @@
+employee_idnumber,first_name,middle_name,last_name,suffix,birthdate,email,password,role_code,created_by
+e.g.: 00-00000,e.g.: Juan,e.g.: Santos,e.g.: Dela Cruz,"e.g.: II, Jr.",MM/DD/YYYY,default password + @ncf.edu.ph,first letter of first name + full surname,"e.g.: adm, osa, sec",your user_id

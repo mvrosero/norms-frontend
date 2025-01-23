@@ -22,7 +22,21 @@ export default function EmployeeRegistrationForm() {
     const [roles, setRoles] = useState([]);
     const [error, setError] = useState('');
     const [errors, setErrors] = useState({});
-
+    const [createdBy, setCreatedBy] = useState(''); 
+    
+      
+    useEffect(() => {
+    const token = localStorage.getItem('token');
+    const roleId = localStorage.getItem('role_id');
+    const userId = localStorage.getItem('user_id'); // Extract user ID from localStorage
+    
+    if (token && roleId === '1') {
+        setCreatedBy(userId); // Directly set userId as the createdBy value
+    } else {
+        console.error('Token is required for accessing the dashboard or invalid role.');
+    }
+    }, []);
+          
 
     // Set the styles for the fields
     const inputStyle = {
@@ -55,7 +69,7 @@ export default function EmployeeRegistrationForm() {
         const token = localStorage.getItem('token');
         const roleId = localStorage.getItem('role_id');
         if (token && roleId === '1') {
-            axios.get('http://localhost:9000/roles')
+            axios.get('https://test-backend-api-2.onrender.com/roles')
                 .then(response => {
                     setRoles(response.data);
                 })
@@ -193,7 +207,7 @@ export default function EmployeeRegistrationForm() {
             return; 
         }
         try {
-            const response = await axios.post('http://localhost:9000/register-employee', {
+            const response = await axios.post('https://test-backend-api-2.onrender.com/register-employee', {
                 employee_idnumber,
                 first_name,
                 middle_name,
@@ -203,7 +217,8 @@ export default function EmployeeRegistrationForm() {
                 email,
                 password,
                 profile_photo_filename,
-                role_id
+                role_id,
+                created_by: createdBy,
             });
             console.log(response.data);
             Swal.fire({
@@ -418,16 +433,28 @@ return (
                             <label htmlFor="email" className="label">Email Address:</label>
                                 <input
                                     id="email"
-                                    type="email"
+                                    type="text"
                                     placeholder="username@ncf.edu.ph"
                                     value={email}
                                     onChange={(e) => {
-                                        let newValue = e.target.value;
-                                        if (!newValue.includes('@ncf.edu.ph') && newValue !== '') {
-                                            newValue = newValue.split('@')[0] + '@ncf.edu.ph'; 
+                                        let inputValue = e.target.value;
+
+                                        if (!inputValue.includes('@ncf.edu.ph') && inputValue !== '') {
+                                            const username = inputValue.split('@')[0];
+                                            inputValue = username + '@ncf.edu.ph';
                                         }
-                                        setEmail(newValue);
-                                        validateField('email', newValue);
+                                        setEmail(inputValue);
+
+                                        // Move the cursor just before the '@' symbol
+                                        const inputElement = e.target;
+                                        const atSymbolIndex = inputValue.indexOf('@');
+                                        if (atSymbolIndex !== -1) {
+                                            requestAnimationFrame(() => {
+                                                inputElement.selectionStart = atSymbolIndex;
+                                                inputElement.selectionEnd = atSymbolIndex;
+                                            });
+                                        }
+                                        validateField('email', inputValue);
                                     }}
                                     onBlur={(e) => validateField('email', e.target.value)}
                                     style={getInputStyle('email', { email }, errors)}
@@ -458,6 +485,17 @@ return (
                                     {errors.password}
                                 </div>
                             )}
+
+                        <div className="input-group" style={{ display: 'none' }}>
+                            <label htmlFor="createdBy" className="label">Created By:</label>
+                            <input
+                                id="createdBy"
+                                name="createdBy"
+                                type="text"
+                                value={createdBy} 
+                                readOnly
+                            />
+                        </div>
                     </fieldset>
                     {/* Buttons */}
                     <div class="btn-container">
