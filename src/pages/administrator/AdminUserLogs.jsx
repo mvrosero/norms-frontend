@@ -103,6 +103,35 @@ export default function AdminUserLogs() {
         setFilters(filters);
     };
 
+
+        // Generate action sentences for the actions taken field
+        const generateActionSentence = (history) => {
+          const changes = [];
+  
+          if (history.old_department_id !== history.new_department_id) {
+          changes.push(`The department was changed from ${history.old_department_name} to ${history.new_department_name}`);
+          }
+          if (history.old_program_id !== history.new_program_id) {
+          changes.push(`The program was changed from ${history.old_program_name} to ${history.new_program_name}`);
+          }
+          if (history.old_year_level !== history.new_year_level) {
+          changes.push(`The year level was changed from ${history.old_year_level} to ${history.new_year_level}`);
+          }
+          if (history.old_status !== history.new_status) {
+          changes.push(`The status was changed from ${history.old_status} to ${history.new_status}`);
+          }
+          if (history.old_batch !== history.new_batch) {
+          changes.push(`The batch was changed from ${history.old_batch} to ${history.new_batch}`);
+          }
+          if (history.old_role_id !== history.new_role_id) {
+          changes.push(`The role was changed from ${history.old_role_name} to ${history.new_role_name}`);
+          }
+  
+          const actionSentence = changes.join(' ') || 'No changes recorded';
+          return `${actionSentence} of ${history.user}.`.replace(/\s+\./, '.');
+      };
+  
+
   
     // Apply search query and filters to histories
     useEffect(() => {
@@ -140,7 +169,7 @@ export default function AdminUserLogs() {
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '20px' }}>
       <AdminNavigation />
       <AdminInfo />
-      
+
 
       {/* Title Section */}
       <div style={{ width: '90%', margin: '0 auto', display: 'flex', justifyContent: 'flex-start' }}>
