@@ -28,6 +28,7 @@ const UniformDefianceTable = ({}) => {
 
 
     // Fetch the uniform defiances submitted by the employee currently logged in
+
     useEffect(() => {
         const fetchData = async () => {
             try {
@@ -48,18 +49,25 @@ const UniformDefianceTable = ({}) => {
         fetchData();
     }, []);
 
-
-     // Fetch the employee
     const fetchEmployeeName = async (employeeIdNumber) => {
         try {
             const response = await axios.get(`https://test-backend-api-2.onrender.com/employees/${employeeIdNumber}`);
             return response.data.name;
         } catch (error) {
             console.error('Error fetching employee data:', error);
-            return 'Unknown Employee'; 
+            return 'Unknown Employee';
         }
     };
 
+    const fetchFileFromDrive = async (fileId) => {
+        try {
+            const response = await axios.get(`https://test-backend-api-2.onrender.com/uniform_defiance/${fileId}`);
+            return response.data.fileUrl;
+        } catch (error) {
+            console.error('Error fetching file from Google Drive:', error);
+            return '/path/to/default-image.jpg';
+        }
+    };
 
     const handleViewDetails = async (record) => {
         setSelectedRecord(record);
@@ -73,7 +81,7 @@ const UniformDefianceTable = ({}) => {
     };
 
     const handleImageError = (e) => {
-        e.target.src = '/path/to/default-image.jpg'; 
+        e.target.src = '/path/to/default-image.jpg';
     };
 
 
@@ -86,35 +94,28 @@ const UniformDefianceTable = ({}) => {
             return (
                 <div>
                     {filenames.map((filename, index) => {
-                        const fileExtension = filename.split('.').pop().toLowerCase();
-                        const fileUrl = `https://test-backend-api-2.onrender.com/uploads/${filename}`;
+                        // Fetch the Google Drive file URL for each file ID
+                        const fileUrl = `https://test-backend-api-2.onrender.com/uniform_defiance/${filename}`;
 
-                        if (fileExtension === 'mp4' || fileExtension === 'avi' || fileExtension === 'mov') {
-                            return (
-                                <a href={fileUrl} target="_blank" rel="noopener noreferrer" key={index}>
-                                    <video controls src={fileUrl} style={{ maxWidth: '100%', display: 'block', marginBottom: '10px' }} />
-                                </a>
-                            );
-                        } else if (fileExtension === 'jpg' || fileExtension === 'jpeg' || fileExtension === 'png' || fileExtension === 'gif') {
-                            return (
-                                <a href={fileUrl} target="_blank" rel="noopener noreferrer" key={index}>
-                                    <img
-                                        src={fileUrl}
-                                        alt={`File Preview ${index}`}
-                                        onError={handleImageError}
-                                        style={{ maxWidth: '100%', display: 'block', marginBottom: '10px' }}
-                                    />
-                                </a>
-                            );
-                        } else {
-                            return <p key={index}>Unsupported file format</p>;
-                        }
+                        return (
+                            <a href={fileUrl} target="_blank" rel="noopener noreferrer" key={index}>
+                                <img
+                                    src={fileUrl}
+                                    alt={`File Preview ${index}`}
+                                    onError={handleImageError}
+                                    style={{ maxWidth: '100%', display: 'block', marginBottom: '10px' }}
+                                />
+                            </a>
+                        );
                     })}
                 </div>
             );
         }
         return null;
     };
+
+    if (loading) return <p>Loading...</p>;
+    if (error) return <p>Error: {error}</p>;
 
 
     // Set the styles for the status
@@ -443,7 +444,7 @@ return (
                     <Button variant="link" onClick={handleCloseDetailsModal} style={{ position: 'absolute', top: '5px', right: '20px', textDecoration: 'none',fontSize: '30px', color: '#a9a9a9' }}>
                         ×
                     </Button>
-                    <Modal.Title style={{ fontSize: '40px', marginBottom: '10px', marginLeft: '90px', marginRight: '90px' }}>VIEW UNIFORM DEFIANCE</Modal.Title>
+                    <Modal.Title style={{ fontSize: '40px', marginBottom: '10px', textAlign: 'center', width: '100%' }}>VIEW UNIFORM DEFIANCE</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                     {selectedRecord && (
