@@ -62,7 +62,7 @@ export default function ManagePrograms() {
         try {
             const token = localStorage.getItem('token');
             const headers = { Authorization: `Bearer ${token}` };
-            const response = await axios.get('http://localhost:9000/programs', { headers });
+            const response = await axios.get('https://test-backend-api-2.onrender.com/programs', { headers });
             setPrograms(response.data);
             setAllItems(response.data);  
             setFilteredPrograms(response.data);  
@@ -112,7 +112,7 @@ export default function ManagePrograms() {
     // Fetch departments
     const fetchDepartments = async () => {
         try {
-            const response = await axios.get('http://localhost:9000/departments', {
+            const response = await axios.get('https://test-backend-api-2.onrender.com/departments', {
                 headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
             });
             setDepartments(response.data);
@@ -151,9 +151,11 @@ export default function ManagePrograms() {
     const handleProgramSubmit = async (e) => {
         e.preventDefault();
         try {
-            await axios.post('http://localhost:9000/register-program', programFormData, {
+            const response = await axios.post('https://test-backend-api-2.onrender.com/register-program', programFormData, {
                 headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
             });
+    
+            // If the program is added successfully
             Swal.fire({
                 icon: 'success',
                 title: 'Program Added Successfully!',
@@ -162,13 +164,24 @@ export default function ManagePrograms() {
             handleCloseProgramModal();
             fetchPrograms();
         } catch (error) {
-            Swal.fire({
-                icon: 'error',
-                title: 'Oops...',
-                text: 'An error occurred while adding the program. Please try again later!',
-            });
+            if (error.response && error.response.status === 400) {
+                // Handle duplicate program name error
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Duplicate Program',
+                    text: error.response.data.error || 'A program with this name already exists. Please choose another name.',
+                });
+            } else {
+                // General error message for other issues
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'An error occurred while adding the program. Please try again later!',
+                });
+            }
         }
     };
+    
 
     
     // Handle the edit program
@@ -196,7 +209,7 @@ export default function ManagePrograms() {
                 department_name: programFormData.department_name,
                 status: programFormData.status,
             };
-            await axios.put(`http://localhost:9000/program/${editProgramId}`, payload, {
+            await axios.put(`https://test-backend-api-2.onrender.com/program/${editProgramId}`, payload, {
                 headers: {
                     'Authorization': `Bearer ${localStorage.getItem('token')}`,
                     'Content-Type': 'application/json', 
@@ -234,7 +247,7 @@ export default function ManagePrograms() {
         }).then(async (result) => {
             if (result.isConfirmed) {
                 try {
-                    await axios.delete(`http://localhost:9000/program/${id}`, {
+                    await axios.delete(`https://test-backend-api-2.onrender.com/program/${id}`, {
                         headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
                     });
                     Swal.fire(

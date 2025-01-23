@@ -16,7 +16,7 @@ const AdminInfo = ({ role }) => {
   useEffect(() => {
     const fetchProfileData = async () => {
       try {
-        const response = await axios.get(`http://localhost:9000/employee/${userId}`, {
+        const response = await axios.get(`https://test-backend-api-2.onrender.com/employee/${userId}`, {
           headers: {
             'Authorization': `Bearer ${localStorage.getItem('token')}` 
           }
@@ -29,7 +29,7 @@ const AdminInfo = ({ role }) => {
 
           const photoFilename = userData.profile_photo_filename;
           if (photoFilename) {
-            const photoUrl = `http://localhost:9000/uploads/profile_photo/${photoFilename}`;
+            const photoUrl = `https://test-backend-api-2.onrender.com/uploads/profile_photo/${photoFilename}`;
             setProfilePhoto(photoUrl);
           }
         }

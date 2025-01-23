@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import { Link } from 'react-router-dom';
 import axios from 'axios';
 import { Button, Table } from 'react-bootstrap';
 import Swal from 'sweetalert2';
@@ -39,7 +40,7 @@ export default function StudentsTable ({filters, searchQuery}) {
   // Fetch the users
   const fetchUsers = useCallback(async () => {
     try {
-        const response = await axios.get('http://localhost:9000/students-not-archived', { headers });
+        const response = await axios.get('https://test-backend-api-2.onrender.com/students-not-archived', { headers });
         console.log('Fetched users:', response.data);
 
         const activeUsers = response.data.filter(user => user.status !== 'archived');
@@ -58,7 +59,7 @@ export default function StudentsTable ({filters, searchQuery}) {
   // Fetch the departments
   const fetchDepartments = useCallback(async () => {
     try {
-        const response = await axios.get('http://localhost:9000/departments', { headers });
+        const response = await axios.get('https://test-backend-api-2.onrender.com/departments', { headers });
           console.log('Fetched departments:', response.data);
     
           setDepartments(response.data);
@@ -71,7 +72,7 @@ export default function StudentsTable ({filters, searchQuery}) {
   // Fetch the programs
   const fetchPrograms = useCallback(async () => {
     try {
-        const response = await axios.get('http://localhost:9000/programs', { headers });
+        const response = await axios.get('https://test-backend-api-2.onrender.com/programs', { headers });
         console.log('Fetched programs:', response.data);
 
         setPrograms(response.data);
@@ -351,9 +352,9 @@ const renderTable = () => {
                   )}
               </button>
             </th>
-            <th style={{ width: '9%' }}>Year Level</th>
-            <th>Department</th>
-            <th>Program</th>
+            <th style={{ width: '11%' }}>Year Level</th>
+            <th style={{ width: '15%' }}>Department</th>
+            <th style={{ width: '15%' }}>Program</th>
             <th style={{ width: '12%' }}>Status</th>
             <th style={{ width: '9%' }}>Actions</th>
           </tr>
@@ -364,7 +365,22 @@ const renderTable = () => {
             <tr key={user.student_idnumber}>
               <td> <input type="checkbox" checked={selectedStudentIds.includes(user.student_idnumber)} onChange={() => handleSelectUser(user.student_idnumber)}/> </td>
               <td>{user.student_idnumber}</td>
-              <td>{`${user.first_name} ${user.middle_name || ''} ${user.last_name} ${user.suffix || ''}`}</td>
+              <td>
+                <Link 
+                    to={`/admin-accounthistory/${user.user_id}`}
+                    style={{ textDecoration: 'none', color: 'black' }}
+                    onMouseEnter={(e) => {
+                        e.target.style.textDecoration = 'underline';
+                        e.target.style.color = '#4682B4'; 
+                    }}
+                    onMouseLeave={(e) => {
+                        e.target.style.textDecoration = 'none';
+                        e.target.style.color = '#000000';
+                    }}
+                >
+                    {`${user.first_name} ${user.middle_name || ''} ${user.last_name} ${user.suffix || ''}`}
+                </Link>
+              </td>
               <td>{user.year_level}</td>
               <td>{user.department_name}</td>
               <td>{user.program_name}</td>

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { FaSearch } from 'react-icons/fa';
-import { IoFilter } from 'react-icons/io5';
+import { RiEqualizerLine } from "react-icons/ri";
 import axios from 'axios';
 import '../../../styles/SearchAndFilter.css';
 
@@ -18,7 +18,7 @@ export default function SFforProgramsTable({ onSearch, onFilterChange }) {
   useEffect(() => {
     const fetchDepartments = async () => {
       try {
-        const response = await axios.get('http://localhost:9000/departments'); 
+        const response = await axios.get('https://test-backend-api-2.onrender.com/departments'); 
         setDepartments(response.data);
       } catch (error) {
         console.error('Error fetching departments:', error);
@@ -75,7 +75,7 @@ export default function SFforProgramsTable({ onSearch, onFilterChange }) {
       <div className="searchAndFilterWrapper">
         <input type="text" placeholder="Search..." value={searchQuery} onChange={handleInputChange} className="searchInput" style={{ color: '#333' }}/>
         <button onClick={toggleFilterDropdown} className={`filterButton ${isFilterActive ? 'active' : ''}`}>
-            <IoFilter className={`filterIcon ${isFilterActive ? 'active' : ''}`} />
+            <RiEqualizerLine className={`filterIcon ${isFilterActive ? 'active' : ''}`} />
         </button>
         <button onClick={() => triggerSearch(searchQuery)} className="searchButton">
             <FaSearch className="searchIcon" />

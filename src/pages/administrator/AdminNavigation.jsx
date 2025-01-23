@@ -5,6 +5,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { MdSpaceDashboard } from "react-icons/md";
 import { FaUsers } from "react-icons/fa";
 import { FaGear } from "react-icons/fa6";
+import { RiFolderUserFill } from "react-icons/ri";
 
 import "../../styles/General.css";
 import logo from "../../components/images/norms_logo.png";
@@ -120,6 +121,13 @@ export default function AdminNavigation() {
                       active={activeMenuItem === "User Management"}
                     >
                       User Management
+                    </MenuItem>
+                    <MenuItem
+                      icon={<RiFolderUserFill style={{ fontSize: iconSize, color: getItemColor("User Logs") }} />}
+                      onClick={() => handleMenuItemClick("User Logs")}
+                      active={activeMenuItem === "User Logs"}
+                    >
+                      User Logs
                     </MenuItem>
                     <MenuItem
                       icon={<FaGear style={{ fontSize: iconSize, color: getItemColor("Settings") }} />}

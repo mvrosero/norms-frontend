@@ -13,6 +13,22 @@ const BatchEmployeesToolbar = ({ selectedItemsCount, selectedEmployeeIds, onDele
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
+  const [updatedBy, setUpdatedBy] = useState(''); // State to hold the full name or user info
+  
+  
+    useEffect(() => {
+    const token = localStorage.getItem('token');
+    const roleId = localStorage.getItem('role_id');
+    const userId = localStorage.getItem('user_id');
+
+    if (token && roleId === '1') {
+      setUpdatedBy(userId); 
+  } else {
+      console.error('Token is required for accessing this.');
+  }
+  }, []);
+
+
 
   const handleClose = () => {
     setIsVisible(false);
@@ -39,7 +55,7 @@ const BatchEmployeesToolbar = ({ selectedItemsCount, selectedEmployeeIds, onDele
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const roleResponse = await axios.get('http://localhost:9000/roles');
+        const roleResponse = await axios.get('https://test-backend-api-2.onrender.com/roles');
         setRoles(roleResponse.data.filter(role => role.role_id !== 3));
       } catch (error) {
         console.error('Error fetching roles:', error);
@@ -53,17 +69,26 @@ const BatchEmployeesToolbar = ({ selectedItemsCount, selectedEmployeeIds, onDele
   }, [isModalVisible]);
   
 
-  // Handle the submit employees toolbar
+  // Handle the submit batch edit employee
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
     setSuccessMessage('');
     setIsSubmitting(true);
 
+    // Make sure `updatedBy` is available
+    if (!updatedBy) {
+        setError('UpdatedBy is required.');
+        setIsSubmitting(false);
+        return;
+    }
+
     const updates = {
         ...(roleId && { role_id: roleId }),
         ...(status && { status: status }),
+        // No need to include updatedBy in both updates and as a separate field
     };
+
     console.log('Selected Employee IDs:', selectedEmployeeIds);
     console.log('Updates:', updates);
 
@@ -72,6 +97,7 @@ const BatchEmployeesToolbar = ({ selectedItemsCount, selectedEmployeeIds, onDele
         setIsSubmitting(false);
         return;
     }
+
     const result = await Swal.fire({
         title: 'Are you sure you want to save the changes?',
         text: 'You are about to update the details of the selected employees. These changes cannot be undone.',
@@ -82,15 +108,19 @@ const BatchEmployeesToolbar = ({ selectedItemsCount, selectedEmployeeIds, onDele
         confirmButtonText: 'Yes, update them!',
         cancelButtonText: 'Cancel',
     });
+
     if (!result.isConfirmed) {
         setIsSubmitting(false);
-        return; 
+        return;
     }
+
     try {
-        const response = await axios.put('http://localhost:9000/employees', {
+        const response = await axios.put('https://test-backend-api-2.onrender.com/employees', {
             employee_ids: selectedEmployeeIds,
-            updates: updates,
+            updates: updates, // `updatedBy` is already included in updates
+            updatedBy: updatedBy, // Optionally pass updatedBy directly, if needed in the backend
         });
+
         console.log('Response:', response);
         handleModalClose();
 
@@ -118,6 +148,7 @@ const BatchEmployeesToolbar = ({ selectedItemsCount, selectedEmployeeIds, onDele
         setIsSubmitting(false);
     }
 };
+
 
 
   // Handle the cancel employees toolbar

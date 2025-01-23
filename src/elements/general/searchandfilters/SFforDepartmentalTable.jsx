@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { FaSearch } from 'react-icons/fa';
-import { IoFilter } from 'react-icons/io5';
+import { RiEqualizerLine } from "react-icons/ri";
 import axios from 'axios';
 import '../../../styles/SearchAndFilter.css';
 
@@ -86,7 +86,7 @@ return (
       <div className="searchAndFilterWrapper">
         <input type="text" placeholder="Search..." value={searchQuery} onChange={handleInputChange} className="searchInput"/>
         <button onClick={toggleFilterDropdown} className={`filterButton ${isFilterActive ? 'active' : ''}`}>
-            <IoFilter className={`filterIcon ${isFilterActive ? 'active' : ''}`} />
+            <RiEqualizerLine className={`filterIcon ${isFilterActive ? 'active' : ''}`} />
         </button>
         <button onClick={() => triggerSearch(searchQuery)} className="searchButton">
             <FaSearch className="searchIcon" />

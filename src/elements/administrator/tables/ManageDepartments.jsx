@@ -40,7 +40,7 @@ export default function ManageDepartments() {
         try {
             const token = localStorage.getItem('token');
             const headers = { Authorization: `Bearer ${token}` };
-            const response = await axios.get('http://localhost:9000/departments', { headers });
+            const response = await axios.get('https://test-backend-api-2.onrender.com/departments', { headers });
             setDepartments(response.data);
             setAllItems(response.data);  
             setFilteredDepartments(response.data);  
@@ -108,7 +108,7 @@ export default function ManageDepartments() {
     const handleDepartmentSubmit = async (e) => {
         e.preventDefault();
         try {
-            await axios.post('http://localhost:9000/register-department', departmentFormData, {
+            await axios.post('https://test-backend-api-2.onrender.com/register-department', departmentFormData, {
                 headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
             });
             Swal.fire('Department Added', 'New department added successfully', 'success');
@@ -131,7 +131,7 @@ export default function ManageDepartments() {
     const handleEditSubmit = async (e) => {
         e.preventDefault();
         try {
-            await axios.put(`http://localhost:9000/department/${editDepartmentId}`, departmentFormData, {
+            await axios.put(`https://test-backend-api-2.onrender.com/department/${editDepartmentId}`, departmentFormData, {
                 headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
             });
             Swal.fire('Department Updated', 'Department updated successfully', 'success');
@@ -163,7 +163,7 @@ export default function ManageDepartments() {
         }).then(async (result) => {
             if (result.isConfirmed) {
                 try {
-                    await axios.delete(`http://localhost:9000/department/${id}`, {
+                    await axios.delete(`https://test-backend-api-2.onrender.com/department/${id}`, {
                         headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
                     });
                     Swal.fire('Deleted', 'Department has been deleted and associated data is affected', 'success');

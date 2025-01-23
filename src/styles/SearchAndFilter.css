@@ -18,7 +18,7 @@
 .filterIcon {
     width: 25px;
     height: 30px;
-    color: #818181; /* Default color */
+    color: #a1a1a1; 
 }
 
 .filterButton.active .filterIcon {

@@ -17,6 +17,22 @@ const BatchStudentsToolbar = ({ selectedItemsCount, selectedStudentIds }) => {
   const [error, setError] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [updatedBy, setUpdatedBy] = useState(''); 
+  
+  
+    useEffect(() => {
+    const token = localStorage.getItem('token');
+    const roleId = localStorage.getItem('role_id');
+    const userId = localStorage.getItem('user_id');
+
+    if (token && roleId === '1') {
+      setUpdatedBy(userId); 
+  } else {
+      console.error('Token is required for accessing this.');
+  }
+  }, []);
+
+
 
   const handleClose = () => {
     setIsVisible(false);
@@ -46,8 +62,8 @@ const BatchStudentsToolbar = ({ selectedItemsCount, selectedStudentIds }) => {
     const fetchData = async () => {
       try {
         const [departmentResponse, programResponse] = await Promise.all([
-          axios.get('http://localhost:9000/departments'),
-          axios.get('http://localhost:9000/programs'),
+          axios.get('https://test-backend-api-2.onrender.com/departments'),
+          axios.get('https://test-backend-api-2.onrender.com/programs'),
         ]);
         setDepartments(departmentResponse.data);
         setPrograms(programResponse.data);
@@ -66,7 +82,7 @@ const BatchStudentsToolbar = ({ selectedItemsCount, selectedStudentIds }) => {
   useEffect(() => {
     if (departmentId) {
       axios
-        .get(`http://localhost:9000/active-programs/${departmentId}`)
+        .get(`https://test-backend-api-2.onrender.com/active-programs/${departmentId}`)
         .then((response) => {
           setFilteredPrograms(response.data);  
         })
@@ -86,6 +102,13 @@ const BatchStudentsToolbar = ({ selectedItemsCount, selectedStudentIds }) => {
     setError('');
     setSuccessMessage('');
     setIsSubmitting(true);
+
+    // Make sure `updatedBy` is available
+    if (!updatedBy) {
+      setError('UpdatedBy is required.');
+      setIsSubmitting(false);
+      return;
+    }
 
     const updates = {
       ...(yearLevel && { year_level: yearLevel }),
@@ -110,9 +133,10 @@ const BatchStudentsToolbar = ({ selectedItemsCount, selectedStudentIds }) => {
         cancelButtonText: 'Cancel',
       });
       if (result.isConfirmed) {
-        const response = await axios.put('http://localhost:9000/students', {
+        const response = await axios.put('https://test-backend-api-2.onrender.com/students', {
           student_ids: selectedStudentIds,
           updates: updates,
+          updatedBy: updatedBy,
         });
         handleModalClose();
 
@@ -229,8 +253,31 @@ const BatchStudentsToolbar = ({ selectedItemsCount, selectedStudentIds }) => {
                   <Form.Select
                     name="status"
                     value={status}
-                    onChange={(e) => setStatus(e.target.value)}
-                    style={{ backgroundColor: '#f2f2f2', border: '1px solid #ced4da'}}
+                    onChange={(e) => {
+                      const selectedStatus = e.target.value;
+
+                      if (selectedStatus === "archived") {
+                        Swal.fire({
+                          title: 'Are you sure you want to archive these users?',
+                          text: 'Archiving these users will also archive all associated records.',
+                          icon: 'warning',
+                          showCancelButton: true,
+                          confirmButtonColor: '#3085d6',
+                          cancelButtonColor: '#B0B0B0',
+                          confirmButtonText: 'Yes, archive it!',
+                          cancelButtonText: 'Cancel',
+                        }).then((result) => {
+                          if (result.isConfirmed) {
+                            setStatus(selectedStatus); 
+                          } else {
+                            setStatus(""); 
+                          }
+                        });
+                      } else {
+                        setStatus(selectedStatus);
+                      }
+                    }}
+                    style={{ backgroundColor: '#f2f2f2', border: '1px solid #ced4da' }}
                   >
                     <option value="">Select Status</option>
                     <option value="active">Active</option>

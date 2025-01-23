@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Swal from 'sweetalert2';
 import { Modal, Button, Form, Row, Col } from 'react-bootstrap';
-import { FaEye, FaEyeSlash } from 'react-icons/fa';
 
 const EditEmployeeModal = ({ user, show, onHide, fetchUsers, headers, roles }) => {
     const [errors, setErrors] = useState({});
@@ -15,17 +14,33 @@ const EditEmployeeModal = ({ user, show, onHide, fetchUsers, headers, roles }) =
         birthdate: user ? user.birthdate : '',
         email: user ? user.email : '',
         password: user ? user.password : '',
+        newPassword: '', 
+        confirmPassword: '', 
         role_id: user ? user.role_id : '',
         status: user ? user.status : 'active', 
     });
+    const [isReset, setIsReset] = useState(false); 
+    const [isConfirmPasswordFocused, setIsConfirmPasswordFocused] = useState(false);
+    const [updatedBy, setUpdatedBy] = useState(''); // State to hold the full name or user info
+
+
+    useEffect(() => {
+    const token = localStorage.getItem('token');
+    const roleId = localStorage.getItem('role_id');
+    const userId = localStorage.getItem('user_id'); // Extract user ID from localStorage
+    
+    if (token && roleId === '1') {
+        setUpdatedBy(userId); // Directly set userId as the createdBy value
+    } else {
+        console.error('Token is required for accessing this.');
+    }
+    }, []);
   
 
-    // Password visiblity
-    const [isPasswordVisible, setIsPasswordVisible] = useState(false);
-
-    const togglePasswordVisibility = () => {
-        setIsPasswordVisible(!isPasswordVisible);
-    };
+    // Toggle reset password fields
+    const handleResetClick = () => {
+        setIsReset(!isReset); 
+      };
 
 
     // Employee form data
@@ -40,8 +55,11 @@ const EditEmployeeModal = ({ user, show, onHide, fetchUsers, headers, roles }) =
                 birthdate: user.birthdate,
                 email: user.email,
                 password: user.password,
+                newPassword: '', 
+                confirmPassword: '',
                 role_id: user.role_id,
                 status: user.status || 'active', 
+                updatedBy 
             });
         }
     }, [user]);
@@ -62,7 +80,7 @@ const EditEmployeeModal = ({ user, show, onHide, fetchUsers, headers, roles }) =
         const newErrors = { ...errors };
 
         if (name === 'employee_idnumber') {
-            const idFormat = /^\d{2}-\d{5}$/; // Matches "00-00000" format
+            const idFormat = /^\d{2}-\d{5}$/; 
             if (!idFormat.test(value)) {
                 newErrors.employee_idnumber = 'Employee ID Number format should be "00-00000".';
             } else {
@@ -72,7 +90,7 @@ const EditEmployeeModal = ({ user, show, onHide, fetchUsers, headers, roles }) =
 
         // Validate First Name
         if (name === 'first_name') {
-            const nameFormat = /^[A-Z][a-zA-Z .'-]*$/; // Capital letter followed by letters, spaces, dots, or dashes
+            const nameFormat = /^[A-Z][a-zA-Z .'-]*$/; 
             if (!nameFormat.test(value)) {
                 newErrors.first_name = 'First name must start with a capital letter and can contain only letters, spaces, dots, or dashes.';
             } else {
@@ -82,7 +100,7 @@ const EditEmployeeModal = ({ user, show, onHide, fetchUsers, headers, roles }) =
 
         // Validate Middle Name
         if (name === 'middle_name' && value) { 
-            const nameFormat = /^[A-Z][a-zA-Z .'-]*$/; // Capital letter followed by letters, spaces, dots, or dashes
+            const nameFormat = /^[A-Z][a-zA-Z .'-]*$/; 
             if (!nameFormat.test(value)) {
                 newErrors.middle_name = 'Middle name must start with a capital letter and can contain only letters, spaces, dots, or dashes.';
             } else {
@@ -92,7 +110,7 @@ const EditEmployeeModal = ({ user, show, onHide, fetchUsers, headers, roles }) =
 
         // Validate Last Name
         if (name === 'last_name') {
-            const nameFormat = /^[A-Z][a-zA-Z .'-]*$/; // Capital letter followed by letters, spaces, dots, or dashes
+            const nameFormat = /^[A-Z][a-zA-Z .'-]*$/; 
             if (!nameFormat.test(value)) {
                 newErrors.last_name = 'Last name must start with a capital letter and can contain only letters, spaces, dots, or dashes.';
             } else {
@@ -102,7 +120,7 @@ const EditEmployeeModal = ({ user, show, onHide, fetchUsers, headers, roles }) =
 
         // Validate Suffix
         if (name === 'suffix' && value) { 
-            const nameFormat = /^[A-Z][a-zA-Z .-]*$/; // Capital letter followed by letters, spaces, dots, or dashes
+            const nameFormat = /^[A-Z][a-zA-Z .-]*$/;
             if (!nameFormat.test(value)) {
                 newErrors.suffix = 'Suffix must start with a capital letter and can contain only letters, spaces, dots, or dashes.';
             } else {
@@ -112,7 +130,7 @@ const EditEmployeeModal = ({ user, show, onHide, fetchUsers, headers, roles }) =
 
         // Validate Email
         if (name === 'email') {
-            const emailFormat = /^[a-zA-Z0-9._%+-]+@gncf\.edu\.ph$/; // Must end with "@ncf.edu.ph"
+            const emailFormat = /^[a-zA-Z0-9._%+-]+@gncf\.edu\.ph$/; 
             if (!emailFormat.test(value)) {
                 newErrors.email = 'Email must end with "@ncf.edu.ph".';
             } else {
@@ -120,17 +138,29 @@ const EditEmployeeModal = ({ user, show, onHide, fetchUsers, headers, roles }) =
             }
         }
 
-        // Validate Password Length
-        if (name === 'password' && value) {
+        // Validate New Password Length
+        if (name === 'newPassword' && value) {
             if (value.length < 3) {
-                newErrors.password = 'Password must be at least 3 characters long.';
+              newErrors.newPassword = 'New password must be at least 3 characters long.';
             } else {
-                newErrors.password = '';
+              newErrors.newPassword = '';
             }
-        }
+          }
 
-        setErrors(newErrors);
-    };
+        // Validate Confirm Password Match
+        if (name === 'confirmPassword' && value) {
+
+            if (value !== formData.newPassword) {
+   
+              if (isConfirmPasswordFocused) {
+                newErrors.confirmPassword = 'Password does not match the new password.';
+              }
+            } else {
+              newErrors.confirmPassword = '';
+            }
+          }          
+            setErrors(newErrors);
+        };
 
 
     // Handle edit employee
@@ -169,49 +199,78 @@ const EditEmployeeModal = ({ user, show, onHide, fetchUsers, headers, roles }) =
         });
         return;
     }
-            Swal.fire({
-                title: 'Are you sure you want to save the changes?',
-                text: 'You are about to update this employeee’s details.',
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#B0B0B0',
-                confirmButtonText: 'Yes, update it!',
-            }).then(async (result) => {
-                if (result.isConfirmed) {
-                    try {
-                        const response = await axios.put(
-                            `http://localhost:9000/employee/${user.user_id}`,
-                            formData,
-                            { headers }
-                        );
-        
-                        if (response.status === 200) {
-                            Swal.fire({
-                                icon: 'success',
-                                text: 'User updated successfully!',
-                            }).then(() => {
-                                onHide();
-                                fetchUsers();
-                            });
-                        } else {
-                            const errorMessage = response.data.message || 'Failed to update user. Please try again later.';
-                            Swal.fire({
-                                icon: 'error',
-                                text: errorMessage,
-                            });
+
+    // Password validation 
+    if (formData.newPassword && formData.newPassword !== formData.confirmPassword) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Password Mismatch',
+            text: 'The new password and confirm password do not match.',
+        });
+        return;
+    }
+
+        Swal.fire({
+            title: 'Are you sure you want to save the changes?',
+            text: 'You are about to update this employeee’s details.',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#B0B0B0',
+            confirmButtonText: 'Yes, update it!',
+        }).then(async (result) => {
+            if (result.isConfirmed) {
+                try {
+                    const employeeResponse = await axios.put(
+                        `https://test-backend-api-2.onrender.com/employee/${user.user_id}`,
+                        formData,
+                        { headers }
+                    );
+    
+                    if (employeeResponse.status === 200) {
+                        if (formData.newPassword) {
+                            const passwordResponse = await axios.put(
+                                `https://test-backend-api-2.onrender.com/password-change/${user.user_id}`,
+                                { new_password: formData.newPassword, confirm_password: formData.confirmPassword },
+                                { headers }
+                            );
+                            if (passwordResponse.status === 200) {
+                                Swal.fire({
+                                    icon: 'success',
+                                    text: 'Password updated successfully!',
+                                });
+                            } else {
+                                Swal.fire({
+                                    icon: 'error',
+                                    text: 'Failed to update password.',
+                                });
+                            }
                         }
-                    } catch (error) {
-                        console.error('Error updating user:', error);
-                        const errorMessage = error.response?.data?.message || 'An error occurred while updating the user. Please try again later.';
+                        Swal.fire({
+                            icon: 'success',
+                            text: 'Employee updated successfully!',
+                        }).then(() => {
+                            onHide();
+                            fetchUsers();
+                        });
+                    } else {
+                        const errorMessage = employeeResponse.data.message || 'Failed to update employee. Please try again later.';
                         Swal.fire({
                             icon: 'error',
                             text: errorMessage,
                         });
                     }
+                } catch (error) {
+                    console.error('Error updating employee:', error);
+                    const errorMessage = error.response?.data?.message || 'An error occurred while updating the employee. Please try again later.';
+                    Swal.fire({
+                        icon: 'error',
+                        text: errorMessage,
+                    });
                 }
-            });
-        };
+            }
+        });
+    };
 
     
     // Handle cancel edit employee
@@ -227,7 +286,14 @@ const EditEmployeeModal = ({ user, show, onHide, fetchUsers, headers, roles }) =
             cancelButtonText: 'No, keep changes',
         }).then((result) => {
             if (result.isConfirmed) {
+            setFormData({
+                ...formData,
+                newPassword: '', 
+                confirmPassword: ''  
+            });
+            setErrors({});  
                 onHide(); 
+                setIsReset(false);
             }
         });
     };
@@ -425,39 +491,66 @@ return (
                         </Col>
                         <Col md={6}>
                             <Form.Group controlId="password">
-                                 <Form.Label className="fw-bold">Password</Form.Label>
-                                    <div style={{ position: 'relative' }}> 
-                                        <Form.Control
-                                            type={isPasswordVisible ? "text" : "password"} 
-                                            name="password"
-                                            value={formData.password || ""} 
-                                            onChange={handleChange}
-                                            style={{
-                                                ...getInputStyle('password', formData, errors),
-                                                paddingRight: '40px' 
-                                            }}
-                                            placeholder="Enter Password"
-                                            required
-                                        />
-                                        <span
-                                        onClick={togglePasswordVisibility}
-                                        style={{
-                                            position: 'absolute',
-                                            right: '10px', 
-                                            top: '50%',
-                                            transform: 'translateY(-50%)',
-                                            cursor: 'pointer',
-                                            color: '#6c757d'
-                                        }}
-                                        >
-                                        {isPasswordVisible ? <FaEyeSlash /> : <FaEye />} 
-                                    </span>
+                                <Form.Label className="fw-bold">Password</Form.Label>
+                                <div style={{ position: 'relative' }}>
+                                <Form.Control
+                                    type="password" 
+                                    name="password"
+                                    value={ formData.password ? formData.password.padEnd(10, '•').slice(0, 10) : '••••••••••' }
+                                    onChange={handleChange}
+                                    readOnly 
+                                    style={{ ...getInputStyle('password', formData, errors), paddingRight: '40px' }}
+                                    placeholder="Enter Password"
+                                    required
+                                />
+                                <Button variant="link" style={{ position: 'absolute', top: '50%', right: '10px', transform: 'translateY(-50%)', textDecoration: 'none', fontWeight: '600', color: '#4e4e4e' }}
+                                    onClick={handleResetClick} onMouseEnter={(e) => e.target.style.textDecoration = 'underline'} onMouseLeave={(e) => e.target.style.textDecoration = 'none'}>
+                                    Reset
+                                </Button>
                                 </div>
-                                    {errors.password && (
-                                        <div style={{ color: 'red', fontSize: '12px' }}>{errors.password}</div>
-                                    )}
+                                {errors.password && ( <div style={{ color: 'red', fontSize: '12px' }}>{errors.password}</div>)}
+
+                                {/* Render additional fields for new password and confirm password when reset is clicked */}
+                                {isReset && (
+                                <>
+                                <Form.Group controlId="newPassword">
+                                    <Form.Label className="fw-bold" style={{ marginTop: "10px" }}>New Password</Form.Label>
+                                    <div style={{ position: "relative" }}>
+                                        <Form.Control
+                                            type="password"
+                                            name="newPassword"
+                                            value={formData.newPassword || ""}
+                                            onChange={handleChange}
+                                            placeholder="Enter New Password"
+                                            style={{...getInputStyle("newPassword", formData, errors), paddingRight: "40px" }}
+                                            required
+                                            />
+                                            {errors.newPassword && (<div style={{ color: "red", fontSize: "12px" }}>{errors.newPassword}</div>)}
+                                    </div>
+                                </Form.Group>
+                                <Form.Group controlId="confirmPassword">
+                                    <Form.Label className="fw-bold" style={{ marginTop: "10px" }}> Confirm Password </Form.Label>
+                                    <div style={{ position: "relative" }}>
+                                        <Form.Control
+                                            type="password"
+                                            name="confirmPassword"
+                                            value={formData.confirmPassword || ""}
+                                            onChange={handleChange}
+                                            placeholder="Confirm New Password"
+                                            style={{...getInputStyle("confirmPassword", formData, errors), paddingRight: "40px" }}
+                                            required
+                                            onFocus={() => setIsConfirmPasswordFocused(true)} 
+                                            onBlur={() => setIsConfirmPasswordFocused(false)} 
+                                            />
+                                            {isConfirmPasswordFocused && errors.confirmPassword && (
+                                            <div style={{ color: "red", fontSize: "12px" }}>{errors.confirmPassword}</div>)}
+                                    </div>
+                                    </Form.Group>
+                                    </>
+                                )}
                             </Form.Group>
                         </Col>
+
                         <Col md={6}>
                             <Form.Group controlId="role_id" style={{ marginBottom: '30px' }}>
                                   <Form.Label className="fw-bold">Role</Form.Label>
@@ -492,6 +585,18 @@ return (
                             </Form.Group>
                         </Col>
                     </Row>
+
+
+                    <div className="input-group" style={{ display: 'none' }}>
+                        <label htmlFor="updatedBy" className="label">Updated By:</label>
+                        <input
+                            id="updatedBy"
+                            name="updatedBy"
+                            type="text"
+                            value={updatedBy} 
+                            readOnly
+                        />
+                    </div>
 
                     {/* Buttons */}
                     <div className="d-flex justify-content-end mt-3">

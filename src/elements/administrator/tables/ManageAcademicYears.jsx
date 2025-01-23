@@ -50,7 +50,7 @@ export default function ManageAcademicYears() {
         try {
             const token = localStorage.getItem('token');
             const headers = { Authorization: `Bearer ${token}` };
-            const response = await axios.get('http://localhost:9000/academic_years', { headers });
+            const response = await axios.get('https://test-backend-api-2.onrender.com/academic_years', { headers });
             setAcademicYears(response.data);
             setAllItems(response.data);  
             setFilteredAcademicYears(response.data);  
@@ -134,7 +134,7 @@ export default function ManageAcademicYears() {
         e.preventDefault();
         try {
             if (currentAcademicYearId) {
-                await axios.put(`http://localhost:9000/academic_year/${currentAcademicYearId}`, formData, {
+                await axios.put(`https://test-backend-api-2.onrender.com/academic_year/${currentAcademicYearId}`, formData, {
                     headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
                 });
                 Swal.fire({
@@ -143,7 +143,7 @@ export default function ManageAcademicYears() {
                     text: 'The academic year has been updated successfully.',
                 });
             } else {
-                await axios.post('http://localhost:9000/register-academicyear', formData, {
+                await axios.post('https://test-backend-api-2.onrender.com/register-academicyear', formData, {
                     headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
                 });
                 Swal.fire({
@@ -181,7 +181,7 @@ export default function ManageAcademicYears() {
         }).then(async (result) => {
             if (result.isConfirmed) {
                 try {
-                    await axios.delete(`http://localhost:9000/academic_year/${id}`, {
+                    await axios.delete(`https://test-backend-api-2.onrender.com/academic_year/${id}`, {
                         headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
                     });
                     Swal.fire('Deleted!', 'The academic year has been deleted.', 'success');

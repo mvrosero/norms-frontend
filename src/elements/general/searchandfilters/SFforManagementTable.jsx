@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { FaSearch } from 'react-icons/fa';
 import '../../../styles/SearchAndFilter.css';
 
-export default function SFfoManagementTable({ onSearch }) {
+export default function SFforManagementTable({ onSearch }) {
   const [searchQuery, setSearchQuery] = useState('');
 
   // Handle search input change

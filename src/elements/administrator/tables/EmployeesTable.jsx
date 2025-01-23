@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
 import { Button, Table } from 'react-bootstrap';
 import Swal from 'sweetalert2';
@@ -37,7 +38,7 @@ export default function ({filters, searchQuery}) {
     // Fetch the employees
     const fetchUsers = useCallback(async () => {
         try {
-            const response = await axios.get('http://localhost:9000/employees', { headers });
+            const response = await axios.get('https://test-backend-api-2.onrender.com/employees', { headers });
             setUsers(response.data);
         } catch (error) {
             console.error('Error fetching users:', error.response ? error.response.data : error.message);
@@ -47,7 +48,7 @@ export default function ({filters, searchQuery}) {
     // Fetch the roles
     const fetchRoles = useCallback(async () => {
         try {
-            const response = await axios.get('http://localhost:9000/roles', { headers });
+            const response = await axios.get('https://test-backend-api-2.onrender.com/roles', { headers });
             setRoles(response.data);
             console.log('Fetched roles:', response.data); 
         } catch (error) {
@@ -96,7 +97,7 @@ export default function ({filters, searchQuery}) {
             return;
         }
         try {
-            await axios.delete(`http://localhost:9000/employee/${userId}`, { headers });
+            await axios.delete(`https://test-backend-api-2.onrender.com/employee/${userId}`, { headers });
             Swal.fire({
                 icon: 'success',
                 text: "Successfully Deleted"
@@ -128,7 +129,7 @@ export default function ({filters, searchQuery}) {
       if (!isConfirm) return;
 
       try {
-          await axios.delete('http://localhost:9000/employees', {
+          await axios.delete('https://test-backend-api-2.onrender.com/employees', {
               data: { employee_ids: selectedEmployeeIds },
               headers
           });
@@ -382,7 +383,22 @@ return (
               <td><input type="checkbox" checked={selectedEmployeeIds.includes(user.employee_idnumber)} onChange={() => handleSelectUser(user.employee_idnumber)}/>
               </td>
               <td>{user.employee_idnumber}</td>
-              <td>{`${user.first_name} ${user.middle_name} ${user.last_name} ${user.suffix}`}</td>
+              <td>
+                  <Link 
+                      to={`/admin-accounthistory/${user.user_id}`}
+                      style={{ textDecoration: 'none', color: 'black' }}
+                      onMouseEnter={(e) => {
+                          e.target.style.textDecoration = 'underline';
+                          e.target.style.color = '#4682B4'; 
+                      }}
+                      onMouseLeave={(e) => {
+                          e.target.style.textDecoration = 'none';
+                          e.target.style.color = '#000000';
+                      }}
+                  >
+                      {`${user.first_name} ${user.middle_name || ''} ${user.last_name} ${user.suffix}`}
+                  </Link>
+              </td>
               <td>{user.role_name}</td>
               <td style={{ textAlign: 'center' }}>
                 <div

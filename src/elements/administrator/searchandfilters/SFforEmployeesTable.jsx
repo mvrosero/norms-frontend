@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { FaSearch } from 'react-icons/fa';
-import { IoFilter } from 'react-icons/io5';
+import { RiEqualizerLine } from "react-icons/ri";
 import axios from 'axios';
 import '../../../styles/SearchAndFilter.css';
 
@@ -18,7 +18,7 @@ export default function SFforEmployeesTable({ onSearch, onFilterChange }) {
   useEffect(() => {
     const fetchRoles = async () => {
       try {
-        const response = await axios.get('http://localhost:9000/roles'); 
+        const response = await axios.get('https://test-backend-api-2.onrender.com/roles'); 
         setRoles(response.data);
       } catch (error) {
         console.error('Error fetching roles:', error);
@@ -75,7 +75,7 @@ export default function SFforEmployeesTable({ onSearch, onFilterChange }) {
       <div className="searchAndFilterWrapper">
         <input type="text" placeholder="Search..." value={searchQuery} onChange={handleInputChange} className="searchInput"/>
         <button onClick={toggleFilterDropdown} className={`filterButton ${isFilterActive ? 'active' : ''}`}>
-            <IoFilter className={`filterIcon ${isFilterActive ? 'active' : ''}`} />
+            <RiEqualizerLine className={`filterIcon ${isFilterActive ? 'active' : ''}`} />
         </button>
         <button onClick={() => triggerSearch(searchQuery)} className="searchButton">
             <FaSearch className="searchIcon" />

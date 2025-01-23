@@ -27,6 +27,8 @@ import StudentRegistrationForm from './elements/administrator/forms/StudentRegis
 import AdminDashboard from './pages/administrator/AdminDashboard';
 import AdminUserManagement from './pages/administrator/AdminUserManagement';
 import AdminDepartmentalStudents from './pages/administrator/AdminDepartmentalStudents';
+import AdminAccountHistory from './pages/administrator/AdminAccountHistory';
+import AdminUserLogs from './pages/administrator/AdminUserLogs';
 import AdminSettings from './pages/administrator/AdminSettings';
 import ManageDepartments from './elements/administrator/tables/ManageDepartments';
 import ManagePrograms from '././elements/administrator/tables/ManagePrograms';
@@ -106,6 +108,8 @@ function App() {
                 <Route path='/admin-dashboard' element={<AdminDashboard />} />
                 <Route path='/admin-usermanagement' element={<AdminUserManagement />} />
                 <Route path="/admin-usermanagement/:department_code" element={<AdminDepartmentalStudents />} />
+                <Route path='/admin-accounthistory/:user_id' element={<AdminAccountHistory />} />
+                <Route path='/admin-userlogs' element={<AdminUserLogs />} />
                 <Route path='/admin-settings' element={<AdminSettings />} />
                 <Route path='/manage-departments' element={<ManageDepartments />} />
                 <Route path='/manage-programs' element={<ManagePrograms />} />

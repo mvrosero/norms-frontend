@@ -41,7 +41,7 @@ export default function AdminDepartmentalStudents() {
             const headers = { Authorization: `Bearer ${token}` };
 
             const response = await axios.get(
-                `http://localhost:9000/admin-usermanagement/${department_code}`,
+                `https://test-backend-api-2.onrender.com/admin-usermanagement/${department_code}`,
                 { headers }
             );
             const activeUsers = response.data.filter(user => user.status !== 'archived');
@@ -102,7 +102,7 @@ export default function AdminDepartmentalStudents() {
             const token = localStorage.getItem('token');
             const headers = { Authorization: `Bearer ${token}` };
 
-            const response = await axios.get('http://localhost:9000/departments', { headers });
+            const response = await axios.get('https://test-backend-api-2.onrender.com/departments', { headers });
             setDepartments(response.data);
 
             const normalizedDepartmentCode = department_code?.toUpperCase();
@@ -131,12 +131,12 @@ return (
             </div>
 
             {/* Search And Filter Section */}
-            <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'center', marginTop: '10px', marginLeft: '70px', padding: '0 20px', gap: '2px' }}>
+            <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'center', marginTop: '10px', marginLeft: '70px' }}>
                 <div style={{ flex: '1 1 70%', minWidth: '300px' }}>
                     <SFforDepartmentalTable onSearch={handleSearch} onFilterChange={handleFilterChange} />
                 </div>
-                <button onClick={() => window.location.href = "http://localhost:3000/register-student"}
-                        style={{ backgroundColor: '#FAD32E', color: 'white', fontWeight: '900', padding: '12px 15px', border: 'none', borderRadius: '10px', cursor: 'pointer', display: 'flex', alignItems: 'center', boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)' }}>
+                <button onClick={() => window.location.href = "https://norms-frontend.vercel.app/register-student"}
+                        style={{ backgroundColor: '#FAD32E', color: 'white', fontWeight: '900', padding: '12px 10px', border: 'none', borderRadius: '10px', cursor: 'pointer', display: 'flex', alignItems: 'center', boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)' }}>
                         Add Student
                     <FaPlus style={{ marginLeft: '10px' }} />
                 </button>

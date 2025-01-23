@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import { Link } from 'react-router-dom';
 import axios from 'axios';
 import { Button, Table } from 'react-bootstrap';
 import Swal from 'sweetalert2';
@@ -38,7 +39,7 @@ export default function ArchivesTable ({filters, searchQuery}) {
     // Fetch the students
     const fetchUsers = useCallback(async () => {
         try {
-            const response = await axios.get('http://localhost:9000/students-archived', { headers });
+            const response = await axios.get('https://test-backend-api-2.onrender.com/students-archived', { headers });
             setUsers(response.data);
         } catch (error) {
             console.error('Error fetching students:', error);
@@ -49,7 +50,7 @@ export default function ArchivesTable ({filters, searchQuery}) {
     // Fetch the departments
     const fetchDepartments = useCallback(async () => {
         try {
-            const response = await axios.get('http://localhost:9000/departments', { headers });
+            const response = await axios.get('https://test-backend-api-2.onrender.com/departments', { headers });
             setDepartments(response.data);
         } catch (error) {
             console.error('Error fetching departments:', error);
@@ -60,7 +61,7 @@ export default function ArchivesTable ({filters, searchQuery}) {
     // Fetch the programs
     const fetchPrograms = useCallback(async () => {
         try {
-            const response = await axios.get('http://localhost:9000/programs', { headers });
+            const response = await axios.get('https://test-backend-api-2.onrender.com/programs', { headers });
             setPrograms(response.data);
         } catch (error) {
             console.error('Error fetching programs:', error);
@@ -106,7 +107,7 @@ export default function ArchivesTable ({filters, searchQuery}) {
           return;
       }
         try {
-            await axios.delete(`http://localhost:9000/student/${userId}`, { headers });
+            await axios.delete(`https://test-backend-api-2.onrender.com/student/${userId}`, { headers });
             Swal.fire({
                 icon: 'success',
                 text: "Successfully Deleted"
@@ -138,7 +139,7 @@ export default function ArchivesTable ({filters, searchQuery}) {
     if (!isConfirm) return;
 
     try {
-        await axios.delete('http://localhost:9000/students', {
+        await axios.delete('https://test-backend-api-2.onrender.com/students', {
             data: { student_ids: selectedStudentIds },
             headers
         });
@@ -419,7 +420,22 @@ return (
                     <tr key={user.student_idnumber}>
                         <td> <input type="checkbox" checked={selectedStudentIds.includes(user.student_idnumber)} onChange={() => handleSelectUser(user.student_idnumber)}/> </td>
                         <td>{user.student_idnumber}</td>
-                        <td>{`${user.first_name} ${user.middle_name || ''} ${user.last_name} ${user.suffix || ''}`}</td>
+                        <td>
+                            <Link 
+                                to={`/admin-accounthistory/${user.user_id}`}
+                                style={{ textDecoration: 'none', color: 'black' }}
+                                onMouseEnter={(e) => {
+                                    e.target.style.textDecoration = 'underline';
+                                    e.target.style.color = '#4682B4'; 
+                                }}
+                                onMouseLeave={(e) => {
+                                    e.target.style.textDecoration = 'none';
+                                    e.target.style.color = '#000000';
+                                }}
+                            >
+                                {`${user.first_name} ${user.middle_name || ''} ${user.last_name} ${user.suffix || ''}`}
+                            </Link>
+                        </td>
                         <td>{user.year_level}</td>
                         <td>{user.department_name}</td>
                         <td>{user.program_name}</td>

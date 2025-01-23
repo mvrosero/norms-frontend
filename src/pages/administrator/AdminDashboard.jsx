@@ -46,7 +46,7 @@ export default function AdminDashboard() {
 
   const fetchUserCounts = async (token) => {
     try {
-      const response = await axios.get(`http://localhost:9000/user-counts`, {
+      const response = await axios.get(`https://test-backend-api-2.onrender.com/user-counts`, {
         headers: {
           Authorization: `Bearer ${token}`
         }

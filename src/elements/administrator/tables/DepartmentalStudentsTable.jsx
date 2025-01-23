@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import { Link } from 'react-router-dom';
 import axios from 'axios';
 import { Button, Table } from 'react-bootstrap';
 import { useParams } from 'react-router-dom';
@@ -40,7 +41,7 @@ export default function DepartmentalStudentsTable({filters, searchQuery}) {
     // Fetch the users
     const fetchUsers = useCallback(async () => {
         try {
-            const response = await axios.get(`http://localhost:9000/admin-usermanagement/${department_code}`, { headers });
+            const response = await axios.get(`https://test-backend-api-2.onrender.com/admin-usermanagement/${department_code}`, { headers });
             console.log('Fetched users:', response.data);
 
             const activeUsers = response.data.filter(user => user.status !== 'archived');
@@ -54,7 +55,7 @@ export default function DepartmentalStudentsTable({filters, searchQuery}) {
     // Fetch the programs based on the selected department
     const fetchProgramsByDepartment = useCallback(async () => {
         try {
-            const response = await axios.get(`http://localhost:9000/programs-by-department/${department_code}`, { headers });
+            const response = await axios.get(`https://test-backend-api-2.onrender.com/programs-by-department/${department_code}`, { headers });
             console.log('Fetched programs for department:', response.data);
 
             setPrograms(response.data); 
@@ -67,7 +68,7 @@ export default function DepartmentalStudentsTable({filters, searchQuery}) {
     // Fetch the departments
     const fetchDepartments = useCallback(async () => {  
         try {
-            const response = await axios.get('http://localhost:9000/departments', { headers });
+            const response = await axios.get('https://test-backend-api-2.onrender.com/departments', { headers });
             setDepartments(response.data);
 
             const normalizedDepartmentCode = department_code.toUpperCase();
@@ -380,7 +381,22 @@ return (
                                 />
                             </td>
                             <td>{user.student_idnumber}</td>
-                            <td>{`${user.first_name || ''} ${user.middle_name || ''} ${user.last_name || ''} ${user.suffix || ''}`}</td>
+                            <td>
+                                <Link 
+                                    to={`/admin-accounthistory/${user.user_id}`}
+                                    style={{ textDecoration: 'none', color: 'black' }}
+                                    onMouseEnter={(e) => {
+                                        e.target.style.textDecoration = 'underline';
+                                        e.target.style.color = '#4682B4'; 
+                                    }}
+                                    onMouseLeave={(e) => {
+                                        e.target.style.textDecoration = 'none';
+                                        e.target.style.color = '#000000';
+                                    }}
+                                >
+                                    {`${user.first_name} ${user.middle_name || ''} ${user.last_name} ${user.suffix || ''}`}
+                                </Link>
+                            </td>
                             <td>{user.year_level}</td>
                             <td>{user.program_name}</td>
                             <td style={{ textAlign: 'center' }}>
