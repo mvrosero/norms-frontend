@@ -7,9 +7,9 @@ function UserDropdownButton() {
   const handleOptionClick = (option) => {
     setIsOpen(false);
     if (option === 'Student') {
-      window.location.href = 'https://test-backend-api-2.onrender.com/register-student';
+      window.location.href = 'https://norms-frontend.vercel.app/register-student';
     } else if (option === 'Employee') {
-      window.location.href = 'https://test-backend-api-2.onrender.com/register-employee';
+      window.location.href = 'https://norms-frontend.vercel.app/register-employee';
     }
   };
 
