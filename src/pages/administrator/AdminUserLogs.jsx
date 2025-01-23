@@ -140,6 +140,7 @@ export default function AdminUserLogs() {
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '20px' }}>
       <AdminNavigation />
       <AdminInfo />
+      
 
       {/* Title Section */}
       <div style={{ width: '90%', margin: '0 auto', display: 'flex', justifyContent: 'flex-start' }}>
