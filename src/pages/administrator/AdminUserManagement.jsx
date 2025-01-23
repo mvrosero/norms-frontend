@@ -110,9 +110,31 @@ export default function AdminUserManagement() {
 
 
     const handleComponentChange = (event) => {
-        setSelectedComponent(event.target.value);
+        const newComponent = event.target.value;
+    
+        // Reset filters and search query when switching components
+        setFilters({
+            yearLevel: '',
+            department: '',
+            program: '',
+            batch: '',
+            status: '',
+            role: ''
+        });
+        setSearchQuery('');
+    
+        // Reset filteredUsers based on the selected component
+        if (newComponent === 'students') {
+            const filtered = allUsers.filter(user => user.role === 'student');
+            setFilteredUsers(filtered);
+        } else if (newComponent === 'employees') {
+            const filtered = allUsers.filter(user => user.role === 'employee');
+            setFilteredUsers(filtered);
+        }
+    
+        setSelectedComponent(newComponent);
     };
-
+    
 
 return (
     <div>
@@ -125,8 +147,8 @@ return (
             {/* Search And Filter Section */}
             <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'center', marginTop: '10px', marginLeft: '70px', padding: '0 20px', gap: '2px' }}>
                 <div style={{ flex: '1 1 50%', minWidth: '300px' }}>
-                    {selectedComponent === 'students' && <SFforStudentsTable onSearch={handleSearch} onFilterChange={handleFilterChange}  />}
-                    {selectedComponent === 'employees' && <SFforEmployeesTable onSearch={handleSearch} onFilterChange={handleFilterChange}/>}
+                    {selectedComponent === 'students' && <SFforStudentsTable onSearch={handleSearch} onFilterChange={handleFilterChange} searchQuery={searchQuery}/>}
+                    {selectedComponent === 'employees' && <SFforEmployeesTable onSearch={handleSearch} onFilterChange={handleFilterChange} searchQuery={searchQuery}/>}
                 </div>
                 <UserDropdownButton/>
                 {selectedComponent === 'students' && <ImportStudentsCSV />}
