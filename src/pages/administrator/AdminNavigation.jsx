@@ -12,38 +12,50 @@ import logo from "../../components/images/norms_logo.png";
 
 export default function AdminNavigation() {
   const [collapsed, setCollapsed] = React.useState(true); 
-  const [searchBarValue2, setSearchBarValue2] = React.useState("");
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Define font size and icon size variables
   const menuItemFontSize = "16px";
   const iconSize = "24px";
 
   // State to store the active menu item
-  const [activeMenuItem, setActiveMenuItem] = React.useState(null);
+  const [activeMenuItem, setActiveMenuItem] = React.useState("Dashboard");
 
-  // Function to handle menu item click
   const handleMenuItemClick = (menuItem) => {
-    setActiveMenuItem(menuItem); // Immediately set the active menu item
-    navigate(`/admin-${menuItem.toLowerCase().replace(' ', '')}`);
+    setActiveMenuItem(menuItem);
+  
+    if (menuItem === "Dashboard") {
+      navigate('/admin-dashboard');
+    } else if (menuItem === "User Management") {
+      navigate('/admin-usermanagement');
+    } else if (menuItem === "User Logs") {
+      navigate('/admin-userlogs');
+    } else if (menuItem === "Settings") {
+      navigate('/admin-settings');
+    }
   };
-
+  
+  
+  // Check current page 
   React.useEffect(() => {
-    // Extract the page name from the URL path
-    const pageName = location.pathname.split("/").pop().replace('admin-', '').replace('-', ' ');
-    setActiveMenuItem(pageName);
+    const currentPath = location.pathname;
+  
+    if (currentPath === "/admin-dashboard") {
+      setActiveMenuItem("Dashboard");
+    } else if (currentPath === "/admin-usermanagement") {
+      setActiveMenuItem("User Management");
+    } else if (currentPath === "/admin-userlogs") {
+      setActiveMenuItem("User Logs");
+    } else if (currentPath === "/admin-settings") {
+      setActiveMenuItem("Settings");
+    }
   }, [location.pathname]);
-
-  // Function to get the color for the menu item based on its activity
+  
+  
   const getItemColor = (menuItem) => {
-    return activeMenuItem === menuItem ? "#134E0F" : "#b1b1b1";
+    return activeMenuItem.trim() === menuItem.trim() ? "#134E0F" : "#b1b1b1";
   };
-
-  // Function to get the icon color for the collapsed sidebar
-  const getCollapsedIconColor = (menuItem) => {
-    return activeMenuItem === menuItem ? "#134E0F" : "#b1b1b1";
-  };
+  
 
   return (
     <>
@@ -104,11 +116,16 @@ export default function AdminNavigation() {
                     style={{ maxHeight: "calc(100vh - 20px)", overflowY: collapsed ? "hidden" : "auto"}} // Hide overflowY when collapsed
                   >
                     <div style={{ display: "flex", alignItems: "center", justifyContent: collapsed ? "center" : "flex-start", height: "auto", padding: "10px", marginBottom: collapsed ? "0" : "10px" }}>
-                      <img src={logo} alt="NORMS Logo" style={{ width: collapsed ? "50px" : "auto", height: collapsed ? "50px" : "auto", maxWidth: collapsed ? "100%" : "100%", transition: "width 0.1s ease-in-out, height 0.1s ease-in-out" }} />
+                      <img 
+                        src={logo} 
+                        alt="NORMS Logo" 
+                        onClick={() => handleMenuItemClick("Dashboard")} 
+                        style={{ width: collapsed ? "50px" : "auto", height: collapsed ? "50px" : "auto", maxWidth: collapsed ? "100%" : "100%", transition: "width 0.1s ease-in-out, height 0.1s ease-in-out" }} 
+                      />
                     </div>
 
                     <MenuItem
-                      icon={<MdSpaceDashboard style={{ fontSize: iconSize, color: collapsed ? getCollapsedIconColor("Dashboard") : getItemColor("Dashboard") }} />}
+                      icon={<MdSpaceDashboard style={{ fontSize: iconSize, color: getItemColor("Dashboard") }} />}
                       onClick={() => handleMenuItemClick("Dashboard")}
                       active={activeMenuItem === "Dashboard"}
                     >
