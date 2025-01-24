@@ -49,47 +49,18 @@ const EditStudentModal = ({ user, show, onHide, fetchUsers, headers, departments
 
     // Student form data
     useEffect(() => {
-        const fetchPrograms = async () => {
-            try {
-                let currentProgram = null;
-                let activePrograms = [];
-                
-                // Fetch all programs to find the current program
-                if (formData.program_id) {
-                    const allProgramsResponse = await axios.get(
-                        `https://test-backend-api-2.onrender.com/programs/`
-                    );
-                    const allPrograms = allProgramsResponse.data;
-                    currentProgram = allPrograms.find(
-                        (program) => program.program_id === formData.program_id
-                    );
-                    console.log('Current Program:', currentProgram); // Debug current program
-                }
-    
-                // Fetch active programs for the dropdown
-                if (formData.department_id) {
-                    const activeProgramsResponse = await axios.get(
-                        `https://test-backend-api-2.onrender.com/active-programs/${formData.department_id}`
-                    );
-                    activePrograms = activeProgramsResponse.data;
-                    console.log('Active Programs:', activePrograms); // Debug active programs
-                }
-    
-                // Merge the current program into active programs if it’s missing
-                if (currentProgram && !activePrograms.some(p => p.program_id === currentProgram.program_id)) {
-                    activePrograms.unshift(currentProgram);
-                    console.log('Merged Programs:', activePrograms); // Debug merged programs
-                }
-    
-                setFilteredPrograms(activePrograms);
-            } catch (error) {
-                console.error('Error fetching programs:', error);
-                setFilteredPrograms([]);
-            }
-        };
-    
-        fetchPrograms();
-    }, [formData.department_id, formData.program_id]);
+        if (formData.department_id) {
+            axios
+                .get(`https://test-backend-api-2.onrender.com/active-programs/${formData.department_id}`)
+                .then((response) => {
+                    setFilteredPrograms(response.data); 
+                })
+                .catch((error) => {
+                    console.error('Error fetching programs:', error);
+                    setFilteredPrograms([]); 
+                });
+        }
+    }, [formData.department_id]);
 
     useEffect(() => {
         if (user) {
