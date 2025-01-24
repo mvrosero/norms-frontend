@@ -368,29 +368,31 @@ return (
           <tr>
             <th style={{ width: '3%' }}><input type="checkbox" checked={selectAll} onChange={handleSelectAll}/></th>
             <th style={{ width: '5%' }}>ID</th>
-            <th style={{ textAlign: 'center', padding: '0', verticalAlign: 'middle', height: '20px', width: '11%' }} onClick={() => handleSort('employee_idnumber')}>
-                ID Number{' '}
-                {sortConfig.key === 'employee_idnumber' ? (
-                  sortConfig.direction === 'asc' ? (
-                    <ArrowDropUpIcon />
-                  ) : (
-                    <ArrowDropDownIcon />
-                  )
+            <th style={{ textAlign: 'center', padding: '0', verticalAlign: 'middle', width: '11%' }}>
+              <button
+                style={{ border: 'none', background: 'none', cursor: 'pointer', display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center', width: '100%' }}
+                onClick={() => handleSort('employee_idnumber')}
+              >
+                <span style={{ textAlign: 'center' }}>Employee ID Number</span>
+                {sortOrder === 'asc' ? (
+                  <ArrowDropUpIcon style={{ marginLeft: '5px' }} />
                 ) : (
-                  <ArrowDropDownIcon />
+                  <ArrowDropDownIcon style={{ marginLeft: '5px' }} />
                 )}
+              </button>
             </th>
-            <th style={{ padding: '0', verticalAlign: 'middle', height: '40px' }} onClick={() => handleSort('full_name')}>
-                Full Name{' '}
-                {sortConfig.key === 'full_name' ? (
-                  sortConfig.direction === 'asc' ? (
-                    <ArrowDropUpIcon />
-                  ) : (
-                    <ArrowDropDownIcon />
-                  )
+            <th style={{ textAlign: 'center', padding: '0', verticalAlign: 'middle' }}>
+              <button
+                style={{ border: 'none', background: 'none', cursor: 'pointer', display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center', width: '100%' }}
+                onClick={() => handleSort('full_name')}
+              >
+                <span style={{ textAlign: 'center' }}>Full Name</span>
+                {sortOrder === 'asc' ? (
+                  <ArrowDropUpIcon style={{ marginLeft: '5px' }} />
                 ) : (
-                  <ArrowDropDownIcon />
+                  <ArrowDropDownIcon style={{ marginLeft: '5px' }} />
                 )}
+              </button>
             </th>
             <th style={{ width: '17%' }}>Role</th>
             <th style={{ width: '13%' }}>Status</th>
