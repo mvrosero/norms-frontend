@@ -12,7 +12,6 @@ export default function AdminAccountHistory() {
   const { user_id } = useParams();
   console.log("User ID from URL:", user_id); 
 
-
   // Generate action sentences for the timeline
   const generateActionSentence = (history) => {
     const changes = [];
