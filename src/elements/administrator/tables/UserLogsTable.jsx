@@ -133,6 +133,8 @@ const UserLogsTable = ({filters, searchQuery}) => {
         };
 
     const renderPagination = () => {
+        if (loading) return null;
+
         const pageNumbers = Array.from({ length: totalPages }, (_, i) => i + 1);
         
             const buttonStyle = {
@@ -226,15 +228,6 @@ const UserLogsTable = ({filters, searchQuery}) => {
             </div>
         );
     };
-
-
-  if (loading) {
-    return <p>Loading...</p>;
-  }
-
-  if (error) {
-    return <p>Error: {error}</p>;
-  }
 
 
   const renderTable = () => {
@@ -356,7 +349,7 @@ const UserLogsTable = ({filters, searchQuery}) => {
     <div>
       {renderTable()}
 
-      {!loading && renderPagination()}
+      {renderPagination()}
 
       {/* View User Log Modal */}
       <Modal show={showModal} onHide={handleCloseModal} size="lg" backdrop='static'>
