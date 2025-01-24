@@ -261,7 +261,6 @@ const BatchArchivesToolbar = ({ selectedItemsCount, onDelete, selectedStudentIds
                     <option value="">Select Status</option>
                     <option value="active">Active</option>
                     <option value="inactive">Inactive</option>
-                    <option value="archived">Archived</option>
                   </Form.Select>
                 </Form.Group>
                 </Col>
