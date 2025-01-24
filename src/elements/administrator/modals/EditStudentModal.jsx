@@ -3,7 +3,7 @@ import axios from 'axios';
 import Swal from 'sweetalert2';
 import { Modal, Button, Form, Row, Col } from 'react-bootstrap';
 
-const EditStudentModal = ({ user, show, onHide, fetchUsers, headers, departments }) => {
+const EditStudentModal = ({ user, show, onHide, fetchUsers, headers, departments, programs }) => {
     const [errors, setErrors] = useState({});
     const [formData, setFormData] = useState({
         student_idnumber: user ? user.student_idnumber : '',
@@ -61,6 +61,7 @@ const EditStudentModal = ({ user, show, onHide, fetchUsers, headers, departments
                 });
         }
     }, [formData.department_id]);
+
     useEffect(() => {
         if (user) {
             setFormData({
