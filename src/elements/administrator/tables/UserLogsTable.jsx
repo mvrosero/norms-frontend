@@ -67,7 +67,7 @@ const UserLogsTable = ({filters, searchQuery}) => {
         changes.push(`The role was changed from ${history.old_role_name} to ${history.new_role_name}`);
         }
 
-        const actionSentence = changes.join(' ') || 'No changes recorded';
+        const actionSentence = changes.join(' ') || 'A modification was made to one of the fields in the user record';
         return `${actionSentence} of ${history.user}.`.replace(/\s+\./, '.');
     };
 

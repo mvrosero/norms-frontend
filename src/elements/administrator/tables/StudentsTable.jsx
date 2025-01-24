@@ -201,6 +201,8 @@ const handleRowsPerPageChange = (e) => {
 };
 
 const renderPagination = () => {
+  if (loading) return null;
+
   const pageNumbers = Array.from({ length: totalPages }, (_, i) => i + 1);
   
   const buttonStyle = {
@@ -319,6 +321,16 @@ const renderTable = () => {
     });
     
     const currentUsers = filteredUsers.slice(indexOfFirstUser, indexOfLastUser);
+
+    // Show loading spinner when data is being fetched
+    if (loading) {
+      return (
+        <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100%" }}>
+          <div style={{ width: "50px", height: "50px", border: "6px solid #f3f3f3", borderTop: "6px solid #a9a9a9", borderRadius: "50%", animation: "spin 1s linear infinite" }}></div>
+          <style> {`@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }`} </style>
+        </div>
+      );
+    }
 
 
   return (
@@ -439,7 +451,7 @@ return (
 
       {renderTable()}
 
-      {renderPagination()}
+      {!loading && renderPagination()}
 
       {/* View Student Modal */}
         <ViewStudentModal
