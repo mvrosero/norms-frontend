@@ -25,16 +25,16 @@ const EditStudentModal = ({ user, show, onHide, fetchUsers, headers, departments
     const [filteredPrograms, setFilteredPrograms] = useState([]);
     const [isReset, setIsReset] = useState(false); 
     const [isConfirmPasswordFocused, setIsConfirmPasswordFocused] = useState(false);
-    const [updatedBy, setUpdatedBy] = useState(''); // State to hold the full name or user info
+    const [updatedBy, setUpdatedBy] = useState(''); 
 
     
         useEffect(() => {
         const token = localStorage.getItem('token');
         const roleId = localStorage.getItem('role_id');
-        const userId = localStorage.getItem('user_id'); // Extract user ID from localStorage
+        const userId = localStorage.getItem('user_id'); 
         
         if (token && roleId === '1') {
-            setUpdatedBy(userId); // Directly set userId as the createdBy value
+            setUpdatedBy(userId); 
         } else {
             console.error('Token is required for accessing this.');
         }
