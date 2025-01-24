@@ -50,9 +50,13 @@ export default function DepartmentalStudentsTable({filters, searchQuery}) {
             setUsers(activeUsers); 
         } catch (error) {
             console.error('Error fetching users:', error);
+            setError(error.message); 
             Swal.fire('Error', 'Failed to fetch users.', 'error');
+        } finally {
+            setLoading(false); 
         }
     }, [headers, department_code, deletionStatus]);
+
 
     // Fetch the programs based on the selected department
     const fetchProgramsByDepartment = useCallback(async () => {
