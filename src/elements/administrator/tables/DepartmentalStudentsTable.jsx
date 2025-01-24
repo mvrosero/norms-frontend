@@ -27,6 +27,8 @@ export default function DepartmentalStudentsTable({filters, searchQuery}) {
     const [selectedStudentIds, setSelectedStudentIds] = useState([]);
     const [selectAll, setSelectAll] = useState(false);
     const [headers, setHeaders] = useState({});
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
     const [deletionStatus, setDeletionStatus] = useState(false); 
     
     
