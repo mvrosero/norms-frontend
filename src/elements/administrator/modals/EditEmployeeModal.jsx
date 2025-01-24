@@ -27,15 +27,14 @@ const EditEmployeeModal = ({ user, show, onHide, fetchUsers, headers, roles }) =
     useEffect(() => {
         const token = localStorage.getItem('token');
         const roleId = localStorage.getItem('role_id');
-        const userId = localStorage.getItem('user_id');
-    
+        const userId = localStorage.getItem('user_id'); 
+        
         if (token && roleId === '1') {
             setUpdatedBy(userId); 
         } else {
             console.error('Token is required for accessing this.');
         }
-    }, []);
-    
+        }, []);
   
 
     // Toggle reset password fields
@@ -225,15 +224,15 @@ const EditEmployeeModal = ({ user, show, onHide, fetchUsers, headers, roles }) =
                     const employeeResponse = await axios.put(
                         `https://test-backend-api-2.onrender.com/employee/${user.user_id}`,
                         formData,
-                        { headers: { ...headers, Authorization: `Bearer ${localStorage.getItem('token')}` } }  // Add token here
+                        { headers }
                     );
-
+    
                     if (employeeResponse.status === 200) {
                         if (formData.newPassword) {
                             const passwordResponse = await axios.put(
                                 `https://test-backend-api-2.onrender.com/password-change/${user.user_id}`,
                                 { new_password: formData.newPassword, confirm_password: formData.confirmPassword },
-                                { headers: { ...headers, Authorization: `Bearer ${localStorage.getItem('token')}` } }  // Add token here
+                                { headers }
                             );
                             if (passwordResponse.status === 200) {
                                 Swal.fire({
@@ -403,16 +402,16 @@ return (
                             </Form.Group>
                         </Col>
                         <Col md={6}>
-                             <Form.Group controlId="birthdate">
-                                    <Form.Label className="fw-bold">Birthdate</Form.Label>
-                                        <Form.Control
-                                            type="date"
-                                            name="birthdate"
-                                            value={formData.birthdate ? formatDateForInput(formData.birthdate) : ''}
-                                            onChange={handleChange}
-                                            placeholder={formData.birthdate ? '' : 'MM/DD/YYYY'}
-                                            style={inputStyle}
-                                        />
+                            <Form.Group controlId="birthdate">
+                                <Form.Label className="fw-bold">Birthdate</Form.Label>
+                                <Form.Control
+                                    type="date"
+                                    name="birthdate"
+                                    value={formData.birthdate ? formatDateForInput(formData.birthdate) : ''}
+                                    onChange={handleChange}
+                                    placeholder={formData.birthdate ? '' : 'MM/DD/YYYY'}
+                                    style={inputStyle}
+                                />
                             </Form.Group>
                         </Col>
 
