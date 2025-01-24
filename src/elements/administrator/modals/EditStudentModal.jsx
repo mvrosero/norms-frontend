@@ -25,21 +25,20 @@ const EditStudentModal = ({ user, show, onHide, fetchUsers, headers, departments
     const [filteredPrograms, setFilteredPrograms] = useState([]);
     const [isReset, setIsReset] = useState(false); 
     const [isConfirmPasswordFocused, setIsConfirmPasswordFocused] = useState(false);
-    const [updatedBy, setUpdatedBy] = useState(''); 
+    const [updatedBy, setUpdatedBy] = useState(''); // State to hold the full name or user info
 
     
-    useEffect(() => {
+        useEffect(() => {
         const token = localStorage.getItem('token');
         const roleId = localStorage.getItem('role_id');
-        const userId = localStorage.getItem('user_id');
+        const userId = localStorage.getItem('user_id'); // Extract user ID from localStorage
         
         if (token && roleId === '1') {
-            setUpdatedBy(userId); 
+            setUpdatedBy(userId); // Directly set userId as the createdBy value
         } else {
             console.error('Token is required for accessing this.');
-            setUpdatedBy(''); 
         }
-    }, []);
+        }, []);
 
 
     // Toggle reset password fields
@@ -684,19 +683,18 @@ return (
                     </Form.Group>
                 </Col>
 
-                {updatedBy && (
-                    <div className="input-group" style={{ display: 'none' }}>
-                        <label htmlFor="updatedBy" className="label">Updated By:</label>
-                        <input
-                            id="updatedBy"
-                            name="updatedBy"
-                            type="text"
-                            value={updatedBy}
-                            readOnly
-                        />
-                    </div>
-                )}
+                <div className="input-group" style={{ display: 'none' }}>
+                    <label htmlFor="updatedBy" className="label">Updated By:</label>
+                    <input
+                        id="updatedBy"
+                        name="updatedBy"
+                        type="text"
+                        value={updatedBy} 
+                        readOnly
+                    />
+                </div>
             </Row>
+            
             {/* Buttons */}
             <div className="d-flex justify-content-end mt-3">
                 <button type="button" onClick={handleCancel} style={cancelButtonStyle}>
