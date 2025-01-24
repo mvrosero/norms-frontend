@@ -334,10 +334,13 @@ const EditStudentModal = ({ user, show, onHide, fetchUsers, headers, departments
     }
 
     // Date and time format
-    const formatDateForInput = (date) => {
-        const newDate = new Date(date);
-        newDate.setMinutes(newDate.getMinutes() - newDate.getTimezoneOffset()); 
-        return newDate.toISOString().split('T')[0]; 
+    const formatDateForInput = (dateString) => {
+        if (!dateString) return '';
+        const date = new Date(dateString);
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0'); 
+        const day = String(date.getDate()).padStart(2, '0'); 
+        return `${year}-${month}-${day}`;
     };
 
 
@@ -436,17 +439,17 @@ return (
                     </Form.Group>
                 </Col>
                 <Col md={6}>
-                <Form.Group controlId="birthdate">
-                    <Form.Label className="fw-bold">Birthdate</Form.Label>
-                    <Form.Control
-                        type="date"
-                        name="birthdate"
-                        value={formData.birthdate ? formatDateForInput(formData.birthdate) : ''}
-                        onChange={handleChange}
-                        placeholder={formData.birthdate ? '' : 'MM/DD/YYYY'}
-                        style={inputStyle}
-                    />
-                </Form.Group>
+                    <Form.Group controlId="birthdate">
+                        <Form.Label className="fw-bold">Birthdate</Form.Label>
+                        <Form.Control
+                            type="date"
+                            name="birthdate"
+                            value={formData.birthdate ? formatDateForInput(formData.birthdate) : ''}
+                            onChange={handleChange}
+                            placeholder={formData.birthdate ? '' : 'YYYY-MM-DD'}
+                            style={inputStyle}
+                        />
+                    </Form.Group>
                 </Col>
 
                 <Col md={6}>
