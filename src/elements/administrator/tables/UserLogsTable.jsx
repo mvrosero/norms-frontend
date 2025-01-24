@@ -261,6 +261,33 @@ const UserLogsTable = ({filters, searchQuery}) => {
     
     const currentHistories = filteredHistories.slice(indexOfFirstHistory, indexOfLastHistory);
 
+
+    if (loading) {
+        // Loading spinner while data is still being fetched
+        return (
+          <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100%" }}>
+            <div
+              style={{
+                width: "50px",
+                height: "50px",
+                border: "6px solid #f3f3f3",
+                borderTop: "6px solid #3498db",
+                borderRadius: "50%",
+                animation: "spin 1s linear infinite",
+              }}
+            ></div>
+            <style>
+              {`
+                @keyframes spin {
+                  0% { transform: rotate(0deg); }
+                  100% { transform: rotate(360deg); }
+                }
+              `}
+            </style>
+          </div>
+        );
+      }
+
     
     return (
       <Table bordered hover responsive style={{ borderRadius: '20px', marginBottom: '20px', marginLeft: '100px' }}>
@@ -327,36 +354,9 @@ const UserLogsTable = ({filters, searchQuery}) => {
 
   return (
     <div>
-    {/* Render loading state or table and pagination */}
-    {loading ? (
-      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
-        <div
-          style={{
-            width: '50px',
-            height: '50px',
-            border: '6px solid #f3f3f3',
-            borderTop: '6px solid #3498db',
-            borderRadius: '50%',
-            animation: 'spin 1s linear infinite',
-          }}
-        ></div>
-        <style>
-          {`
-            @keyframes spin {
-              0% { transform: rotate(0deg); }
-              100% { transform: rotate(360deg); }
-            }
-          `}
-        </style>
-      </div>
-    ) : (
-      <div>
-        {renderTable()}  {/* Only render the table if not loading */}
-        {renderPagination()}  {/* Only render pagination if not loading */}
-      </div>
-    )}
-  
+      {renderTable()}
 
+      {!loading && renderPagination()}
 
       {/* View User Log Modal */}
       <Modal show={showModal} onHide={handleCloseModal} size="lg" backdrop='static'>
