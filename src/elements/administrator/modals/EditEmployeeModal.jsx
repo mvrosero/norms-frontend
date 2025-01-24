@@ -11,7 +11,7 @@ const EditEmployeeModal = ({ user, show, onHide, fetchUsers, headers, roles }) =
         middle_name: user ? user.middle_name : '',
         last_name: user ? user.last_name : '',
         suffix: user ? user.suffix : '',
-        birthdate: user && user.birthdate ? formatDateForInput(user.birthdate) : '',
+        birthdate: user ? user.birthdate : '',
         email: user ? user.email : '',
         password: user ? user.password : '',
         newPassword: '', 
@@ -52,7 +52,7 @@ const EditEmployeeModal = ({ user, show, onHide, fetchUsers, headers, roles }) =
                 middle_name: user.middle_name,
                 last_name: user.last_name,
                 suffix: user.suffix,
-                birthdate: user.birthdate ? formatDateForInput(user.birthdate) : '',
+                birthdate: user.birthdate,
                 email: user.email,
                 password: user.password,
                 newPassword: '', 
@@ -301,7 +301,7 @@ const EditEmployeeModal = ({ user, show, onHide, fetchUsers, headers, roles }) =
 
     // Date and time format
     const formatDateForInput = (date) => {
-        if (!date) return ''; // Return an empty string if date is null/undefined
+        if (!date) return ''; 
         const d = new Date(date);
         const year = d.getFullYear();
         const month = String(d.getMonth() + 1).padStart(2, '0');
@@ -405,18 +405,16 @@ return (
                             </Form.Group>
                         </Col>
                         <Col md={6}>
-                            <Form.Group controlId="birthdate">
-                                <Form.Label>Birthdate</Form.Label>
-                                <Form.Control
-                                    type="date"
-                                    name="birthdate"
-                                    value={formData.birthdate || ''}
-                                    onChange={handleChange}
-                                    isInvalid={!!errors.birthdate}
-                                />
-                                <Form.Control.Feedback type="invalid">
-                                    {errors.birthdate}
-                                </Form.Control.Feedback>
+                             <Form.Group controlId="birthdate">
+                                    <Form.Label className="fw-bold">Birthdate</Form.Label>
+                                        <Form.Control
+                                            type="date"
+                                            name="birthdate"
+                                            value={formData.birthdate ? formatDateForInput(formData.birthdate) : ''}
+                                            onChange={handleChange}
+                                            placeholder={formData.birthdate ? '' : 'YYYY/MM/DD'}
+                                            style={inputStyle}
+                                        />
                             </Form.Group>
                         </Col>
 
