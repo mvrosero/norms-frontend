@@ -54,22 +54,13 @@ const EditStudentModal = ({ user, show, onHide, fetchUsers, headers, departments
                 .get(`https://test-backend-api-2.onrender.com/active-programs/${formData.department_id}`)
                 .then((response) => {
                     setFilteredPrograms(response.data); 
-                    // If formData.program_id is not set, set it to the user’s program_id
-                    if (!formData.program_id && user?.program_id) {
-                        setFormData((prevData) => ({
-                            ...prevData,
-                            program_id: user.program_id, // Set user’s current program as the default
-                        }));
-                    }
                 })
                 .catch((error) => {
                     console.error('Error fetching programs:', error);
                     setFilteredPrograms([]); 
                 });
         }
-    }, [formData.department_id, user]);
-    
-
+    }, [formData.department_id]);
     useEffect(() => {
         if (user) {
             setFormData({
@@ -718,7 +709,6 @@ return (
 </Modal>
 );
 };
-
 
 
 export default EditStudentModal;
