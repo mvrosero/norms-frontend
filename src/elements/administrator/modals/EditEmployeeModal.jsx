@@ -25,16 +25,17 @@ const EditEmployeeModal = ({ user, show, onHide, fetchUsers, headers, roles }) =
 
 
     useEffect(() => {
-    const token = localStorage.getItem('token');
-    const roleId = localStorage.getItem('role_id');
-    const userId = localStorage.getItem('user_id'); // Extract user ID from localStorage
+        const token = localStorage.getItem('token');
+        const roleId = localStorage.getItem('role_id');
+        const userId = localStorage.getItem('user_id');
     
-    if (token && roleId === '1') {
-        setUpdatedBy(userId); // Directly set userId as the createdBy value
-    } else {
-        console.error('Token is required for accessing this.');
-    }
+        if (token && roleId === '1') {
+            setUpdatedBy(userId); 
+        } else {
+            console.error('Token is required for accessing this.');
+        }
     }, []);
+    
   
 
     // Toggle reset password fields
@@ -224,15 +225,15 @@ const EditEmployeeModal = ({ user, show, onHide, fetchUsers, headers, roles }) =
                     const employeeResponse = await axios.put(
                         `https://test-backend-api-2.onrender.com/employee/${user.user_id}`,
                         formData,
-                        { headers }
+                        { headers: { ...headers, Authorization: `Bearer ${localStorage.getItem('token')}` } }  // Add token here
                     );
-    
+
                     if (employeeResponse.status === 200) {
                         if (formData.newPassword) {
                             const passwordResponse = await axios.put(
                                 `https://test-backend-api-2.onrender.com/password-change/${user.user_id}`,
                                 { new_password: formData.newPassword, confirm_password: formData.confirmPassword },
-                                { headers }
+                                { headers: { ...headers, Authorization: `Bearer ${localStorage.getItem('token')}` } }  // Add token here
                             );
                             if (passwordResponse.status === 200) {
                                 Swal.fire({

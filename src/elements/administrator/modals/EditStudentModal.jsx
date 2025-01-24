@@ -28,17 +28,17 @@ const EditStudentModal = ({ user, show, onHide, fetchUsers, headers, departments
     const [updatedBy, setUpdatedBy] = useState(''); 
 
     
-        useEffect(() => {
-        const token = localStorage.getItem('token');
-        const roleId = localStorage.getItem('role_id');
-        const userId = localStorage.getItem('user_id'); 
-        
-        if (token && roleId === '1') {
-            setUpdatedBy(userId); 
-        } else {
-            console.error('Token is required for accessing this.');
-        }
-        }, []);
+    useEffect(() => {
+    const token = localStorage.getItem('token');
+    const roleId = localStorage.getItem('role_id');
+    const userId = localStorage.getItem('user_id'); 
+    
+    if (token && roleId === '1') {
+        setUpdatedBy(userId); 
+    } else {
+        console.error('Token is required for accessing this.');
+    }
+    }, []);
 
 
     // Toggle reset password fields
@@ -88,11 +88,9 @@ const EditStudentModal = ({ user, show, onHide, fetchUsers, headers, departments
 
     const handleChange = (e) => {
         const { name, value } = e.target;
-    
-        // Save the previous status before making changes
+
         const previousStatus = formData.status;
     
-        // Update form data with the new value
         setFormData((prev) => ({
             ...prev,
             [name]: value,
@@ -101,7 +99,7 @@ const EditStudentModal = ({ user, show, onHide, fetchUsers, headers, departments
         // Validate the field after updating form data
         validateField(name, value);
     
-        // Check if the "status" field is being updated to "archived"
+        // Show a more specific sweet alert for changing status to archive
         if (name === "status" && value === "archived") {
             Swal.fire({
                 title: 'Are you sure you want to archive this user?',
@@ -232,8 +230,6 @@ const EditStudentModal = ({ user, show, onHide, fetchUsers, headers, departments
             });
             return;
         }
-    
-        // Password validation 
         if (formData.newPassword && formData.newPassword !== formData.confirmPassword) {
             Swal.fire({
                 icon: 'error',
@@ -242,7 +238,6 @@ const EditStudentModal = ({ user, show, onHide, fetchUsers, headers, departments
             });
             return;
         }
-
         Swal.fire({
             title: 'Are you sure you want to save the changes?',
             text: 'You are about to update this student’s details.',
