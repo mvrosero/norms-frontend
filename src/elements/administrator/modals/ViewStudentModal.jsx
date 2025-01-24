@@ -15,7 +15,6 @@ const ViewStudentModal = ({ show, onHide, user }) => {
             backgroundColor = '#EDEDED';
             textColor = '#6C757D'; 
         }
-
         return (
             <div style={{
                 backgroundColor,
