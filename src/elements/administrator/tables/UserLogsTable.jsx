@@ -228,42 +228,16 @@ const UserLogsTable = ({filters, searchQuery}) => {
     };
 
 
-  const renderTable = () => {
-
-  // Show loading spinner if data is being fetched
   if (loading) {
-    return (
-      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
-        <div
-          style={{
-            width: '50px',
-            height: '50px',
-            border: '6px solid #f3f3f3',
-            borderTop: '6px solid #3498db',
-            borderRadius: '50%',
-            animation: 'spin 1s linear infinite',
-          }}
-        ></div>
-        <style>
-          {`
-            @keyframes spin {
-              0% { transform: rotate(0deg); }
-              100% { transform: rotate(360deg); }
-            }
-          `}
-        </style>
-      </div>
-    );
+    return <p>Loading...</p>;
   }
 
-  // Check if there is no data after fetching
-  if (!loading && histories.length === 0) {
-    return (
-      <p style={{ textAlign: 'center', fontWeight: 'bold', fontSize: '16px' }}>
-        No data available to display.
-      </p>
-    );
+  if (error) {
+    return <p>Error: {error}</p>;
   }
+
+
+  const renderTable = () => {
 
     const filteredHistories = histories.filter((history) => {
         const normalizedQuery = searchQuery.toLowerCase();
@@ -353,9 +327,36 @@ const UserLogsTable = ({filters, searchQuery}) => {
 
   return (
     <div>
-      {renderTable()}
+    {/* Render loading state or table and pagination */}
+    {loading ? (
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
+        <div
+          style={{
+            width: '50px',
+            height: '50px',
+            border: '6px solid #f3f3f3',
+            borderTop: '6px solid #3498db',
+            borderRadius: '50%',
+            animation: 'spin 1s linear infinite',
+          }}
+        ></div>
+        <style>
+          {`
+            @keyframes spin {
+              0% { transform: rotate(0deg); }
+              100% { transform: rotate(360deg); }
+            }
+          `}
+        </style>
+      </div>
+    ) : (
+      <div>
+        {renderTable()}  {/* Only render the table if not loading */}
+        {renderPagination()}  {/* Only render pagination if not loading */}
+      </div>
+    )}
+  
 
-      {renderPagination()}
 
       {/* View User Log Modal */}
       <Modal show={showModal} onHide={handleCloseModal} size="lg" backdrop='static'>
