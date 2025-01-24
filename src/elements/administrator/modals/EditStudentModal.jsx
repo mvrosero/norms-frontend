@@ -34,7 +34,7 @@ const EditStudentModal = ({ user, show, onHide, fetchUsers, headers, departments
         const userId = localStorage.getItem('user_id'); 
         
         if (token && roleId === '1') {
-            setUpdatedBy(userId); // Directly set userId as the createdBy value
+            setUpdatedBy(userId); 
         } else {
             console.error('Token is required for accessing this.');
         }

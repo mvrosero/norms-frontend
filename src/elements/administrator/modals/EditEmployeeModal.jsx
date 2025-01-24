@@ -21,7 +21,7 @@ const EditEmployeeModal = ({ user, show, onHide, fetchUsers, headers, roles }) =
     });
     const [isReset, setIsReset] = useState(false); 
     const [isConfirmPasswordFocused, setIsConfirmPasswordFocused] = useState(false);
-    const [updatedBy, setUpdatedBy] = useState(''); // State to hold the full name or user info
+    const [updatedBy, setUpdatedBy] = useState(''); 
 
 
     useEffect(() => {
