@@ -3,16 +3,6 @@ import axios from 'axios';
 import Swal from 'sweetalert2';
 import { Modal, Button, Form, Row, Col } from 'react-bootstrap';
 
-// Set date format properly
-const formatDateForInput = (date) => {
-    if (!date) return ''; // Return an empty string if date is null/undefined
-    const d = new Date(date);
-    const year = d.getFullYear();
-    const month = String(d.getMonth() + 1).padStart(2, '0');
-    const day = String(d.getDate()).padStart(2, '0');
-    return `${year}-${month}-${day}`;
-};
-
 const EditEmployeeModal = ({ user, show, onHide, fetchUsers, headers, roles }) => {
     const [errors, setErrors] = useState({});
     const [formData, setFormData] = useState({
@@ -311,10 +301,13 @@ const EditEmployeeModal = ({ user, show, onHide, fetchUsers, headers, roles }) =
 
     // Date and time format
     const formatDateForInput = (date) => {
-        const newDate = new Date(date);
-        newDate.setMinutes(newDate.getMinutes() - newDate.getTimezoneOffset()); 
-        return newDate.toISOString().split('T')[0]; 
-      };
+        if (!date) return ''; // Return an empty string if date is null/undefined
+        const d = new Date(date);
+        const year = d.getFullYear();
+        const month = String(d.getMonth() + 1).padStart(2, '0');
+        const day = String(d.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+    };
     
 
       // Set styles for fields and buttons
