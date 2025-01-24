@@ -25,7 +25,7 @@ export default function AdminNavigation() {
 
   // Function to handle menu item click
   const handleMenuItemClick = (menuItem) => {
-    setActiveMenuItem(menuItem);
+    setActiveMenuItem(menuItem); // Immediately set the active menu item
     navigate(`/admin-${menuItem.toLowerCase().replace(' ', '')}`);
   };
 
@@ -94,7 +94,6 @@ export default function AdminNavigation() {
                         },
                       },
                     }}
-
                     rootStyles={{
                       ["&>ul"]: {
                         gap: "4px",
