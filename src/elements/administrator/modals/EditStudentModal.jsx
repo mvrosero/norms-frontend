@@ -48,45 +48,19 @@ const EditStudentModal = ({ user, show, onHide, fetchUsers, headers, departments
     
 
     // Student form data
-// Fetch current program and active programs
-useEffect(() => {
-    const fetchPrograms = async () => {
-        try {
-            let currentProgram = null;
-            let activePrograms = [];
-            
-            // Fetch the current program regardless of status
-            if (formData.program_id) {
-                const currentProgramResponse = await axios.get(
-                    `https://test-backend-api-2.onrender.com/programs/${formData.program_id}`
-                );
-                currentProgram = currentProgramResponse.data;
-            }
-            
-            // Fetch active programs for the selected department
-            if (formData.department_id) {
-                const activeProgramsResponse = await axios.get(
-                    `https://test-backend-api-2.onrender.com/active-programs/${formData.department_id}`
-                );
-                activePrograms = activeProgramsResponse.data;
-            }
-
-            // Merge the current program into the active programs list if needed
-            if (currentProgram && !activePrograms.some(p => p.program_id === currentProgram.program_id)) {
-                activePrograms.unshift(currentProgram); // Add the current program at the top
-            }
-
-            setFilteredPrograms(activePrograms);
-        } catch (error) {
-            console.error('Error fetching programs:', error);
-            setFilteredPrograms([]); // Reset dropdown if fetch fails
+    useEffect(() => {
+        if (formData.department_id) {
+            axios
+                .get(`https://test-backend-api-2.onrender.com/active-programs/${formData.department_id}`)
+                .then((response) => {
+                    setFilteredPrograms(response.data); 
+                })
+                .catch((error) => {
+                    console.error('Error fetching programs:', error);
+                    setFilteredPrograms([]); 
+                });
         }
-    };
-
-    fetchPrograms();
-}, [formData.department_id, formData.program_id]);
-
-
+    }, [formData.department_id]);
 
     useEffect(() => {
         if (user) {
