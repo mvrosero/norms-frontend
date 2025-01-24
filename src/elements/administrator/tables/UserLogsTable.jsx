@@ -230,7 +230,8 @@ const UserLogsTable = ({filters, searchQuery}) => {
     };
 
 
-  const renderTable = () => {
+// Display the user logs table
+const renderTable = () => {
 
     const filteredHistories = histories.filter((history) => {
         const normalizedQuery = searchQuery.toLowerCase();
@@ -254,7 +255,6 @@ const UserLogsTable = ({filters, searchQuery}) => {
     
     const currentHistories = filteredHistories.slice(indexOfFirstHistory, indexOfLastHistory);
 
-
     // Show loading spinner when data is being fetched
     if (loading) {
         return (
@@ -266,10 +266,10 @@ const UserLogsTable = ({filters, searchQuery}) => {
       }
 
     
-    return (
-      <Table bordered hover responsive style={{ borderRadius: '20px', marginBottom: '20px', marginLeft: '100px' }}>
+return (
+    <Table bordered hover responsive style={{ borderRadius: '20px', marginBottom: '20px', marginLeft: '100px' }}>
         <thead>
-          <tr>
+        <tr>
           <th style={{ textAlign: 'center', padding: '0', verticalAlign: 'middle', width: '5%' }}>
                 <button style={{ border: 'none', background: 'none', cursor: 'pointer', display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center', width: '100%' }}
                     onClick={handleSortHistoryId}
@@ -329,8 +329,8 @@ const UserLogsTable = ({filters, searchQuery}) => {
   };
 
 
-  return (
-    <div>
+return (
+<div>
       {renderTable()}
 
       {!loading && renderPagination()}
@@ -338,13 +338,7 @@ const UserLogsTable = ({filters, searchQuery}) => {
       {/* View User Log Modal */}
       <Modal show={showModal} onHide={handleCloseModal} size="lg" backdrop='static'>
         <Modal.Header>
-          <Button
-            variant="link"
-            onClick={handleCloseModal}
-            style={{ position: 'absolute', top: '5px', right: '20px', textDecoration: 'none', fontSize: '30px', color: '#a9a9a9' }}
-          >
-            ×
-          </Button>
+          <Button variant="link" onClick={handleCloseModal} style={{ position: 'absolute', top: '5px', right: '20px', textDecoration: 'none', fontSize: '30px', color: '#a9a9a9' }}> × </Button>
           <Modal.Title style={{ fontSize: '40px', marginBottom: '10px', textAlign: 'center', width: '100%' }}>VIEW USER LOG DETAILS</Modal.Title>
         </Modal.Header>
         <Modal.Body>

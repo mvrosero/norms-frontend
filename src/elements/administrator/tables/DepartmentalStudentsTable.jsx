@@ -205,33 +205,35 @@ const handleRowsPerPageChange = (e) => {
 };
 
 const renderPagination = () => {
-  const pageNumbers = Array.from({ length: totalPages }, (_, i) => i + 1);
-  
-  const buttonStyle = {
-      width: '30px', 
-      height: '30px', 
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      border: '1px solid #a0a0a0',
-      backgroundColor: '#ebebeb',
-      color: '#4a4a4a',
-      fontSize: '0.75rem', 
-      cursor: 'pointer',
-  };
-  
-  const activeButtonStyle = {
-      ...buttonStyle,
-      backgroundColor: '#a0a0a0',
-      color: '#f1f1f1',
-  };
-  
-  const disabledButtonStyle = {
-      ...buttonStyle,
-      backgroundColor: '#ebebeb',
-      color: '#a1a1a1',
-      cursor: 'not-allowed',
-  };
+    if (loading) return null;
+
+    const pageNumbers = Array.from({ length: totalPages }, (_, i) => i + 1);
+    
+    const buttonStyle = {
+        width: '30px', 
+        height: '30px', 
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        border: '1px solid #a0a0a0',
+        backgroundColor: '#ebebeb',
+        color: '#4a4a4a',
+        fontSize: '0.75rem', 
+        cursor: 'pointer',
+    };
+    
+    const activeButtonStyle = {
+        ...buttonStyle,
+        backgroundColor: '#a0a0a0',
+        color: '#f1f1f1',
+    };
+    
+    const disabledButtonStyle = {
+        ...buttonStyle,
+        backgroundColor: '#ebebeb',
+        color: '#a1a1a1',
+        cursor: 'not-allowed',
+    };
   
   return (
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '15px', fontSize: '14px', color: '#4a4a4a'}}>
@@ -299,7 +301,7 @@ const renderPagination = () => {
 };
 
 
-// Render Table
+// Display the departmental students table
 const renderTable = () => {
 
     const activeUsers = users.filter(user => user.status !== 'archived');
@@ -323,7 +325,17 @@ const renderTable = () => {
         return matchesSearchQuery && matchesFilters; 
     });
     
-const currentUsers = filteredUsers.slice(indexOfFirstUser, indexOfLastUser);
+    const currentUsers = filteredUsers.slice(indexOfFirstUser, indexOfLastUser);
+
+    // Show loading spinner when data is being fetched
+    if (loading) {
+        return (
+            <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100%" }}>
+            <div style={{ width: "50px", height: "50px", border: "6px solid #f3f3f3", borderTop: "6px solid #a9a9a9", borderRadius: "50%", animation: "spin 1s linear infinite" }}></div>
+            <style> {`@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }`} </style>
+            </div>
+        );
+    }
     
 
 return (
@@ -458,7 +470,7 @@ return (
             
         {renderTable()}
 
-        {renderPagination()}
+        {!loading && renderPagination()}
 
         {/* View Student Modal */}
         <ViewStudentModal
