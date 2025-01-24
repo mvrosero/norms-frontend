@@ -261,9 +261,14 @@ const UserLogsTable = ({filters, searchQuery}) => {
           <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100%" }}>
             <div
               style={{
-                width: "50px", height: "50px", border: "6px solid #f3f3f3", borderTop: "6px solid #a9a9a9", 
-                borderRadius: "50%", animation: "spin 1s linear infinite", 
-                borderTopLeftRadius: "10px", borderTopRightRadius: "10px"
+                width: "50px",
+                height: "50px",
+                border: "6px solid #f3f3f3",
+                borderTop: "6px solid #a9a9a9",
+                borderRadius: "50%",
+                animation: "spin 1s linear infinite",
+                borderTopLeftRadius: "10px",  // Rounded top left
+                borderTopRightRadius: "10px"  // Rounded top right
               }}
             ></div>
             <style>
@@ -277,6 +282,7 @@ const UserLogsTable = ({filters, searchQuery}) => {
           </div>
         );
       }
+      
       
     
     return (
