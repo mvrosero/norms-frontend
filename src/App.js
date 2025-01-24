@@ -108,7 +108,7 @@ function App() {
                 <Route path='/admin-dashboard' element={<AdminDashboard />} />
                 <Route path='/admin-usermanagement' element={<AdminUserManagement />} />
                 <Route path="/admin-usermanagement/:department_code" element={<AdminDepartmentalStudents />} />
-                <Route path='/admin-accounthistory/:user_id' element={<AdminAccountHistory />} />
+                <Route path="/admin-accounthistory/:user_id" element={<AdminAccountHistory/>} />
                 <Route path='/admin-userlogs' element={<AdminUserLogs />} />
                 <Route path='/admin-settings' element={<AdminSettings />} />
                 <Route path='/manage-departments' element={<ManageDepartments />} />
