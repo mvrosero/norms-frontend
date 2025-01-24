@@ -1,16 +1,7 @@
 import React from 'react';
 import { Modal, Button } from 'react-bootstrap';
 
-const ViewStudentModal = ({ show, onHide, user, departments, programs }) => {
-    const getDepartmentName = (departmentId) => {
-        const department = departments.find(d => d.department_id === departmentId);
-        return department ? department.department_name : '';
-    };
-
-    const getProgramName = (programId) => {
-        const program = programs.find(p => p.program_id === programId);
-        return program ? program.program_name : '';
-    };
+const ViewStudentModal = ({ show, onHide, user }) => {
 
     const renderStatus = (status) => {
         let backgroundColor, textColor;
@@ -88,10 +79,10 @@ return (
                         <p>{user.batch}</p>
 
                         <p style={{ fontWeight: 'bold' }}>Department:</p>
-                        <p>{getDepartmentName(user.department_id)}</p>
+                        <p>{user.department_name}</p>
 
                         <p style={{ fontWeight: 'bold' }}>Program:</p>
-                        <p>{getProgramName(user.program_id)}</p>
+                        <p>{user.program_name}</p>
 
                         <p style={{ fontWeight: 'bold' }}>Status:</p>
                         <p>{renderStatus(user.status)}</p>
