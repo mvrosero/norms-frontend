@@ -44,8 +44,11 @@ export default function ArchivesTable ({filters, searchQuery}) {
             const response = await axios.get('https://test-backend-api-2.onrender.com/students-archived', { headers });
             setUsers(response.data);
         } catch (error) {
+            setError(error.message);
             console.error('Error fetching students:', error);
             Swal.fire('Error', 'Failed to fetch students.', 'error');
+        } finally {
+            setLoading(false); 
         }
     }, [headers]);
 
@@ -55,8 +58,11 @@ export default function ArchivesTable ({filters, searchQuery}) {
             const response = await axios.get('https://test-backend-api-2.onrender.com/departments', { headers });
             setDepartments(response.data);
         } catch (error) {
+            setError(error.message); 
             console.error('Error fetching departments:', error);
             Swal.fire('Error', 'Failed to fetch departments.', 'error');
+        } finally {
+            setLoading(false); 
         }
     }, [headers]);
 
@@ -66,8 +72,11 @@ export default function ArchivesTable ({filters, searchQuery}) {
             const response = await axios.get('https://test-backend-api-2.onrender.com/programs', { headers });
             setPrograms(response.data);
         } catch (error) {
+            setError(error.message); 
             console.error('Error fetching programs:', error);
             Swal.fire('Error', 'Failed to fetch programs.', 'error');
+        } finally {
+            setLoading(false); 
         }
     }, [headers]);
     useEffect(() => {
