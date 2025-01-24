@@ -394,69 +394,79 @@ return (
 
                 {/* Program Table */}
                 <div style={{ width: '90%', marginBottom: '40px' }}>
+                {loading ? (
+                    <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100%" }}>
+                    <div style={{ width: "50px", height: "50px", border: "6px solid #f3f3f3", borderTop: "6px solid #a9a9a9", borderRadius: "50%", animation: "spin 1s linear infinite" }}></div>
+                    <style> {`@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }`} </style>
+                    </div>
+                ) : (
+                    <>
+                    {/* Table */}
                     <table className="table table-hover table-bordered" style={{ marginBottom: '20px', textAlign: 'center', backgroundColor: 'white' }}>
-                    <thead style={{ backgroundColor: '#FAD32E', textAlign: 'center' }}>
+                        <thead style={{ backgroundColor: '#FAD32E', textAlign: 'center' }}>
                         <tr>
-                            <th style={{ width: '5%'}}>No.</th>
+                            <th style={{ width: '5%' }}>No.</th>
                             <th style={{ width: '10%' }}>Code</th>
                             <th>Program Name</th>
                             <th style={{ width: '25%' }}>Department</th>
                             <th style={{ width: '13%' }}>Status</th>
-                            <th style={{width: '10%'}}>Actions</th>
+                            <th style={{ width: '10%' }}>Actions</th>
                         </tr>
-                    </thead>
-                    <tbody>
-                    {filteredPrograms.length > 0 ? (
-                        currentPrograms.map((program, index) => (
+                        </thead>
+                        <tbody>
+                        {filteredPrograms.length > 0 ? (
+                            currentPrograms.map((program, index) => (
                             <tr key={program.program_id} style={{ backgroundColor: index % 2 === 0 ? 'white' : '#f2f2f2' }}>
-                                <td style={{ textAlign: 'center' }}>{ (currentPage - 1) * programsPerPage + (index + 1) }</td>
+                                <td style={{ textAlign: 'center' }}>
+                                {(currentPage - 1) * programsPerPage + (index + 1)}
+                                </td>
                                 <td>{program.program_code}</td>
                                 <td>{program.program_name}</td>
                                 <td>{program.department_name}</td>
                                 <td style={{ textAlign: 'center' }}>{renderStatus(program.status)}</td>
                                 <td style={{ textAlign: 'center' }}>
-                                        <EditIcon
-                                            onClick={() => handleEditProgram(program.program_id)}
-                                            style={{ cursor: 'pointer', color: '#007bff', marginRight: '10px' }}
-                                        />
-                                        <DeleteIcon
-                                            onClick={() => handleDeleteProgram(program.program_id)}
-                                            style={{ cursor: 'pointer', color: '#dc3545' }}
-                                        />
+                                <EditIcon
+                                    onClick={() => handleEditProgram(program.program_id)}
+                                    style={{ cursor: 'pointer', color: '#007bff', marginRight: '10px' }}
+                                />
+                                <DeleteIcon
+                                    onClick={() => handleDeleteProgram(program.program_id)}
+                                    style={{ cursor: 'pointer', color: '#dc3545' }}
+                                />
                                 </td>
                             </tr>
-                                ))
-                            ) : (
-                                <tr>
-                                    <td colSpan="6" style={{ textAlign: 'center' }}>No programs found</td>
-                                </tr>
-                            )}
-                    </tbody>
-                </table>
+                            ))
+                        ) : (
+                            <tr>
+                            <td colSpan="6" style={{ textAlign: 'center' }}>No programs found</td>
+                            </tr>
+                        )}
+                        </tbody>
+                    </table>
 
-                {/* Pagination */}
-                <div style = {{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', marginBottom: '15px', marginRight: '30px' }}>
-                    {/* Page Info */}
-                    <div style={{ fontSize: '0.875rem', color: '#4a4a4a', marginRight: '10px' }}>
+                    {/* Pagination */}
+                    <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', marginBottom: '15px', marginRight: '30px' }}>
+                        {/* Page Info */}
+                        <div style={{ fontSize: '0.875rem', color: '#4a4a4a', marginRight: '10px' }}>
                         Page {currentPage} out of {totalPages}
-                    </div>
+                        </div>
 
-                    {/* Previous Page Button */}
-                    <button
+                        {/* Previous Page Button */}
+                        <button
                         onClick={() => handlePaginationChange(currentPage - 1)}
                         style={{
                             ...buttonStyle,
-                            borderTopLeftRadius: '8px',  
+                            borderTopLeftRadius: '8px',
                             borderBottomLeftRadius: '8px',
                             ...(currentPage === 1 ? disabledButtonStyle : {}),
                         }}
                         disabled={currentPage === 1}
-                    >
+                        >
                         ❮
-                    </button>
+                        </button>
 
-                    {/* Page Numbers */}
-                    {(() => {
+                        {/* Page Numbers */}
+                        {(() => {
                         let pageStart = currentPage - 1 > 0 ? currentPage - 1 : 1;
                         let pageEnd = pageStart + 2 <= totalPages ? pageStart + 2 : totalPages;
 
@@ -467,27 +477,30 @@ return (
 
                         return pageTiles.map(number => (
                             <button key={number} onClick={() => paginate(number)} style={currentPage === number ? activeButtonStyle : buttonStyle}>
-                                {number}
+                            {number}
                             </button>
                         ));
-                    })()}
+                        })()}
 
-                    {/* Next Page Button */}
-                    <button
+                        {/* Next Page Button */}
+                        <button
                         onClick={() => handlePaginationChange(currentPage + 1)}
                         style={{
                             ...buttonStyle,
-                            borderTopRightRadius: '8px',  
+                            borderTopRightRadius: '8px',
                             borderBottomRightRadius: '8px',
                             ...(currentPage === totalPages ? disabledButtonStyle : {}),
                         }}
                         disabled={currentPage === totalPages}
-                    >
+                        >
                         ❯
-                    </button>
+                        </button>
+                    </div>
+                    </>
+                )}
                 </div>
             </div>
-        </div>
+
             
         {/* Add Program Modal */}
         <AddProgramModal 
