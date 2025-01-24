@@ -39,13 +39,13 @@ function UserDropdownButton() {
           style={{
             display: 'block',
             position: 'absolute',
-            backgroundColor: 'white', // White background color
+            backgroundColor: 'white', 
             minWidth: '160px',
             zIndex: 1,
-            boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)', // Light shadow
-            border: '1px solid #ccc', // Border
-            borderRadius: '10px', // Rounded corners
-            marginTop: '5px', // Adjusted position
+            boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
+            border: '1px solid #ccc', 
+            borderRadius: '10px', 
+            marginTop: '5px', 
           }}
         >
           <a href="#" style={{ color: 'black', padding: '12px 16px', textDecoration: 'none', display: 'block', borderBottom: '1px solid #ccc' }} onClick={() => handleOptionClick('Student')}>Student</a>

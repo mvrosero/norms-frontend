@@ -368,12 +368,12 @@ return (
           <tr>
             <th style={{ width: '3%' }}><input type="checkbox" checked={selectAll} onChange={handleSelectAll}/></th>
             <th style={{ width: '5%' }}>ID</th>
-            <th style={{ textAlign: 'center', padding: '0', verticalAlign: 'middle', width: '22%' }}>
+            <th style={{ textAlign: 'center', padding: '0', verticalAlign: 'middle', width: '13%' }}>
               <button
                 style={{ border: 'none', background: 'none', cursor: 'pointer', display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center', width: '100%' }}
                 onClick={() => handleSort('employee_idnumber')}
               >
-                <span style={{ textAlign: 'center' }}>Employee ID Number</span>
+                <span style={{ textAlign: 'center' }}>ID Number</span>
                 {sortConfig.direction === 'asc' ? (
                   <ArrowDropUpIcon style={{ marginLeft: '5px' }} />
                 ) : (
