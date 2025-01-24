@@ -368,7 +368,7 @@ return (
           <tr>
             <th style={{ width: '3%' }}><input type="checkbox" checked={selectAll} onChange={handleSelectAll}/></th>
             <th style={{ width: '5%' }}>ID</th>
-            <th style={{ textAlign: 'center', padding: '0', verticalAlign: 'middle', height: '40px', width: '11%' }} onClick={() => handleSort('employee_idnumber')}>
+            <th style={{ textAlign: 'center', padding: '0', verticalAlign: 'middle', height: '30px', width: '11%' }} onClick={() => handleSort('employee_idnumber')}>
                 ID Number{' '}
                 {sortConfig.key === 'employee_idnumber' ? (
                   sortConfig.direction === 'asc' ? (
