@@ -347,6 +347,7 @@ return (
         <thead>
           <tr>
             <th style={{ width: '3%' }}><input type="checkbox" checked={selectAll} onChange={handleSelectAll}/></th>
+            <th style={{ width: '5%' }}>ID</th>
             <th style={{ width: '12%' }} onClick={() => handleSort('employee_idnumber')}>
               ID Number{' '}
               {sortConfig.key === 'employee_idnumber' ? (
@@ -382,6 +383,7 @@ return (
             <tr key={user.employee_idnumber}>
               <td><input type="checkbox" checked={selectedEmployeeIds.includes(user.employee_idnumber)} onChange={() => handleSelectUser(user.employee_idnumber)}/>
               </td>
+              <td style={{ textAlign: 'center' }}>{user.user_id}</td>
               <td>{user.employee_idnumber}</td>
               <td>
                   <Link 

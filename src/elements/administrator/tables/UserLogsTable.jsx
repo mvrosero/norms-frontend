@@ -134,7 +134,7 @@ const UserLogsTable = ({filters, searchQuery}) => {
 
     const renderPagination = () => {
         if (loading) return null;
-
+        
         const pageNumbers = Array.from({ length: totalPages }, (_, i) => i + 1);
         
             const buttonStyle = {
@@ -349,7 +349,7 @@ const UserLogsTable = ({filters, searchQuery}) => {
     <div>
       {renderTable()}
 
-      {renderPagination()}
+      {!loading && renderPagination()}
 
       {/* View User Log Modal */}
       <Modal show={showModal} onHide={handleCloseModal} size="lg" backdrop='static'>
