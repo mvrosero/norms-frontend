@@ -48,45 +48,48 @@ const EditStudentModal = ({ user, show, onHide, fetchUsers, headers, departments
     
 
     // Student form data
-// Fetch current program and active programs
-useEffect(() => {
-    const fetchPrograms = async () => {
-        try {
-            let currentProgram = null;
-            let activePrograms = [];
-            
-            // Fetch the current program regardless of status
-            if (formData.program_id) {
-                const currentProgramResponse = await axios.get(
-                    `https://test-backend-api-2.onrender.com/programs/${formData.program_id}`
-                );
-                currentProgram = currentProgramResponse.data;
+    useEffect(() => {
+        const fetchPrograms = async () => {
+            try {
+                let currentProgram = null;
+                let activePrograms = [];
+                
+                // Fetch all programs to find the current program
+                if (formData.program_id) {
+                    const allProgramsResponse = await axios.get(
+                        `https://test-backend-api-2.onrender.com/programs/`
+                    );
+                    const allPrograms = allProgramsResponse.data;
+                    currentProgram = allPrograms.find(
+                        (program) => program.program_id === formData.program_id
+                    );
+                    console.log('Current Program:', currentProgram); // Debug current program
+                }
+    
+                // Fetch active programs for the dropdown
+                if (formData.department_id) {
+                    const activeProgramsResponse = await axios.get(
+                        `https://test-backend-api-2.onrender.com/active-programs/${formData.department_id}`
+                    );
+                    activePrograms = activeProgramsResponse.data;
+                    console.log('Active Programs:', activePrograms); // Debug active programs
+                }
+    
+                // Merge the current program into active programs if it’s missing
+                if (currentProgram && !activePrograms.some(p => p.program_id === currentProgram.program_id)) {
+                    activePrograms.unshift(currentProgram);
+                    console.log('Merged Programs:', activePrograms); // Debug merged programs
+                }
+    
+                setFilteredPrograms(activePrograms);
+            } catch (error) {
+                console.error('Error fetching programs:', error);
+                setFilteredPrograms([]);
             }
-            
-            // Fetch active programs for the selected department
-            if (formData.department_id) {
-                const activeProgramsResponse = await axios.get(
-                    `https://test-backend-api-2.onrender.com/active-programs/${formData.department_id}`
-                );
-                activePrograms = activeProgramsResponse.data;
-            }
-
-            // Merge the current program into the active programs list if needed
-            if (currentProgram && !activePrograms.some(p => p.program_id === currentProgram.program_id)) {
-                activePrograms.unshift(currentProgram); // Add the current program at the top
-            }
-
-            setFilteredPrograms(activePrograms);
-        } catch (error) {
-            console.error('Error fetching programs:', error);
-            setFilteredPrograms([]); // Reset dropdown if fetch fails
-        }
-    };
-
-    fetchPrograms();
-}, [formData.department_id, formData.program_id]);
-
-
+        };
+    
+        fetchPrograms();
+    }, [formData.department_id, formData.program_id]);
 
     useEffect(() => {
         if (user) {
