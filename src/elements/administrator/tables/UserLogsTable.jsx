@@ -228,16 +228,15 @@ const UserLogsTable = ({filters, searchQuery}) => {
     };
 
 
-  if (loading) {
-    return <p>Loading...</p>;
-  }
-
-  if (error) {
-    return <p>Error: {error}</p>;
-  }
-
-
   const renderTable = () => {
+
+    if (loading) {
+        return (
+          <p style={{ textAlign: 'center', fontWeight: 'bold', fontSize: '16px' }}>
+            Loading...
+          </p>
+        );
+      }
 
     const filteredHistories = histories.filter((history) => {
         const normalizedQuery = searchQuery.toLowerCase();
