@@ -25,7 +25,7 @@ const EditStudentModal = ({ user, show, onHide, fetchUsers, headers, departments
     const [filteredPrograms, setFilteredPrograms] = useState([]);
     const [isReset, setIsReset] = useState(false); 
     const [isConfirmPasswordFocused, setIsConfirmPasswordFocused] = useState(false);
-    const [updatedBy, setUpdatedBy] = useState(''); // State to hold the full name or user info
+    const [updatedBy, setUpdatedBy] = useState(''); 
 
     
         useEffect(() => {
@@ -682,7 +682,6 @@ return (
                             </Form.Select>
                     </Form.Group>
                 </Col>
-
                 <div className="input-group" style={{ display: 'none' }}>
                     <label htmlFor="updatedBy" className="label">Updated By:</label>
                     <input
