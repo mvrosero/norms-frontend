@@ -57,8 +57,8 @@ export default function AdminNavigation() {
   };
   
 
-  return (
-    <>
+return (
+  <>
       <div className="w-full bg-white-A700">
         <div className="self-end">
           <div className="flex md:flex-col items-start">
