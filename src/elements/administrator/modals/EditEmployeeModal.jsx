@@ -300,14 +300,16 @@ const EditEmployeeModal = ({ user, show, onHide, fetchUsers, headers, roles }) =
 
 
     // Date and time format
-    const formatDateForInput = (date) => {
-        if (!date) return ''; 
-        const d = new Date(date);
-        const year = d.getFullYear();
-        const month = String(d.getMonth() + 1).padStart(2, '0');
-        const day = String(d.getDate()).padStart(2, '0');
+    const formatDateForInput = (dateString) => {
+        if (!dateString) return '';
+        const date = new Date(dateString);
+        // Format the date as YYYY-MM-DD
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0'); 
+        const day = String(date.getDate()).padStart(2, '0'); 
         return `${year}-${month}-${day}`;
     };
+    
     
 
       // Set styles for fields and buttons
@@ -405,16 +407,16 @@ return (
                             </Form.Group>
                         </Col>
                         <Col md={6}>
-                             <Form.Group controlId="birthdate">
-                                    <Form.Label className="fw-bold">Birthdate</Form.Label>
-                                        <Form.Control
-                                            type="date"
-                                            name="birthdate"
-                                            value={formData.birthdate ? formatDateForInput(formData.birthdate) : ''}
-                                            onChange={handleChange}
-                                            placeholder={formData.birthdate ? '' : 'YYYY/MM/DD'}
-                                            style={inputStyle}
-                                        />
+                            <Form.Group controlId="birthdate">
+                                <Form.Label className="fw-bold">Birthdate</Form.Label>
+                                <Form.Control
+                                    type="date"
+                                    name="birthdate"
+                                    value={formData.birthdate ? formatDateForInput(formData.birthdate) : ''}
+                                    onChange={handleChange}
+                                    placeholder={formData.birthdate ? '' : 'YYYY-MM-DD'}
+                                    style={inputStyle}
+                                />
                             </Form.Group>
                         </Col>
 
