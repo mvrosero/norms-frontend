@@ -108,7 +108,7 @@ export default function ({filters, searchQuery}) {
             console.error('Error deleting user:', error.response ? error.response.data : error.message);
             Swal.fire({
                 icon: 'error',
-                text: 'An error occurred while deleting user. Please try again later.',
+                text: 'This user cannot be deleted because there are associated records linked to it.',
             });
         }
     };
@@ -143,7 +143,7 @@ export default function ({filters, searchQuery}) {
           console.error('Error deleting employees:', error.response?.data || error.message);
           Swal.fire({
               icon: 'error',
-              text: 'Failed to delete selected employees. Please try again.'
+              text: 'Selected employees cannot be deleted because there are associated records linked to them.'
           });
       }
   };
