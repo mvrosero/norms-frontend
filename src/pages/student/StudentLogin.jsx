@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { FiUser, FiLock } from 'react-icons/fi';
@@ -14,6 +14,17 @@ const StudentLogin = () => {
     const [password, setPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
 
+
+    // Redirect to the student my records if the user is already logged in and accesses the login page
+    useEffect(() => {
+            // Check if the admin is already logged in
+            const token = localStorage.getItem('token');
+            if (token) {
+                navigate('/student-myrecords'); 
+            }
+        }, [navigate]);
+
+        
     const handleLogin = async (e) => {
         e.preventDefault();
         try {

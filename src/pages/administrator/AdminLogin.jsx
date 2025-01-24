@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -12,6 +12,16 @@ const AdminLogin = () => {
     const [employee_idnumber, setEmployeeNumber] = useState('');
     const [password, setPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false); 
+
+
+    // Redirect to the dashboard if the user is already logged in and accesses the login page
+    useEffect(() => {
+        const token = localStorage.getItem('token');
+        if (token) {
+            navigate('/admin-dashboard'); 
+        }
+    }, [navigate]);
+
 
     const handleLogin = async (e) => {
         e.preventDefault();
