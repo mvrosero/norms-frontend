@@ -684,18 +684,19 @@ return (
                     </Form.Group>
                 </Col>
 
-                <div className="input-group" style={{ display: 'none' }}>
-                    <label htmlFor="updatedBy" className="label">Updated By:</label>
-                    <input
-                        id="updatedBy"
-                        name="updatedBy"
-                        type="text"
-                        value={updatedBy} 
-                        readOnly
-                    />
-                </div>
+                {updatedBy && (
+                    <div className="input-group" style={{ display: 'none' }}>
+                        <label htmlFor="updatedBy" className="label">Updated By:</label>
+                        <input
+                            id="updatedBy"
+                            name="updatedBy"
+                            type="text"
+                            value={updatedBy}
+                            readOnly
+                        />
+                    </div>
+                )}
             </Row>
-            
             {/* Buttons */}
             <div className="d-flex justify-content-end mt-3">
                 <button type="button" onClick={handleCancel} style={cancelButtonStyle}>
