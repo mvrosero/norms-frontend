@@ -1,2 +1,2 @@
 student_idnumber,first_name,middle_name,last_name,suffix,birthdate,email,password,profile_photo_filename,year_level,batch,program_code,created_by
-e.g.: 00-00000,e.g.: Juan,e.g.: Santos,e.g.: Dela Cruz,"e.g.: II, Jr.",MM/DD/YYYY,default password + @gbox.ncf.edu.ph,first letter of first name + full surname,e.g. jdelacruz.png,"e.g.: First Year, Fourth Year",e.g.: 2025,"e.g.: BSIS, BSCS",your user_id
+e.g.: 00-00000,e.g.: Juan,e.g.: Santos,e.g.: Dela Cruz,"e.g.: II, Jr.",YYYY-MM-DD,default password + @gbox.ncf.edu.ph,first letter of first name + full surname,e.g. jdelacruz.png,"e.g.: First Year, Fourth Year",e.g.: 2025,"e.g.: BSIS, BSCS",your user_id
