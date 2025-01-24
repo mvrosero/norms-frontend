@@ -31,7 +31,7 @@ const EditStudentModal = ({ user, show, onHide, fetchUsers, headers, departments
         useEffect(() => {
         const token = localStorage.getItem('token');
         const roleId = localStorage.getItem('role_id');
-        const userId = localStorage.getItem('user_id'); // Extract user ID from localStorage
+        const userId = localStorage.getItem('user_id'); 
         
         if (token && roleId === '1') {
             setUpdatedBy(userId); // Directly set userId as the createdBy value
