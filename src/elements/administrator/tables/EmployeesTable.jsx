@@ -42,8 +42,11 @@ export default function ({filters, searchQuery}) {
         try {
             const response = await axios.get('https://test-backend-api-2.onrender.com/employees', { headers });
             setUsers(response.data);
-        } catch (error) {
+          } catch (error) {
+            setError(error.response ? error.response.data : error.message); 
             console.error('Error fetching users:', error.response ? error.response.data : error.message);
+        } finally {
+            setLoading(false); 
         }
     }, [headers, deletionStatus]);
 
@@ -53,8 +56,11 @@ export default function ({filters, searchQuery}) {
             const response = await axios.get('https://test-backend-api-2.onrender.com/roles', { headers });
             setRoles(response.data);
             console.log('Fetched roles:', response.data); 
-        } catch (error) {
+          } catch (error) {
+            setError(error.response ? error.response.data : error.message); 
             console.error('Error fetching roles:', error.response ? error.response.data : error.message);
+        } finally {
+            setLoading(false); 
         }
     }, [headers]);
     useEffect(() => {
