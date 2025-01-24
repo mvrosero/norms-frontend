@@ -51,7 +51,7 @@ const EditStudentModal = ({ user, show, onHide, fetchUsers, headers, departments
     useEffect(() => {
         if (formData.department_id) {
             axios
-                .get(`https://test-backend-api-2.onrender.com/${formData.department_id}`)
+                .get(`https://test-backend-api-2.onrender.com/active-programs/${formData.department_id}`)
                 .then((response) => {
                     setFilteredPrograms(response.data); 
                 })
