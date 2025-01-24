@@ -238,6 +238,7 @@ const UserLogsTable = ({filters, searchQuery}) => {
         );
       }
 
+      
     const filteredHistories = histories.filter((history) => {
         const normalizedQuery = searchQuery.toLowerCase();
     
