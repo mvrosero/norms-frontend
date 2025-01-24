@@ -335,6 +335,7 @@ return (
                     </table>
                     )}
                 </div>
+            </div>
    
 
             {/* Add Academic Year Modal */}
