@@ -1,6 +1,8 @@
 import React from 'react';
 import { Modal, Button, Card } from 'react-bootstrap';
 import { MdFilePresent } from "react-icons/md";
+import 'react-quill/dist/quill.snow.css';
+
 
 const ViewAnnouncementModal = ({ show, onHide, selectedAnnouncement }) => {
     const renderFile = () => {
