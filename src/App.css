@@ -46,19 +46,16 @@
 
 
 @import 'react-quill/dist/quill.snow.css';
-.quill-content-text ul {
-    list-style-type: disc; 
-    margin-left: 20px;
-  }
-  
-  .quill-content-text ol {
-    list-style-type: decimal; 
-    margin-left: 20px;
-  }
-  
-  .quill-content-text li {
-    margin-bottom: 5px; 
-  }
+.quill-content ul,
+.quill-content ol {
+    padding-left: 20px;
+    list-style-position: inside;
+}
+
+.quill-content li {
+    margin-bottom: 5px;
+}
+
   
 
 

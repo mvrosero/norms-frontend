@@ -710,6 +710,7 @@ return (
                             onChange={(content) => handleChange({ target: { name: 'content', value: content.trim() } })}
                             onFocus={() => setFocusedElement('content')}
                             onBlur={() => setFocusedElement(null)}
+                            formats={[ 'header', 'bold', 'italic', 'underline', 'list', 'bullet', 'ordered' ]}
                             modules={{
                                 toolbar: [
                                     [{ header: [1, 2, false] }],
@@ -717,7 +718,6 @@ return (
                                     [{ list: 'ordered' }, { list: 'bullet' }]
                                 ],
                             }}
-                            formats={[ 'header', 'bold', 'italic', 'underline', 'list', 'bullet' ]}
                             style={{
                                 backgroundColor: '#f2f2f2',
                                 border: `1px solid ${
