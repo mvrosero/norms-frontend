@@ -1,0 +1,12 @@
+/*login selection*/
+@media (max-width: 768px) {
+    h5 {
+      font-size: 6vw; /* Larger font size on smaller screens */
+    }
+  
+    .card {
+      width: 100%;
+      margin-bottom: 10px;
+    }
+  }
+  
