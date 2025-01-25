@@ -69,13 +69,14 @@ const LoginSelectionPage = () => {
             maxWidth: '280px', // Max width to avoid too large on big screens
             height: '40vh', // Adjust height for smaller screens
             marginBottom: '5vw',
+            transition: 'transform 0.3s ease', // Added smooth hover effect
           }}
         >
           <img
             src={studentImage}
             alt="Student"
             style={{
-              width: '30vw', // Use viewport width for responsive image size
+              width: '25vw', // Make the image responsive
               maxWidth: '120px', // Max width for larger screens
               marginBottom: '5vw',
             }}
@@ -100,13 +101,14 @@ const LoginSelectionPage = () => {
             maxWidth: '280px', // Max width to avoid too large on big screens
             height: '40vh', // Adjust height for smaller screens
             marginBottom: '5vw',
+            transition: 'transform 0.3s ease', // Added smooth hover effect
           }}
         >
           <img
             src={employeeImage}
             alt="Employee"
             style={{
-              width: '30vw', // Use viewport width for responsive image size
+              width: '25vw', // Make the image responsive
               maxWidth: '120px', // Max width for larger screens
               marginBottom: '5vw',
             }}
