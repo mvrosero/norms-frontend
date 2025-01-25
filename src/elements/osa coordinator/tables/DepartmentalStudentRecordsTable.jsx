@@ -20,6 +20,8 @@ export default function DepartmentalStudentRecordsTable() {
     const [selectedUser, setSelectedUser] = useState(null);
     const [deletionStatus, setDeletionStatus] = useState(false);
     const [showViolationModal, setShowViolationModal] = useState(false); 
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(null);
     const [users, setUsers] = useState([]); 
     const [searchQuery, setSearchQuery] = useState('');
     const [allUsers, setAllUsers] = useState([]);  
@@ -114,6 +116,9 @@ export default function DepartmentalStudentRecordsTable() {
 
     // Fetch departments 
     const fetchDepartments = useCallback(async () => {
+        setLoading(true); 
+        setError(null);
+
         try {
             const token = localStorage.getItem('token');
             const headers = { Authorization: `Bearer ${token}` };
@@ -126,6 +131,9 @@ export default function DepartmentalStudentRecordsTable() {
             setDepartmentName(department ? department.department_name : 'Unknown Department');
         } catch (error) {
             console.error('Error fetching departments:', error);
+            setError('Failed to fetch departments.'); 
+        } finally {
+            setLoading(false); 
         }
     }, [department_code]);
     useEffect(() => {
@@ -224,6 +232,8 @@ export default function DepartmentalStudentRecordsTable() {
 
 
     const renderPagination = () => {
+        if (loading) return null;
+
         const pageNumbers = Array.from({ length: totalPages }, (_, i) => i + 1);
 
         const buttonStyle = {
@@ -342,6 +352,17 @@ const renderTable = () => {
         const currentUsers = filteredUsers.slice(indexOfFirstUser, indexOfLastUser);
 
 
+        // Show loading spinner when data is being fetched
+        if (loading) {
+            return (
+            <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100%" }}>
+                <div style={{ width: "50px", height: "50px", border: "6px solid #f3f3f3", borderTop: "6px solid #a9a9a9", borderRadius: "50%", animation: "spin 1s linear infinite" }}></div>
+                <style> {`@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }`} </style>
+            </div>
+            );
+        }
+
+
     return (
         <Table bordered hover responsive style={{ borderRadius: '20px', marginBottom: '20px', marginLeft: '110px' }}>
         <thead>
@@ -455,7 +476,7 @@ return (
 
             {renderTable()}
 
-            {renderPagination()}
+            {!loading && renderPagination()}
 
             {/*Create Violation Modal*/}
             <DepartmentalCreateViolationModal
