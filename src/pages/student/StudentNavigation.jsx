@@ -22,7 +22,7 @@ export default function StudentNavigation() {
   const iconSize = "24px";
 
   // State to store the active menu item
-  const [activeMenuItem, setActiveMenuItem] = React.useState("My Records");
+  const [activeMenuItem, setActiveMenuItem] = React.useState("");
 
 
   const handleMenuItemClick = (menuItem) => {

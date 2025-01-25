@@ -19,7 +19,7 @@ export default function AdminNavigation() {
   const iconSize = "24px";
 
   // State to store the active menu item
-  const [activeMenuItem, setActiveMenuItem] = React.useState("Dashboard");
+  const [activeMenuItem, setActiveMenuItem] = React.useState("");
 
   const handleMenuItemClick = (menuItem) => {
     setActiveMenuItem(menuItem);
