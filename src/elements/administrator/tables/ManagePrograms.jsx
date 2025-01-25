@@ -401,7 +401,6 @@ return (
                     </div>
                 ) : (
                     <>
-                    {/* Table */}
                     <table className="table table-hover table-bordered" style={{ marginBottom: '20px', textAlign: 'center', backgroundColor: 'white' }}>
                         <thead style={{ backgroundColor: '#FAD32E', textAlign: 'center' }}>
                         <tr>
