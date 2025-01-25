@@ -23,7 +23,7 @@ const StudentRecordsTable = ({filters, searchQuery}) => {
 
      // Pagination state
      const [currentPage, setCurrentPage] = useState(1);
-     const [rowsPerPage, setRowsPerPage] = useState(10);
+     const [rowsPerPage, setRowsPerPage] = useState(50);
 
     // Sorting state for full name
     const [sortOrder, setSortOrder] = useState('asc'); // 'asc' for ascending, 'desc' for descending
@@ -290,7 +290,7 @@ const renderTable = () => {
         const currentUsers = filteredUsers.slice(indexOfFirstUser, indexOfLastUser);
 
     return ( 
-        <Table bordered hover style={{ borderRadius: '20px', marginLeft: '110px', marginTop: '10px' }}>
+        <Table bordered hover responsive style={{ borderRadius: '20px', marginLeft: '110px', marginTop: '10px' }}>
         <thead style={{ backgroundColor: '#f8f9fa' }}> 
             <tr>
                 <th style={{ width: '4%'}}>No.</th>
