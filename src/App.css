@@ -45,6 +45,9 @@
 }
 
 
+@import 'react-quill/dist/quill.snow.css';
+
+
 .wrapper{
     max-width: 500px;
     border-radius: 10px;
