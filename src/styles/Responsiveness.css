@@ -1,12 +1,28 @@
-/*login selection*/
+/* login selection */
 @media (max-width: 768px) {
     h5 {
       font-size: 6vw; /* Larger font size on smaller screens */
     }
   
+    .login-container {
+      flex-direction: column; /* Stack cards vertically */
+      align-items: center; /* Center cards horizontally */
+    }
+  
     .card {
-      width: 100%;
-      margin-bottom: 10px;
+      width: 80%; /* Make cards responsive to screen width */
+      max-width: 280px; /* Limit maximum card width */
+      margin-bottom: 20px; /* Adjust bottom margin */
+    }
+  
+    .card img {
+      width: 50vw; /* Make images responsive */
+      max-width: 120px; /* Max image size */
+      margin-bottom: 5vw; /* Adjust spacing */
+    }
+  
+    .card span {
+      font-size: 5vw; /* Adjust text size for smaller screens */
     }
   }
   
