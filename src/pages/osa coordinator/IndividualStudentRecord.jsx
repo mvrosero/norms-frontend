@@ -149,13 +149,13 @@ return (
             {/* Breadcrumbs */}
             <nav style={{ width: '100%', marginLeft: '120px' }}>
                 <ol style={{ backgroundColor: 'transparent', padding: '0', margin: '0', listStyle: 'none', alignItems: 'center', display: 'flex', justifyContent: 'flex-start' }}>
-                <li style={{ marginRight: '5px' }}>
-                    <Link to="/coordinator-student records" style={{ textDecoration: 'none', color: '#0D4809' }}>
-                        Student Records
-                    </Link>
-                </li>
-                <li style={{ margin: '0 5px', color: '#6c757d' }}>{'>'}</li>
-                <li style={{ marginLeft: '5px', color: '#000' }}>Individual Violation Record</li>
+                    <li style={{ marginRight: '5px' }}>
+                        <Link to="/coordinator-studentrecords" style={{ textDecoration: 'none', color: '#0D4809' }}>
+                            Student Records
+                        </Link>
+                    </li>
+                    <li style={{ margin: '0 5px', color: '#6c757d' }}>{'>'}</li>
+                    <li style={{ marginLeft: '5px', color: '#000' }}>Individual Violation Record</li>
                 </ol>
             </nav>
 

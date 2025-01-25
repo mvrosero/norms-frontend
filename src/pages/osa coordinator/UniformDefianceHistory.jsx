@@ -109,12 +109,28 @@ return (
             <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'center', marginTop: '10px', marginLeft: '100px', padding: '0 20px' }}>
                 <div style={{ flex: '1 1 80%', minWidth: '300px' }}>  
                     <SFforDefianceHistory onSearch={handleSearch} onFilterChange={handleFilterChange}/> </div>
-                    <ExportDefianceHistoryCSV filteredDefiances={filteredDefiances}/> </div>
-                    <UniformDefianceHistoryTable   
-                        filteredDefiances={filteredDefiances}  
-                        filters={filters}  
-                        searchQuery={searchQuery}               
-                    />
-            </div>
+                    <ExportDefianceHistoryCSV filteredDefiances={filteredDefiances}/> 
+                </div>
+            
+                {/* Breadcrumbs */}
+                <nav style={{ width: '100%', marginLeft: '120px' }}>
+                    <ol style={{ backgroundColor: 'transparent', padding: '0', margin: '0', listStyle: 'none', alignItems: 'center', display: 'flex', justifyContent: 'flex-start' }}>
+                        <li style={{ marginRight: '5px' }}>
+                            <Link to="/coordinator-uniformdefiance" style={{ textDecoration: 'none', color: '#0D4809' }}>
+                                Uniform Defiance
+                            </Link>
+                        </li>
+                        <li style={{ margin: '0 5px', color: '#6c757d' }}>{'>'}</li>
+                        <li style={{ marginLeft: '5px', color: '#000' }}>History</li>
+                    </ol>
+                </nav>
+            
+            {/* Table Section */}
+            <UniformDefianceHistoryTable   
+                filteredDefiances={filteredDefiances}  
+                filters={filters}  
+                searchQuery={searchQuery}               
+            />
+        </div>
     );
 }

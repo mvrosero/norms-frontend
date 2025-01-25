@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import axios from 'axios';
 import { Button } from 'react-bootstrap';
 import { useNavigate, useLocation, useParams } from 'react-router-dom';  
+import { Link } from 'react-router-dom';
 import { FaPlus } from 'react-icons/fa';
 import defaultProfile from '../../components/images/default_profile.jpg';
 
@@ -237,6 +238,19 @@ return (
                 </Button>
                 <ExportIndividualDefianceCSV student_idnumber={student_idnumber} />
             </div>
+
+            {/* Breadcrumbs */}
+            <nav style={{ width: '100%', marginLeft: '120px' }}>
+                <ol style={{ backgroundColor: 'transparent', padding: '0', margin: '0', listStyle: 'none', alignItems: 'center', display: 'flex', justifyContent: 'flex-start' }}>
+                    <li style={{ marginRight: '5px' }}>
+                        <Link to="/uniformdefiance-history" style={{ textDecoration: 'none', color: '#0D4809' }}>
+                            History
+                        </Link>
+                    </li>
+                    <li style={{ margin: '0 5px', color: '#6c757d' }}>{'>'}</li>
+                    <li style={{ marginLeft: '5px', color: '#000' }}>Individual Uniform Defiance</li>
+                </ol>
+            </nav>
 
             {/* Table Section */}
             <IndividualUniformDefianceTable 
