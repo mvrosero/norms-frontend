@@ -43,11 +43,11 @@ export default function AddViolationModal({ show, onHide, handleCloseModal }) {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const categoriesResponse = await axios.get('http://localhost:9000/categories');
-                const offensesResponse = await axios.get('http://localhost:9000/offenses');
-                const sanctionsResponse = await axios.get('http://localhost:9000/sanctions');
-                const academic_yearsResponse = await axios.get('http://localhost:9000/academic_years');
-                const semestersResponse = await axios.get('http://localhost:9000/semesters');
+                const categoriesResponse = await axios.get('https://test-backend-api-2.onrender.com/categories');
+                const offensesResponse = await axios.get('https://test-backend-api-2.onrender.com/offenses');
+                const sanctionsResponse = await axios.get('https://test-backend-api-2.onrender.com/sanctions');
+                const academic_yearsResponse = await axios.get('https://test-backend-api-2.onrender.com/academic_years');
+                const semestersResponse = await axios.get('https://test-backend-api-2.onrender.com/semesters');
 
                 setCategories(categoriesResponse.data);
                 setOffenses(offensesResponse.data);
@@ -114,7 +114,7 @@ export default function AddViolationModal({ show, onHide, handleCloseModal }) {
         if (result.isConfirmed) {
             try {
                 const response = await axios.post(
-                    `http://localhost:9000/create-violationrecord/${formData.student_idnumber}`,
+                    `https://test-backend-api-2.onrender.com/create-violationrecord/${formData.student_idnumber}`,
                     formData
                 );
                 console.log(response.data);
@@ -229,7 +229,7 @@ return (
             <Button variant="link" onClick={handleCancel} style={{ position: 'absolute', top: '5px', right: '20px', textDecoration: 'none', fontSize: '30px', color: '#a9a9a9' }} >
                 ×
             </Button>
-            <Modal.Title style={{ fontSize: '40px', marginBottom: '10px', marginLeft: '100px', marginRight: '100px' }}> ADD VIOLATION RECORD </Modal.Title>
+            <Modal.Title style={{ fontSize: '40px', marginBottom: '10px', textAlign: 'center', width: '100%' }}> ADD VIOLATION RECORD </Modal.Title>
         </Modal.Header>
         <Modal.Body style={{ paddingLeft: '30px', paddingRight: '30px' }}>
             <form onSubmit={handleSubmit}>

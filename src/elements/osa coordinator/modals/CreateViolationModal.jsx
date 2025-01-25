@@ -63,12 +63,12 @@ export default function CreateViolationModal({ show, onHide, handleCloseModal })
                     academicYearsResponse,
                     semestersResponse,
                 ] = await Promise.all([
-                    axios.get('http://localhost:9000/students'),
-                    axios.get('http://localhost:9000/categories'),
-                    axios.get('http://localhost:9000/offenses'),
-                    axios.get('http://localhost:9000/sanctions'),
-                    axios.get('http://localhost:9000/academic_years'),
-                    axios.get('http://localhost:9000/semesters'),
+                    axios.get('https://test-backend-api-2.onrender.com/students'),
+                    axios.get('https://test-backend-api-2.onrender.com/categories'),
+                    axios.get('https://test-backend-api-2.onrender.com/offenses'),
+                    axios.get('https://test-backend-api-2.onrender.com/sanctions'),
+                    axios.get('https://test-backend-api-2.onrender.com/academic_years'),
+                    axios.get('https://test-backend-api-2.onrender.com/semesters'),
                 ]);
 
                 setStudents(studentsResponse.data.filter((student) => student.status === 'active'));
@@ -119,7 +119,7 @@ export default function CreateViolationModal({ show, onHide, handleCloseModal })
         });
         if (result.isConfirmed) {
             try {
-                const response = await axios.post('http://localhost:9000/create-violationrecord', formData);
+                const response = await axios.post('https://test-backend-api-2.onrender.com/create-violationrecord', formData);
     
                 if (response.status === 200 || response.status === 201) {
                     Swal.fire({
@@ -234,7 +234,7 @@ return (
                 <Button variant="link" onClick={handleCancel} style={{ position: 'absolute', top: '5px', right: '20px', textDecoration: 'none', fontSize: '30px', color: '#a9a9a9' }} >
                     ×
                 </Button>
-                <Modal.Title style={{ fontSize: '40px', marginBottom: '10px', marginLeft: '60px', marginRight: '60px' }}> CREATE VIOLATION RECORD </Modal.Title>
+                <Modal.Title style={{ fontSize: '40px', marginBottom: '10px', textAlign: 'center', width: '100%' }}> CREATE VIOLATION RECORD </Modal.Title>
             </Modal.Header>
             <Modal.Body style={{ paddingLeft: '30px', paddingRight: '30px' }}>
             <form onSubmit={handleSubmit}> 

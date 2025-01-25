@@ -35,7 +35,7 @@ const EditCategoryModal = ({ show, handleClose, handleSubmit, categoryFormData, 
                 <Button variant="link" onClick={handleClose} style={{ position: 'absolute', top: '5px', right: '20px', textDecoration: 'none', fontSize: '30px', color: '#a9a9a9' }}>
                     ×
                 </Button>
-                <Modal.Title style={{ fontSize: '30px', marginLeft: '80px', marginRight: '80px' }}> EDIT CATEGORY </Modal.Title>
+                <Modal.Title style={{ fontSize: '30px', textAlign: 'center', width: '100%' }}> EDIT CATEGORY </Modal.Title>
             </Modal.Header>
             <Modal.Body>
                 <Form onSubmit={handleSubmit}>

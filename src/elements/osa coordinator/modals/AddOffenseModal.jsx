@@ -36,7 +36,7 @@ const AddOffenseModal = ({ show, handleClose, offenseFormData, handleOffenseChan
                 <Button variant="link" onClick={handleClose} style={{ position: 'absolute', top: '5px', right: '20px', textDecoration: 'none', fontSize: '30px', color: '#a9a9a9' }}>
                     ×
                 </Button>
-                <Modal.Title style={{ fontSize: '30px', marginLeft: '100px', marginRight: '100px' }}> ADD OFFENSE </Modal.Title>
+                <Modal.Title style={{ fontSize: '30px', textAlign: 'center', width: '100%' }}> ADD OFFENSE </Modal.Title>
             </Modal.Header>
             <Modal.Body>
                 <Form onSubmit={handleOffenseSubmit}>

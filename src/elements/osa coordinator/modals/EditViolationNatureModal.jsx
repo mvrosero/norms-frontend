@@ -36,7 +36,7 @@ const EditViolationNatureModal = ({ show, handleClose, handleNatureSubmit, natur
                 <Button variant="link" onClick={handleClose} style={{ position: 'absolute', top: '5px', right: '20px', textDecoration: 'none', fontSize: '30px', color: '#a9a9a9' }}>
                     ×
                 </Button>
-                <Modal.Title style={{ fontSize: '30px', marginLeft: '15px', marginRight: '15px' }}> EDIT VIOLATION NATURE </Modal.Title>
+                <Modal.Title style={{ fontSize: '30px', textAlign: 'center', width: '100%' }}> EDIT VIOLATION NATURE </Modal.Title>
             </Modal.Header>
             <Modal.Body>
                 <Form onSubmit={handleNatureSubmit}>

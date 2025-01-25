@@ -43,11 +43,11 @@ const AddUniformDefianceModal = ({ show, onHide, handleCloseModal }) => {
         const fetchData = async () => {
             try {
                 const [categoriesResponse, offensesResponse, sanctionsResponse, academic_yearsResponse, semestersResponse] = await Promise.all([
-                    axios.get('http://localhost:9000/categories'),
-                    axios.get('http://localhost:9000/offenses'),
-                    axios.get('http://localhost:9000/sanctions'),
-                    axios.get('http://localhost:9000/academic_years'),
-                    axios.get('http://localhost:9000/semesters'),
+                    axios.get('https://test-backend-api-2.onrender.com/categories'),
+                    axios.get('https://test-backend-api-2.onrender.com/offenses'),
+                    axios.get('https://test-backend-api-2.onrender.com/sanctions'),
+                    axios.get('https://test-backend-api-2.onrender.com/academic_years'),
+                    axios.get('https://test-backend-api-2.onrender.com/semesters'),
                 ]);
 
                 setCategories(categoriesResponse.data || []);
@@ -112,7 +112,7 @@ const AddUniformDefianceModal = ({ show, onHide, handleCloseModal }) => {
         }).then(async (result) => {
             if (result.isConfirmed) {
                 try {
-                    const response = await axios.post(`http://localhost:9000/create-violationrecord/${student_idnumber}`, { ...formData, sanctions });
+                    const response = await axios.post(`https://test-backend-api-2.onrender.com/create-violationrecord/${student_idnumber}`, { ...formData, sanctions });
                     console.log(response.data);
     
                     Swal.fire({
@@ -226,7 +226,7 @@ return (
                 <Button variant="link" onClick={handleCancel} style={{ position: 'absolute', top: '5px', right: '20px', textDecoration: 'none', fontSize: '30px', color: '#a9a9a9' }} >
                     ×
                 </Button>
-                <Modal.Title style={{ fontSize: '40px', marginBottom: '10px', marginLeft: '100px', marginRight: '100px' }}> ADD VIOLATION RECORD </Modal.Title>
+                <Modal.Title style={{ fontSize: '40px', marginBottom: '10px', textAlign: 'center', width: '100%' }}> ADD VIOLATION RECORD </Modal.Title>
             </Modal.Header>
             <Modal.Body style={{ paddingLeft: '30px', paddingRight: '30px' }}>
                 <form onSubmit={handleSubmit}>
