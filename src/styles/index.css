@@ -99,3 +99,17 @@ table {
 .ps-sidebar-container::-webkit-scrollbar {
   width: 2px;
 }
+
+.quill-content ul {
+  list-style-type: disc;
+  padding-left: 20px;
+}
+
+.quill-content ol {
+  list-style-type: decimal;
+  padding-left: 20px;
+}
+
+.quill-content li {
+  margin-bottom: 5px;
+}
