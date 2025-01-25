@@ -92,17 +92,6 @@ const StudentRecordsTable = ({filters, searchQuery}) => {
     }, [fetchUsers, fetchDepartments, fetchPrograms]);
 
 
-    const getDepartmentName = (departmentId) => {
-        const department = departments.find((d) => d.department_id === departmentId);
-        return department ? department.department_name : '';
-    };
-
-    const getProgramName = (programId) => {
-        const program = programs.find((p) => p.program_id === programId);
-        return program ? program.program_name : '';
-    };
-
-
     // Handle redirect to selected student
     const handleRedirect = async (student_idnumber) => {
         try {
@@ -366,8 +355,8 @@ return (
                     </a>
                 </td>
                 <td>{user.year_level}</td>
-                <td>{getDepartmentName(user.department_id)}</td>
-                <td>{getProgramName(user.program_id)}</td>
+                <td>{user.department_name}</td>
+                <td>{user.program_name}</td>
                 <td style={{ textAlign: 'center' }}>
                     <div style={{ backgroundColor: user.status === 'active' ? '#DBF0DC' : '#F0DBDB', color: user.status === 'active' ? '#30A530' : '#D9534F', fontWeight: '600', fontSize: '14px', borderRadius: '30px', padding: '5px 20px', display: 'inline-flex', alignItems: 'center' }}>
                     <div style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: user.status === 'active' ? '#30A530' : '#D9534F', marginRight: '7px' }} />
