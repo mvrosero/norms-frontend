@@ -64,6 +64,8 @@ export default function StudentNavigation() {
       setActiveMenuItem("About and Contact");
     } else if (currentPath === "/student-settings") {
       setActiveMenuItem("Settings");
+    } else if (currentPath === "account-settings/:user_id") {
+      setActiveMenuItem("Settings");
     }
   }, [location.pathname]);
   
