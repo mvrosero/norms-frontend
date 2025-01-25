@@ -545,23 +545,21 @@ return (
                                 <div style={{ flex: 1 }}>
                                     <Card.Title style={{ marginTop: '20px', marginBottom: '20px', fontSize: '28px' }}>{a.title}</Card.Title>
                                     <Card.Text style={{ marginRight: '30px', fontSize: '16px' }}>
-                                    <div className="quill-content" 
+                                        <div className="quill-content"
                                             dangerouslySetInnerHTML={{
-                                                __html: a.content.length > 250 
-                                                    ? `${truncateText(a.content, 250)}...` 
-                                                    : a.content,
+                                            __html: a.content.length > 750 
+                                                ? `${truncateText(a.content, 750)}...` 
+                                                : a.content,
                                             }}>
-                                            </div>
-                                            {a.content.length > 250 && (
-                                            <div style={{ display: 'flex', alignItems: 'center' }}>
-                                                <span 
-                                                    onClick={() => handleViewAnnouncement(a)}
-                                                    style={{ color: '#007bff', cursor: 'pointer', textDecoration: 'underline' }}
-                                                >
-                                                    See more...
-                                                </span>
-                                            </div>
-                                            )}
+                                        </div>
+                                        {a.content.length > 750 && (
+                                            <span
+                                                onClick={() => handleViewAnnouncement(a)}
+                                                style={{ color: '#007bff', cursor: 'pointer', textDecoration: 'underline' }}
+                                            >
+                                                See more...
+                                            </span>
+                                        )}
                                     </Card.Text>
                                     <Card.Text className="text-muted" style={{ marginTop: '20px', marginBottom: '20px', fontSize: '15px' }}>
                                         {renderStatus(a.status)} {renderDateTime(a.created_at, a.updated_at)}
