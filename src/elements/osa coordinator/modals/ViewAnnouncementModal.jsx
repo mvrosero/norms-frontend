@@ -18,6 +18,7 @@ const ViewAnnouncementModal = ({ show, onHide, selectedAnnouncement }) => {
         setClickedImage('');
     };
 
+
     const renderFile = () => {
         if (selectedAnnouncement) {
             const filenames = selectedAnnouncement.filenames.split(',');
@@ -32,19 +33,9 @@ const ViewAnnouncementModal = ({ show, onHide, selectedAnnouncement }) => {
                         if (isImage) {
                             return (
                                 <div key={index} style={{ marginBottom: '10px' }}>
-                                    <img
-                                        src={fileUrl}
-                                        alt="File Preview"
-                                        style={{
-                                            maxWidth: '100%',
-                                            maxHeight: '450px',
-                                            objectFit: 'cover',
-                                            borderRadius: '5px',
-                                            border: '1px solid #ddd',
-                                            cursor: 'pointer',
-                                        }}
-                                        onClick={() => handleImageClick(fileUrl)} // Click handler for enlarging the image
-                                    />
+                                    <img src={fileUrl} alt="File Preview"
+                                        style={{ maxWidth: '100%', maxHeight: '450px', objectFit: 'cover', borderRadius: '5px', border: '1px solid #ddd', cursor: 'pointer' }}
+                                        onClick={() => handleImageClick(fileUrl)} />
                                 </div>
                             );
                         } else {
@@ -172,33 +163,19 @@ const ViewAnnouncementModal = ({ show, onHide, selectedAnnouncement }) => {
             </Modal>
 
             {/* Full Image Modal for Enlarged View */}
-            <Modal
-                show={isImageClicked}
-                onHide={closeFullImageView}
-                size="lg"
-                backdrop="static"
-                centered
-            >
+            <Modal show={isImageClicked} onHide={closeFullImageView} size="lg" backdrop="static" centered>
                 <Modal.Header>
-                    <Button
-                        variant="link"
-                        onClick={closeFullImageView}
-                        style={{ position: 'absolute', top: '5px', right: '20px', textDecoration: 'none', fontSize: '30px', color: '#a9a9a9' }}
-                    >
+                    <Button variant="link" onClick={closeFullImageView} style={{ position: 'absolute', top: '5px', right: '20px', textDecoration: 'none', fontSize: '30px', color: '#a9a9a9' }}>
                         ×
                     </Button>
-                    <Modal.Title style={{ textAlign: 'center', width: '100%' }}>Image View</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                    <img
-                        src={clickedImage}
-                        alt="Enlarged Preview"
-                        style={{ width: '100%', height: 'auto', objectFit: 'contain', borderRadius: '5px' }}
-                    />
+                    <img src={clickedImage} alt="Enlarged Preview" style={{ width: '100%', height: 'auto', objectFit: 'contain', borderRadius: '5px' }}/>
                 </Modal.Body>
             </Modal>
         </>
     );
 };
+
 
 export default ViewAnnouncementModal;
