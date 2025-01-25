@@ -6,6 +6,8 @@ import '../../../styles/index.css';
 
 
 const ViewAnnouncementModal = ({ show, onHide, selectedAnnouncement }) => {
+    const [zoomEnabled, setZoomEnabled] = useState(true);
+
     const renderFile = () => {
         if (selectedAnnouncement) {
             const filenames = selectedAnnouncement.filenames.split(',');
@@ -20,9 +22,9 @@ const ViewAnnouncementModal = ({ show, onHide, selectedAnnouncement }) => {
                         if (isImage) {
                             return (
                                 <div key={index} style={{ marginBottom: '10px' }}>
-                                    <a href={fileUrl} target="_blank" rel="noopener noreferrer">
+                                    <Zoom>
                                         <img src={fileUrl} alt="File Preview" style={{ maxWidth: '100%', maxHeight: '450px', objectFit: 'cover', borderRadius: '5px', border: '1px solid #ddd' }} />
-                                    </a>
+                                     </Zoom>
                                 </div>
                             );
                         } else {
