@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
+import { Link } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 
 import CoordinatorNavigation from './CoordinatorNavigation';
@@ -112,18 +113,18 @@ return (
                     <ExportDefianceHistoryCSV filteredDefiances={filteredDefiances}/> 
                 </div>
             
-                {/* Breadcrumbs */}
-                <nav style={{ width: '100%', marginLeft: '120px' }}>
-                    <ol style={{ backgroundColor: 'transparent', padding: '0', margin: '0', listStyle: 'none', alignItems: 'center', display: 'flex', justifyContent: 'flex-start' }}>
-                        <li style={{ marginRight: '5px' }}>
-                            <Link to="/coordinator-uniformdefiance" style={{ textDecoration: 'none', color: '#0D4809' }}>
-                                Uniform Defiance
-                            </Link>
-                        </li>
-                        <li style={{ margin: '0 5px', color: '#6c757d' }}>{'>'}</li>
-                        <li style={{ marginLeft: '5px', color: '#000' }}>History</li>
-                    </ol>
-                </nav>
+            {/* Breadcrumbs */}
+            <nav style={{ width: '100%', marginLeft: '120px' }}>
+                <ol style={{ backgroundColor: 'transparent', padding: '0', margin: '0', listStyle: 'none', alignItems: 'center', display: 'flex', justifyContent: 'flex-start' }}>
+                    <li style={{ marginRight: '5px' }}>
+                        <Link to="/coordinator-uniformdefiance" style={{ textDecoration: 'none', color: '#0D4809' }}>
+                            Uniform Defiance
+                        </Link>
+                    </li>
+                    <li style={{ margin: '0 5px', color: '#6c757d' }}>{'>'}</li>
+                    <li style={{ marginLeft: '5px', color: '#000' }}>History</li>
+                </ol>
+            </nav>
             
             {/* Table Section */}
             <UniformDefianceHistoryTable   
