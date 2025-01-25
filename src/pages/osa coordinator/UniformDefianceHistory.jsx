@@ -126,7 +126,6 @@ return (
                 </ol>
             </nav>
             
-            
             {/* Table Section */}
             <UniformDefianceHistoryTable   
                 filteredDefiances={filteredDefiances}  
