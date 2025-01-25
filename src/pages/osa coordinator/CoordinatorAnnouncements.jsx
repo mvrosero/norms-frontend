@@ -4,6 +4,8 @@ import axios from 'axios';
 import Swal from 'sweetalert2';
 import { Modal, Form, Button, Card, Row, Col } from 'react-bootstrap';
 import Dropdown from 'react-bootstrap/Dropdown';
+import ReactQuill from 'react-quill';
+import 'react-quill/dist/quill.snow.css'; 
 
 import { MdClose, MdFilePresent } from 'react-icons/md';
 import { BsThreeDotsVertical } from "react-icons/bs";
@@ -119,11 +121,11 @@ export default function CoordinatorAnnouncements() {
 
     const handleChange = (e) => {
         const { name, value } = e.target;
-        setAnnouncementFormData(prevState => ({
-            ...prevState,
-            [name]: value
+        setAnnouncementFormData((prev) => ({
+            ...prev,
+            [name]: value,
         }));
-    };
+    };    
 
     const handleFileChange = (e) => {
         setFiles(prevFiles => [...prevFiles, ...Array.from(e.target.files)]);
@@ -687,32 +689,57 @@ return (
                     </Row>
 
                     <Row className="gy-4">
-                        <Form.Group className="content mb-3" style={{ marginBottom: '20px' }}>
-                            <Form.Label className="fw-bold">Content</Form.Label>
-                            <div style={{ position: 'relative' }}>
-                                <Form.Control
-                                    as="textarea"
-                                    name="content"
-                                    value={announcementFormData.content}
-                                    onChange={handleChange}
-                                    rows={3}
-                                    maxLength={maxLength}
-                                    onFocus={() => setFocusedElement('content')}
-                                    onBlur={() => setFocusedElement(null)}
-                                    style={{
-                                        width: '100%',
-                                        padding: '10px',
-                                        backgroundColor: '#f2f2f2',
-                                        border: `1px solid ${focusedElement === 'content' ? (editing ? '#3B71CA' : '#FAD32E') : '#ced4da'}`,
-                                        borderRadius: '4px',
-                                        boxShadow: focusedElement === 'content' ? (editing ? '0 0 0 2px rgba(59, 113, 202, 1)' : '0 0 0 2px rgba(250, 211, 46, 1)') : 'none',
-                                    }}
-                                />
-                                <div style={{ position: 'absolute', bottom: '10px', right: '10px', fontSize: '12px', color: '#666' }}>
-                                    {currentLength}/{maxLength}
-                                </div>
-                            </div>
-                        </Form.Group>
+                    <Form.Group className="content mb-3" style={{ marginBottom: '20px' }}>
+    <Form.Label className="fw-bold">Content</Form.Label>
+    <ReactQuill
+        theme="snow" // Use the default "snow" theme
+        value={announcementFormData.content}
+        onChange={(content) => handleChange({ target: { name: 'content', value: content } })}
+        onFocus={() => setFocusedElement('content')}
+        onBlur={() => setFocusedElement(null)}
+        modules={{
+            toolbar: [
+                [{ header: [1, 2, false] }],
+                ['bold', 'italic', 'underline'],
+                [{ list: 'ordered' }, { list: 'bullet' }],
+                ['link', 'image'],
+            ],
+        }}
+        formats={[
+            'header',
+            'bold',
+            'italic',
+            'underline',
+            'list',
+            'bullet',
+            'link',
+            'image',
+        ]}
+        style={{
+            backgroundColor: '#f2f2f2',
+            border: `1px solid ${
+                focusedElement === 'content' ? (editing ? '#3B71CA' : '#FAD32E') : '#ced4da'
+            }`,
+            borderRadius: '4px',
+            boxShadow:
+                focusedElement === 'content'
+                    ? editing
+                        ? '0 0 0 2px rgba(59, 113, 202, 1)'
+                        : '0 0 0 2px rgba(250, 211, 46, 1)'
+                    : 'none',
+        }}
+    />
+    <div
+        style={{
+            marginTop: '10px',
+            fontSize: '12px',
+            color: '#666',
+        }}
+    >
+        {announcementFormData.content.length}/{maxLength}
+    </div>
+</Form.Group>
+
                     </Row>
 
                     <Row className="gy-4">
