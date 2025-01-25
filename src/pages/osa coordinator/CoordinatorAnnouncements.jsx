@@ -552,7 +552,7 @@ return (
                                 <div style={{ flex: 1 }}>
                                     <Card.Title style={{ marginTop: '20px', marginBottom: '20px', fontSize: '28px' }}>{a.title}</Card.Title>
                                     <Card.Text style={{ marginRight: '30px', fontSize: '16px' }}>
-                                        <div
+                                        <div className="quill-content"
                                             dangerouslySetInnerHTML={{
                                             __html: a.content.length > 750 
                                                 ? `${truncateText(a.content, 750)}...` 
@@ -621,7 +621,7 @@ return (
                                 <div style={{ flex: 1 }}>
                                     <Card.Title style={{ marginTop: '7px', marginLeft: '10px', fontSize: '20px' }}>{a.title}</Card.Title>
                                     <Card.Text style={{ marginLeft: '10px', marginRight: '50px', fontSize: '14px' }}>   
-                                            <div
+                                            <div className="quill-content"
                                                 dangerouslySetInnerHTML={{
                                                 __html: a.content.length > 250 
                                                     ? `${truncateText(a.content, 250)}...` 
