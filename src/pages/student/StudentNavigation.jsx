@@ -31,13 +31,13 @@ export default function StudentNavigation() {
     if (menuItem === "My Records") {
       navigate('/student-myrecords');
     } else if (menuItem === "Announcements") {
-      navigate('/announcements'); 
+      navigate('/student-announcements'); 
     } else if (menuItem === "Legislations") {
       navigate ('/legislations'); 
     } else if (menuItem === "Handbook") {
       navigate('/handbook');
     } else if (menuItem === "FAQs") { 
-      navigate ('/faqs'); 
+      navigate ('/student-faqs'); 
     }  else if (menuItem === "About and Contact") {
       navigate('/aboutcontact'); 
     } else if (menuItem === "Settings") {
@@ -52,13 +52,13 @@ export default function StudentNavigation() {
 
     if (currentPath === "/student-myrecords") {
       setActiveMenuItem("My Records");
-    } else if (currentPath === "/announcements") {
+    } else if (currentPath === "/student-announcements") {
       setActiveMenuItem("Announcements");
     } else if (currentPath === "/legislations") {
       setActiveMenuItem("Legislations");
     } else if (currentPath === "/handbook") {
       setActiveMenuItem("Handbook");
-    } else if (currentPath === "/faqs") {
+    } else if (currentPath === "/student-faqs") {
       setActiveMenuItem("FAQs");
     } else if (currentPath === "/aboutcontact") {
       setActiveMenuItem("About and Contact");
