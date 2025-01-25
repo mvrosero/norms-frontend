@@ -31,7 +31,7 @@ const TotalViolationRecordsChart = ({ startDate, endDate }) => {
 
         // Fetch data from backend with date filter
         const response = await axios.get(
-          `https://test-backend-api-2.onrender.com/violation-records/totals?${params.toString()}`
+          `http://localhost:9000/violation-records/totals?${params.toString()}`
         );
         const data = response.data;
         setChartData({
