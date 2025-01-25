@@ -101,8 +101,10 @@ const ViewAnnouncementModal = ({ show, onHide, selectedAnnouncement }) => {
                         <p
                             className="quill-content"
                             style={{ textAlign: 'justify' }}
-                            dangerouslySetInnerHTML={{ __html: selectedAnnouncement.content }}
-                        ></p>
+                            dangerouslySetInnerHTML={{
+                                __html: selectedAnnouncement.content,
+                            }}>
+                        </p>
 
                         <p style={{ fontWeight: 'bold' }}>Attachments:</p>
                         <div>{renderFile()}</div>
