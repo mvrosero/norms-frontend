@@ -20,9 +20,7 @@ const ViewAnnouncementModal = ({ show, onHide, selectedAnnouncement }) => {
                         if (isImage) {
                             return (
                                 <div key={index} style={{ marginBottom: '10px' }}>
-                                    <a href={fileUrl} target="_blank" rel="noopener noreferrer">
-                                        <img src={fileUrl} alt="File Preview" style={{ maxWidth: '100%', maxHeight: '450px', objectFit: 'cover', borderRadius: '5px', border: '1px solid #ddd' }} />
-                                    </a>
+                                    <img src={fileUrl} alt="File Preview" style={{ maxWidth: '100%', maxHeight: '450px', objectFit: 'cover', borderRadius: '5px', border: '1px solid #ddd' }} />
                                 </div>
                             );
                         } else {
