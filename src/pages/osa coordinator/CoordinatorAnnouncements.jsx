@@ -547,12 +547,12 @@ return (
                                     <Card.Text style={{ marginRight: '30px', fontSize: '16px' }}>
                                         <div
                                             dangerouslySetInnerHTML={{
-                                            __html: a.content.length > 250 
-                                                ? `${truncateText(a.content, 250)}...` 
+                                            __html: a.content.length > 750 
+                                                ? `${truncateText(a.content, 750)}...` 
                                                 : a.content,
                                             }}>
                                         </div>
-                                        {a.content.length > 250 && (
+                                        {a.content.length > 750 && (
                                             <span
                                                 onClick={() => handleViewAnnouncement(a)}
                                                 style={{ color: '#007bff', cursor: 'pointer', textDecoration: 'underline' }}
