@@ -324,7 +324,7 @@ return (
                             <Form.Label className="fw-bold">Offense</Form.Label>
                             <Form.Control
                                 name="offense_id"
-                                value="Uniform and Dress Code Defiance"  
+                                value="Incomplete and improper use of uniform or wearing an attire not befitting the school’s dress code policy, and non-wearing of ID"  
                                 readOnly  
                                 style={{ backgroundColor: '#f2f2f2', border: '1px solid #ced4da', borderRadius: '4px', padding: '6px'}} />
                         </Form.Group>
