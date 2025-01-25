@@ -96,7 +96,7 @@ const TopCategoriesChart = ({ startDate, endDate }) => {
 
       // Fetch the top categories data from the API
       axios
-        .get(`http://localhost:9000/api/top-categories?${params.toString()}`)
+        .get(`https://test-backend-api-2.onrender.com/api/top-categories?${params.toString()}`)
         .then((response) => {
           const data = response.data;
           const categories = Array.isArray(data)
