@@ -57,7 +57,7 @@ export default function DepartmentalStudentRecordsTable() {
             const headers = { Authorization: `Bearer ${token}` };
 
             const response = await axios.get(
-                `http://localhost:9000/coordinator-studentrecords/${department_code}`,
+                `https://test-backend-api-2.onrender.com/coordinator-studentrecords/${department_code}`,
                 { headers }
             );
             const activeUsers = response.data.filter(user => user.status !== 'archived');
@@ -118,7 +118,7 @@ export default function DepartmentalStudentRecordsTable() {
             const token = localStorage.getItem('token');
             const headers = { Authorization: `Bearer ${token}` };
 
-            const response = await axios.get('http://localhost:9000/departments', { headers });
+            const response = await axios.get('https://test-backend-api-2.onrender.com/departments', { headers });
             setDepartments(response.data);
 
             const normalizedDepartmentCode = department_code?.toUpperCase();
@@ -137,7 +137,7 @@ export default function DepartmentalStudentRecordsTable() {
     // Handle redirect to selected student
     const handleRedirect = async (student_idnumber) => {
         try {
-            const response = await axios.get(`http://localhost:9000/student/${student_idnumber}`);
+            const response = await axios.get(`https://test-backend-api-2.onrender.com/student/${student_idnumber}`);
             const student = response.data;
             localStorage.setItem('selectedStudent', JSON.stringify(student)); 
             navigate(`/individualstudentrecord/${student_idnumber}`);
@@ -444,7 +444,7 @@ return (
             <nav style={{ marginTop: '5px', marginBottom: '20px', marginLeft: '120px' }}>
                 <ol style={{ backgroundColor: 'transparent', padding: '0', margin: '0', listStyle: 'none', display: 'flex' }}>
                     <li style={{ marginRight: '5px' }}>
-                        <Link to="http://localhost:3000/coordinator-studentrecords" style={{ textDecoration: 'none', color: '#0D4809' }}>
+                        <Link to="/coordinator-studentrecords" style={{ textDecoration: 'none', color: '#0D4809' }}>
                             Students
                         </Link>
                     </li>

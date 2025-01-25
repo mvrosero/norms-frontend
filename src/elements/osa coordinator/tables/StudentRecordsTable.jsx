@@ -34,7 +34,7 @@ const StudentRecordsTable = ({filters, searchQuery}) => {
         try {
             let response;
             if (searchQuery) {
-                response = await axios.get('http://localhost:9000/students-not-archived', { headers });
+                response = await axios.get('https://test-backend-api-2.onrender.com/students-not-archived', { headers });
 
                 const fuse = new Fuse(response.data, {
                     keys: ['student_idnumber', 'first_name', 'middle_name', 'last_name', 'suffix'],
@@ -50,7 +50,7 @@ const StudentRecordsTable = ({filters, searchQuery}) => {
 
                 setUsers(filteredUsers);
             } else {
-                response = await axios.get('http://localhost:9000/students-not-archived', { headers });
+                response = await axios.get('https://test-backend-api-2.onrender.com/students-not-archived', { headers });
                 setUsers(response.data);
             }
         } catch (error) {
@@ -62,7 +62,7 @@ const StudentRecordsTable = ({filters, searchQuery}) => {
      // Fetch the departments
     const fetchDepartments = useCallback(async () => {
         try {
-            const response = await axios.get('http://localhost:9000/departments', { headers });
+            const response = await axios.get('https://test-backend-api-2.onrender.com/departments', { headers });
             setDepartments(response.data);
         } catch (error) {
             console.error('Error fetching departments:', error);
@@ -73,7 +73,7 @@ const StudentRecordsTable = ({filters, searchQuery}) => {
      // Fetch the programs
     const fetchPrograms = useCallback(async () => {
         try {
-            const response = await axios.get('http://localhost:9000/programs', { headers });
+            const response = await axios.get('https://test-backend-api-2.onrender.com/programs', { headers });
             setPrograms(response.data);
         } catch (error) {
             console.error('Error fetching programs:', error);
@@ -101,7 +101,7 @@ const StudentRecordsTable = ({filters, searchQuery}) => {
     // Handle redirect to selected student
     const handleRedirect = async (student_idnumber) => {
         try {
-            const response = await axios.get(`http://localhost:9000/student/${student_idnumber}`);
+            const response = await axios.get(`https://test-backend-api-2.onrender.com/student/${student_idnumber}`);
             const student = response.data;
             localStorage.setItem('selectedStudent', JSON.stringify(student)); 
             navigate(`/individualstudentrecord/${student_idnumber}`);

@@ -34,7 +34,7 @@ const UniformDefianceHistoryTable = ({filters, searchQuery}) => {
     // Fetch the employees
     const fetchEmployeeName = async (employee_idnumber) => {
         try {
-            const response = await axios.get(`http://localhost:9000/employees/${employee_idnumber}`, { headers });
+            const response = await axios.get(`https://test-backend-api-2.onrender.com/employees/${employee_idnumber}`, { headers });
             return response.data.name;
         } catch (error) {
             console.error('Error fetching employee name:', error);
@@ -45,7 +45,7 @@ const UniformDefianceHistoryTable = ({filters, searchQuery}) => {
     // Fetch the students
     const fetchNatures = useCallback(async () => {
         try {
-            const response = await axios.get('http://localhost:9000/violation-natures', { headers });
+            const response = await axios.get('https://test-backend-api-2.onrender.com/violation-natures', { headers });
             setNatures(response.data);
         } catch (error) {
             console.error('Error fetching nature of violations:', error);
@@ -57,7 +57,7 @@ const UniformDefianceHistoryTable = ({filters, searchQuery}) => {
     // Fetch the uniform defiances
     const fetchDefiances = useCallback(async () => {
         try {
-            let response = await axios.get('http://localhost:9000/uniform_defiances', { headers });
+            let response = await axios.get('https://test-backend-api-2.onrender.com/uniform_defiances', { headers });
             let data = response.data;
 
             data = data.filter(defiance => defiance.status !== 'pending');
@@ -80,7 +80,7 @@ const UniformDefianceHistoryTable = ({filters, searchQuery}) => {
     // Handle redirect to selected uniform defiance slip
     const handleRedirect = async (slip_id) => {
         try {
-            const response = await axios.get(`http://localhost:9000/uniform_defiance/${slip_id}`);
+            const response = await axios.get(`https://test-backend-api-2.onrender.com/uniform_defiance/${slip_id}`);
             const defiance = response.data;
             localStorage.setItem('selectedDefiance', JSON.stringify(defiance)); 
             navigate(`/individualdefiancerecord/${slip_id}`);

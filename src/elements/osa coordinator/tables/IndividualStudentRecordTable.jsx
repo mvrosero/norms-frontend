@@ -32,17 +32,17 @@ const IndividualStudentRecordTable = () => {
         const fetchData = async () => {
             try {
                 const violationResponse = await axios.get(
-                    `http://localhost:9000/individual_violationrecords/${student_idnumber}`
+                    `https://test-backend-api-2.onrender.com/individual_violationrecords/${student_idnumber}`
                 );
                 setRecords(violationResponse.data);
 
                 const [categoriesResponse, offensesResponse, sanctionsResponse, academicYearsResponse, semestersResponse] =
                     await Promise.all([
-                        axios.get('http://localhost:9000/categories'),
-                        axios.get('http://localhost:9000/offenses'),
-                        axios.get('http://localhost:9000/sanctions'),
-                        axios.get('http://localhost:9000/academic_years'),
-                        axios.get('http://localhost:9000/semesters'),
+                        axios.get('https://test-backend-api-2.onrender.com/categories'),
+                        axios.get('https://test-backend-api-2.onrender.com/offenses'),
+                        axios.get('https://test-backend-api-2.onrender.com/sanctions'),
+                        axios.get('https://test-backend-api-2.onrender.com/academic_years'),
+                        axios.get('https://test-backend-api-2.onrender.com/semesters'),
                     ]);
                 setCategories(categoriesResponse.data);
                 setOffenses(offensesResponse.data);

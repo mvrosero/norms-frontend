@@ -35,7 +35,7 @@ const IndividualUniformDefianceTable = ({ handleShowDetailsModal, filters, searc
     useEffect(() => {
         const fetchDefiances = async () => {
             try {
-                const response = await fetch(`http://localhost:9000/uniform_defiances/${student_idnumber}`);
+                const response = await fetch(`https://test-backend-api-2.onrender.com/uniform_defiances/${student_idnumber}`);
                 if (!response.ok) {
                     throw new Error(`HTTP error! Status: ${response.status}`);
                 }
@@ -58,7 +58,7 @@ const IndividualUniformDefianceTable = ({ handleShowDetailsModal, filters, searc
     // Fetch the students
     const fetchNatures = useCallback(async () => {
         try {
-            const response = await axios.get('http://localhost:9000/violation-natures', { headers });
+            const response = await axios.get('https://test-backend-api-2.onrender.com/violation-natures', { headers });
             setNatures(response.data);
         } catch (error) {
             console.error('Error fetching nature of violations:', error);
