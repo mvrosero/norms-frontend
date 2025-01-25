@@ -146,11 +146,22 @@ return (
                 </Button>
             </div>
 
+            {/* Breadcrumbs */}
+            <nav style={{ marginTop: '20px', marginBottom: '20px', marginLeft: '100px', textAlign: 'left' }}>
+                <ol style={{ backgroundColor: 'transparent', padding: '0', margin: '0', listStyle: 'none', display: 'flex', justifyContent: 'flex-start' }}>
+                <li style={{ marginRight: '5px' }}>
+                    <Link to="/coordinator-student records" style={{ textDecoration: 'none', color: '#0D4809' }}>
+                        Student Records
+                    </Link>
+                </li>
+                <li style={{ margin: '0 5px', color: '#6c757d' }}>{'>'}</li>
+                <li style={{ marginLeft: '5px', color: '#000' }}>Individual Violation Record</li>
+                </ol>
+            </nav>
 
             {/* Table for displaying violation records */}
             <IndividualStudentRecordTable records={violationRecords} />
        
-
             {/* Add Individual Violation Record Modal */}
             <AddViolationModal
                 show={showAddViolationModal}
