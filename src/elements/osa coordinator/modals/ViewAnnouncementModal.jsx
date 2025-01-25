@@ -163,15 +163,42 @@ const ViewAnnouncementModal = ({ show, onHide, selectedAnnouncement }) => {
             </Modal>
 
             {/* Full Image Modal for Enlarged View */}
-            <Modal show={isImageClicked} onHide={closeFullImageView} size="lg" backdrop="static" centered>
-                <Modal.Header>
-                    <Button variant="link" onClick={closeFullImageView} style={{ position: 'absolute', top: '5px', right: '20px', textDecoration: 'none', fontSize: '30px', color: '#a9a9a9' }}>
+            <Modal show={isImageClicked} onHide={closeFullImageView} size="lg" backdrop="static" centered style={{ border: 'none', backgroundColor: 'transparent' }}>
+                <Modal.Header
+                style={{
+                    position: 'absolute', // Positioning at the top of the modal
+                    top: '10px',
+                    right: '10px',
+                    padding: '0', // No padding to avoid spacing around the button
+                    zIndex: 10, // Ensure the button is above the image
+                  }}>
+                    <Button variant="link"
+      onClick={closeFullImageView}
+      style={{
+        position: 'absolute',
+        top: '0',
+        right: '0',
+        fontSize: '30px',
+        color: '#a9a9a9',
+        backgroundColor: 'transparent',
+        border: 'none',
+        zIndex: 100, // Ensure it's on top of the image
+        padding: '10px'}} >
                         ×
                     </Button>
                 </Modal.Header>
-                <Modal.Body>
-                    <img src={clickedImage} alt="Enlarged Preview" style={{ width: '100%', height: 'auto', objectFit: 'contain', borderRadius: '5px' }}/>
-                </Modal.Body>
+                <Modal.Body style={{ padding: '0' }}>
+    <img
+      src={clickedImage}
+      alt="Enlarged Preview"
+      style={{
+        width: '100%',
+        height: '100%',
+        objectFit: 'cover', // Cover the modal area, cropping if necessary
+        borderRadius: '5px',
+      }}
+    />
+  </Modal.Body>
             </Modal>
         </>
     );
