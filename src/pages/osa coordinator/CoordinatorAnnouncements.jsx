@@ -707,7 +707,7 @@ return (
                         <ReactQuill
                             theme="snow" 
                             value={announcementFormData.content}
-                            onChange={(content) => handleChange({ target: { name: 'content', value: content } })}
+                            onChange={(content) => handleChange({ target: { name: 'content', value: content.trim() } })}
                             onFocus={() => setFocusedElement('content')}
                             onBlur={() => setFocusedElement(null)}
                             modules={{
