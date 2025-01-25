@@ -17,7 +17,7 @@ export default function SFforUniformDefiance({ onSearch, onFilterChange }) {
   useEffect(() => {
     const fetchNatures = async () => {
       try {
-        const response = await axios.get('http://localhost:9000/violation-natures');
+        const response = await axios.get('https://test-backend-api-2.onrender.com/violation-natures');
         setNatures(response.data);
       } catch (error) {
         console.error('Error fetching natures:', error);

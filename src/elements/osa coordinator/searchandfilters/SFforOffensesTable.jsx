@@ -20,7 +20,7 @@ export default function SFforOffensesTable({ onSearch, onFilterChange }) {
     useEffect(() => {
         const fetchOffenses = async () => {
           try {
-            const response = await axios.get('http://localhost:9000/offenses'); 
+            const response = await axios.get('https://test-backend-api-2.onrender.com/offenses'); 
             setOffenses(response.data);
           } catch (error) {
             console.error('Error fetching offenses:', error);
@@ -34,7 +34,7 @@ export default function SFforOffensesTable({ onSearch, onFilterChange }) {
     useEffect(() => {
         const fetchCategories = async () => {
         try {
-            const response = await axios.get('http://localhost:9000/categories'); 
+            const response = await axios.get('https://test-backend-api-2.onrender.com/categories'); 
             setCategories(response.data);
         } catch (error) {
             console.error('Error fetching offenses:', error);
@@ -48,7 +48,7 @@ export default function SFforOffensesTable({ onSearch, onFilterChange }) {
     useEffect(() => {
         const fetchSubcategories = async () => {
             try {
-            const response = await axios.get('http://localhost:9000/subcategories'); 
+            const response = await axios.get('https://test-backend-api-2.onrender.com/subcategories'); 
             setSubcategories(response.data);
             } catch (error) {
             console.error('Error fetching subcategories:', error);
