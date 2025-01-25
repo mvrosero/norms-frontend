@@ -23,8 +23,21 @@ const ViewAnnouncementModal = ({ show, onHide, selectedAnnouncement }) => {
                             return (
                                 <div key={index} style={{ marginBottom: '10px' }}>
                                     <Zoom>
-                                        <img src={fileUrl} alt="File Preview" style={{ maxWidth: '100%', maxHeight: '450px', objectFit: 'cover', borderRadius: '5px', border: '1px solid #ddd' }} />
-                                     </Zoom>
+                                        <img
+                                            src={fileUrl}
+                                            alt="File Preview"
+                                            style={{
+                                                maxWidth: '100%',
+                                                maxHeight: '450px',
+                                                objectFit: 'contain',
+                                                borderRadius: '5px',
+                                                border: '1px solid #ddd',
+                                                cursor: 'zoom-in', // Cursor for zooming
+                                                margin: '0 auto', // Ensure it's centered
+                                                display: 'block', // Ensure it's centered within the div
+                                            }}
+                                        />
+                                    </Zoom>
                                 </div>
                             );
                         } else {
