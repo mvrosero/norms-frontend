@@ -145,9 +145,9 @@ const ViewAnnouncementModal = ({ show, onHide, selectedAnnouncement }) => {
                                 : 'N/A'}
                         </p>
                     </div>
-                ) : (
-                    <p>No announcement selected.</p>
-                )}
+                    ) : (
+                        <p>No announcement selected.</p>
+                    )}
             </Modal.Body>
         </Modal>
     );
