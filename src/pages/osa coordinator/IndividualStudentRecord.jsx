@@ -148,7 +148,7 @@ return (
             </div>
 
             {/* Breadcrumbs */}
-            <div>
+            <div style={{ display: 'flex', justifyContent: 'flex-start' }}>
                 <nav style={{ marginTop: '10px', marginBottom: '10px', textAlign: 'left' }}>
                     <ol style={{ backgroundColor: 'transparent', padding: '0', margin: '0', listStyle: 'none', display: 'flex', justifyContent: 'flex-start' }}>
                     <li style={{ marginRight: '5px' }}>
