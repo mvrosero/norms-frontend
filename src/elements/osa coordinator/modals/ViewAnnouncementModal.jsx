@@ -109,7 +109,7 @@ const ViewAnnouncementModal = ({ show, onHide, selectedAnnouncement }) => {
                     {selectedAnnouncement ? (
                         <div className="quill-content" style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', rowGap: '10px', marginLeft: '20px', marginRight: '20px' }}>
                             <p style={{ fontWeight: 'bold' }}>Title:</p>
-                            <p style={{ fontWeight: '600', fontSize: '25px' }}>{selectedAnnouncement.title}</p>
+                            <p style={{ fontWeight: '600', fontSize: '20px' }}>{selectedAnnouncement.title}</p>
 
                             <p style={{ fontWeight: 'bold' }}>Content:</p>
                             <p className="quill-content"
