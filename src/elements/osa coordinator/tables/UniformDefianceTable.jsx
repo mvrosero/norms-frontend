@@ -343,7 +343,8 @@ const renderTable = () => {
                         </button>
                     </th>
                     <th style={{ textAlign: 'center', padding: '0', verticalAlign: 'middle', width: '12%' }}>
-                        <button onClick={() => handleSort('student_idnumber')}>
+                        <button style={{ border: 'none', background: 'none', cursor: 'pointer', display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center', width: '100%' }}
+                            onClick={() => handleSort('student_idnumber')}>
                             ID Number {sortOrder === 'asc' ? 
                             <ArrowDropUpIcon /> : 
                             <ArrowDropDownIcon />}
