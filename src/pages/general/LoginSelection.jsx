@@ -20,7 +20,7 @@ const LoginSelectionPage = () => {
     <div
       style={{
         backgroundImage: `url(${background})`,
-        backgroundSize: 'cover',
+        backgroundSize: '100% 100%', 
         backgroundPosition: 'center',
         width: '100vw',
         height: '100vh',
@@ -28,96 +28,59 @@ const LoginSelectionPage = () => {
         justifyContent: 'center',
         alignItems: 'center',
         flexDirection: 'column',
-        color: 'white',
-        paddingTop: '5vw', // Adjust the padding for smaller screens
+        color: 'white', 
+        paddingTop: '40px', 
       }}
     >
-      <h5
-        style={{
-          fontFamily: 'Inter',
-          marginBottom: '5vw', // Adjust the margin for smaller screens
-          fontSize: '5vw', // Responsive font size
-          fontWeight: '900',
-          marginTop: '10px',
-        }}
-      >
-        Select User Type
-      </h5>
-      <div
-        style={{
-          display: 'flex',
-          flexDirection: 'row',
-          gap: '5vw',
-          justifyContent: 'center',
-          flexWrap: 'wrap',
-        }}
-      >
+      <h5 style={{ fontFamily: 'Inter', marginBottom: '40px', fontSize: '50px', fontWeight: '900', marginTop: '10px' }}>Select User Type </h5>
+      <div style={{ display: 'flex', flexDirection: 'row', gap: '20px' }}>
         {/* Student Card */}
         <div
           onClick={handleStudentLogin}
           style={{
             backgroundColor: '#FFFFFF',
             color: '#0D4809',
-            padding: '5vw',
+            padding: '40px',
             borderRadius: '15px',
             cursor: 'pointer',
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
             justifyContent: 'center',
-            width: '40vw', // Responsive width
-            maxWidth: '280px', // Max width to avoid too large on big screens
-            height: '40vh', // Adjust height for smaller screens
-            marginBottom: '5vw',
-            transition: 'transform 0.3s ease', // Added smooth hover effect
+            width: '280px', 
+            height: '300px', 
+            marginRight: '20px', 
           }}
         >
-          <img
-            src={studentImage}
-            alt="Student"
-            style={{
-              width: '25vw', // Make the image responsive
-              maxWidth: '120px', // Max width for larger screens
-              marginBottom: '5vw',
-            }}
-          />
-          <span style={{ fontSize: '6vw', fontFamily: 'Poppins', textAlign: 'center' }}>Student</span>
+          <img src={studentImage} alt="Student" style={{ width: '120px', marginBottom: '30px' }} /> 
+          <span style={{ fontSize: '25px', fontFamily: 'Poppins', textAlign: 'center' }}>Student</span> 
         </div>
-
         {/* Employee Card */}
         <div
           onClick={handleEmployeeLogin}
           style={{
             backgroundColor: '#FFFFFF',
             color: '#0D4809',
-            padding: '5vw',
+            padding: '40px',
             borderRadius: '15px',
             cursor: 'pointer',
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
             justifyContent: 'center',
-            width: '40vw', // Responsive width
-            maxWidth: '280px', // Max width to avoid too large on big screens
-            height: '40vh', // Adjust height for smaller screens
-            marginBottom: '5vw',
-            transition: 'transform 0.3s ease', // Added smooth hover effect
+            width: '280px',
+            height: '300px', 
+            marginLeft: '20px', 
           }}
         >
-          <img
-            src={employeeImage}
-            alt="Employee"
-            style={{
-              width: '25vw', // Make the image responsive
-              maxWidth: '120px', // Max width for larger screens
-              marginBottom: '5vw',
-            }}
-          />
-          <span style={{ fontSize: '6vw', fontFamily: 'Poppins', textAlign: 'center' }}>Employee</span>
+          <img src={employeeImage} alt="Employee" style={{ width: '120px', marginBottom: '30px' }} /> 
+          <span style={{ fontSize: '25px', fontFamily: 'Poppins', textAlign: 'center' }}>Employee</span> 
         </div>
       </div>
+      <div style={{ height: '60px' }} /> 
     </div>
   );
 };
+
 
 export default LoginSelectionPage;
