@@ -21,7 +21,7 @@ import chsBackgroundImage from "../../components/images/chs.png";
 import coeBackgroundImage from "../../components/images/coe.png";
 import ctedBackgroundImage from "../../components/images/cted.png";
 
-import offensesImage from "../../components/images/offenses.png";
+import offensesImage from "../../components/images/offenses.png"
 import sanctionsImage from "../../components/images/sanctions.png";
 import categoriesImage from "../../components/images/categories.png";
 
@@ -96,15 +96,21 @@ const CoordinatorDashboard = () => {
   const [userCounts, setUserCounts] = useState({});
   const [defianceStatusCounts, setDefianceStatusCounts] = useState({ approved: 0, rejected: 0, pending: 0 });
 
+  const token = localStorage.getItem('token');
+  const roleId = localStorage.getItem('role_id');
+
+  // Early return if no token or invalid role
+  if (!token || roleId !== '2') {
+    return null;
+  }
+
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    const roleId = localStorage.getItem('role_id');
     if (token && roleId === '2') {
       fetchUserCounts(token);
     } else {
       console.error("Token is required for accessing the dashboard or invalid role.");
     }
-  }, []);
+  }, [token, roleId]); // Add token and roleId as dependencies
 
   const fetchUserCounts = async (token) => {
     try {
@@ -119,29 +125,23 @@ const CoordinatorDashboard = () => {
     }
   };
 
-  if (!localStorage.getItem('token') || localStorage.getItem('role_id') !== '2') {
-    return null; 
-  }
-
-
   // Fetch defiance counts by status
   useEffect(() => {
-      const fetchDefianceStatusCounts = async () => {
+    const fetchDefianceStatusCounts = async () => {
       try {
-          const response = await axios.get('https://test-backend-api-2.onrender.com/defiance-status-counts');
-          console.log('Backend response:', response.data); // Debugging the response
-          setDefianceStatusCounts({
+        const response = await axios.get('https://test-backend-api-2.onrender.com/defiance-status-counts');
+        console.log('Backend response:', response.data); // Debugging the response
+        setDefianceStatusCounts({
           approved: response.data.approved || 0,
           rejected: response.data.rejected || 0,
           pending: response.data.pending || 0
-          });
+        });
       } catch (error) {
-          console.error('Error fetching defiance status counts:', error);
+        console.error('Error fetching defiance status counts:', error);
       }
-      };
-      fetchDefianceStatusCounts();
-  }, []);
-
+    };
+    fetchDefianceStatusCounts();
+  }, []); // Empty dependency array, runs once on mount
 
   const handleCategoriesClick = () => {
     navigate('/manage-categories');
