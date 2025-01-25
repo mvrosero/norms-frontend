@@ -1,7 +1,20 @@
-import React from 'react';
+import React, { useState } from 'react'; // Import useState here
 import { Modal, Button } from 'react-bootstrap';
 
 const ViewUniformDefianceModal = ({ show, onHide, record }) => {
+    const [isImageClicked, setIsImageClicked] = useState(false);
+    const [clickedImage, setClickedImage] = useState('');
+
+    const handleImageClick = (imageUrl) => {
+        setClickedImage(imageUrl);
+        setIsImageClicked(true);
+    };
+
+    const closeFullImageView = () => {
+        setIsImageClicked(false);
+        setClickedImage('');
+    };
+
     const renderFile = () => {
         if (record) {
             const { photo_video_filenames } = record;
@@ -14,17 +27,13 @@ const ViewUniformDefianceModal = ({ show, onHide, record }) => {
                 if (fileExtension === 'mp4' || fileExtension === 'avi' || fileExtension === 'mov') {
                     return (
                         <div key={index} style={{ marginBottom: '10px' }}>
-                            <a href={fileUrl} target="_blank" rel="noopener noreferrer">
                                 <video controls src={fileUrl} style={{ maxWidth: '100%' }} />
-                            </a>
                         </div>
                     );
                 } else if (fileExtension === 'jpg' || fileExtension === 'jpeg' || fileExtension === 'png' || fileExtension === 'gif') {
                     return (
                         <div key={index} style={{ marginBottom: '10px' }}>
-                            <a href={fileUrl} target="_blank" rel="noopener noreferrer">
                                 <img src={fileUrl} alt="File Preview" style={{ maxWidth: '100%' }} />
-                            </a>
                         </div>
                     );
                 } else {
@@ -34,6 +43,7 @@ const ViewUniformDefianceModal = ({ show, onHide, record }) => {
         }
         return null;
     };
+
 
 
     const renderStatus = (status) => {
@@ -75,6 +85,7 @@ const ViewUniformDefianceModal = ({ show, onHide, record }) => {
     };
 
     return (
+        <>
         <Modal show={show} onHide={onHide} size="lg">
             <Modal.Header>
                 <Button variant="link" onClick={onHide} style={{ position: 'absolute', top: '5px', right: '20px', textDecoration: 'none',fontSize: '30px', color: '#a9a9a9' }}>
@@ -119,6 +130,18 @@ const ViewUniformDefianceModal = ({ show, onHide, record }) => {
                 )}
             </Modal.Body>
         </Modal>
+       
+        <Modal show={isImageClicked} onHide={closeFullImageView} size="lg" backdrop="static" centered>
+            <Modal.Header>
+                <Button variant="link" onClick={closeFullImageView} style={{ position: 'absolute', top: '5px', right: '20px', textDecoration: 'none', fontSize: '30px', color: '#a9a9a9' }}>
+                    ×
+                </Button>
+            </Modal.Header>
+            <Modal.Body>
+                <img src={clickedImage} alt="Enlarged Preview" style={{ width: '100%', height: 'auto', objectFit: 'contain', borderRadius: '5px' }}/>
+            </Modal.Body>
+        </Modal>
+        </>
     );
 };
 
