@@ -17,36 +17,59 @@ export default function StudentNavigation() {
   const [collapsed, setCollapsed] = React.useState(true);
   const navigate = useNavigate();
   const location = useLocation();
+
   const menuItemFontSize = "16px";
   const iconSize = "24px";
-  const [activeMenuItem, setActiveMenuItem] = React.useState(null);
+
+  // State to store the active menu item
+  const [activeMenuItem, setActiveMenuItem] = React.useState("My Records");
 
 
   const handleMenuItemClick = (menuItem) => {
     setActiveMenuItem(menuItem);
-    let path = menuItem.toLowerCase().replace(/\s+/g, '-'); 
+
     if (menuItem === "My Records") {
-      path = "student-myrecords";
-    }  else if (menuItem === "About and Contact") {
-      path = "aboutcontact"; 
-    } else if (menuItem === "Settings") {
-      path = "student-settings"; 
+      navigate('/student-myrecords');
     } else if (menuItem === "Announcements") {
-      path = "student-announcements"; 
+      navigate('/announcements'); 
+    } else if (menuItem === "Legislations") {
+      navigate ('/legislations'); 
+    } else if (menuItem === "Handbook") {
+      navigate('/handbook');
     } else if (menuItem === "FAQs") { 
-      path = "student-faqs"; 
-  }
-    navigate(`/${path}`);
+      navigate ('/faqs'); 
+    }  else if (menuItem === "About and Contact") {
+      navigate('/aboutcontact'); 
+    } else if (menuItem === "Settings") {
+      navigate('/student-settings'); 
+    }
   };
 
 
+  // Check current page 
   React.useEffect(() => {
-    const pageName = location.pathname.split("/").pop().replace('-', ' ');
-    setActiveMenuItem(pageName);
-  }, [location.pathname]);
+    const currentPath = location.pathname;
 
+    if (currentPath === "/student-myrecords") {
+      setActiveMenuItem("My Records");
+    } else if (currentPath === "/announcements") {
+      setActiveMenuItem("Announcements");
+    } else if (currentPath === "/legislations") {
+      setActiveMenuItem("Legislations");
+    } else if (currentPath === "/handbook") {
+      setActiveMenuItem("Handbook");
+    } else if (currentPath === "/faqs") {
+      setActiveMenuItem("FAQs");
+    } else if (currentPath === "/aboutcontact") {
+      setActiveMenuItem("About and Contact");
+    } else if (currentPath === "/student-settings") {
+      setActiveMenuItem("Settings");
+    }
+  }, [location.pathname]);
+  
+  
   const getItemColor = (menuItem) => {
-    return activeMenuItem === menuItem ? "#134E0F" : "#b1b1b1";
+    return activeMenuItem.trim() === menuItem.trim() ? "#134E0F" : "#b1b1b1";
   };
 
 
@@ -120,13 +143,6 @@ export default function StudentNavigation() {
                       My Records 
                     </MenuItem>
                     <MenuItem
-                      icon={<RiBook2Fill style={{ fontSize: iconSize, color: getItemColor("Handbook") }} />}
-                      onClick={() => handleMenuItemClick("Handbook")}
-                      active={activeMenuItem === "Handbook"}
-                    >
-                      Handbook
-                    </MenuItem>
-                    <MenuItem
                       icon={<MdAnnouncement style={{ fontSize: iconSize, color: getItemColor("Announcements") }} />}
                       onClick={() => handleMenuItemClick("Announcements")}
                       active={activeMenuItem === "Announcements"}
@@ -139,6 +155,13 @@ export default function StudentNavigation() {
                       active={activeMenuItem === "Legislations"}
                     >
                       Legislations
+                    </MenuItem>
+                    <MenuItem
+                      icon={<RiBook2Fill style={{ fontSize: iconSize, color: getItemColor("Handbook") }} />}
+                      onClick={() => handleMenuItemClick("Handbook")}
+                      active={activeMenuItem === "Handbook"}
+                    >
+                      Handbook
                     </MenuItem>
                     <MenuItem
                       icon={<GiHelp style={{ fontSize: iconSize, color: getItemColor("FAQs") }} />} 
