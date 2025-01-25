@@ -12,16 +12,16 @@ import "../../styles/General.css";
 
 export default function CoordinatorNavigation() {
   const [collapsed, setCollapsed] = React.useState(true);
-  const [searchBarValue2, setSearchBarValue2] = React.useState("");
   const navigate = useNavigate();
   const location = useLocation();
   const menuItemFontSize = "16px";
   const iconSize = "24px";
   const [activeMenuItem, setActiveMenuItem] = React.useState(null);
 
+  // Handle menu item click
   const handleMenuItemClick = (menuItem) => {
     setActiveMenuItem(menuItem);
-    let path = menuItem.toLowerCase().replace(' ', '');
+    let path = menuItem.toLowerCase().replace(" ", "");
     if (path === "handbook") {
       navigate(`/${path}`);
     } else {
@@ -29,20 +29,21 @@ export default function CoordinatorNavigation() {
     }
   };
 
+  // Set active menu item based on location
   React.useEffect(() => {
-    const pageName = location.pathname.split("/").pop().replace('coordinator-', '').replace('-', ' ');
+    const pageName = location.pathname
+      .split("/")
+      .pop()
+      .replace("coordinator-", "")
+      .replace("-", " ");
     setActiveMenuItem(pageName);
   }, [location.pathname]);
 
+  // Dynamic item color based on active state
   const getItemColor = (menuItem) => {
     return activeMenuItem === menuItem ? "#134E0F" : "#b1b1b1";
   };
 
-  const getCollapsedIconColor = (menuItem) => {
-    return activeMenuItem === menuItem ? "#134E0F" : "initial";
-  };
-
-  
   return (
     <>
       <div className="w-full bg-white-A700">
@@ -64,9 +65,7 @@ export default function CoordinatorNavigation() {
                 <Sidebar
                   collapsedWidth="70px !important"
                   collapsed={collapsed}
-                  onClick={() => {
-                    setCollapsed(!collapsed);
-                  }}
+                  onClick={() => setCollapsed(!collapsed)}
                   className="flex flex-col h-screen top-0 py-[13px] !sticky overflow-auto"
                 >
                   <Menu
@@ -85,14 +84,7 @@ export default function CoordinatorNavigation() {
                           },
                         },
                       },
-                      menuItemActive: {
-                        color: "#134E0F",
-                        "& svg": {
-                          fill: "#134E0F",
-                        },
-                      },
                     }}
-
                     rootStyles={{
                       ["&>ul"]: {
                         gap: "4px",
@@ -100,42 +92,91 @@ export default function CoordinatorNavigation() {
                       },
                     }}
                     className="flex flex-col items-center w-full"
-                    style={{ maxHeight: "calc(100vh - 20px)", overflowY: collapsed ? "hidden" : "auto"}}
+                    style={{
+                      maxHeight: "calc(100vh - 20px)",
+                      overflowY: collapsed ? "hidden" : "auto",
+                    }}
                   >
-                    <div style={{ display: "flex", alignItems: "center", justifyContent: collapsed ? "center" : "flex-start", height: "auto", padding: "10px", marginBottom: collapsed ? "0" : "10px" }}>
-                      <img src={logo} alt="NORMS Logo" style={{ width: collapsed ? "50px" : "auto", height: collapsed ? "50px" : "auto", maxWidth: collapsed ? "100%" : "100%", transition: "width 0.1s ease-in-out, height 0.1s ease-in-out" }} />
+                    {/* Logo Section */}
+                    <div
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: collapsed ? "center" : "flex-start",
+                        height: "auto",
+                        padding: "10px",
+                        marginBottom: collapsed ? "0" : "10px",
+                      }}
+                    >
+                      <img
+                        src={logo}
+                        alt="NORMS Logo"
+                        style={{
+                          width: collapsed ? "50px" : "auto",
+                          height: collapsed ? "50px" : "auto",
+                          maxWidth: collapsed ? "100%" : "100%",
+                          transition: "width 0.1s ease-in-out, height 0.1s ease-in-out",
+                        }}
+                      />
                     </div>
 
+                    {/* Menu Items */}
                     <MenuItem
-                      icon={<MdSpaceDashboard style={{ fontSize: iconSize, color: getItemColor("Dashboard") }} />}
+                      icon={
+                        <MdSpaceDashboard
+                          style={{ fontSize: iconSize, color: getItemColor("Dashboard") }}
+                        />
+                      }
                       onClick={() => handleMenuItemClick("Dashboard")}
                       active={activeMenuItem === "Dashboard"}
                     >
-                      Dashboard 
+                      Dashboard
                     </MenuItem>
                     <MenuItem
-                      icon={<IoFolder style={{ fontSize: iconSize, color: getItemColor("Student Records") }} />}
+                      icon={
+                        <IoFolder
+                          style={{
+                            fontSize: iconSize,
+                            color: getItemColor("Student Records"),
+                          }}
+                        />
+                      }
                       onClick={() => handleMenuItemClick("Student Records")}
                       active={activeMenuItem === "Student Records"}
                     >
                       Student Records
                     </MenuItem>
                     <MenuItem
-                      icon={<RiShirtFill style={{ fontSize: iconSize, color: getItemColor("Uniform Defiance") }} />}
+                      icon={
+                        <RiShirtFill
+                          style={{
+                            fontSize: iconSize,
+                            color: getItemColor("Uniform Defiance"),
+                          }}
+                        />
+                      }
                       onClick={() => handleMenuItemClick("Uniform Defiance")}
                       active={activeMenuItem === "Uniform Defiance"}
                     >
                       Uniform Defiance
                     </MenuItem>
                     <MenuItem
-                      icon={<RiBook2Fill style={{ fontSize: iconSize, color: getItemColor("Handbook") }} />}
+                      icon={
+                        <RiBook2Fill
+                          style={{ fontSize: iconSize, color: getItemColor("Handbook") }}
+                        />
+                      }
                       onClick={() => handleMenuItemClick("Handbook")}
                       active={activeMenuItem === "Handbook"}
                     >
                       Handbook
                     </MenuItem>
                     <MenuItem
-                      icon={<MdAnnouncement style={{ fontSize: iconSize, color: getItemColor("Announcements") }} />}
+                      icon={
+                        <MdAnnouncement
+                          style={{ fontSize: iconSize, color: getItemColor("Announcements") }}
+                        />
+                      }
                       onClick={() => handleMenuItemClick("Announcements")}
                       active={activeMenuItem === "Announcements"}
                     >
