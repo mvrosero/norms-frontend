@@ -4,7 +4,6 @@ import { useNavigate } from 'react-router-dom';
 import background from '../../components/images/norms_background.png';
 import studentImage from '../../components/images/student.png'; 
 import employeeImage from '../../components/images/employee.png'; 
-import '../../styles/Responsiveness.css'
 
 const LoginSelectionPage = () => {
   const navigate = useNavigate();
@@ -21,7 +20,7 @@ const LoginSelectionPage = () => {
     <div
       style={{
         backgroundImage: `url(${background})`,
-        backgroundSize: 'cover',  // Adjusted to make it more responsive
+        backgroundSize: 'cover',
         backgroundPosition: 'center',
         width: '100vw',
         height: '100vh',
@@ -29,15 +28,15 @@ const LoginSelectionPage = () => {
         justifyContent: 'center',
         alignItems: 'center',
         flexDirection: 'column',
-        color: 'white', 
-        paddingTop: '40px', 
+        color: 'white',
+        paddingTop: '5vw', // Adjust the padding for smaller screens
       }}
     >
       <h5
         style={{
           fontFamily: 'Inter',
-          marginBottom: '40px',
-          fontSize: '5vw',  // Make the font size relative to viewport width
+          marginBottom: '5vw', // Adjust the margin for smaller screens
+          fontSize: '5vw', // Responsive font size
           fontWeight: '900',
           marginTop: '10px',
         }}
@@ -48,9 +47,9 @@ const LoginSelectionPage = () => {
         style={{
           display: 'flex',
           flexDirection: 'row',
-          gap: '20px',
-          justifyContent: 'center', // Center cards on small screens
-          flexWrap: 'wrap', // Allow cards to wrap on smaller screens
+          gap: '5vw',
+          justifyContent: 'center',
+          flexWrap: 'wrap',
         }}
       >
         {/* Student Card */}
@@ -59,25 +58,29 @@ const LoginSelectionPage = () => {
           style={{
             backgroundColor: '#FFFFFF',
             color: '#0D4809',
-            padding: '40px',
+            padding: '5vw',
             borderRadius: '15px',
             cursor: 'pointer',
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
             justifyContent: 'center',
-            width: '280px',
-            height: '300px',
-            marginRight: '20px',
-            marginBottom: '20px', // Add margin for spacing between cards when wrapping
+            width: '40vw', // Responsive width
+            maxWidth: '280px', // Max width to avoid too large on big screens
+            height: '40vh', // Adjust height for smaller screens
+            marginBottom: '5vw',
           }}
         >
-          <img 
-            src={studentImage} 
-            alt="Student" 
-            style={{ width: '120px', marginBottom: '30px' }} 
+          <img
+            src={studentImage}
+            alt="Student"
+            style={{
+              width: '30vw', // Use viewport width for responsive image size
+              maxWidth: '120px', // Max width for larger screens
+              marginBottom: '5vw',
+            }}
           />
-          <span style={{ fontSize: '25px', fontFamily: 'Poppins', textAlign: 'center' }}>Student</span>
+          <span style={{ fontSize: '6vw', fontFamily: 'Poppins', textAlign: 'center' }}>Student</span>
         </div>
 
         {/* Employee Card */}
@@ -86,28 +89,31 @@ const LoginSelectionPage = () => {
           style={{
             backgroundColor: '#FFFFFF',
             color: '#0D4809',
-            padding: '40px',
+            padding: '5vw',
             borderRadius: '15px',
             cursor: 'pointer',
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
             justifyContent: 'center',
-            width: '280px',
-            height: '300px',
-            marginLeft: '20px',
-            marginBottom: '20px', // Add margin for spacing between cards when wrapping
+            width: '40vw', // Responsive width
+            maxWidth: '280px', // Max width to avoid too large on big screens
+            height: '40vh', // Adjust height for smaller screens
+            marginBottom: '5vw',
           }}
         >
-          <img 
-            src={employeeImage} 
-            alt="Employee" 
-            style={{ width: '120px', marginBottom: '30px' }} 
+          <img
+            src={employeeImage}
+            alt="Employee"
+            style={{
+              width: '30vw', // Use viewport width for responsive image size
+              maxWidth: '120px', // Max width for larger screens
+              marginBottom: '5vw',
+            }}
           />
-          <span style={{ fontSize: '25px', fontFamily: 'Poppins', textAlign: 'center' }}>Employee</span>
+          <span style={{ fontSize: '6vw', fontFamily: 'Poppins', textAlign: 'center' }}>Employee</span>
         </div>
       </div>
-      <div style={{ height: '60px' }} />
     </div>
   );
 };
