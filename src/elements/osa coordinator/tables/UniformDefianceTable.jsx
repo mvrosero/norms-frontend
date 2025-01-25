@@ -316,7 +316,7 @@ const renderTable = () => {
 
         return (
             <Table bordered hover style={{ borderRadius: '20px', marginLeft: '110px', marginTop: '10px' }}>
-                <thead style={{ backgroundColor: '#f8f9fa' }}>
+                <thead>
                     <tr>
                     <th style={{ textAlign: 'center', padding: '0', verticalAlign: 'middle', width: '5%' }}>
                         <button style={{ border: 'none', background: 'none', cursor: 'pointer', display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center', width: '100%' }}
@@ -330,7 +330,7 @@ const renderTable = () => {
                             )}
                         </button>
                     </th>
-                    <th style={{ width: '20%' }}>
+                    <th style={{ textAlign: 'center', padding: '0', verticalAlign: 'middle', width: '20%' }}>
                         <button style={{ border: 'none', background: 'none', cursor: 'pointer', display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center', width: '100%' }}
                             onClick={handleSortDate}
                             >
