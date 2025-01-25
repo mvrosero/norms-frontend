@@ -1,9 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Modal, Button, Card } from 'react-bootstrap';
 import { MdFilePresent } from "react-icons/md";
+import Zoom from 'react-medium-image-zoom';
 import 'react-quill/dist/quill.snow.css';
 import '../../../styles/index.css';
-
 
 const ViewAnnouncementModal = ({ show, onHide, selectedAnnouncement }) => {
     const [zoomEnabled, setZoomEnabled] = useState(true);
