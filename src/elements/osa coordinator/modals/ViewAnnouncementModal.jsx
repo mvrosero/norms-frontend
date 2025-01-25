@@ -1,4 +1,5 @@
 import React from 'react';
+import { useState } from 'react';
 import { Modal, Button, Card } from 'react-bootstrap';
 import { MdFilePresent } from "react-icons/md";
 import 'react-quill/dist/quill.snow.css';
@@ -6,38 +7,74 @@ import '../../../styles/index.css';
 
 
 const ViewAnnouncementModal = ({ show, onHide, selectedAnnouncement }) => {
+    const [currentFile, setCurrentFile] = useState(null); // State to store the selected file for viewing
+
     const renderFile = () => {
         if (selectedAnnouncement) {
             const filenames = selectedAnnouncement.filenames.split(',');
-    
+
             return (
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px' }}>
                     {filenames.map((filename, index) => {
                         const fileExtension = filename.split('.').pop().toLowerCase();
                         const fileUrl = `http://localhost:9000/uploads/${filename.trim()}`;
                         const isImage = ['jpg', 'jpeg', 'png', 'gif'].includes(fileExtension);
-    
+
                         if (isImage) {
                             return (
                                 <div key={index} style={{ marginBottom: '10px' }}>
-                        
-                                        <img src={fileUrl} alt="File Preview" style={{ maxWidth: '100%', maxHeight: '450px', objectFit: 'cover', borderRadius: '5px', border: '1px solid #ddd' }} 
-                                        onClick={() => setCurrentFile(fileUrl)}
-                                        />
-                             
+                                    <img
+                                        src={fileUrl}
+                                        alt="File Preview"
+                                        style={{
+                                            maxWidth: '100%',
+                                            maxHeight: '450px',
+                                            objectFit: 'cover',
+                                            borderRadius: '5px',
+                                            border: '1px solid #ddd',
+                                            cursor: 'pointer',
+                                        }}
+                                        onClick={() => setCurrentFile(fileUrl)} // Set the selected file to be viewed inline
+                                    />
+                                    {currentFile === fileUrl && (
+                                        <div style={{ marginTop: '10px' }}>
+                                            <img
+                                                src={currentFile}
+                                                alt="Preview"
+                                                style={{
+                                                    maxWidth: '100%',
+                                                    maxHeight: '450px',
+                                                    objectFit: 'cover',
+                                                    borderRadius: '5px',
+                                                    border: '1px solid #ddd',
+                                                }}
+                                            />
+                                        </div>
+                                    )}
                                 </div>
                             );
                         } else {
                             return (
                                 <div key={index} style={{ position: 'relative', display: 'inline-block', cursor: 'pointer' }}>
-                                    <a href={fileUrl} target="_blank" rel="noopener noreferrer">
                                     <Card style={{ width: '100px', height: '100px', border: '1px solid #0D4809', marginRight: '10px', marginBottom: '50px' }}>
                                         <Card.Body style={{ padding: '5px', display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
                                             <MdFilePresent style={{ fontSize: '90px', color: '#0D4809' }} />
                                         </Card.Body>       
                                         <p style={{ textAlign: 'center', marginTop: '5px', fontSize: '10px', wordWrap: 'break-word' }}> {filename.trim()} </p>
                                     </Card>
-                                    </a>
+                                    {currentFile === fileUrl && (
+                                        <div style={{ marginTop: '10px' }}>
+                                            <iframe
+                                                src={currentFile}
+                                                style={{
+                                                    width: '100%',
+                                                    height: '450px',
+                                                    border: '1px solid #ddd',
+                                                    borderRadius: '5px',
+                                                }}
+                                            ></iframe>
+                                        </div>
+                                    )}
                                 </div>
                             );
                         }
@@ -47,6 +84,7 @@ const ViewAnnouncementModal = ({ show, onHide, selectedAnnouncement }) => {
         }
         return null;
     };
+
 
     const renderStatus = (status) => {
         let backgroundColor, textColor;
