@@ -430,6 +430,13 @@ export default function CoordinatorAnnouncements() {
         return text;
     };
 
+    // Get the plain text content length, ignoring HTML tags
+    const getTextLength = (content) => {
+        const tempDiv = document.createElement('div');
+        tempDiv.innerHTML = content;
+        return tempDiv.textContent || tempDiv.innerText || '';
+    };
+
 
     // Set the styles for the status
     const renderStatus = (status) => {
@@ -702,41 +709,46 @@ return (
                     </Row>
 
                     <Row className="gy-4">
-                    <Form.Group className="content mb-3" style={{ marginBottom: '20px' }}>
-                        <Form.Label className="fw-bold">Content</Form.Label>
-                        <ReactQuill
-                            theme="snow" 
-                            value={announcementFormData.content}
-                            onChange={(content) => handleChange({ target: { name: 'content', value: content.trim() } })}
-                            onFocus={() => setFocusedElement('content')}
-                            onBlur={() => setFocusedElement(null)}
-                            formats={[ 'header', 'bold', 'italic', 'underline', 'list', 'bullet', 'ordered' ]}
-                            modules={{
-                                toolbar: [
-                                    [{ header: [1, 2, false] }],
-                                    ['bold', 'italic', 'underline'],
-                                    [{ list: 'ordered' }, { list: 'bullet' }]
-                                ],
-                            }}
-                            style={{
-                                backgroundColor: '#f2f2f2',
-                                border: `1px solid ${
-                                    focusedElement === 'content' ? (editing ? '#3B71CA' : '#FAD32E') : '#ced4da'
-                                }`,
-                                borderRadius: '4px',
-                                boxShadow:
-                                    focusedElement === 'content'
-                                        ? editing
-                                            ? '0 0 0 2px rgba(59, 113, 202, 1)'
-                                            : '0 0 0 2px rgba(250, 211, 46, 1)'
-                                        : 'none',
-                            }}
-                        />
-                        <div style={{ marginTop: '10px', fontSize: '12px', color: '#666' }}>
-                            {announcementFormData.content.length}/{maxLength}
-                        </div>
-                    </Form.Group>
+                        <Form.Group className="content mb-3" style={{ marginBottom: '20px' }}>
+                            <Form.Label className="fw-bold">Content</Form.Label>
+                            <ReactQuill
+                                theme="snow"
+                                value={announcementFormData.content}
+                                onChange={(content) => handleChange({ target: { name: 'content', value: content.trim() } })}
+                                onFocus={() => setFocusedElement('content')}
+                                onBlur={() => setFocusedElement(null)}
+                                formats={['header', 'bold', 'italic', 'underline', 'list', 'bullet', 'ordered']}
+                                modules={{
+                                    toolbar: [
+                                        [{ header: [1, 2, false] }],
+                                        ['bold', 'italic', 'underline'],
+                                        [{ list: 'ordered' }, { list: 'bullet' }],
+                                    ],
+                                }}
+                                style={{
+                                    backgroundColor: '#f2f2f2',
+                                    border: `1px solid ${
+                                        focusedElement === 'content'
+                                            ? editing
+                                                ? '#3B71CA'
+                                                : '#FAD32E'
+                                            : '#ced4da'
+                                    }`,
+                                    borderRadius: '4px',
+                                    boxShadow:
+                                        focusedElement === 'content'
+                                            ? editing
+                                                ? '0 0 0 2px rgba(59, 113, 202, 1)'
+                                                : '0 0 0 2px rgba(250, 211, 46, 1)'
+                                            : 'none',
+                                }}
+                            />
+                            <div style={{ marginTop: '10px', fontSize: '12px', color: '#666' }}>
+                                {getTextLength(announcementFormData.content)}/{maxLength}
+                            </div>
+                        </Form.Group>
                     </Row>
+                                    
 
                     <Row className="gy-4">
                     <Form.Group className="status mb-3">
