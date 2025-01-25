@@ -16,6 +16,8 @@ const UniformDefianceTable = ({filters, searchQuery}) => {
     const [natures, setNatures] = useState([]);
     const [showDetailsModal, setShowDetailsModal] = useState(false);
     const [selectedRecord, setSelectedRecord] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
     const navigate = useNavigate();
 
 
@@ -71,6 +73,9 @@ const UniformDefianceTable = ({filters, searchQuery}) => {
             setDefiances(data);
         } catch (error) {
             console.error('Error fetching defiances:', error);
+            setError('Failed to fetch uniform defiances.'); 
+        } finally {
+            setLoading(false); 
         }
     }, [headers]);
     useEffect(() => {
@@ -199,6 +204,8 @@ const UniformDefianceTable = ({filters, searchQuery}) => {
         };
 
     const renderPagination = () => {
+        if (loading) return null;
+
         const pageNumbers = Array.from({ length: totalPages }, (_, i) => i + 1);
         
             const buttonStyle = {
@@ -314,10 +321,20 @@ const renderTable = () => {
       
         const currentDefiances = filteredDefiances.slice(indexOfFirstDefiance, indexOfLastDefiance);
 
-        return (
-            <Table bordered hover style={{ borderRadius: '20px', marginLeft: '110px', marginTop: '10px' }}>
-                <thead>
-                    <tr>
+        // Show loading spinner when data is being fetched
+        if (loading) {
+            return (
+            <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100%" }}>
+                <div style={{ width: "50px", height: "50px", border: "6px solid #f3f3f3", borderTop: "6px solid #a9a9a9", borderRadius: "50%", animation: "spin 1s linear infinite" }}></div>
+                <style> {`@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }`} </style>
+            </div>
+            );
+        }
+
+    return (
+        <Table bordered hover style={{ borderRadius: '20px', marginLeft: '110px', marginTop: '10px' }}>
+            <thead>
+                <tr>
                     <th style={{ textAlign: 'center', padding: '0', verticalAlign: 'middle', width: '5%' }}>
                         <button style={{ border: 'none', background: 'none', cursor: 'pointer', display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center', width: '100%' }}
                             onClick={handleSortSlipId}
@@ -403,7 +420,7 @@ return (
     <div>
         {renderTable()}
 
-        {renderPagination()}
+        {!loading && renderPagination()}
 
         {/* View Defiance Modal */}
         <ViewUniformDefianceModal 

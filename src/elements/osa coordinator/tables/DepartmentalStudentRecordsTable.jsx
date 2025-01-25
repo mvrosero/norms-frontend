@@ -434,7 +434,7 @@ return (
                 <div style={{ width: '920px' }}> <SFforDepartmentalTable onSearch={handleSearch} onFilterChange={handleFilterChange}/> </div>
                 <button 
                     onClick={handleCreateViolation} 
-                    style={{ backgroundColor: '#FAD32E', color: 'white', fontWeight: '900', padding: '12px 15px', border: 'none', borderRadius: '10px', cursor: 'pointer', display: 'flex', alignItems: 'center', boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)' }}>
+                    style={{ backgroundColor: '#FAD32E', color: 'white', fontWeight: '900', padding: '12px 30px', border: 'none', borderRadius: '10px', cursor: 'pointer', display: 'flex', alignItems: 'center', boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)' }}>
                         Create Violation
                     <FaPlus style={{ marginLeft: '10px' }} />
                 </button>
