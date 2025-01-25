@@ -337,7 +337,7 @@ const renderTable = () => {
                     style={{ textDecoration: 'none', color: 'black', cursor: 'pointer', transition: 'color 0.3s ease, text-decoration 0.3s ease' }}
                     onMouseEnter={(e) => {
                         e.target.style.textDecoration = 'underline'; 
-                        e.target.style.color = '#007bff';  
+                        e.target.style.color = '#4682B4';  
                     }}
                     onMouseLeave={(e) => {
                         e.target.style.textDecoration = 'none'; 
