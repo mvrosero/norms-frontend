@@ -29,7 +29,7 @@ const TopViolationNaturesChart = ({ startDate, endDate }) => {
       if (endDate) params.append('end_date', endDate);
 
       // Fetch top violation natures from the backend
-      fetch(`http://localhost:9000/api/top-violationnatures?${params.toString()}`)
+      fetch(`https://test-backend-api-2.onrender.com/api/top-violationnatures?${params.toString()}`)
         .then((response) => response.json())
         .then((data) => {
           const formattedData = data.map((record) => ({

@@ -23,7 +23,7 @@ const TopUniformDefiancesByDepartmentChart = ({ startDate, endDate }) => {
       if (endDate) params.append('end_date', endDate);
 
       // Fetch uniform defiance records count from the backend
-      fetch(`http://localhost:9000/api/top-uniformdefiances?${params.toString()}`)
+      fetch(`https://test-backend-api-2.onrender.com/api/top-uniformdefiances?${params.toString()}`)
         .then((response) => response.json())
         .then((data) => {
           // Sort departments by department_code if necessary

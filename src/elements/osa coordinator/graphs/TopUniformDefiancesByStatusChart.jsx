@@ -18,7 +18,7 @@ const TopUniformDefiancesByStatusChart = ({ startDate, endDate }) => {
 
         // Fetch data from the backend API with the date filters
         const response = await axios.get(
-          `http://localhost:9000/uniform-defiances/status?${params.toString()}`
+          `https://test-backend-api-2.onrender.com/uniform-defiances/status?${params.toString()}`
         );
         const data = response.data;
 

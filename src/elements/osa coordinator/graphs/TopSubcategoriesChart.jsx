@@ -54,7 +54,7 @@ const TopSubcategoriesChart = ({ startDate, endDate }) => {
         if (endDate) params.append('end_date', endDate);
 
         // Fetch the top subcategories data from the API with date filters
-        const response = await axios.get(`http://localhost:9000/api/top-subcategories?${params.toString()}`);
+        const response = await axios.get(`https://test-backend-api-2.onrender.com/api/top-subcategories?${params.toString()}`);
         const data = response.data;
 
 

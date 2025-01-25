@@ -63,7 +63,7 @@ const TopViolationRecordsByYearLevel = ({ startDate, endDate }) => {
 
         // Fetch data from the backend API with the date filters
         const response = await axios.get(
-          `http://localhost:9000/violation-records/year-level?${params.toString()}`
+          `https://test-backend-api-2.onrender.com/violation-records/year-level?${params.toString()}`
         );
         const data = response.data;
 

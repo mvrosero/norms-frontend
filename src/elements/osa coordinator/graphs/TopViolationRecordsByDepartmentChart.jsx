@@ -71,7 +71,7 @@ const TopViolationRecordsByDepartmentChart = ({ startDate, endDate }) => {
 
       // Fetch violation records count from the backend
       axios
-        .get('http://localhost:9000/api/top-violationrecords', { params })
+        .get('https://test-backend-api-2.onrender.com/api/top-violationrecords', { params })
         .then((response) => {
           const data = response.data; 
 

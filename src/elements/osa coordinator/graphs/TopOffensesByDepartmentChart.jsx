@@ -46,7 +46,7 @@ const TopOffensesByDepartmentChart = ({ startDate, endDate }) => {
     if (endDate) params.end_date = endDate;
 
     axios
-      .get('http://localhost:9000/api/top-offenses', { params })
+      .get('https://test-backend-api-2.onrender.com/api/top-offenses', { params })
       .then((response) => {
         const departments = [];
         const offenses = [];

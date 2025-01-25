@@ -29,7 +29,7 @@ const TotalUniformDefiancesChart = ({ startDate, endDate }) => {
 
         // Fetch data from backend with date filter
         const response = await axios.get(
-          `http://localhost:9000/uniform-defiances/totals?${params.toString()}`
+          `https://test-backend-api-2.onrender.com/uniform-defiances/totals?${params.toString()}`
         );
         const data = response.data;
         setChartData({
