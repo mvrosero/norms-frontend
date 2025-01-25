@@ -1,13 +1,11 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Modal, Button, Card } from 'react-bootstrap';
 import { MdFilePresent } from "react-icons/md";
-import Zoom from 'react-medium-image-zoom';
 import 'react-quill/dist/quill.snow.css';
 import '../../../styles/index.css';
 
-const ViewAnnouncementModal = ({ show, onHide, selectedAnnouncement }) => {
-    const [zoomEnabled, setZoomEnabled] = useState(true);
 
+const ViewAnnouncementModal = ({ show, onHide, selectedAnnouncement }) => {
     const renderFile = () => {
         if (selectedAnnouncement) {
             const filenames = selectedAnnouncement.filenames.split(',');
@@ -22,22 +20,11 @@ const ViewAnnouncementModal = ({ show, onHide, selectedAnnouncement }) => {
                         if (isImage) {
                             return (
                                 <div key={index} style={{ marginBottom: '10px' }}>
-                                    <Zoom>
-                                        <img
-                                            src={fileUrl}
-                                            alt="File Preview"
-                                            style={{
-                                                maxWidth: '100%',
-                                                maxHeight: '450px',
-                                                objectFit: 'contain',
-                                                borderRadius: '5px',
-                                                border: '1px solid #ddd',
-                                                cursor: 'zoom-in', // Cursor for zooming
-                                                margin: '0 auto', // Ensure it's centered
-                                                display: 'block', // Ensure it's centered within the div
-                                            }}
+                        
+                                        <img src={fileUrl} alt="File Preview" style={{ maxWidth: '100%', maxHeight: '450px', objectFit: 'cover', borderRadius: '5px', border: '1px solid #ddd' }} 
+                                        onClick={() => setCurrentFile(fileUrl)}
                                         />
-                                    </Zoom>
+                             
                                 </div>
                             );
                         } else {
