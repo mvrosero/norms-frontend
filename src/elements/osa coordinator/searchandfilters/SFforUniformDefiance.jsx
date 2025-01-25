@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { FaSearch } from 'react-icons/fa';
-import { IoFilter } from 'react-icons/io5';
+import { RiEqualizerLine } from "react-icons/ri";
 import axios from 'axios';
 import '../../../styles/SearchAndFilter.css';
 
@@ -75,7 +75,7 @@ export default function SFforUniformDefiance({ onSearch, onFilterChange }) {
           aria-label="Search input"
         />
         <button onClick={toggleFilterDropdown} className={`filterButton ${isFilterActive ? 'active' : ''}`} aria-label="Filter">
-          <IoFilter className={`filterIcon ${isFilterActive ? 'active' : ''}`} />
+          <RiEqualizerLine className={`filterIcon ${isFilterActive ? 'active' : ''}`} />
         </button>
         <button onClick={() => triggerSearch(searchQuery)} className="searchButton" aria-label="Search">
           <FaSearch className="searchIcon" />
