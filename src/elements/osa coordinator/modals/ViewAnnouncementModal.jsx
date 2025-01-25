@@ -99,7 +99,7 @@ const ViewAnnouncementModal = ({ show, onHide, selectedAnnouncement }) => {
 
                         <p style={{ fontWeight: 'bold' }}>Content:</p>
                         <p
-                            className="quill-content-text"
+                            className="quill-content"
                             style={{ textAlign: 'justify' }}
                             dangerouslySetInnerHTML={{ __html: selectedAnnouncement.content }}
                         ></p>
