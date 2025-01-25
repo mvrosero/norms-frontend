@@ -206,7 +206,7 @@ const TotalViolationRecordsChart = ({ startDate, endDate }) => {
           </select>
       </div>
 
-      {/* Conditional rendering based on selectedOption */}
+      {/* Conditional rendering based on selected Option */}
       {selectedOption === 'daily' && (
         <div>
           <ReactApexChart
