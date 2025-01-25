@@ -21,13 +21,9 @@ import chsBackgroundImage from "../../components/images/chs.png";
 import coeBackgroundImage from "../../components/images/coe.png";
 import ctedBackgroundImage from "../../components/images/cted.png";
 
-import offensesImage from "../../components/images/offenses.png"
+import offensesImage from "../../components/images/offenses.png";
 import sanctionsImage from "../../components/images/sanctions.png";
 import categoriesImage from "../../components/images/categories.png";
-
-import approvedImage from "../../components/images/approved.png";
-import rejectedImage from "../../components/images/rejected.png";
-import pendingImage from "../../components/images/pending.png";
 
 
 const BaseButton = styled(Button)`
@@ -50,33 +46,8 @@ const SanctionsButton = styled(BaseButton)`
   background-image: url(${sanctionsImage}) !important;
 `;
 
-const CategoriesButton = styled(BaseButton)`
+const AcademicYearButton = styled(BaseButton)`
   background-image: url(${categoriesImage}) !important;
-`;
-
-
-const StatusBaseButton = styled(Button)`
-  background-size: cover;
-  border-color: transparent !important;
-  display: flex;
-  align-items: flex-start;
-  justify-content: flex-start;
-  font-size: 30px;
-  font-weight: 600;
-  padding: 20px;
-  width: 350px !important;
-`;
-
-const ApprovedButton = styled(StatusBaseButton)`
-  background-image: url(${approvedImage}) !important;
-`;
-
-const RejectedButton = styled(StatusBaseButton)`
-  background-image: url(${rejectedImage}) !important;
-`;
-
-const PendingButton = styled(StatusBaseButton)`
-  background-image: url(${pendingImage}) !important;
 `;
 
 
@@ -94,23 +65,16 @@ const departments = [
 const CoordinatorDashboard = () => {
   const navigate = useNavigate();
   const [userCounts, setUserCounts] = useState({});
-  const [defianceStatusCounts, setDefianceStatusCounts] = useState({ approved: 0, rejected: 0, pending: 0 });
-
-  const token = localStorage.getItem('token');
-  const roleId = localStorage.getItem('role_id');
-
-  // Early return if no token or invalid role
-  if (!token || roleId !== '2') {
-    return null;
-  }
 
   useEffect(() => {
+    const token = localStorage.getItem('token');
+    const roleId = localStorage.getItem('role_id');
     if (token && roleId === '2') {
       fetchUserCounts(token);
     } else {
       console.error("Token is required for accessing the dashboard or invalid role.");
     }
-  }, [token, roleId]); // Add token and roleId as dependencies
+  }, []);
 
   const fetchUserCounts = async (token) => {
     try {
@@ -125,25 +89,11 @@ const CoordinatorDashboard = () => {
     }
   };
 
-  // Fetch defiance counts by status
-  useEffect(() => {
-    const fetchDefianceStatusCounts = async () => {
-      try {
-        const response = await axios.get('https://test-backend-api-2.onrender.com/defiance-status-counts');
-        console.log('Backend response:', response.data); // Debugging the response
-        setDefianceStatusCounts({
-          approved: response.data.approved || 0,
-          rejected: response.data.rejected || 0,
-          pending: response.data.pending || 0
-        });
-      } catch (error) {
-        console.error('Error fetching defiance status counts:', error);
-      }
-    };
-    fetchDefianceStatusCounts();
-  }, []); // Empty dependency array, runs once on mount
+  if (!localStorage.getItem('token') || localStorage.getItem('role_id') !== '2') {
+    return null; 
+  }
 
-  const handleCategoriesClick = () => {
+  const handleRecordsClick = () => {
     navigate('/manage-categories');
   };
 
@@ -155,17 +105,6 @@ const CoordinatorDashboard = () => {
     navigate('/manage-offenses');
   };
 
-  const handleApprovedClick = () => {
-    navigate('/uniformdefiance-history');
-  };
-
-  const handleRejectedClick = () => {
-    navigate('/uniformdefiance-history');
-  };
-
-  const handlePendingClick = () => {
-    navigate('/coordinator-uniformdefiance');
-  };
 
   return (
     <>
@@ -175,41 +114,11 @@ const CoordinatorDashboard = () => {
 
       {/* Shortcuts Cards */}
       <text style={{ fontSize: '20px', fontWeight: '600', marginLeft: '120px' }}>My Shortcuts</text>
-        <div className="buttons-container d-flex justify-content-center mt-4">
-            <OffensesButton variant="primary" onClick={handleOffensesClick} className="mr-3" style={{ width: "300px", height: "150px", marginLeft: "90px", marginRight: "20px", marginBottom: "40px" }}> Offenses </OffensesButton>
-            <SanctionsButton variant="primary" onClick={handleSanctionsClick} className="mr-3" style={{ width: "300px", height: "150px", marginRight: "20px", marginBottom: "40px" }}> Sanctions </SanctionsButton>
-            <CategoriesButton variant="primary" onClick={handleCategoriesClick} style={{ width: "300px", height: "150px", marginBottom: "40px", textAlign: 'left' }}> Categories </CategoriesButton>
-        </div>
-
-
-      {/* Shortcuts Cards */}
-      <text style={{ fontSize: '20px', fontWeight: '600', marginLeft: '120px' }}>Uniform Defiances</text>
-        <div className="buttons-container d-flex justify-content-center mt-4">
-            <PendingButton variant="primary" onClick={handlePendingClick} className="mr-3" style={{ width: "300px", height: "150px", marginLeft: "100px", marginRight: "20px", marginBottom: "40px" }}> 
-              <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-start", marginLeft: "15px" }}>
-                <span style={{ color: "#007cff", fontSize: "30px", fontWeight: "bold", marginTop: "13px" }}>Pending</span>
-                <span style={{ fontSize: "40px", fontWeight: "500", marginTop: "5px", marginLeft: "10px", color: "#101010" }}>
-                  {defianceStatusCounts.pending}
-                </span>
-              </div>
-            </PendingButton>
-            <RejectedButton variant="primary" onClick={handleRejectedClick} className="mr-3" style={{ width: "300px", height: "150px", marginRight: "20px", marginBottom: "40px" }}>  
-              <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-start", marginLeft: "15px" }}>
-                <span style={{ color: "#d83a00", fontSize: "30px", fontWeight: "bold", marginTop: "13px" }}>Rejected</span>
-                <span style={{ fontSize: "40px", fontWeight: "500", marginTop: "5px", marginLeft: "10px", color: "#101010" }}>
-                  {defianceStatusCounts.rejected}
-                </span>
-              </div>
-            </RejectedButton>
-            <ApprovedButton variant="primary" onClick={handleApprovedClick} className="mr-3" style={{ width: "300px", height: "150px", marginBottom: "40px" }}> 
-              <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-start", marginLeft: "15px" }}>
-                <span style={{ color: "#00a637", fontSize: "30px", fontWeight: "bold", marginTop: "13px" }}>Approved</span>
-                <span style={{ fontSize: "40px", fontWeight: "500", marginTop: "5px", marginLeft: "10px", color: "#101010" }}>
-                  {defianceStatusCounts.approved}
-                </span>
-              </div>
-            </ApprovedButton>
-        </div>
+      <div className="buttons-container d-flex justify-content-center mt-4">
+        <OffensesButton variant="primary" onClick={handleOffensesClick} className="mr-3" style={{ width: "300px", height: "150px", marginLeft: "90px", marginRight: "20px", marginBottom: "40px" }}> Offenses </OffensesButton>
+        <SanctionsButton variant="primary" onClick={handleSanctionsClick} className="mr-3" style={{ width: "300px", height: "150px", marginRight: "20px", marginBottom: "40px" }}> Sanctions </SanctionsButton>
+        <AcademicYearButton variant="primary" onClick={handleRecordsClick} style={{ width: "300px", height: "150px", marginBottom: "40px", textAlign: 'left' }}> Categories </AcademicYearButton>
+      </div>
 
 
       {/* Department Cards */}
