@@ -148,17 +148,19 @@ return (
             </div>
 
             {/* Breadcrumbs */}
-            <nav style={{ marginTop: '10px', marginBottom: '10px', textAlign: 'left' }}>
-                <ol style={{ backgroundColor: 'transparent', padding: '0', margin: '0', listStyle: 'none', display: 'flex', justifyContent: 'flex-start' }}>
-                <li style={{ marginRight: '5px' }}>
-                    <Link to="/coordinator-student records" style={{ textDecoration: 'none', color: '#0D4809' }}>
-                        Student Records
-                    </Link>
-                </li>
-                <li style={{ margin: '0 5px', color: '#6c757d' }}>{'>'}</li>
-                <li style={{ marginLeft: '5px', color: '#000' }}>Individual Violation Record</li>
-                </ol>
-            </nav>
+            <div>
+                <nav style={{ marginTop: '10px', marginBottom: '10px', textAlign: 'left' }}>
+                    <ol style={{ backgroundColor: 'transparent', padding: '0', margin: '0', listStyle: 'none', display: 'flex', justifyContent: 'flex-start' }}>
+                    <li style={{ marginRight: '5px' }}>
+                        <Link to="/coordinator-student records" style={{ textDecoration: 'none', color: '#0D4809' }}>
+                            Student Records
+                        </Link>
+                    </li>
+                    <li style={{ margin: '0 5px', color: '#6c757d' }}>{'>'}</li>
+                    <li style={{ marginLeft: '5px', color: '#000' }}>Individual Violation Record</li>
+                    </ol>
+                </nav>
+            </div>
 
             {/* Table for displaying violation records */}
             <IndividualStudentRecordTable records={violationRecords} />
