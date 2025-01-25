@@ -545,14 +545,8 @@ return (
                                 <div style={{ flex: 1 }}>
                                     <Card.Title style={{ marginTop: '20px', marginBottom: '20px', fontSize: '28px' }}>{a.title}</Card.Title>
                                     <Card.Text style={{ marginRight: '30px', fontSize: '16px' }}>
-                                        <div
-                                            dangerouslySetInnerHTML={{
-                                            __html: a.content.length > 250 
-                                                ? `${truncateText(a.content, 250)}...` 
-                                                : a.content,
-                                            }}>
-                                        </div>
-                                        {a.content.length > 250 && (
+                                        {truncateText(a.content, 700)}{' '}
+                                        {a.content.length > 700 && (
                                             <span
                                                 onClick={() => handleViewAnnouncement(a)}
                                                 style={{ color: '#007bff', cursor: 'pointer', textDecoration: 'underline' }}
@@ -613,14 +607,7 @@ return (
                             <Card.Body style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                                 <div style={{ flex: 1 }}>
                                     <Card.Title style={{ marginTop: '7px', marginLeft: '10px', fontSize: '20px' }}>{a.title}</Card.Title>
-                                    <Card.Text style={{ marginLeft: '10px', marginRight: '50px', fontSize: '14px' }}>   
-                                            <div
-                                                dangerouslySetInnerHTML={{
-                                                __html: a.content.length > 250 
-                                                    ? `${truncateText(a.content, 250)}...` 
-                                                    : a.content,
-                                                }}>
-                                            </div> {a.content.length > 250 && (
+                                    <Card.Text style={{ marginLeft: '10px', marginRight: '50px', fontSize: '14px' }}> {truncateText(a.content, 250)}{' '} {a.content.length > 250 && (
                                         <span onClick={() => handleViewAnnouncement(a)} style={{ color: '#007bff', cursor: 'pointer', textDecoration: 'underline' }}> See more... </span>)}
                                     </Card.Text>
                                     <Card.Text className="text-muted" style={{ marginTop: '10px', marginLeft: '10px', fontSize: '13px' }}> {renderStatus(a.status)} {renderDateTime(a.created_at, a.updated_at)} </Card.Text>
