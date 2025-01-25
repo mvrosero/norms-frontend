@@ -62,7 +62,7 @@ export default function CoordinatorAnnouncements() {
 
     const fetchAnnouncements = async () => {
         try {
-            const response = await axios.get('http://localhost:9000/announcements', {
+            const response = await axios.get('https://test-backend-api-2.onrender.com/announcements', {
                 headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
             });
             setAnnouncements(response.data);
@@ -132,7 +132,7 @@ export default function CoordinatorAnnouncements() {
     // Handle the submit announcement
     const handleAnnouncementSubmit = async (e) => {
         e.preventDefault();
-        const url = editing ? `http://localhost:9000/announcement/${editing}` : 'http://localhost:9000/create-announcement';
+        const url = editing ? `https://test-backend-api-2.onrender.com/announcement/${editing}` : 'https://test-backend-api-2.onrender.com/create-announcement';
         const method = editing ? 'put' : 'post';
 
         const formData = new FormData();
@@ -203,7 +203,7 @@ export default function CoordinatorAnnouncements() {
     // Handle the pin announcement 
     const handlePinAnnouncement = async (announcement_id) => {
         try {
-            const response = await fetch(`http://localhost:9000/announcement/${announcement_id}/pin`, {
+            const response = await fetch(`https://test-backend-api-2.onrender.com/announcement/${announcement_id}/pin`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -243,7 +243,7 @@ export default function CoordinatorAnnouncements() {
     // Handle the unpin announcement
     const handleUnpinAnnouncement = async (announcement_id) => {
         try {
-            const response = await fetch(`http://localhost:9000/announcement/${announcement_id}/unpin`, {
+            const response = await fetch(`https://test-backend-api-2.onrender.com/announcement/${announcement_id}/unpin`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -310,7 +310,7 @@ export default function CoordinatorAnnouncements() {
         }).then(async (result) => {
             if (result.isConfirmed) {
                 try {
-                    await axios.delete(`http://localhost:9000/announcement/${id}`, {
+                    await axios.delete(`https://test-backend-api-2.onrender.com/announcement/${id}`, {
                         headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
                     });
                     Swal.fire('Deleted!', 'The announcement has been deleted.', 'success');
@@ -384,7 +384,7 @@ export default function CoordinatorAnnouncements() {
         const filename = isOriginal ? file.name : file.name;
     
         if (isOriginal) {
-            axios.delete(`http://localhost:9000/announcement/${editing}/file/${filename}`, {
+            axios.delete(`https://test-backend-api-2.onrender.com/announcement/${editing}/file/${filename}`, {
                 headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
             })
             .then(() => {

@@ -50,7 +50,7 @@ export default function ManageSubcategories() {
     // Fetch subcategories
     const fetchSubcategories = async () => {
         try {
-            const response = await axios.get('http://localhost:9000/subcategories', {
+            const response = await axios.get('https://test-backend-api-2.onrender.com/subcategories', {
                 headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
             });
             setSubcategories(response.data);
@@ -120,7 +120,7 @@ export default function ManageSubcategories() {
     const handleSubcategorySubmit = async (e) => {
         e.preventDefault();
         try {
-            await axios.post('http://localhost:9000/create-subcategory', subcategoryFormData, {
+            await axios.post('https://test-backend-api-2.onrender.com/create-subcategory', subcategoryFormData, {
                 headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
             });
             Swal.fire({
@@ -157,7 +157,7 @@ export default function ManageSubcategories() {
     const handleEditSubmit = async (e) => {
         e.preventDefault();
         try {
-            await axios.put(`http://localhost:9000/subcategory/${editSubcategoryId}`, subcategoryFormData, {
+            await axios.put(`https://test-backend-api-2.onrender.com/subcategory/${editSubcategoryId}`, subcategoryFormData, {
                 headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
             });
             Swal.fire({
@@ -191,7 +191,7 @@ export default function ManageSubcategories() {
         }).then(async (result) => {
             if (result.isConfirmed) {
                 try {
-                    await axios.delete(`http://localhost:9000/subcategory/${id}`, {
+                    await axios.delete(`https://test-backend-api-2.onrender.com/subcategory/${id}`, {
                         headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
                     });
                     Swal.fire(

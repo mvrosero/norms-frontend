@@ -40,7 +40,7 @@ const IndividualUniformDefiance = () => {
     // Fetch the student information
     const fetchStudentInfo = useCallback(async () => {
         try {
-            const response = await axios.get(`http://localhost:9000/student/${student_idnumber}`, { headers });
+            const response = await axios.get(`https://test-backend-api-2.onrender.com/student/${student_idnumber}`, { headers });
             const studentData = response.data[0];
             if (studentData) {
                 const fullName = `${studentData.first_name} ${studentData.last_name}`.trim();
@@ -64,7 +64,7 @@ const IndividualUniformDefiance = () => {
     // Fetch the employee information
     const fetchEmployeeName = useCallback(async (employee_idnumber) => {
         try {
-            const response = await axios.get(`http://localhost:9000/employees/${employee_idnumber}`, { headers });
+            const response = await axios.get(`https://test-backend-api-2.onrender.com/employees/${employee_idnumber}`, { headers });
             if (response.data && response.data.name) {
                 return response.data.name;
             }
@@ -79,7 +79,7 @@ const IndividualUniformDefiance = () => {
     const fetchDefiances = useCallback(async () => {
         try {
             await fetchStudentInfo();
-            const response = await axios.get(`http://localhost:9000/uniform_defiances/${student_idnumber}`, { headers });
+            const response = await axios.get(`https://test-backend-api-2.onrender.com/uniform_defiances/${student_idnumber}`, { headers });
 
             setDefiances(response.data);
             setAllDefiances(response.data);

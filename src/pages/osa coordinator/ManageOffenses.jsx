@@ -64,7 +64,7 @@ export default function ManageOffenses() {
     // Fetch offenses
     const fetchOffenses = async () => {
         try {
-            const response = await axios.get('http://localhost:9000/offenses', {
+            const response = await axios.get('https://test-backend-api-2.onrender.com/offenses', {
                 headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
             });
             console.log('Fetched Offenses:', response.data);
@@ -82,7 +82,7 @@ export default function ManageOffenses() {
     // Fetch categories
     const fetchCategories = async () => {
         try {
-            const response = await axios.get('http://localhost:9000/categories', {
+            const response = await axios.get('https://test-backend-api-2.onrender.com/categories', {
                 headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
             });
             setCategories(response.data);
@@ -96,7 +96,7 @@ export default function ManageOffenses() {
     // Fetch subcategories
     const fetchSubcategories = async () => {
         try {
-            const response = await axios.get('http://localhost:9000/subcategories', {
+            const response = await axios.get('https://test-backend-api-2.onrender.com/subcategories', {
                 headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
             });
             setSubcategories(response.data); 
@@ -186,7 +186,7 @@ export default function ManageOffenses() {
             return;
         }
         try {
-            await axios.post('http://localhost:9000/register-offense', offenseFormData, {
+            await axios.post('https://test-backend-api-2.onrender.com/register-offense', offenseFormData, {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
 
@@ -234,7 +234,7 @@ export default function ManageOffenses() {
             status: offenseFormData.status,
         };
         try {
-            await axios.put(`http://localhost:9000/offense/${editOffenseId}`, payload, {
+            await axios.put(`https://test-backend-api-2.onrender.com/offense/${editOffenseId}`, payload, {
                 headers: {
                     'Authorization': `Bearer ${localStorage.getItem('token')}`,
                     'Content-Type': 'application/json',
@@ -273,7 +273,7 @@ export default function ManageOffenses() {
         }).then(async (result) => {
             if (result.isConfirmed) {
                 try {
-                    await axios.delete(`http://localhost:9000/offense/${id}`, {
+                    await axios.delete(`https://test-backend-api-2.onrender.com/offense/${id}`, {
                         headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
                     });
                     Swal.fire('Deleted!', 'The offense has been deleted.', 'success');

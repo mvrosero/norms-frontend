@@ -45,7 +45,7 @@ export default function ManageCategories() {
     // Fetch categories
     const fetchCategories = async () => {
         try {
-            const response = await axios.get('http://localhost:9000/categories', {
+            const response = await axios.get('https://test-backend-api-2.onrender.com/categories', {
                 headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
             });
             setCategories(response.data);
@@ -113,7 +113,7 @@ export default function ManageCategories() {
     const handleCategorySubmit = async (e) => {
         e.preventDefault();
         try {
-            await axios.post('http://localhost:9000/register-category', categoryFormData, {
+            await axios.post('https://test-backend-api-2.onrender.com/register-category', categoryFormData, {
                 headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
             });
 
@@ -154,7 +154,7 @@ export default function ManageCategories() {
     const handleEditSubmit = async (e) => {
         e.preventDefault();
         try {
-            await axios.put(`http://localhost:9000/category/${editCategoryId}`, categoryFormData, {
+            await axios.put(`https://test-backend-api-2.onrender.com/category/${editCategoryId}`, categoryFormData, {
                 headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` },
             });
             Swal.fire({
@@ -188,7 +188,7 @@ export default function ManageCategories() {
         }).then(async (result) => {
             if (result.isConfirmed) {
                 try {
-                    await axios.delete(`http://localhost:9000/category/${id}`, {
+                    await axios.delete(`https://test-backend-api-2.onrender.com/category/${id}`, {
                         headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
                     });
                     Swal.fire(

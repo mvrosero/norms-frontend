@@ -50,7 +50,7 @@ export default function ManageViolationNature() {
     // Fetch nature of violations
     const fetchNatures = async () => {
         try {
-            const response = await axios.get('http://localhost:9000/violation-natures', {
+            const response = await axios.get('https://test-backend-api-2.onrender.com/violation-natures', {
                 headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
             });
             setNatures(response.data); 
@@ -124,7 +124,7 @@ export default function ManageViolationNature() {
     const handleNatureSubmit = async (e) => {
         e.preventDefault();
         try {
-            await axios.post('http://localhost:9000/create-violationnature', natureFormData, {
+            await axios.post('https://test-backend-api-2.onrender.com/create-violationnature', natureFormData, {
                 headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
             });
             Swal.fire({
@@ -161,7 +161,7 @@ export default function ManageViolationNature() {
     const handleEditSubmit = async (e) => {
         e.preventDefault();
         try {
-            await axios.put(`http://localhost:9000/violation-nature/${editNatureId}`, natureFormData, { // Changed to natureFormData
+            await axios.put(`https://test-backend-api-2.onrender.com/violation-nature/${editNatureId}`, natureFormData, { // Changed to natureFormData
                 headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
             });
             Swal.fire({
@@ -195,7 +195,7 @@ export default function ManageViolationNature() {
         }).then(async (result) => {
             if (result.isConfirmed) {
                 try {
-                    await axios.delete(`http://localhost:9000/violation-nature/${id}`, {
+                    await axios.delete(`https://test-backend-api-2.onrender.com/violation-nature/${id}`, {
                         headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
                     });
                     Swal.fire('Deleted!', 'The violation nature has been deleted.', 'success');

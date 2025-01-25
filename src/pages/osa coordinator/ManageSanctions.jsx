@@ -51,7 +51,7 @@ export default function ManageSanctions() {
     // Fetch sanctions
     const fetchSanctions = async () => {
         try {
-            const response = await axios.get('http://localhost:9000/sanctions', {
+            const response = await axios.get('https://test-backend-api-2.onrender.com/sanctions', {
                 headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` },
             });
             setSanctions(response.data);
@@ -123,7 +123,7 @@ export default function ManageSanctions() {
     const handleSanctionSubmit = async (e) => {
         e.preventDefault();
         try {
-            await axios.post('http://localhost:9000/register-sanction', sanctionFormData, {
+            await axios.post('https://test-backend-api-2.onrender.com/register-sanction', sanctionFormData, {
                 headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` },
             });
             Swal.fire({
@@ -161,7 +161,7 @@ export default function ManageSanctions() {
         e.preventDefault();
         setIsSubmitting(true);
         try {
-            await axios.put(`http://localhost:9000/sanction/${editSanctionId}`, sanctionFormData, {
+            await axios.put(`https://test-backend-api-2.onrender.com/sanction/${editSanctionId}`, sanctionFormData, {
                 headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` },
             });
             Swal.fire({
@@ -197,7 +197,7 @@ export default function ManageSanctions() {
         }).then(async (result) => {
             if (result.isConfirmed) {
                 try {
-                    await axios.delete(`http://localhost:9000/sanction/${id}`, {
+                    await axios.delete(`https://test-backend-api-2.onrender.com/sanction/${id}`, {
                         headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` },
                     });
                     Swal.fire('Deleted!', 'The sanction has been deleted.', 'success');

@@ -40,7 +40,7 @@ export default function UniformDefianceHistory() {
         try {
             const token = localStorage.getItem('token');
             const headers = { Authorization: `Bearer ${token}` };
-            const response = await axios.get('http://localhost:9000/uniform_defiances', { headers });
+            const response = await axios.get('https://test-backend-api-2.onrender.com/uniform_defiances', { headers });
             setDefiances(response.data);
             setAllDefiances(response.data);
             setFilteredDefiances(response.data);
