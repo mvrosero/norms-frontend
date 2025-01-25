@@ -13,6 +13,8 @@ const StudentRecordsTable = ({filters, searchQuery}) => {
     const [departments, setDepartments] = useState([]);
     const [programs, setPrograms] = useState([]);
     const [deletionStatus, setDeletionStatus] = useState(false);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
     const navigate = useNavigate();
 
     const headers = useMemo(() => {
@@ -55,8 +57,11 @@ const StudentRecordsTable = ({filters, searchQuery}) => {
             }
         } catch (error) {
             console.error('Error fetching users:', error);
+            Swal.fire('Error', 'Failed to fetch users.', 'error');
+        } finally {
+            setLoading(false);
         }
-    }, [headers, deletionStatus]);
+    }, [headers, deletionStatus]); 
 
 
      // Fetch the departments
@@ -170,6 +175,8 @@ const StudentRecordsTable = ({filters, searchQuery}) => {
     };
 
     const renderPagination = () => {
+        if (loading) return null;
+
         const pageNumbers = Array.from({ length: totalPages }, (_, i) => i + 1);
 
         const buttonStyle = {
@@ -289,9 +296,20 @@ const renderTable = () => {
         
         const currentUsers = filteredUsers.slice(indexOfFirstUser, indexOfLastUser);
 
-    return ( 
-        <Table bordered hover responsive style={{ borderRadius: '20px', marginLeft: '110px', marginTop: '10px' }}>
-        <thead style={{ backgroundColor: '#f8f9fa' }}> 
+        // Show loading spinner when data is being fetched
+        if (loading) {
+            return (
+            <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100%" }}>
+                <div style={{ width: "50px", height: "50px", border: "6px solid #f3f3f3", borderTop: "6px solid #a9a9a9", borderRadius: "50%", animation: "spin 1s linear infinite" }}></div>
+                <style> {`@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }`} </style>
+            </div>
+            );
+        }
+
+
+return ( 
+    <Table bordered hover responsive style={{ borderRadius: '20px', marginLeft: '110px', marginTop: '10px' }}>
+        <thead> 
             <tr>
                 <th style={{ width: '4%'}}>No.</th>
                 <th style={{ textAlign: 'center', padding: '0', verticalAlign: 'middle', width: '11%' }}>
@@ -328,7 +346,7 @@ const renderTable = () => {
         {filteredUsers && filteredUsers.length > 0 ? (
             currentUsers.map((user, index) => ( 
                 <tr key={index}>
-                <td style={{ textAlign: 'center' }}>{index + 1}</td>
+                <td style={{ textAlign: 'center' }}>{currentPage * rowsPerPage + index + 1}</td>
                 <td>{user.student_idnumber}</td>
                 <td>
                     <a
@@ -374,7 +392,7 @@ return (
     <>
         {renderTable()}
 
-        {renderPagination()}
+        {!loading && renderPagination()}
     </>
     );
 }

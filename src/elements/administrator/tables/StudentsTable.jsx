@@ -47,8 +47,6 @@ export default function StudentsTable ({filters, searchQuery}) {
         setUsers(activeUsers); 
         setLoading(false);
     } catch (error) {
-      
-       
         console.error('Error fetching users:', error);
         Swal.fire('Error', 'Failed to fetch users.', 'error');
     }
