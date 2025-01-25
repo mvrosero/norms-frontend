@@ -71,8 +71,7 @@ export default function IndividualStudentRecord() {
 
 
 return (
-    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-
+    <div>
             {/* Title Section */}
             <div style={{ width: '90%', margin: '0 auto', display: 'flex', justifyContent: 'flex-start' }}>
                 <h6 className="section-title" style={{ fontFamily: 'Poppins, sans-serif', color: '#242424', fontSize: '40px', fontWeight: 'bold', marginTop: '20px', marginLeft: '50px' }}>Individual Violation Records</h6>
@@ -148,19 +147,17 @@ return (
             </div>
 
             {/* Breadcrumbs */}
-            <div style={{ display: 'flex', justifyContent: 'flex-start' }}>
-                <nav style={{ marginTop: '10px', marginBottom: '10px', textAlign: 'left' }}>
-                    <ol style={{ backgroundColor: 'transparent', padding: '0', margin: '0', listStyle: 'none', display: 'flex', justifyContent: 'flex-start' }}>
-                    <li style={{ marginRight: '5px' }}>
-                        <Link to="/coordinator-student records" style={{ textDecoration: 'none', color: '#0D4809' }}>
-                            Student Records
-                        </Link>
-                    </li>
-                    <li style={{ margin: '0 5px', color: '#6c757d' }}>{'>'}</li>
-                    <li style={{ marginLeft: '5px', color: '#000' }}>Individual Violation Record</li>
-                    </ol>
-                </nav>
-            </div>
+            <nav style={{ marginTop: '10px', marginBottom: '10px', textAlign: 'left' }}>
+                <ol style={{ backgroundColor: 'transparent', padding: '0', margin: '0', listStyle: 'none', display: 'flex', justifyContent: 'flex-start' }}>
+                <li style={{ marginRight: '5px' }}>
+                    <Link to="/coordinator-student records" style={{ textDecoration: 'none', color: '#0D4809' }}>
+                        Student Records
+                    </Link>
+                </li>
+                <li style={{ margin: '0 5px', color: '#6c757d' }}>{'>'}</li>
+                <li style={{ marginLeft: '5px', color: '#000' }}>Individual Violation Record</li>
+                </ol>
+            </nav>
 
             {/* Table for displaying violation records */}
             <IndividualStudentRecordTable records={violationRecords} />
