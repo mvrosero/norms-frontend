@@ -96,7 +96,10 @@ const ViewAnnouncementModal = ({ show, onHide, selectedAnnouncement }) => {
                         <p>{selectedAnnouncement.title}</p>
 
                         <p style={{ fontWeight: 'bold' }}>Content:</p>
-                        <p style={{ textAlign: 'justify' }}>{selectedAnnouncement.content}</p>
+                        <p
+                            style={{ textAlign: 'justify' }}
+                            dangerouslySetInnerHTML={{ __html: selectedAnnouncement.content }}
+                        ></p>
 
                         <p style={{ fontWeight: 'bold' }}>Attachments:</p>
                         <div>{renderFile()}</div>
