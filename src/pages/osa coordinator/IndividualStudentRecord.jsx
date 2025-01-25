@@ -72,6 +72,8 @@ export default function IndividualStudentRecord() {
 
 return (
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+        <CoordinatorNavigation />
+        <CoordinatorInfo />
 
             {/* Title Section */}
             <div style={{ width: '90%', margin: '0 auto', display: 'flex', justifyContent: 'flex-start' }}>
@@ -135,9 +137,6 @@ return (
                 )}
             </div>
 
-            <CoordinatorNavigation />
-            <CoordinatorInfo />
-
             {/* Search And Filter Section */}
             <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'center', marginLeft: '60px', padding: '0 20px' }}>
                 <div style={{ flex: '1 1 80%', minWidth: '300px' }}> <SFforViolationsTable /> </div>
@@ -148,8 +147,8 @@ return (
             </div>
 
             {/* Breadcrumbs */}
-            <nav style={{ marginTop: '10px', marginBottom: '10px', textAlign: 'left' }}>
-                <ol style={{ backgroundColor: 'transparent', padding: '0', margin: '0', listStyle: 'none', display: 'inline-flex', justifyContent: 'flex-start' }}>
+            <nav style={{ marginTop: '10px', marginBottom: '10px', width: '100%' }}>
+                <ol style={{ backgroundColor: 'transparent', padding: '0', margin: '0', listStyle: 'none', alignItems: 'center', display: 'flex', justifyContent: 'flex-start' }}>
                 <li style={{ marginRight: '5px' }}>
                     <Link to="/coordinator-student records" style={{ textDecoration: 'none', color: '#0D4809' }}>
                         Student Records
