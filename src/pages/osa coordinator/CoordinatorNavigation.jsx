@@ -14,34 +14,54 @@ export default function CoordinatorNavigation() {
   const [collapsed, setCollapsed] = React.useState(true);
   const navigate = useNavigate();
   const location = useLocation();
+
   const menuItemFontSize = "16px";
   const iconSize = "24px";
-  const [activeMenuItem, setActiveMenuItem] = React.useState(null);
 
-  // Handle menu item click
+  // State to store the active menu item
+  const [activeMenuItem, setActiveMenuItem] = React.useState("Dashboard");
+
   const handleMenuItemClick = (menuItem) => {
     setActiveMenuItem(menuItem);
-    let path = menuItem.toLowerCase().replace(" ", "");
-    if (path === "handbook") {
-      navigate(`/${path}`);
-    } else {
-      navigate(`/coordinator-${path}`);
+  
+    if (menuItem === "Dashboard") {
+      navigate('/coordinator-dashboard');
+    } else if (menuItem === "Student Records") {
+      navigate('/coordinator-studentrecords');
+    } else if (menuItem === "Uniform Defiance") {
+      navigate('/coordinator-uniformdefiance');
+    } else if (menuItem === "Announcements") {
+      navigate('/coordinator-announcements');
+    } else if (menuItem === "Handbook") {
+      navigate('/handbook');
+    } else if (menuItem === "Settings") {
+      navigate('/coordinator-settings');
     }
   };
-
-  // Set active menu item based on location
+  
+  
+  // Check current page 
   React.useEffect(() => {
-    const pageName = location.pathname
-      .split("/")
-      .pop()
-      .replace("coordinator-", "")
-      .replace("-", " ");
-    setActiveMenuItem(pageName);
-  }, [location.pathname]);
+    const currentPath = location.pathname;
 
-  // Dynamic item color based on active state
+    if (currentPath === "/coordinator-dashboard") {
+      setActiveMenuItem("Dashboard");
+    } else if (currentPath === "/coordinator-studentrecords") {
+      setActiveMenuItem("Student Records");
+    } else if (currentPath === "/coordinator-uniformdefiance") {
+      setActiveMenuItem("Uniform Defiance");
+    } else if (currentPath === "/coordinator-announcements") {
+      setActiveMenuItem("Announcements");
+    } else if (currentPath === "/handbook") {
+      setActiveMenuItem("Handbook");
+    } else if (currentPath === "/coordinator-settings") {
+      setActiveMenuItem("Settings");
+    }
+  }, [location.pathname]);
+  
+  
   const getItemColor = (menuItem) => {
-    return activeMenuItem === menuItem ? "#134E0F" : "#b1b1b1";
+    return activeMenuItem.trim() === menuItem.trim() ? "#134E0F" : "#b1b1b1";
   };
 
   return (
@@ -162,17 +182,6 @@ export default function CoordinatorNavigation() {
                     </MenuItem>
                     <MenuItem
                       icon={
-                        <RiBook2Fill
-                          style={{ fontSize: iconSize, color: getItemColor("Handbook") }}
-                        />
-                      }
-                      onClick={() => handleMenuItemClick("Handbook")}
-                      active={activeMenuItem === "Handbook"}
-                    >
-                      Handbook
-                    </MenuItem>
-                    <MenuItem
-                      icon={
                         <MdAnnouncement
                           style={{ fontSize: iconSize, color: getItemColor("Announcements") }}
                         />
@@ -181,6 +190,17 @@ export default function CoordinatorNavigation() {
                       active={activeMenuItem === "Announcements"}
                     >
                       Announcements
+                    </MenuItem>
+                    <MenuItem
+                      icon={
+                        <RiBook2Fill
+                          style={{ fontSize: iconSize, color: getItemColor("Handbook") }}
+                        />
+                      }
+                      onClick={() => handleMenuItemClick("Handbook")}
+                      active={activeMenuItem === "Handbook"}
+                    >
+                      Handbook
                     </MenuItem>
                     <MenuItem
                       icon={<FaGear style={{ fontSize: iconSize, color: getItemColor("Settings") }} />}
