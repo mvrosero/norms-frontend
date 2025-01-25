@@ -147,7 +147,7 @@ return (
             </div>
 
             {/* Breadcrumbs */}
-            <nav style={{ marginTop: '10px', marginBottom: '10px', width: '100%' }}>
+            <nav style={{ width: '100%', marginLeft: '120px' }}>
                 <ol style={{ backgroundColor: 'transparent', padding: '0', margin: '0', listStyle: 'none', alignItems: 'center', display: 'flex', justifyContent: 'flex-start' }}>
                 <li style={{ marginRight: '5px' }}>
                     <Link to="/coordinator-student records" style={{ textDecoration: 'none', color: '#0D4809' }}>
