@@ -140,14 +140,14 @@ return (
             {/* Search And Filter Section */}
             <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'center', marginLeft: '60px', padding: '0 20px' }}>
                 <div style={{ flex: '1 1 80%', minWidth: '300px' }}> <SFforViolationsTable /> </div>
-                <Button onClick={handleCreateNewRecord} title="Add Record" style={{ backgroundColor: '#FAD32E', color: 'white', fontWeight: '900', padding: '12px 36px', marginLeft: '20px', border: 'none', borderRadius: '10px', cursor: 'pointer', display: 'flex', alignItems: 'center', boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)' }} >
+                <Button onClick={handleCreateNewRecord} title="Add Record" style={{ backgroundColor: '#FAD32E', color: 'white', fontWeight: '900', padding: '12px 36px', border: 'none', borderRadius: '10px', cursor: 'pointer', display: 'flex', alignItems: 'center', boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)' }} >
                         Add Violation
                     <FaPlus style={{ marginLeft: '10px' }} />
                 </Button>
             </div>
 
             {/* Breadcrumbs */}
-            <nav style={{ marginTop: '10px', marginBottom: '10px', textAlign: 'left' }}>
+            <nav style={{ marginLeft: '120px', textAlign: 'left' }}>
                 <ol style={{ backgroundColor: 'transparent', padding: '0', margin: '0', listStyle: 'none', display: 'flex', justifyContent: 'flex-start' }}>
                 <li style={{ marginRight: '5px' }}>
                     <Link to="/coordinator-student records" style={{ textDecoration: 'none', color: '#0D4809' }}>
