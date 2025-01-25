@@ -508,14 +508,6 @@ return (
 
 
             {/* Pinned Announcements Section */}
-            <div style={{ width: '90%', marginBottom: '40px' }}>
-                {loading ? (
-                    <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100%" }}>
-                    <div style={{ width: "50px", height: "50px", border: "6px solid #f3f3f3", borderTop: "6px solid #a9a9a9", borderRadius: "50%", animation: "spin 1s linear infinite" }}></div>
-                    <style> {`@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }`} </style>
-                    </div>
-                ) : (
-            <>
             <text style={{ fontSize: '20px', fontWeight: '600', marginLeft: '120px' }}>Pinned Announcements</text>
             <Row xs={1} md={1} lg={1} className="g-4" style={{ marginTop: '2px', marginBottom: '40px', marginLeft: '100px', marginRight: '20px' }}>
                 {filteredAnnouncements.filter(a => a.status === 'pinned').map(a => (
@@ -593,10 +585,6 @@ return (
                     </Col>
                 ))}
             </Row>
-            </>
-        )}
-    </div>
-         
 
             {/* Announcement Containers Section */}
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginLeft: '120px', marginRight: '20px' }}>
