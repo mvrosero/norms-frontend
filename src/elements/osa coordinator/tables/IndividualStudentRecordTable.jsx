@@ -57,21 +57,6 @@ const IndividualStudentRecordTable = () => {
     }, [student_idnumber]);
 
 
-    const getSanctionNames = (sanction_ids) => {
-        if (!sanction_ids) return 'Unknown';
-
-        const ids = sanction_ids.split(',').map((id) => id.trim());
-        const sanctionNames = ids.map((id) => getSanctionName(id));
-
-        return sanctionNames.every((name) => name === 'Unknown') ? 'Unknown' : sanctionNames.join(', ');
-    };
-
-    const getSanctionName = (sanction_id) => {
-        const sanction = sanctions.find((sanction) => String(sanction.sanction_id) === String(sanction_id));
-        return sanction ? sanction.sanction_name : 'Unknown';
-    };
-
-
     const handleViewDetails = (record) => {
         setSelectedRecord(record);
         setShowDetailsModal(true);
@@ -268,7 +253,6 @@ const IndividualStudentRecordTable = () => {
                 show={showDetailsModal}
                 onHide={handleCloseDetailsModal}
                 selectedRecord={selectedRecord}
-                getSanctionNames={getSanctionNames}
             />
         </div>
     );

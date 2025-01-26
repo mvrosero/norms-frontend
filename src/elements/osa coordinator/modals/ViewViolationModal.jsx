@@ -4,7 +4,7 @@ import Button from 'react-bootstrap/Button';
 import 'react-quill/dist/quill.snow.css';
 import '../../../styles/index.css';
 
-const ViewViolationModal = ({ show, onHide, selectedRecord, getCategoryName, getOffenseName, getSanctionNames, getAcademicYearName, getSemesterName }) => {
+const ViewViolationModal = ({ show, onHide, selectedRecord }) => {
     console.log(selectedRecord); 
 
     return (
@@ -47,7 +47,7 @@ const ViewViolationModal = ({ show, onHide, selectedRecord, getCategoryName, get
                         <p>{selectedRecord.offense_name}</p>
 
                         <p style={{ fontWeight: 'bold' }}>Sanctions:</p>
-                        <p>{getSanctionNames(selectedRecord.sanction_ids)}</p>
+                        <p>{selectedRecord.sanction_names}</p>
 
                         <p style={{ fontWeight: 'bold' }}>Description:</p>
                         <p className="quill-content"
