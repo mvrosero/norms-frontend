@@ -10,6 +10,7 @@ import ViewViolationModal from '../modals/ViewViolationModal';
 const IndividualStudentRecordTable = () => {
     const { student_idnumber } = useParams();
     const [records, setRecords] = useState([]);
+    const [groupedRecords, setGroupedRecords] = useState({});
     const [categories, setCategories] = useState([]);
     const [offenses, setOffenses] = useState([]);
     const [sanctions, setSanctions] = useState([]);
@@ -31,11 +32,24 @@ const IndividualStudentRecordTable = () => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const violationResponse = await axios.get( 
+                // Fetch violation records based on student_idnumber
+                const violationResponse = await axios.get(
                     `https://test-backend-api-2.onrender.com/myrecords-history/${student_idnumber}`
                 );
-                setRecords(violationResponse.data);
+                const records = violationResponse.data;
 
+                // Group records by department_name and program_name
+                const groupedRecords = records.reduce((acc, record) => {
+                    const key = `${record.department_name} - ${record.program_name}`;
+                    if (!acc[key]) {
+                        acc[key] = [];
+                    }
+                    acc[key].push(record);
+                    return acc;
+                }, {});
+                setGroupedRecords(groupedRecords);
+
+                // Fetch other data
                 const [categoriesResponse, offensesResponse, sanctionsResponse, academicYearsResponse, semestersResponse] =
                     await Promise.all([
                         axios.get('https://test-backend-api-2.onrender.com/categories'),
@@ -55,6 +69,7 @@ const IndividualStudentRecordTable = () => {
         };
         fetchData();
     }, [student_idnumber]);
+
 
 
     const handleViewDetails = (record) => {
@@ -203,48 +218,61 @@ const IndividualStudentRecordTable = () => {
 };
 
 
-// Render the individual student records table
-    return (
-        <div style={{ paddingTop: '10px' }}>
-            <Table bordered hover responsive style={{ borderRadius: '20px', marginBottom: '20px', marginLeft: '110px' }}>
-                <thead style={{ backgroundColor: '#f8f9fa' }}>
-                    <tr>
-                        <th style={{ width: '5%'}}>No.</th>
-                        <th style={{ textAlign: 'center', padding: '0', verticalAlign: 'middle', width: '20%' }}>
-                            <button style={{ border: 'none', background: 'none', cursor: 'pointer', display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center', width: '100%' }}
-                                onClick={handleSortDate}
+// Render the grouped student records table
+return (
+    <div style={{ paddingTop: '10px' }}>
+        {Object.entries(groupedRecords).map(([group, records]) => (
+            <div key={group} style={{ marginBottom: '30px' }}>
+                {/* Display group title */}
+                <h5 style={{ fontWeight: 'bold', marginBottom: '10px' }}>{group}</h5>
+                
+                <Table bordered hover responsive style={{ borderRadius: '20px', marginBottom: '20px', marginLeft: '110px' }}>
+                    <thead style={{ backgroundColor: '#f8f9fa' }}>
+                        <tr>
+                            <th style={{ width: '5%' }}>No.</th>
+                            <th style={{ textAlign: 'center', padding: '0', verticalAlign: 'middle', width: '20%' }}>
+                                <button
+                                    style={{
+                                        border: 'none', background: 'none', cursor: 'pointer', display: 'flex', flexDirection: 'row',
+                                        justifyContent: 'center', alignItems: 'center', width: '100%'
+                                    }}
+                                    onClick={handleSortDate}
                                 >
-                                <span>Date</span>
-                                {sortOrderDate === 'asc' ? (
-                                    <ArrowDropUpIcon style={{ marginLeft: '5px' }} />
-                                ) : (
-                                    <ArrowDropDownIcon style={{ marginLeft: '5px' }} />
-                                )}
-                            </button>
-                        </th>
-                        <th style={{ width: '12%' }}>Category</th>
-                        <th>Offense</th>
-                        <th style={{ width: '13%' }}>Academic Year</th>
-                        <th style={{ width: '13%' }}>Semester</th>
-                        <th style={{ width: '12%' }}>Action</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {currentRecords.map((record, index) => (
-                        <tr key={index}>
-                            <td style={{ textAlign: 'center' }}>{ (currentPage - 1) * rowsPerPage + (index + 1) }</td>
-                            <td>{new Date(record.created_at).toLocaleString()}</td>
-                            <td>{record.category_name}</td>
-                            <td>{record.offense_name}</td>
-                            <td style={{ textAlign: 'center' }}>{record.academic_year}</td>
-                            <td style={{ textAlign: 'center' }}>{record.semester_name}</td>
-                            <td style={{ display: 'flex', justifyContent: 'center' }}>
-                                <ViewButton onClick={() => handleViewDetails(record)}>View</ViewButton>
-                            </td>
+                                    <span>Date</span>
+                                    {sortOrderDate === 'asc' ? (
+                                        <ArrowDropUpIcon style={{ marginLeft: '5px' }} />
+                                    ) : (
+                                        <ArrowDropDownIcon style={{ marginLeft: '5px' }} />
+                                    )}
+                                </button>
+                            </th>
+                            <th style={{ width: '12%' }}>Category</th>
+                            <th>Offense</th>
+                            <th style={{ width: '13%' }}>Academic Year</th>
+                            <th style={{ width: '13%' }}>Semester</th>
+                            <th style={{ width: '12%' }}>Action</th>
                         </tr>
-                    ))}
-                </tbody>
-            </Table>
+                    </thead>
+                    <tbody>
+                        {records.map((record, index) => (
+                            <tr key={index}>
+                                <td style={{ textAlign: 'center' }}>
+                                    {(currentPage - 1) * rowsPerPage + (index + 1)}
+                                </td>
+                                <td>{new Date(record.created_at).toLocaleString()}</td>
+                                <td>{record.category_name}</td>
+                                <td>{record.offense_name}</td>
+                                <td style={{ textAlign: 'center' }}>{record.academic_year}</td>
+                                <td style={{ textAlign: 'center' }}>{record.semester_name}</td>
+                                <td style={{ display: 'flex', justifyContent: 'center' }}>
+                                    <ViewButton onClick={() => handleViewDetails(record)}>View</ViewButton>
+                                </td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </Table>
+            </div>
+        ))}
 
             {renderPagination()}
 
