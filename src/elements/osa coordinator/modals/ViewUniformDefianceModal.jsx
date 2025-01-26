@@ -1,18 +1,18 @@
-import React, { useState } from 'react'; // Import useState here
+import React, { useState } from 'react';
 import { Modal, Button } from 'react-bootstrap';
 
 const ViewUniformDefianceModal = ({ show, onHide, record }) => {
-    const [isImageClicked, setIsImageClicked] = useState(false);
-    const [clickedImage, setClickedImage] = useState('');
+    const [isFileClicked, setIsFileClicked] = useState(false);
+    const [clickedFile, setClickedFile] = useState('');
 
-    const handleImageClick = (imageUrl) => {
-        setClickedImage(imageUrl);
-        setIsImageClicked(true);
+    const handleFileClick = (fileUrl) => {
+        setClickedFile(fileUrl);
+        setIsFileClicked(true);
     };
 
-    const closeFullImageView = () => {
-        setIsImageClicked(false);
-        setClickedImage('');
+    const closeFullFileView = () => {
+        setIsFileClicked(false);
+        setClickedFile('');
     };
 
     const renderFile = () => {
@@ -27,13 +27,15 @@ const ViewUniformDefianceModal = ({ show, onHide, record }) => {
                 if (fileExtension === 'mp4' || fileExtension === 'avi' || fileExtension === 'mov') {
                     return (
                         <div key={index} style={{ marginBottom: '10px' }}>
-                                <video controls src={fileUrl} style={{ maxWidth: '100%' }} />
+                            <video controls src={fileUrl} style={{ maxWidth: '100%' }} 
+                            onClick={() => handleFileClick(fileUrl)}/>
                         </div>
                     );
                 } else if (fileExtension === 'jpg' || fileExtension === 'jpeg' || fileExtension === 'png' || fileExtension === 'gif') {
                     return (
                         <div key={index} style={{ marginBottom: '10px' }}>
-                                <img src={fileUrl} alt="File Preview" style={{ maxWidth: '100%' }} />
+                            <img src={fileUrl} alt="File Preview" style={{ maxWidth: '100%' }} 
+                            onClick={() => handleFileClick(fileUrl)}/>
                         </div>
                     );
                 } else {
@@ -43,7 +45,6 @@ const ViewUniformDefianceModal = ({ show, onHide, record }) => {
         }
         return null;
     };
-
 
 
     const renderStatus = (status) => {
@@ -84,8 +85,9 @@ const ViewUniformDefianceModal = ({ show, onHide, record }) => {
         );
     };
 
-    return (
-        <>
+
+return (
+    <>
         <Modal show={show} onHide={onHide} size="lg">
             <Modal.Header>
                 <Button variant="link" onClick={onHide} style={{ position: 'absolute', top: '5px', right: '20px', textDecoration: 'none',fontSize: '30px', color: '#a9a9a9' }}>
@@ -130,15 +132,15 @@ const ViewUniformDefianceModal = ({ show, onHide, record }) => {
                 )}
             </Modal.Body>
         </Modal>
-       
-        <Modal show={isImageClicked} onHide={closeFullImageView} size="lg" backdrop="static" centered>
+        {/* Full File Modal for Enlarged View */}
+        <Modal show={isFileClicked} onHide={closeFullFileView} size="lg" backdrop="static" centered>
             <Modal.Header>
-                <Button variant="link" onClick={closeFullImageView} style={{ position: 'absolute', top: '5px', right: '20px', textDecoration: 'none', fontSize: '30px', color: '#a9a9a9' }}>
+                <Button variant="link" onClick={closeFullFileView} style={{ position: 'absolute', top: '5px', right: '20px', textDecoration: 'none', fontSize: '30px', color: '#a9a9a9' }}>
                     ×
                 </Button>
             </Modal.Header>
             <Modal.Body>
-                <img src={clickedImage} alt="Enlarged Preview" style={{ width: '100%', height: 'auto', objectFit: 'contain', borderRadius: '5px' }}/>
+                <img src={clickedFile} alt="Enlarged Preview" style={{ width: '100%', height: 'auto', objectFit: 'contain', borderRadius: '5px' }}/>
             </Modal.Body>
         </Modal>
         </>
