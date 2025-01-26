@@ -155,7 +155,7 @@ return (
 
             {/* Breadcrumbs and Tab Buttons */}
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '5px' }}>
-                {/* Breadcrumbs - aligned to the left */}
+                {/* Breadcrumbs */}
                 <nav style={{ width: '80%' }}>
                     <ol style={{ backgroundColor: 'transparent', padding: '0', margin: '0', listStyle: 'none', alignItems: 'center', display: 'flex', justifyContent: 'flex-start' }}>
                     <li style={{ marginRight: '5px' }}>
@@ -168,7 +168,7 @@ return (
                     </ol>
                 </nav>
 
-                {/* Tab buttons for History and Stack - aligned to the right */}
+                {/* Tab buttons for History and Stack */}
                 <div>
                     <GoStack size={20} onClick={() => handleTabClick('stack')} style={{ cursor: 'pointer', color: activeTab === 'stack' ? '#134E0F' : '#8C8C8C', marginLeft: '20px' }} />
                     <GoHistory size={20} onClick={() => handleTabClick('history')} style={{ cursor: 'pointer', color: activeTab === 'history' ? '#134E0F' : '#8C8C8C', marginLeft: '10px' }} />
