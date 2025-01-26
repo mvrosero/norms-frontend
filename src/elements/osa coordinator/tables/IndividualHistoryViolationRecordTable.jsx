@@ -97,7 +97,7 @@ return (
   <div style={{ paddingTop: '10px' }}>
     {Object.entries(groupedRecords).map(([group, records]) => (
         <StyledTableContainer key={group}>
-          <h3 style={{ fontSize: '16px', fontWeight: '600', marginTop: '20px', marginBottom: '20px', marginLeft: '120px' }}>{group}</h3>
+          <h3 style={{ fontSize: '18px', fontWeight: '600', marginTop: '20px', marginBottom: '20px', marginLeft: '120px' }}>{group}</h3>
           <Table bordered hover responsive style={{ borderRadius: '20px', marginBottom: '20px', marginLeft: '110px' }}>
             <thead style={{ backgroundColor: '#f8f9fa' }}>
               <tr>
