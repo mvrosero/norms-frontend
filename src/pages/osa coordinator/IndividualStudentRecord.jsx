@@ -3,7 +3,10 @@ import axios from 'axios';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 import { Button } from 'react-bootstrap';
+
 import { FaPlus } from 'react-icons/fa'; 
+import { GoStack } from "react-icons/go";
+import { GoHistory } from "react-icons/go";
 
 import CoordinatorNavigation from './CoordinatorNavigation';
 import CoordinatorInfo from './CoordinatorInfo';

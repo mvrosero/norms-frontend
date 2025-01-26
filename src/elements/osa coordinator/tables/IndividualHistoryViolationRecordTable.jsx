@@ -17,11 +17,12 @@ const IndividualHistoryViolationRecordTable = () => {
   const { student_idnumber } = useParams();
   const [records, setRecords] = useState([]);
   const [groupedRecords, setGroupedRecords] = useState({});
-  const [sortOrderDate, setSortOrderDate] = useState('asc');
-  const [currentPage, setCurrentPage] = useState(1);
-  const [rowsPerPage] = useState(10);
   const [showDetailsModal, setShowDetailsModal] = useState(false);
   const [selectedRecord, setSelectedRecord] = useState(null);
+
+
+  // Sorting state for date
+  const [sortOrderDate, setSortOrderDate] = useState('asc'); 
 
   // Fetch violation records based on student_idnumber
   useEffect(() => {
@@ -51,19 +52,28 @@ const IndividualHistoryViolationRecordTable = () => {
     fetchViolationRecords();
   }, [student_idnumber]);
 
-  // Handle date sorting
+
+  // Sort records based on date
   const handleSortDate = () => {
-    const newSortOrder = sortOrderDate === 'asc' ? 'desc' : 'asc';
-    setSortOrderDate(newSortOrder);
+      const sortedRecords = [...records];
+      sortedRecords.sort((a, b) => {
+          const dateA = new Date(a.created_at); 
+          const dateB = new Date(b.created_at);
+
+          return sortOrderDate === 'asc' ? dateA - dateB : dateB - dateA;
+      });
+
+      setRecords(sortedRecords);
+      setSortOrderDate(sortOrderDate === 'asc' ? 'desc' : 'asc');
   };
 
-  // Handle opening the ViewViolationModal
+
+  // Handle opening and closing  the ViewViolationModal
   const handleViewDetails = (record) => {
     setSelectedRecord(record);
     setShowDetailsModal(true);
   };
 
-  // Handle closing the modal
   const handleCloseDetailsModal = () => {
     setShowDetailsModal(false);
   };
@@ -88,43 +98,21 @@ return (
     {Object.entries(groupedRecords).map(([group, records]) => (
         <StyledTableContainer key={group}>
           <h3>{group}</h3>
-          <Table
-            bordered
-            hover
-            responsive
-            style={{ borderRadius: '20px', marginBottom: '20px', marginLeft: '110px' }}
-          >
+          <Table bordered hover responsive style={{ borderRadius: '20px', marginBottom: '20px', marginLeft: '110px' }}>
             <thead style={{ backgroundColor: '#f8f9fa' }}>
               <tr>
                 <th style={{ width: '5%' }}>No.</th>
-                <th
-                  style={{
-                    textAlign: 'center',
-                    padding: '0',
-                    verticalAlign: 'middle',
-                    width: '20%',
-                  }}
-                >
-                  <button
-                    style={{
-                      border: 'none',
-                      background: 'none',
-                      cursor: 'pointer',
-                      display: 'flex',
-                      flexDirection: 'row',
-                      justifyContent: 'center',
-                      alignItems: 'center',
-                      width: '100%',
-                    }}
-                    onClick={handleSortDate}
-                  >
-                    <span>Date</span>
-                    {sortOrderDate === 'asc' ? (
-                      <ArrowDropUpIcon style={{ marginLeft: '5px' }} />
-                    ) : (
-                      <ArrowDropDownIcon style={{ marginLeft: '5px' }} />
-                    )}
-                  </button>
+                <th style={{ textAlign: 'center', padding: '0', verticalAlign: 'middle', width: '20%' }}>
+                    <button style={{ border: 'none', background: 'none', cursor: 'pointer', display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center', width: '100%' }}
+                        onClick={handleSortDate}
+                        >
+                        <span>Date</span>
+                        {sortOrderDate === 'asc' ? (
+                            <ArrowDropUpIcon style={{ marginLeft: '5px' }} />
+                        ) : (
+                            <ArrowDropDownIcon style={{ marginLeft: '5px' }} />
+                        )}
+                    </button>
                 </th>
                 <th style={{ width: '12%' }}>Category</th>
                 <th>Offense</th>
@@ -136,9 +124,7 @@ return (
             <tbody>
               {records.map((record, index) => (
                 <tr key={index}>
-                  <td style={{ textAlign: 'center' }}>
-                    {(currentPage - 1) * rowsPerPage + (index + 1)}
-                  </td>
+                  <td style={{ textAlign: 'center' }}>{index + 1}</td>
                   <td>{new Date(record.created_at).toLocaleString()}</td>
                   <td>{record.category_name}</td>
                   <td>{record.offense_name}</td>

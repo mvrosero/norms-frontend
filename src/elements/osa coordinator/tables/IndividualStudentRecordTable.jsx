@@ -83,7 +83,7 @@ const IndividualStudentRecordTable = () => {
     `;
 
 
-    // Sort users based on date
+    // Sort records based on date
     const handleSortDate = () => {
         const sortedRecords = [...records];
         sortedRecords.sort((a, b) => {
