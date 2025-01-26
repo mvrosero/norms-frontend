@@ -370,7 +370,6 @@ return (
                     <td colSpan="7" style={{ textAlign: 'center' }}>No users found</td>
                 </tr>
                 )}
-
         </tbody>
     </Table>
     );

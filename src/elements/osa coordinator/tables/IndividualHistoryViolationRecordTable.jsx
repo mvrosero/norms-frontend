@@ -22,6 +22,7 @@ const IndividualHistoryViolationRecordTable = () => {
   // Sorting state for date
   const [sortOrderDate, setSortOrderDate] = useState('asc'); 
 
+
   // Fetch violation records based on student_idnumber
   useEffect(() => {
     const fetchViolationRecords = async () => {
@@ -70,6 +71,7 @@ const IndividualHistoryViolationRecordTable = () => {
     setSortOrderDate(sortOrderDate === 'asc' ? 'desc' : 'asc');
   };
 
+
   // Handle opening and closing  the ViewViolationModal
   const handleViewDetails = (record) => {
     setSelectedRecord(record);
@@ -79,6 +81,7 @@ const IndividualHistoryViolationRecordTable = () => {
   const handleCloseDetailsModal = () => {
     setShowDetailsModal(false);
   };
+
 
   // Styles for the view button
   const ViewButton = styled.button`
@@ -93,8 +96,9 @@ const IndividualHistoryViolationRecordTable = () => {
   }
 `;
 
-  return (
-    <div style={{ paddingTop: '10px' }}>
+
+return (
+  <div style={{ paddingTop: '10px' }}>
       {Object.entries(groupedRecords).map(([group, records]) => (
         <StyledTableContainer key={group}>
           <h3 style={{ fontSize: '16px', fontWeight: '600', marginBottom: '20px', marginLeft: '120px' }}>{group}</h3>
@@ -150,5 +154,6 @@ const IndividualHistoryViolationRecordTable = () => {
     </div>
   );
 };
+
 
 export default IndividualHistoryViolationRecordTable;

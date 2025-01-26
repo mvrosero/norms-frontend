@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
+import Swal from 'sweetalert2';
 import axios from 'axios';
 import Table from 'react-bootstrap/Table';
 import styled from '@emotion/styled';
@@ -17,6 +18,8 @@ const IndividualStudentRecordTable = () => {
     const [sanctions, setSanctions] = useState([]);
     const [academicYears, setAcademicYears] = useState([]);
     const [semesters, setSemesters] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
     const [selectedRecord, setSelectedRecord] = useState(null);
     const [showDetailsModal, setShowDetailsModal] = useState(false);
 
@@ -29,15 +32,16 @@ const IndividualStudentRecordTable = () => {
     const [sortOrderDate, setSortOrderDate] = useState('asc'); 
 
 
-    // Fetch the violation records
+    // Fetch the violation records of the student
     useEffect(() => {
         const fetchData = async () => {
+            setLoading(true); 
             try {
-                const violationResponse = await axios.get( 
+                const violationResponse = await axios.get(
                     `https://test-backend-api-2.onrender.com/individual_violationrecords/${student_idnumber}`
                 );
                 setRecords(violationResponse.data);
-
+    
                 const [categoriesResponse, offensesResponse, sanctionsResponse, academicYearsResponse, semestersResponse] =
                     await Promise.all([
                         axios.get('https://test-backend-api-2.onrender.com/categories'),
@@ -53,12 +57,17 @@ const IndividualStudentRecordTable = () => {
                 setSemesters(semestersResponse.data);
             } catch (error) {
                 console.error('Error fetching data:', error);
+                setError('Failed to fetch data'); 
+                Swal.fire('Error', 'Failed to fetch data.', 'error'); 
+            } finally {
+                setLoading(false); 
             }
         };
         fetchData();
     }, [student_idnumber]);
 
 
+    // Handle opening and closing  the ViewViolationModal
     const handleViewDetails = (record) => {
         setSelectedRecord(record);
         setShowDetailsModal(true);
@@ -111,6 +120,8 @@ const IndividualStudentRecordTable = () => {
     };
 
     const renderPagination = () => {
+        if (loading) return null;
+
         const pageNumbers = Array.from({ length: totalPages }, (_, i) => i + 1);
     
         const buttonStyle = {
@@ -205,6 +216,19 @@ const IndividualStudentRecordTable = () => {
 };
 
 
+// Render student records table
+const renderTable = () => {
+
+        // Show loading spinner when data is being fetched
+        if (loading) {
+            return (
+            <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100%" }}>
+                <div style={{ width: "50px", height: "50px", border: "6px solid #f3f3f3", borderTop: "6px solid #a9a9a9", borderRadius: "50%", animation: "spin 1s linear infinite" }}></div>
+                <style> {`@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }`} </style>
+            </div>
+            );
+        }
+
 // Render the individual student records table
     return (
         <div style={{ paddingTop: '10px' }}>
@@ -232,7 +256,8 @@ const IndividualStudentRecordTable = () => {
                     </tr>
                 </thead>
                 <tbody>
-                    {currentRecords.map((record, index) => (
+                    {currentRecords.length > 0 ? (
+                        currentRecords.map((record, index) => (
                         <tr key={index}>
                             <td style={{ textAlign: 'center' }}>{ (currentPage - 1) * rowsPerPage + (index + 1) }</td>
                             <td>{new Date(record.created_at).toLocaleString()}</td>
@@ -244,21 +269,32 @@ const IndividualStudentRecordTable = () => {
                                 <ViewButton onClick={() => handleViewDetails(record)}>View</ViewButton>
                             </td>
                         </tr>
-                    ))}
+                        ))
+                    ) : (
+                    <tr>
+                        <td colSpan="7" style={{ textAlign: 'center' }}>No violation records found</td>
+                    </tr>
+                    )}
                 </tbody>
             </Table>
-
-            {renderPagination()}
-
-            {/*View Violation Modal*/}
-            <ViewViolationModal
-                show={showDetailsModal}
-                onHide={handleCloseDetailsModal}
-                selectedRecord={selectedRecord}
-            />
         </div>
     );
 };
+
+
+return (
+    <div>
+        {!loading && renderPagination()}
+
+        {/*View Violation Modal*/}
+        <ViewViolationModal
+            show={showDetailsModal}
+            onHide={handleCloseDetailsModal}
+            selectedRecord={selectedRecord}
+        />
+    </div>
+);
+}
 
 
 export default IndividualStudentRecordTable;

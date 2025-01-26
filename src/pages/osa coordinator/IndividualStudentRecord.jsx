@@ -16,7 +16,6 @@ import IndividualHistoryViolationRecordTable from '../../elements/osa coordinato
 import AddViolationModal from '../../elements/osa coordinator/modals/AddViolationModal';
 import defaultProfile from '../../components/images/default_profile.jpg';
 
-
 export default function IndividualStudentRecord() {
     const [studentInfo, setStudentInfo] = useState(null);
     const [profilePhoto, setProfilePhoto] = useState(defaultProfile); 
@@ -167,21 +166,18 @@ return (
                         <li style={{ marginLeft: '5px', color: '#000' }}>Individual Violation Records</li>
                     </ol>
                 </nav>
-
                 {/* Tab buttons for History and Stack */}
                 <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
                     <GoStack size={20} onClick={() => handleTabClick('stack')} style={{ cursor: 'pointer', color: activeTab === 'stack' ? '#134E0F' : '#8C8C8C', marginLeft: '20px' }} />
                     <GoHistory size={20} onClick={() => handleTabClick('history')} style={{ cursor: 'pointer', color: activeTab === 'history' ? '#134E0F' : '#8C8C8C', marginLeft: '10px' }} />
                 </div>
             </div>
-
-            {/* Conditionally render the tables based on active tab */}
-            {activeTab === 'stack' ? (
-                <IndividualStudentRecordTable records={violationRecords} />
-            ) : (
-                <IndividualHistoryViolationRecordTable />
-            )}
-
+                {/* Conditionally render the tables based on active tab */}
+                {activeTab === 'stack' ? (
+                    <IndividualStudentRecordTable records={violationRecords} />
+                ) : (
+                    <IndividualHistoryViolationRecordTable />
+                )}
        
             {/* Add Individual Violation Record Modal */}
             <AddViolationModal
