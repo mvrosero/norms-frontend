@@ -72,6 +72,29 @@ export default function DepartmentalStudentRecordsTable() {
         }
     }, [department_code]);
 
+    
+    // Handle search and filter logic
+    useEffect(() => {
+    const filtered = users.filter(user => {
+        const fullName = `${user.first_name} ${user.middle_name || ''} ${user.last_name} ${user.suffix || ''}`.toLowerCase();
+        const studentId = user.student_idnumber.toLowerCase();
+        const matchesSearchQuery = fullName.includes(searchQuery.toLowerCase()) || studentId.includes(searchQuery.toLowerCase());
+
+            const matchesFilters = Object.keys(filters).every(key => {
+                if (filters[key]) {
+                    if (key === 'yearLevel' && user.year_level !== filters[key]) return false;
+                    if (key === 'program' && user.program_name !== filters[key]) return false;
+                    if (key === 'batch' && user.batch !== filters[key]) return false;
+                    if (key === 'status' && user.status !== filters[key]) return false;
+                }
+                return true;
+            });
+
+            return matchesSearchQuery && matchesFilters;
+        });
+        setFilteredUsers(filtered);
+    }, [users, searchQuery, filters]);
+
 
     // Handle search query changes
     const handleSearch = (query) => {
@@ -328,92 +351,56 @@ export default function DepartmentalStudentRecordsTable() {
 
 // Render the student records table
 const renderTable = () => {
-    const activeUsers = users.filter(user => user.status !== 'archived');
-
-    // Calculate filteredUsers first
-    const filteredUsers = activeUsers.filter(user => {
-        const fullName = `${user.first_name} ${user.middle_name || ''} ${user.last_name} ${user.suffix || ''}`.toLowerCase();
-        const studentId = user.student_idnumber.toLowerCase();
-        const matchesSearchQuery = fullName.includes(searchQuery.toLowerCase()) || studentId.includes(searchQuery.toLowerCase());
-
-        const matchesFilters = Object.keys(filters).every(key => {
-            if (filters[key]) {
-                if (key === 'yearLevel' && user.year_level && user.year_level !== filters[key]) return false;
-                if (key === 'program' && user.program_name && user.program_name !== filters[key]) return false;
-                if (key === 'batch' && user.batch !== filters[key]) return false;
-                if (key === 'status' && user.status !== filters[key]) return false;
-            }
-            return true;
-        });
-        return matchesSearchQuery && matchesFilters;
-    });
-
-    const currentUsers = filteredUsers.slice(indexOfFirstUser, indexOfLastUser);
-
-    // Show loading spinner when data is being fetched
     if (loading) {
         return (
-            <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100%" }}>
-                <div style={{ width: "50px", height: "50px", border: "6px solid #f3f3f3", borderTop: "6px solid #a9a9a9", borderRadius: "50%", animation: "spin 1s linear infinite" }}></div>
+            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
+                <div style={{ width: '50px', height: '50px', border: '6px solid #f3f3f3', borderTop: '6px solid #a9a9a9', borderRadius: '50%', animation: 'spin 1s linear infinite' }}></div>
                 <style> {`@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }`} </style>
             </div>
         );
     }
 
-return (
-    <Table bordered hover responsive style={{ borderRadius: '20px', marginBottom: '20px', marginLeft: '110px' }}>
-        <thead>
-            <tr>
-                <th style={{ width: '4%'}}>No.</th>
-                <th style={{ textAlign: 'center', padding: '0', verticalAlign: 'middle', width: '11%' }}>
-                    <button style={{ border: 'none', background: 'none', cursor: 'pointer', display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center', width: '100%' }}
-                        onClick={handleSortIdNumber}
-                        >
-                        <span style={{ textAlign: 'center' }}>ID Number</span>
-                        {sortOrder === 'asc' ? (
-                        <ArrowDropUpIcon style={{ marginLeft: '5px' }} />
-                        ) : (
-                        <ArrowDropDownIcon style={{ marginLeft: '5px' }} />
-                        )}
-                    </button>
-                </th>
-                <th style={{ textAlign: 'center', padding: '0', verticalAlign: 'middle' }}>
-                <button style={{ border: 'none', background: 'none', cursor: 'pointer', display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center', width: '100%' }}
-                        onClick={handleSortFullName}
-                        >
-                        <span style={{ textAlign: 'center' }}>Full Name</span>
-                        {sortOrder === 'asc' ? (
-                        <ArrowDropUpIcon style={{ marginLeft: '5px' }} />
-                        ) : (
-                        <ArrowDropDownIcon style={{ marginLeft: '5px' }} />
-                        )}
-                    </button>
-                </th>
-                <th style={{ width: '10%' }}>Year Level</th>
-                <th>Program</th>
-                <th style={{ width: '12%' }}>Status</th>
-            </tr>
-        </thead>
-        <tbody>
-            {filteredUsers.length > 0 ? (
-                    currentUsers.map((user, index) => (
+        // If no users found after filtering
+        if (filteredUsers.length === 0) {
+            return <div style={{ textAlign: 'center' }}>No users found</div>;
+        }
+
+        return (
+            <Table bordered hover responsive style={{ borderRadius: '20px', marginBottom: '20px', marginLeft: '110px' }}>
+                <thead>
+                    <tr>
+                        <th style={{ width: '4%' }}>No.</th>
+                        <th style={{ textAlign: 'center', padding: '0', verticalAlign: 'middle', width: '11%' }}>
+                            <button
+                                style={{ border: 'none', background: 'none', cursor: 'pointer', display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center', width: '100%' }}
+                                onClick={handleSortIdNumber}
+                            >
+                                <span style={{ textAlign: 'center' }}>ID Number</span>
+                                {sortOrder === 'asc' ? <ArrowDropUpIcon style={{ marginLeft: '5px' }} /> : <ArrowDropDownIcon style={{ marginLeft: '5px' }} />}
+                            </button>
+                        </th>
+                        <th style={{ textAlign: 'center', padding: '0', verticalAlign: 'middle' }}>
+                            <button
+                                style={{ border: 'none', background: 'none', cursor: 'pointer', display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center', width: '100%' }}
+                                onClick={handleSortFullName}
+                            >
+                                <span style={{ textAlign: 'center' }}>Full Name</span>
+                                {sortOrder === 'asc' ? <ArrowDropUpIcon style={{ marginLeft: '5px' }} /> : <ArrowDropDownIcon style={{ marginLeft: '5px' }} />}
+                            </button>
+                        </th>
+                        <th style={{ width: '10%' }}>Year Level</th>
+                        <th>Program</th>
+                        <th style={{ width: '12%' }}>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {filteredUsers.map((user, index) => (
                         <tr key={index}>
                             <td style={{ textAlign: 'center' }}>{index + 1}</td>
                             <td>{user.student_idnumber}</td>
                             <td>
-                                <a href="#"
-                                    onClick={() => handleReadModalShow(user)}
-                                    style={{ textDecoration: 'none', color: 'black', cursor: 'pointer', transition: 'color 0.3s ease, text-decoration 0.3s ease' }}
-                                    onMouseEnter={(e) => {
-                                        e.target.style.textDecoration = 'underline';
-                                        e.target.style.color = '#007bff';
-                                    }}
-                                    onMouseLeave={(e) => {
-                                        e.target.style.textDecoration = 'none';
-                                        e.target.style.color = 'black';
-                                    }}
-                                >
-                                    {`${user.first_name} ${user.middle_name} ${user.last_name} ${user.suffix}`}
+                                <a href="#" onClick={() => handleReadModalShow(user)} style={{ textDecoration: 'none', color: 'black', cursor: 'pointer' }}>
+                                    {`${user.first_name} ${user.middle_name || ''} ${user.last_name} ${user.suffix || ''}`}
                                 </a>
                             </td>
                             <td>{user.year_level}</td>
@@ -425,16 +412,11 @@ return (
                                 </div>
                             </td>
                         </tr>
-                    ))
-                ) : (
-                    <tr>
-                        <td colSpan="6" style={{ textAlign: 'center' }}>No users found</td>
-                    </tr>
-                )}
-            </tbody>
-        </Table>
-    );
-};
+                    ))}
+                </tbody>
+            </Table>
+        );
+    };
 
 
 return (

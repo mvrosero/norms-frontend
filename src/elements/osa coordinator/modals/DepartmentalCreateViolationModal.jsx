@@ -349,7 +349,7 @@ return (
                                     ...regularSelectStyles,
                                     ...borderColorStyles(focusedElement, 'offense'), 
                                 }}
-                            >
+                                >
                                 <option disabled value="">Select Offense</option>
                                 {offenses.map((off) => (
                                     <option key={off.offense_id} value={off.offense_id}>
