@@ -22,6 +22,7 @@ export default function IndividualStudentRecord() {
     const [profilePhoto, setProfilePhoto] = useState(defaultProfile); 
     const [violationRecords, setViolationRecords] = useState([]);
     const [showAddViolationModal, setShowAddViolationModal] = useState(false); 
+    const [activeTab, setActiveTab] = useState('stack');
     const location = useLocation();
     const navigate = useNavigate();
 
@@ -70,8 +71,9 @@ export default function IndividualStudentRecord() {
         await fetchStudentInfo(student_idnumber);
     };
 
-    const handleCancel = () => {
-        handleCloseModal();
+    // Handle icon click to switch tabs
+    const handleTabClick = (tab) => {
+        setActiveTab(tab);
     };
 
 
@@ -164,12 +166,17 @@ return (
                 </ol>
             </nav>
 
-            <IndividualHistoryViolationRecordTable />
 
-     
+            {/* Tab buttons for History and Stack */}
+            <GoHistory size={30} onClick={() => handleTabClick('history')} style={{ cursor: 'pointer', color: activeTab === 'history' ? '#0D4809' : 'black' }}/>
+            <GoStack size={30} onClick={() => handleTabClick('stack')} style={{ cursor: 'pointer', color: activeTab === 'stack' ? '#0D4809' : 'black', marginLeft: '20px' }}/>
+                {/* Conditionally render the tables based on active tab */}
+                {activeTab === 'stack' ? (
+                    <IndividualStudentRecordTable records={violationRecords} />
+                ) : (
+                    <IndividualHistoryViolationRecordTable />
+                )}
 
-            {/* Table for displaying violation records */}
-            <IndividualStudentRecordTable records={violationRecords} />
        
             {/* Add Individual Violation Record Modal */}
             <AddViolationModal
