@@ -8,7 +8,6 @@ import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import ViewViolationModal from '../modals/ViewViolationModal';
 
-
 const StyledTableContainer = styled.div`
   margin-bottom: 40px;
 `;
@@ -19,7 +18,6 @@ const IndividualHistoryViolationRecordTable = () => {
   const [groupedRecords, setGroupedRecords] = useState({});
   const [showDetailsModal, setShowDetailsModal] = useState(false);
   const [selectedRecord, setSelectedRecord] = useState(null);
-
 
   // Sorting state for date
   const [sortOrderDate, setSortOrderDate] = useState('asc'); 
@@ -52,21 +50,25 @@ const IndividualHistoryViolationRecordTable = () => {
     fetchViolationRecords();
   }, [student_idnumber]);
 
-
-  // Sort records based on date
+  // Sort records based on date inside each group
   const handleSortDate = () => {
-      const sortedRecords = [...records];
+    const sortedGroupedRecords = { ...groupedRecords };
+
+    // Loop through each group and sort the records by date
+    Object.keys(sortedGroupedRecords).forEach((group) => {
+      const sortedRecords = [...sortedGroupedRecords[group]];
       sortedRecords.sort((a, b) => {
-          const dateA = new Date(a.created_at); 
-          const dateB = new Date(b.created_at);
+        const dateA = new Date(a.created_at); 
+        const dateB = new Date(b.created_at);
 
-          return sortOrderDate === 'asc' ? dateA - dateB : dateB - dateA;
+        return sortOrderDate === 'asc' ? dateA - dateB : dateB - dateA;
       });
+      sortedGroupedRecords[group] = sortedRecords;
+    });
 
-      setRecords(sortedRecords);
-      setSortOrderDate(sortOrderDate === 'asc' ? 'desc' : 'asc');
+    setGroupedRecords(sortedGroupedRecords);
+    setSortOrderDate(sortOrderDate === 'asc' ? 'desc' : 'asc');
   };
-
 
   // Handle opening and closing  the ViewViolationModal
   const handleViewDetails = (record) => {
@@ -77,7 +79,6 @@ const IndividualHistoryViolationRecordTable = () => {
   const handleCloseDetailsModal = () => {
     setShowDetailsModal(false);
   };
-
 
   // Styles for the view button
   const ViewButton = styled.button`
@@ -92,27 +93,27 @@ const IndividualHistoryViolationRecordTable = () => {
   }
 `;
 
-
-return (
-  <div style={{ paddingTop: '10px' }}>
-    {Object.entries(groupedRecords).map(([group, records]) => (
+  return (
+    <div style={{ paddingTop: '10px' }}>
+      {Object.entries(groupedRecords).map(([group, records]) => (
         <StyledTableContainer key={group}>
-          <h3 style={{ fontSize: '17px', fontWeight: '600', marginTop: '10px', marginBottom: '20px', marginLeft: '120px' }}>{group}</h3>
+          <h3 style={{ fontSize: '16px', fontWeight: '600', marginBottom: '20px', marginLeft: '120px' }}>{group}</h3>
           <Table bordered hover responsive style={{ borderRadius: '20px', marginBottom: '20px', marginLeft: '110px' }}>
             <thead style={{ backgroundColor: '#f8f9fa' }}>
               <tr>
                 <th style={{ width: '5%' }}>No.</th>
                 <th style={{ textAlign: 'center', padding: '0', verticalAlign: 'middle', width: '20%' }}>
-                    <button style={{ border: 'none', background: 'none', cursor: 'pointer', display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center', width: '100%' }}
-                        onClick={handleSortDate}
-                        >
-                        <span>Date</span>
-                        {sortOrderDate === 'asc' ? (
-                            <ArrowDropUpIcon style={{ marginLeft: '5px' }} />
-                        ) : (
-                            <ArrowDropDownIcon style={{ marginLeft: '5px' }} />
-                        )}
-                    </button>
+                  <button
+                    style={{ border: 'none', background: 'none', cursor: 'pointer', display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center', width: '100%' }}
+                    onClick={handleSortDate}
+                  >
+                    <span>Date</span>
+                    {sortOrderDate === 'asc' ? (
+                      <ArrowDropUpIcon style={{ marginLeft: '5px' }} />
+                    ) : (
+                      <ArrowDropDownIcon style={{ marginLeft: '5px' }} />
+                    )}
+                  </button>
                 </th>
                 <th style={{ width: '12%' }}>Category</th>
                 <th>Offense</th>
@@ -149,6 +150,5 @@ return (
     </div>
   );
 };
-
 
 export default IndividualHistoryViolationRecordTable;
