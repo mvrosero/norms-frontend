@@ -226,7 +226,7 @@ return (
 
             {/* Search And Filter Section */}
             <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'center', marginLeft: '60px', padding: '0 20px' }}>
-                <div style={{ flex: '1 1 70%', minWidth: '250px' }}> <SFforDefianceHistory onSearch={handleSearch} onFilterChange={handleFilterChange}/> </div>
+                <div style={{ flex: '1 1 50%', minWidth: '200px' }}> <SFforDefianceHistory onSearch={handleSearch} onFilterChange={handleFilterChange}/> </div>
                 <Button
                     onClick={() => setShowAddViolationModal(true)} 
                     title="Add Record"
@@ -238,7 +238,7 @@ return (
             </div>
 
             {/* Breadcrumbs */}
-            <nav style={{ width: '80%', marginBottom: '5px', marginLeft: '60px' }}>
+            <nav style={{ width: '80%', marginBottom: '5px' }}>
                 <ol style={{ backgroundColor: 'transparent', padding: '0', margin: '0', listStyle: 'none', alignItems: 'center', display: 'flex', justifyContent: 'flex-start' }}>
                     <li style={{ marginRight: '5px' }}>
                         <Link to="/uniformdefiance-history" style={{ textDecoration: 'none', color: '#0D4809' }}>
