@@ -352,6 +352,7 @@ return (
                     <Row className="gy-4">
                         <Form.Group className="desscription mb-3" style={{ marginBottom: '20px' }}>
                             <Form.Label className="fw-bold">Description</Form.Label>
+                            <div style={{ position: 'relative', width: '100%' }}>
                             <ReactQuill
                                 theme="snow" 
                                 value={formData.description}
@@ -374,8 +375,9 @@ return (
                                     boxShadow: focusedElement === 'description' ? '0 0 0 2px rgba(250, 211, 46, 1)' : 'none',
                                 }}
                             />
-                            <div style={{ marginTop: '10px', fontSize: '12px', color: '#666' }}>
+                            <div style={{ position: 'absolute', bottom: '8px', right: '10px', fontSize: '12px', color: '#666' }}>
                                 {formData.description.length}/{maxLength}
+                            </div>
                             </div>
                         </Form.Group>
                     </Row>
