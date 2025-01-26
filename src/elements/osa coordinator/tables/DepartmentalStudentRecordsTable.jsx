@@ -445,7 +445,7 @@ return (
                 <ol style={{ backgroundColor: 'transparent', padding: '0', margin: '0', listStyle: 'none', display: 'flex' }}>
                     <li style={{ marginRight: '5px' }}>
                         <Link to="/coordinator-studentrecords" style={{ textDecoration: 'none', color: '#0D4809' }}>
-                            Students
+                            Student Records
                         </Link>
                     </li>
                     <li style={{ margin: '0 5px', color: '#6c757d' }}>{'>'}</li>

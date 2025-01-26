@@ -145,7 +145,9 @@ return (
 
             {/* Search And Filter Section */}
             <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'center', marginLeft: '60px', padding: '0 20px' }}>
-                <div style={{ flex: '1 1 80%', minWidth: '300px' }}> <SFforViolationsTable /> </div>
+                <div style={{ flex: '1 1 80%', minWidth: '300px' }}> 
+                    <SFforViolationsTable /> 
+                </div>
                 <Button onClick={handleCreateNewRecord} title="Add Record" style={{ backgroundColor: '#FAD32E', color: 'white', fontWeight: '900', padding: '12px 36px', marginLeft: '20px', border: 'none', borderRadius: '10px', cursor: 'pointer', display: 'flex', alignItems: 'center', boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)' }} >
                         Add Violation
                     <FaPlus style={{ marginLeft: '10px' }} />
@@ -153,7 +155,7 @@ return (
             </div>
 
             {/* Breadcrumbs and Tab Buttons */}
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '5px', width: '100%', maxWidth: '1100px', marginLeft: '140px', marginRight: 'auto', marginBottom: '5px' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '5px', width: '100%', maxWidth: '1080px', marginLeft: '140px', marginRight: 'auto', marginBottom: '5px' }}>
                 {/* Breadcrumbs */}
                 <nav style={{ flex: 1, display: 'flex', justifyContent: 'flex-start' }}>
                     <ol style={{ backgroundColor: 'transparent', padding: '0', margin: '0', listStyle: 'none', alignItems: 'center', display: 'flex', justifyContent: 'flex-start' }}>
