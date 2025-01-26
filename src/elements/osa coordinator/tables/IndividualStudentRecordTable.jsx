@@ -284,6 +284,8 @@ const renderTable = () => {
 
 return (
     <div>
+        {renderTable()}
+        
         {!loading && renderPagination()}
 
         {/*View Violation Modal*/}
