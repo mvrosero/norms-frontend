@@ -2,6 +2,7 @@ import React from 'react';
 import { Modal, Button } from 'react-bootstrap';
 
 const ViewIndividualUniformDefianceModal = ({ show, onHide, selectedRecord }) => {
+    
     const renderFile = () => {
         if (selectedRecord) {
             const { photo_video_filenames } = selectedRecord;
