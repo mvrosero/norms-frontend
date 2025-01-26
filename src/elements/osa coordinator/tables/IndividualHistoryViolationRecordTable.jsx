@@ -50,7 +50,6 @@ const IndividualHistoryViolationRecordTable = () => {
       } catch (error) {
             console.error('Error fetching data:', error);
             setError('Failed to fetch data'); 
-            Swal.fire('Error', 'Failed to fetch data.', 'error'); 
         } finally {
             setLoading(false); 
         }
