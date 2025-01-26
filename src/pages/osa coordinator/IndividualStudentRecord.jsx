@@ -154,7 +154,7 @@ return (
             </div>
 
             {/* Breadcrumbs and Tab Buttons */}
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '5px' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '5px' }}>
                 {/* Breadcrumbs */}
                 <nav style={{ flex: 1, display: 'flex', justifyContent: 'flex-start' }}>
                     <ol style={{ backgroundColor: 'transparent', padding: '0', margin: '0', listStyle: 'none', alignItems: 'center', display: 'flex', justifyContent: 'flex-start' }}>
