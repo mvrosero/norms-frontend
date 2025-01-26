@@ -95,7 +95,7 @@ return (
                 </div>
             
             {/* Breadcrumbs */}
-            <nav style={{ width: '80%', marginBottom: '20px', marginLeft: '80px' }}>
+            <nav style={{ width: '80%', marginBottom: '20px', marginLeft: '160px' }}>
                 <ol style={{ backgroundColor: 'transparent', padding: '0', margin: '0', listStyle: 'none', alignItems: 'center', display: 'flex', justifyContent: 'flex-start' }}>
                     <li style={{ marginRight: '5px' }}>
                         <Link to="/coordinator-uniformdefiance" style={{ textDecoration: 'none', color: '#0D4809' }}>
