@@ -156,29 +156,31 @@ return (
             {/* Breadcrumbs and Tab Buttons */}
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '5px' }}>
                 {/* Breadcrumbs */}
-                <nav style={{ width: '80%' }}>
+                <nav style={{ flex: 1, display: 'flex', justifyContent: 'flex-start' }}>
                     <ol style={{ backgroundColor: 'transparent', padding: '0', margin: '0', listStyle: 'none', alignItems: 'center', display: 'flex', justifyContent: 'flex-start' }}>
-                    <li style={{ marginRight: '5px' }}>
-                        <Link to="/coordinator-studentrecords" style={{ textDecoration: 'none', color: '#0D4809' }}>
-                        Student Records
-                        </Link>
-                    </li>
-                    <li style={{ margin: '0 5px', color: '#6c757d' }}>{'>'}</li>
-                    <li style={{ marginLeft: '5px', color: '#000' }}>Individual Violation Records</li>
+                        <li style={{ marginRight: '5px' }}>
+                            <Link to="/coordinator-studentrecords" style={{ textDecoration: 'none', color: '#0D4809' }}>
+                                Student Records
+                            </Link>
+                        </li>
+                        <li style={{ margin: '0 5px', color: '#6c757d' }}>{'>'}</li>
+                        <li style={{ marginLeft: '5px', color: '#000' }}>Individual Violation Records</li>
                     </ol>
                 </nav>
 
                 {/* Tab buttons for History and Stack */}
-                <GoStack size={20} onClick={() => handleTabClick('stack')} style={{ cursor: 'pointer', color: activeTab === 'stack' ? '#0D4809' : 'black', marginLeft: '20px' }} />
-                <GoHistory size={20} onClick={() => handleTabClick('history')} style={{ cursor: 'pointer', color: activeTab === 'history' ? '#0D4809' : 'black', marginLeft: '10px' }} />
+                <div style={{ display: 'flex', alignItems: 'center' }}>
+                    <GoStack size={20} onClick={() => handleTabClick('stack')} style={{ cursor: 'pointer', color: activeTab === 'stack' ? '#0D4809' : 'black', marginLeft: '20px' }} />
+                    <GoHistory size={20} onClick={() => handleTabClick('history')} style={{ cursor: 'pointer', color: activeTab === 'history' ? '#0D4809' : 'black', marginLeft: '10px' }} />
                 </div>
+            </div>
 
-                {/* Conditionally render the tables based on active tab */}
-                {activeTab === 'stack' ? (
+            {/* Conditionally render the tables based on active tab */}
+            {activeTab === 'stack' ? (
                 <IndividualStudentRecordTable records={violationRecords} />
-                ) : (
+            ) : (
                 <IndividualHistoryViolationRecordTable />
-                )}
+            )}
 
        
             {/* Add Individual Violation Record Modal */}
