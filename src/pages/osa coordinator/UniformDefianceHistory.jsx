@@ -32,43 +32,24 @@ export default function UniformDefianceHistory() {
             navigate('/unauthorized');
         }
     }, [navigate]);
-
-
-    // Fetch uniform defiances
-    const fetchDefiances = useCallback(async () => {
-        setLoading(true); 
-        setError(false); 
-        try {
-            const token = localStorage.getItem('token');
-            const headers = { Authorization: `Bearer ${token}` };
-            const response = await axios.get('https://test-backend-api-2.onrender.com/uniform_defiances', { headers });
-            setDefiances(response.data);
-            setAllDefiances(response.data);
-            setFilteredDefiances(response.data);
-        } catch (error) {
-            console.error('Error fetching uniform defiances:', error.response || error.message || error);
-            setError(true); 
-        } finally {
-            setLoading(false); 
-        }
-    }, []);
     
 
-        // Handle search query changes
-        const handleSearch = (query) => {
-            setSearchQuery(query);
-            const normalizedQuery = query ? query.trim().toLowerCase() : '';
+    // Handle search query changes
+    const handleSearch = (query) => {
+        setSearchQuery(query);
+        const normalizedQuery = query ? query.trim().toLowerCase() : '';
 
-            const filtered = allDefiances.filter(defiance => {
-                const nature_name = defiance.nature_name ? defiance.nature_name.trim().toLowerCase() : '';
-                const studentId = defiance.student_idnumber ? defiance.student_idnumber.toString().toLowerCase() : '';
+        const filtered = allDefiances.filter(defiance => {
+            const nature_name = defiance.nature_name ? defiance.nature_name.trim().toLowerCase() : '';
+            const studentId = defiance.student_idnumber ? defiance.student_idnumber.toString().toLowerCase() : '';
+            const slipId = defiance.slip_id ? defiance.slip_id.toString().toLowerCase() : '';
 
-                // Check if either nature_name or studentId matches the search query
-                return nature_name.includes(normalizedQuery) || studentId.includes(normalizedQuery);
-            });
+            // Check if either nature_name or studentId matches the search query
+            return nature_name.includes(normalizedQuery) || studentId.includes(normalizedQuery) || slipId.includes(normalizedQuery);
+        });
 
-            setFilteredDefiances(filtered);
-        };
+        setFilteredDefiances(filtered);
+    };
 
 
 
