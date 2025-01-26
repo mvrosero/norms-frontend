@@ -368,7 +368,6 @@ return (
                                 }}
                                 style={{
                                     width: '100%',
-                                    minHeight: '100px',
                                     backgroundColor: '#f2f2f2',
                                     border: `1px solid ${focusedElement === 'description' ? '#FAD32E' : '#ced4da'}`, 
                                     borderRadius: '4px',
