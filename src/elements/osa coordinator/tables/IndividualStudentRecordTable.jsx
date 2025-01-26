@@ -268,11 +268,7 @@ const IndividualStudentRecordTable = () => {
                 show={showDetailsModal}
                 onHide={handleCloseDetailsModal}
                 selectedRecord={selectedRecord}
-                getCategoryName={getCategoryName}
-                getOffenseName={getOffenseName}
                 getSanctionNames={getSanctionNames}
-                getAcademicYearName={getAcademicYearName}
-                getSemesterName={getSemesterName}
             />
         </div>
     );
