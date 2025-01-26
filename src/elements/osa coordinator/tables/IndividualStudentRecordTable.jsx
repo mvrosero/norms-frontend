@@ -9,8 +9,7 @@ import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import ViewViolationModal from '../modals/ViewViolationModal';
 
-
-const IndividualStudentRecordTable = () => {
+export default function IndividualStudentRecordTable ({ filters, searchQuery }) {
     const { student_idnumber } = useParams();
     const [records, setRecords] = useState([]);
     const [categories, setCategories] = useState([]);
@@ -218,6 +217,26 @@ const IndividualStudentRecordTable = () => {
 // Render student records table
 const renderTable = () => {
 
+    const filteredRecords = records.filter(record => {
+         
+        const category = record.category_name.toLowerCase();
+        const semester = record.semester_name.toLowerCase();
+        const offense = record.offense_name ? record.offense_name.toLowerCase() : '';
+        const matchesSearchQuery = offense.includes(searchQuery.toLowerCase());
+    
+        const matchesFilters = Object.keys(filters).every(key => {
+          if (filters[key]) {  
+            if (key === 'category' && category !== filters[key].toLowerCase()) return false;
+            if (key === 'academic_year' && record.academic_year !== filters[key].toLowerCase()) return false;
+            if (key === 'semester' && semester !== filters[key].toLowerCase()) return false;
+          }
+          return true;
+        });
+        return matchesSearchQuery && matchesFilters; 
+      });
+    
+      const currentRecords = filteredRecords.slice(indexOfFirstRecord, indexOfLastRecord);
+
         // Show loading spinner when data is being fetched
         if (loading) {
             return (
@@ -298,4 +317,4 @@ return (
 }
 
 
-export default IndividualStudentRecordTable;
+

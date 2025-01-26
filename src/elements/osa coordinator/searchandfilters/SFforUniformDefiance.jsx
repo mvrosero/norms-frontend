@@ -1,14 +1,17 @@
 import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+import DatePicker from 'react-datepicker'; 
+import "react-datepicker/dist/react-datepicker.css"; 
+import '../../../styles/SearchAndFilter.css';
+
 import { FaSearch } from 'react-icons/fa';
 import { RiEqualizerLine } from "react-icons/ri";
-import axios from 'axios';
-import '../../../styles/SearchAndFilter.css';
+
 
 export default function SFforUniformDefiance({ onSearch, onFilterChange }) {
   const [searchQuery, setSearchQuery] = useState('');
   const [nature, setNature] = useState('');
-  const [startDate, setStartDate] = useState('');
-  const [endDate, setEndDate] = useState('');
+  const [changedAt, setChangedAt] = useState(null); 
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [isFilterActive, setIsFilterActive] = useState(false);
   const [natures, setNatures] = useState([]);
@@ -35,16 +38,15 @@ export default function SFforUniformDefiance({ onSearch, onFilterChange }) {
 
   // Trigger search with current query and filters
   const triggerSearch = (query) => {
-    onSearch(query, { nature });
+    onSearch(query, { nature, changedAt });
   };
 
   // Handle filter changes
   const handleFilterChange = (field, value) => {
     if (field === 'nature') setNature(value);
-    if (field === 'startDate') setStartDate(value);
-    if (field === 'endDate') setEndDate(value);
+    if (field === 'changedAt') setChangedAt(value);
 
-    const updatedFilters = { nature, startDate, endDate, [field]: value };
+    const updatedFilters = { nature, changedAt, [field]: value };
     onFilterChange(updatedFilters);
     triggerSearch(searchQuery);
   };
@@ -58,10 +60,10 @@ export default function SFforUniformDefiance({ onSearch, onFilterChange }) {
   // Clear all filters
   const clearFilters = () => {
     setNature('');
-    setStartDate('');
-    setEndDate('');
-    onFilterChange({ nature: '', startDate: '', endDate: '' });
+    setChangedAt('');
+    onFilterChange({ nature: '', changedAt: '' });
   };
+  
 
   return (
     <div className="searchAndFilterContainer">
@@ -99,27 +101,6 @@ export default function SFforUniformDefiance({ onSearch, onFilterChange }) {
               ))}
             </select>
           </div>
-
-          <div className="filterOption">
-            <input
-              type="date"
-              value={startDate}
-              onChange={(e) => handleFilterChange('startDate', e.target.value)}
-              className="filterSelect"
-              aria-label="Start Date"
-            />
-          </div>
-
-          <div className="filterOption">
-            <input
-              type="date"
-              value={endDate}
-              onChange={(e) => handleFilterChange('endDate', e.target.value)}
-              className="filterSelect"
-              aria-label="End Date"
-            />
-          </div>
-
           <button className="clearButton" onClick={clearFilters} aria-label="Clear Filters">
             Clear
           </button>

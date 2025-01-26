@@ -13,10 +13,14 @@ const StyledTableContainer = styled.div`
   margin-bottom: 40px;
 `;
 
-const IndividualHistoryViolationRecordTable = () => {
+export default function IndividualHistoryViolationRecordTable ({ filters, searchQuery }) {
   const { student_idnumber } = useParams();
-  const [records, setRecords] = useState([]);
   const [groupedRecords, setGroupedRecords] = useState({});
+  const [categories, setCategories] = useState([]);
+  const [offenses, setOffenses] = useState([]);
+  const [sanctions, setSanctions] = useState([]);
+  const [academicYears, setAcademicYears] = useState([]);
+  const [semesters, setSemesters] = useState([]);
   const [showDetailsModal, setShowDetailsModal] = useState(false);
   const [selectedRecord, setSelectedRecord] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -104,9 +108,8 @@ const IndividualHistoryViolationRecordTable = () => {
 `;
 
 
-// Render student records table
+// Render the violation record modal
 const renderTable = () => {
-
     // Show loading spinner when data is being fetched
     if (loading) {
       return (
@@ -117,13 +120,37 @@ const renderTable = () => {
       );
     }
 
-    return (
-      <div style={{ paddingTop: '10px' }}>
-        {Object.entries(groupedRecords).map(([group, records]) => (
-          <StyledTableContainer key={group}>
-            <h3 style={{ fontSize: '16px', fontWeight: '600', marginTop: '10px', marginBottom: '20px', marginLeft: '120px' }}>{group}</h3>
-            <Table bordered hover responsive style={{ borderRadius: '20px', marginBottom: '20px', marginLeft: '110px' }}>
-              <thead style={{ backgroundColor: '#f8f9fa' }}>
+
+  return (
+    <div style={{ paddingTop: '10px' }}>
+      {Object.entries(groupedRecords).map(([group, records]) => {
+        // Filter the records based on search query and filters
+        const filteredRecords = records.filter(record => {
+          const category = record.category_name.toLowerCase();
+          const semester = record.semester_name.toLowerCase();
+          const offense = record.offense_name ? record.offense_name.toLowerCase() : '';
+          
+          // Check if offense matches the search query
+          const matchesSearchQuery = offense.includes(searchQuery.toLowerCase());
+  
+          // Check if filters match
+          const matchesFilters = Object.keys(filters).every(key => {
+            if (filters[key]) {
+              if (key === 'category' && category !== filters[key].toLowerCase()) return false;
+              if (key === 'academic_year' && record.academic_year !== filters[key].toLowerCase()) return false;
+              if (key === 'semester' && semester !== filters[key].toLowerCase()) return false;
+            }
+            return true;
+          });
+
+          return matchesSearchQuery && matchesFilters;
+        });
+
+  return (
+    <StyledTableContainer key={group}>
+        <h3 style={{ fontSize: '16px', fontWeight: '600', marginTop: '10px', marginBottom: '20px', marginLeft: '120px' }}>{group}</h3>
+          <Table bordered hover responsive style={{ borderRadius: '20px', marginBottom: '20px', marginLeft: '110px' }}>
+            <thead style={{ backgroundColor: '#f8f9fa' }}>
                 <tr>
                   <th style={{ width: '5%' }}>No.</th>
                   <th style={{ textAlign: 'center', padding: '0', verticalAlign: 'middle', width: '20%' }}>
@@ -147,8 +174,8 @@ const renderTable = () => {
                 </tr>
               </thead>
               <tbody>
-                {records.length > 0 ? (
-                  records.map((record, index) => (
+                {filteredRecords.length > 0 ? (
+                  filteredRecords.map((record, index) => (
                     <tr key={index}>
                       <td style={{ textAlign: 'center' }}>{index + 1}</td>
                       <td>{new Date(record.created_at).toLocaleString()}</td>
@@ -169,23 +196,23 @@ const renderTable = () => {
               </tbody>
             </Table>
           </StyledTableContainer>
-        ))}
-
-        {/* View Violation Modal */}
-        <ViewViolationModal
-          show={showDetailsModal}
-          onHide={handleCloseDetailsModal}
-          selectedRecord={selectedRecord}
-        />
-      </div>
-    );
-  };
-
-  return (
-    <div>
-      {renderTable()}
+        );
+      })}
     </div>
   );
 };
 
-export default IndividualHistoryViolationRecordTable;
+return (
+  <div>
+    {renderTable()}
+
+    {/* View Violation Modal */}
+    <ViewViolationModal
+      show={showDetailsModal}
+      onHide={handleCloseDetailsModal}
+      selectedRecord={selectedRecord}
+    />
+  </div>
+);
+}
+

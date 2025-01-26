@@ -129,16 +129,6 @@ export default function SFforDefianceHistory({ onSearch, onFilterChange }) {
             </select>
           </div>
 
-          <div className="filterOption">
-            <input
-              type="date"
-              value={filterDate}
-              onChange={(e) => handleFilterChange('filterDate', e.target.value)}
-              className="filterSelect"
-              aria-label="Date"
-            />
-          </div>
-
           <button className="clearButton" onClick={clearFilters} aria-label="Clear Filters">
             Clear
           </button>

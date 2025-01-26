@@ -7,129 +7,100 @@ import '../../../styles/SearchAndFilter.css';
 export default function SFforViolationsTable({ onSearch, onFilterChange }) {
   const [searchQuery, setSearchQuery] = useState('');
   const [category, setCategory] = useState('');
-  const [offense, setOffense] = useState('');
-  const [acadyear, setAcadYear] = useState('');
+  const [academic_year, setAcadYear] = useState('');
   const [semester, setSemester] = useState('');
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [isFilterActive, setIsFilterActive] = useState(false);
   const [categories, setCategories] = useState([]);
-  const [offenses, setOffenses] = useState([]);
-  const [acadyears, setAcadYears] = useState([]);
+  const [academic_years, setAcadYears] = useState([]);
   const [semesters, setSemesters] = useState([]);
 
-
-  // Fetch programs from the backend
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const response = await axios.get('https://test-backend-api-2.onrender.com/categories'); 
-        setCategories(response.data);
+        const response = await axios.get('https://test-backend-api-2.onrender.com/categories');
+        console.log(response.data); // Log to verify structure
+        setCategories(Array.isArray(response.data) ? response.data : []);
       } catch (error) {
         console.error('Error fetching categories:', error);
+        setCategories([]); // Fallback to an empty array
       }
     };
     fetchCategories();
   }, []);
 
-
-  // Fetch offenses grouped by the selected category
-    useEffect(() => {
-        const fetchOffenses = async () => {
-        try {
-            const response = await axios.get('https://test-backend-api-2.onrender.com/offenses-by-category');
-            setOffenses(response.data);
-        } catch (error) {
-            console.error('Error fetching offenses by category:', error);
-        }
-        };
-        fetchOffenses();
-    }, []);
-  
-
-// Fetch academic years from the backend
   useEffect(() => {
     const fetchAcadYears = async () => {
       try {
-        const response = await axios.get('https://test-backend-api-2.onrender.com/academicyears'); 
-        setAcadYears(response.data);
+        const response = await axios.get('https://test-backend-api-2.onrender.com/academic_years');
+        setAcadYears(Array.isArray(response.data) ? response.data : []);
       } catch (error) {
         console.error('Error fetching academic years:', error);
+        setAcadYears([]);
       }
     };
     fetchAcadYears();
   }, []);
 
-
-  // Fetch semesters from the backend
   useEffect(() => {
     const fetchSemesters = async () => {
       try {
-        const response = await axios.get('https://test-backend-api-2.onrender.com/semesters'); 
-        setSemesters(response.data);
+        const response = await axios.get('https://test-backend-api-2.onrender.com/semesters');
+        setSemesters(Array.isArray(response.data) ? response.data : []);
       } catch (error) {
         console.error('Error fetching semesters:', error);
+        setSemesters([]);
       }
     };
     fetchSemesters();
   }, []);
 
-
-
-  // Handle search input change
   const handleInputChange = (e) => {
     const query = e.target.value;
     setSearchQuery(query);
     triggerSearch(query);
   };
 
-
-  // Trigger search with current query and filters
   const triggerSearch = (query) => {
-    onSearch(query, { category, offense, acadyear, semester });
+    onSearch(query, { category, academic_year, semester });
   };
 
-
-  // Handle filter changes
   const handleFilterChange = (field, value) => {
-    const updatedFilters = { category, offense, acadyear, semester, [field]: value };
+    const updatedFilters = {
+      category: field === 'category' ? value : category,
+      academic_year: field === 'academic_year' ? value : academic_year,
+      semester: field === 'semester' ? value : semester,
+    };
 
-    // Update individual filter states
-    if (field === 'category') setCategories(value);
-    if (field === 'offense') setOffenses(value);
-    if (field === 'acadyear') setAcadYears(value);
-    if (field === 'semester') setSemesters(value);
+    if (field === 'category') setCategory(value);
+    if (field === 'academic_year') setAcadYear(value);
+    if (field === 'semester') setSemester(value);
 
-    onFilterChange(updatedFilters); 
-    triggerSearch(searchQuery); 
+    onFilterChange(updatedFilters);
+    triggerSearch(searchQuery);
   };
 
-
-  // Toggle filter dropdown visibility
   const toggleFilterDropdown = () => {
     setIsFilterOpen(!isFilterOpen);
     setIsFilterActive(!isFilterActive);
   };
 
-
-  // Clear all filters
   const clearFilters = () => {
-    setCategories('');
-    setOffenses('');
-    setAcadYears('');
-    setSemesters('');
-    onFilterChange({ category: '', offense: '', acadyear: '', semester: '' });
+    setCategory('');
+    setAcadYear('');
+    setSemester('');
+    onFilterChange({ category: '', academic_year: '', semester: '' });
   };
-
 
   return (
     <div className="searchAndFilterContainer">
       <div className="searchAndFilterWrapper">
-        <input type="text" placeholder="Search..." value={searchQuery} onChange={handleInputChange} className="searchInput"/>
+        <input type="text" placeholder="Search..." value={searchQuery} onChange={handleInputChange} className="searchInput" />
         <button onClick={toggleFilterDropdown} className={`filterButton ${isFilterActive ? 'active' : ''}`}>
-            <RiEqualizerLine className={`filterIcon ${isFilterActive ? 'active' : ''}`} />
+          <RiEqualizerLine className={`filterIcon ${isFilterActive ? 'active' : ''}`} />
         </button>
         <button onClick={() => triggerSearch(searchQuery)} className="searchButton">
-            <FaSearch className="searchIcon" />
+          <FaSearch className="searchIcon" />
         </button>
       </div>
 
@@ -152,14 +123,14 @@ export default function SFforViolationsTable({ onSearch, onFilterChange }) {
 
           <div className="filterOption">
             <select
-              value={offense}
-              onChange={(e) => handleFilterChange('offense', e.target.value)}
+              value={academic_year}
+              onChange={(e) => handleFilterChange('academic_year', e.target.value)}
               className="filterSelect"
             >
-              <option value="">Offense</option>
-              {offenses.map((offense) => (
-                <option key={offense.offense_id} value={offense.offense_name}>
-                  {offense.offense_name}
+              <option value="">Academic Year</option>
+              {academic_years.map((academic_year) => (
+                <option key={academic_year.academic_year} value={academic_year.academic_year}>
+                  {academic_year.academic_year}
                 </option>
               ))}
             </select>
@@ -167,29 +138,17 @@ export default function SFforViolationsTable({ onSearch, onFilterChange }) {
 
           <div className="filterOption">
             <select
-                value={acadyear}
-                onChange={(e) => handleFilterChange('acadyear', e.target.value)}
-                className="filterSelect"
+              value={semester}
+              onChange={(e) => handleFilterChange('semester', e.target.value)}
+              className="filterSelect"
             >
-                <option value="">Academic Year</option>
-                {acadyears.map((year, index) => (
-                <option key={index} value={year.formatted_year}>
-                    {year.formatted_year}
+              <option value="">Semester</option>
+              {semesters.map((semester) => (
+                <option key={semester.semester_id} value={semester.semester_name}>
+                  {semester.semester_name}
                 </option>
-                ))}
+              ))}
             </select>
-            </div>
-
-          <div className="filterOption">
-                <select
-                value={semester}
-                onChange={(e) => handleFilterChange('semester', e.target.value)}
-                className="filterSelect"
-                >
-                <option value="">Semester</option>
-                <option value="First Semester">First Semester</option>
-                <option value="Second Semester">Second Semester</option>
-                </select>
           </div>
 
           <button className="clearButton" onClick={clearFilters}>
@@ -200,4 +159,3 @@ export default function SFforViolationsTable({ onSearch, onFilterChange }) {
     </div>
   );
 }
-

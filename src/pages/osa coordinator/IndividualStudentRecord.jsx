@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
+import { useNavigate, useLocation, useParams } from 'react-router-dom';
 import axios from 'axios';
-import { useLocation, useNavigate } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 import { Button } from 'react-bootstrap';
 
@@ -23,7 +23,18 @@ export default function IndividualStudentRecord() {
     const [showAddViolationModal, setShowAddViolationModal] = useState(false); 
     const [activeTab, setActiveTab] = useState('stack');
     const location = useLocation();
+    const [loading, setLoading] = useState(false); 
+    const [error, setError] = useState(false);
+    const [searchQuery, setSearchQuery] = useState('');
+    const [allRecords, setAllRecords] = useState([]);  
+    const [filteredRecords, setFilteredRecords] = useState([]);  
+    const [filters, setFilters] = useState({
+        category_name: '',
+        academic_year: '',
+        semester: '',
+    });
     const navigate = useNavigate();
+    const { student_idnumber } = useParams(); 
 
 
     // Fetch the student information
@@ -58,6 +69,66 @@ export default function IndividualStudentRecord() {
             fetchStudentInfo(student_idnumber);
         }
     }, [location.pathname, navigate]);
+
+
+    // Fetch records
+    const fetchRecords = useCallback(async () => {
+        setLoading(true); 
+        setError(false); 
+        try {
+            const token = localStorage.getItem('token');
+            const headers = { Authorization: `Bearer ${token}` };
+            const response = await axios.get(`https://test-backend-api-2.onrender.com/individual_violationrecords/${student_idnumber}`, { headers }
+            );
+            setAllRecords(response.data);
+            setFilteredRecords(response.data);
+        } catch (error) {
+            console.error('Error fetching records:', error.response || error.message || error);
+            setError(true); 
+        } finally {
+            setLoading(false); 
+        }
+    }, []);
+
+
+    // Handle search query changes
+    const handleSearch = (query) => {
+        setSearchQuery(query);
+        const normalizedQuery = query ? query.toLowerCase() : '';
+    
+        const filtered = allRecords.filter(record => {
+            const offense = record.offense_name ? record.offense_name.toLowerCase() : ''; 
+            return offense.includes(normalizedQuery);
+        });
+        setFilteredRecords(filtered);  
+    };
+
+
+    // Handle filter changes 
+    const handleFilterChange = (filters) => {
+        console.log('Updated Filters:', filters);
+        setFilters(filters);  
+    
+        let filtered = allRecords;
+    
+        // Apply filters one by one
+        if (filters.category_name) {
+            filtered = filtered.filter(record => record.category_name === filters.category_name);
+        }
+
+        if (filters.academic_year) {
+            filtered = filtered.filter(record => record.academic_year === filters.academic_year);
+        }
+        
+        if (filters.semester_name) {
+            filtered = filtered.filter(record => record.semester_name === filters.semester_name);
+        }
+    
+        setFilteredRecords(filtered);
+    };
+    useEffect(() => {
+        fetchRecords();
+    }, [fetchRecords]);
 
 
     const handleCreateNewRecord = () => {
@@ -146,7 +217,7 @@ return (
             {/* Search And Filter Section */}
             <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'center', marginLeft: '60px', padding: '0 20px' }}>
                 <div style={{ flex: '1 1 80%', minWidth: '300px' }}> 
-                    <SFforViolationsTable /> 
+                    <SFforViolationsTable onSearch={handleSearch} onFilterChange={handleFilterChange} /> 
                 </div>
                 <Button onClick={handleCreateNewRecord} title="Add Record" style={{ backgroundColor: '#FAD32E', color: 'white', fontWeight: '900', padding: '12px 36px', marginLeft: '20px', border: 'none', borderRadius: '10px', cursor: 'pointer', display: 'flex', alignItems: 'center', boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)' }} >
                      Add Violation
@@ -155,7 +226,7 @@ return (
             </div>
 
             {/* Breadcrumbs and Tab Buttons */}
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '5px', width: '100%', maxWidth: '1080px', marginLeft: '140px', marginRight: 'auto', marginBottom: '5px' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '5px', width: '100%', maxWidth: '1080px', marginLeft: '130px', marginRight: 'auto', marginBottom: '5px' }}>
                 {/* Breadcrumbs */}
                 <nav style={{ flex: 1, display: 'flex', justifyContent: 'flex-start' }}>
                     <ol style={{ backgroundColor: 'transparent', padding: '0', margin: '0', listStyle: 'none', alignItems: 'center', display: 'flex', justifyContent: 'flex-start' }}>
@@ -176,9 +247,16 @@ return (
             </div>
                 {/* Conditionally render the tables based on active tab */}
                 {activeTab === 'stack' ? (
-                    <IndividualStudentRecordTable records={violationRecords} />
+                    <IndividualStudentRecordTable 
+                        records={violationRecords} 
+                        filteredRecords={filteredRecords}  
+                        filters={filters}  
+                        searchQuery={searchQuery}/>
                 ) : (
-                    <IndividualHistoryViolationRecordTable />
+                    <IndividualHistoryViolationRecordTable 
+                        filteredRecords={filteredRecords}  
+                        filters={filters}  
+                        searchQuery={searchQuery}/>
                 )}
        
             {/* Add Individual Violation Record Modal */}
