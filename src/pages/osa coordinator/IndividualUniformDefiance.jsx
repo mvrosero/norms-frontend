@@ -4,8 +4,8 @@ import { Link } from 'react-router-dom';
 import { Button } from 'react-bootstrap';
 import { useNavigate, useLocation, useParams } from 'react-router-dom';  
 import { FaPlus } from 'react-icons/fa';
-import defaultProfile from '../../components/images/default_profile.jpg';
 
+import defaultProfile from '../../components/images/default_profile.jpg';
 import CoordinatorNavigation from './CoordinatorNavigation';
 import CoordinatorInfo from './CoordinatorInfo';
 import SFforDefianceHistory from '../../elements/osa coordinator/searchandfilters/SFforIndividualDefiance';
@@ -113,7 +113,6 @@ const IndividualUniformDefiance = () => {
         setShowAddViolationModal(false);
         await fetchDefiances(); 
     };
-
 
 
     // Handle search query changes
@@ -239,7 +238,7 @@ return (
             </div>
 
             {/* Breadcrumbs */}
-            <nav style={{ width: '80%', marginBottom: '5px', marginLeft: '250px' }}>
+            <nav style={{ width: '80%', marginBottom: '5px', marginLeft: '200px' }}>
                 <ol style={{ backgroundColor: 'transparent', padding: '0', margin: '0', listStyle: 'none', alignItems: 'center', display: 'flex', justifyContent: 'flex-start' }}>
                     <li style={{ marginRight: '5px' }}>
                         <Link to="/uniformdefiance-history" style={{ textDecoration: 'none', color: '#0D4809' }}>
