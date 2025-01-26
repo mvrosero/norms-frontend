@@ -55,7 +55,7 @@ const IndividualUniformDefianceTable = ({ handleShowDetailsModal, filters, searc
     }, [student_idnumber]);
 
 
-    // Fetch the students
+    // Fetch the violation natures
     const fetchNatures = useCallback(async () => {
         try {
             const response = await axios.get('https://test-backend-api-2.onrender.com/violation-natures', { headers });
@@ -254,7 +254,7 @@ const IndividualUniformDefianceTable = ({ handleShowDetailsModal, filters, searc
 // Render the individual uniform defiances table
 const renderTable = () => {
 
-    const filteredDefiances = defiances.filter(defiance => {
+    const filteredDefiances = approvedDefiances.filter(defiance => {
 
         const nature = defiance.nature_name.toLowerCase(); 
         const matchesSearchQuery = nature.includes(searchQuery.toLowerCase());
@@ -276,10 +276,11 @@ const renderTable = () => {
             <Table bordered hover responsive style={{ borderRadius: '20px', marginBottom: '20px', marginLeft: '110px' }}>
                 <thead>
                     <tr>
-                        <th style={{ textAlign: 'center', padding: '0', verticalAlign: 'middle', width: '5%' }}>
-                            <button style={{ border: 'none', background: 'none', cursor: 'pointer', display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center', width: '100%' }}
+                        <th style={{ width: '5%' }}>
+                            <button
+                                style={{ border: 'none', background: 'none', cursor: 'pointer', display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center', width: '100%' }}
                                 onClick={handleSortSlipId}
-                                >
+                            >
                                 <span style={{ textAlign: 'center' }}>ID</span>
                                 {sortOrderSlipId === 'asc' ? (
                                     <ArrowDropUpIcon style={{ marginLeft: '5px' }} />
@@ -288,10 +289,11 @@ const renderTable = () => {
                                 )}
                             </button>
                         </th>
-                        <th style={{ textAlign: 'center', padding: '0', verticalAlign: 'middle', width: '23%' }}>
-                            <button style={{ border: 'none', background: 'none', cursor: 'pointer', display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center', width: '100%' }}
+                        <th style={{ width: '23%' }}>
+                            <button
+                                style={{ border: 'none', background: 'none', cursor: 'pointer', display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center', width: '100%' }}
                                 onClick={handleSortDate}
-                                >
+                            >
                                 <span>Date</span>
                                 {sortOrderDate === 'asc' ? (
                                     <ArrowDropUpIcon style={{ marginLeft: '5px' }} />
