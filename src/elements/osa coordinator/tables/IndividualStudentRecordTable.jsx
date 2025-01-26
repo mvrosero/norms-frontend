@@ -56,15 +56,6 @@ const IndividualStudentRecordTable = () => {
         fetchData();
     }, [student_idnumber]);
 
-    const getCategoryName = (category_id) => {
-        const category = categories.find((cat) => cat.category_id === category_id);
-        return category ? category.category_name : 'Unknown';
-    };
-
-    const getOffenseName = (offense_id) => {
-        const offense = offenses.find((offense) => offense.offense_id === offense_id);
-        return offense ? offense.offense_name : 'Unknown';
-    };
 
     const getSanctionNames = (sanction_ids) => {
         if (!sanction_ids) return 'Unknown';
@@ -78,16 +69,6 @@ const IndividualStudentRecordTable = () => {
     const getSanctionName = (sanction_id) => {
         const sanction = sanctions.find((sanction) => String(sanction.sanction_id) === String(sanction_id));
         return sanction ? sanction.sanction_name : 'Unknown';
-    };
-
-    const getAcademicYearName = (acadyear_id) => {
-        const academicYear = academicYears.find((academicYear) => academicYear.acadyear_id === acadyear_id);
-        return academicYear ? `${academicYear.start_year} - ${academicYear.end_year}` : 'Unknown';
-    };
-
-    const getSemesterName = (semester_id) => {
-        const semester = semesters.find((semester) => semester.semester_id === semester_id);
-        return semester ? semester.semester_name : 'Unknown';
     };
 
 
@@ -268,10 +249,10 @@ const IndividualStudentRecordTable = () => {
                         <tr key={index}>
                             <td style={{ textAlign: 'center' }}>{ (currentPage - 1) * rowsPerPage + (index + 1) }</td>
                             <td>{new Date(record.created_at).toLocaleString()}</td>
-                            <td>{getCategoryName(record.category_id)}</td>
-                            <td>{getOffenseName(record.offense_id)}</td>
-                            <td style={{ textAlign: 'center' }}>{getAcademicYearName(record.acadyear_id)}</td>
-                            <td style={{ textAlign: 'center' }}>{getSemesterName(record.semester_id)}</td>
+                            <td>{record.category_name}</td>
+                            <td>{record.offense_name}</td>
+                            <td style={{ textAlign: 'center' }}>{`${record.start_year} - ${record.end_year}`}</td>
+                            <td style={{ textAlign: 'center' }}>{record.semester_name}</td>
                             <td style={{ display: 'flex', justifyContent: 'center' }}>
                                 <ViewButton onClick={() => handleViewDetails(record)}>View</ViewButton>
                             </td>
