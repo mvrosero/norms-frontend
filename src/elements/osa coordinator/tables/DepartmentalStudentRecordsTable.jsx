@@ -365,9 +365,9 @@ const renderTable = () => {
             return <div style={{ textAlign: 'center' }}>No users found</div>;
         }
 
-        return (
-            <Table bordered hover responsive style={{ borderRadius: '20px', marginBottom: '20px', marginLeft: '110px' }}>
-                <thead>
+    return (
+        <Table bordered hover responsive style={{ borderRadius: '20px', marginBottom: '20px', marginLeft: '110px' }}>
+            <thead>
                     <tr>
                         <th style={{ width: '4%' }}>No.</th>
                         <th style={{ textAlign: 'center', padding: '0', verticalAlign: 'middle', width: '11%' }}>
