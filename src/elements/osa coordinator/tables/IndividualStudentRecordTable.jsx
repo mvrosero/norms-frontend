@@ -32,7 +32,7 @@ const IndividualStudentRecordTable = () => {
         const fetchData = async () => {
             try {
                 const violationResponse = await axios.get( 
-                    `https://test-backend-api-2.onrender.com/individual_violationrecords/${student_idnumber}`
+                    `https://test-backend-api-2.onrender.com/myrecords-history/${student_idnumber}`
                 );
                 setRecords(violationResponse.data);
 
