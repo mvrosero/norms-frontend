@@ -238,7 +238,7 @@ return (
             </div>
 
             {/* Breadcrumbs */}
-            <nav style={{ width: '80%', marginBottom: '5px', marginLeft: '200px' }}>
+            <nav style={{ width: '80%', marginBottom: '5px', marginLeft: '120px' }}>
                 <ol style={{ backgroundColor: 'transparent', padding: '0', margin: '0', listStyle: 'none', alignItems: 'center', display: 'flex', justifyContent: 'flex-start' }}>
                     <li style={{ marginRight: '5px' }}>
                         <Link to="/uniformdefiance-history" style={{ textDecoration: 'none', color: '#0D4809' }}>
