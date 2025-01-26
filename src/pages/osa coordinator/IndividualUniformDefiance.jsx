@@ -86,7 +86,7 @@ const IndividualUniformDefiance = () => {
             setAllDefiances(response.data);
             setFilteredDefiances(response.data);
 
-            const nonPendingDefiances = response.data.filter(defiance => defiance.status !== 'Pending');
+            const nonPendingDefiances = response.data.filter(defiance => defiance.status !== 'pending');
             setDefiances(nonPendingDefiances);
 
             const employeeIds = new Set(response.data.map(defiance => defiance.submitted_by));
