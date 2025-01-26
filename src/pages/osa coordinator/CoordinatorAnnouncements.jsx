@@ -720,8 +720,7 @@ return (
                                 ],
                             }}
                             style={{
-                                bottom: '10px', 
-                                right: '15px',
+                                paddingBottom: '35px',
                                 backgroundColor: '#f2f2f2',
                                 border: `1px solid ${
                                     focusedElement === 'content' ? (editing ? '#3B71CA' : '#FAD32E') : '#ced4da'
@@ -735,7 +734,9 @@ return (
                                         : 'none',
                             }}
                         />
+                        <div style={{ position: 'absolute', bottom: '8px', right: '10px', fontSize: '12px', color: '#666' }}>
                             {announcementFormData.content.length}/{maxLength}
+                        </div>
                         </div>
                     </Form.Group>
                     </Row>
