@@ -156,7 +156,7 @@ return (
             {/* Breadcrumbs and Tab Buttons */}
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '5px' }}>
                 {/* Breadcrumbs */}
-                <nav style={{ width: '80%' }}>
+                <nav style={{ flex: 1, display: 'flex', justifyContent: 'flex-start', width: '80%' }}>
                     <ol style={{ backgroundColor: 'transparent', padding: '0', margin: '0', listStyle: 'none', alignItems: 'center', display: 'flex', justifyContent: 'flex-start' }}>
                         <li style={{ marginRight: '5px' }}>
                             <Link to="/coordinator-studentrecords" style={{ textDecoration: 'none', color: '#0D4809' }}>
@@ -175,12 +175,12 @@ return (
                 </div>
             </div>
 
-                {/* Conditionally render the tables based on active tab */}
-                {activeTab === 'stack' ? (
-                    <IndividualStudentRecordTable records={violationRecords} />
-                ) : (
-                    <IndividualHistoryViolationRecordTable />
-                )}
+            {/* Conditionally render the tables based on active tab */}
+            {activeTab === 'stack' ? (
+                <IndividualStudentRecordTable records={violationRecords} />
+            ) : (
+                <IndividualHistoryViolationRecordTable />
+            )}
 
        
             {/* Add Individual Violation Record Modal */}
