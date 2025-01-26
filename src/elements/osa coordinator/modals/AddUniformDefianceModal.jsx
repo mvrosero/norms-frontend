@@ -369,16 +369,15 @@ return (
                                 }}
                                 style={{
                                     width: '100%',
-                                    paddingBottom: '35px',
+                                    bottom: '10px', 
+                                    right: '15px',
                                     backgroundColor: '#f2f2f2',
                                     border: `1px solid ${focusedElement === 'description' ? '#FAD32E' : '#ced4da'}`, 
                                     borderRadius: '4px',
                                     boxShadow: focusedElement === 'description' ? '0 0 0 2px rgba(250, 211, 46, 1)' : 'none',
                                 }}
                             />
-                            <div style={{ position: 'absolute', bottom: '8px', right: '10px', fontSize: '12px', color: '#666' }}>
-                                {formData.description.length}/{maxLength}
-                            </div>
+                            {formData.description.length}/{maxLength}
                             </div>
                         </Form.Group>
                     </Row>
