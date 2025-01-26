@@ -1,8 +1,20 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Modal, Button } from 'react-bootstrap';
 
 const ViewIndividualUniformDefianceModal = ({ show, onHide, selectedRecord }) => {
-    
+    const [isFileClicked, setIsFileClicked] = useState(false);
+    const [clickedFile, setClickedFile] = useState('');
+
+    const handleFileClick = (fileUrl) => {
+        setClickedFile(fileUrl);
+        setIsFileClicked(true);
+    };
+
+    const closeFullFileView = () => {
+        setIsFileClicked(false);
+        setClickedFile('');
+    };
+
     const renderFile = () => {
         if (selectedRecord) {
             const { photo_video_filenames } = selectedRecord;
@@ -15,17 +27,15 @@ const ViewIndividualUniformDefianceModal = ({ show, onHide, selectedRecord }) =>
                 if (['mp4', 'avi', 'mov'].includes(fileExtension)) {
                     return (
                         <div key={index} style={{ marginBottom: '10px' }}>
-                            <a href={fileUrl} target="_blank" rel="noopener noreferrer">
-                                <video controls src={fileUrl} style={{ maxWidth: '100%' }} />
-                            </a>
+                            <video controls src={fileUrl} style={{ maxWidth: '100%' }} 
+                            onClick={() => handleFileClick(fileUrl)}/>
                         </div>
                     );
                 } else if (['jpg', 'jpeg', 'png', 'gif'].includes(fileExtension)) {
                     return (
                         <div key={index} style={{ marginBottom: '10px' }}>
-                            <a href={fileUrl} target="_blank" rel="noopener noreferrer">
-                                <img src={fileUrl} alt="File Preview" style={{ maxWidth: '100%' }} />
-                            </a>
+                            <img src={fileUrl} alt="File Preview" style={{ maxWidth: '100%' }} 
+                            onClick={() => handleFileClick(fileUrl)}/>
                         </div>
                     );
                 } else {
@@ -76,7 +86,8 @@ const ViewIndividualUniformDefianceModal = ({ show, onHide, selectedRecord }) =>
     };
 
 
-    return (
+return (
+    <>
         <Modal show={show} onHide={onHide} size="lg">
             <Modal.Header>
                 <Button variant="link" onClick={onHide} style={{ position: 'absolute', top: '5px', right: '20px', textDecoration: 'none', fontSize: '30px', color: '#a9a9a9' }}>
@@ -137,6 +148,18 @@ const ViewIndividualUniformDefianceModal = ({ show, onHide, selectedRecord }) =>
                 )}
             </Modal.Body>
         </Modal>
+        {/* Full File Modal for Enlarged View */}
+        <Modal show={isFileClicked} onHide={closeFullFileView} size="lg" backdrop="static" centered>
+            <Modal.Header>
+                <Button variant="link" onClick={closeFullFileView} style={{ position: 'absolute', top: '5px', right: '20px', textDecoration: 'none', fontSize: '30px', color: '#a9a9a9' }}>
+                    ×
+                </Button>
+            </Modal.Header>
+            <Modal.Body>
+                <img src={clickedFile} alt="Enlarged Preview" style={{ width: '100%', height: 'auto', objectFit: 'contain', borderRadius: '5px' }}/>
+            </Modal.Body>
+        </Modal>
+        </>
     );
 };
 
