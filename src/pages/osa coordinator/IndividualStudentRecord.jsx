@@ -175,12 +175,12 @@ return (
                 </div>
             </div>
 
-            {/* Conditionally render the tables based on active tab */}
-            {activeTab === 'stack' ? (
-                <IndividualStudentRecordTable records={violationRecords} />
-            ) : (
-                <IndividualHistoryViolationRecordTable />
-            )}
+                {/* Conditionally render the tables based on active tab */}
+                {activeTab === 'stack' ? (
+                    <IndividualStudentRecordTable records={violationRecords} />
+                ) : (
+                    <IndividualHistoryViolationRecordTable />
+                )}
 
        
             {/* Add Individual Violation Record Modal */}
