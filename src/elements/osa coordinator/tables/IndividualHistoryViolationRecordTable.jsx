@@ -4,8 +4,8 @@ import axios from 'axios';
 import Table from 'react-bootstrap/Table';
 import styled from '@emotion/styled';
 
-import ArrowDropUpIcon from '@material-ui/icons/ArrowDropUp';
-import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
+import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
+import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import ViewViolationModal from '../modals/ViewViolationModal';
 
 
