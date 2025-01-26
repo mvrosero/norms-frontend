@@ -12,7 +12,7 @@ import IndividualStudentRecordTable from '../../elements/osa coordinator/tables/
 import AddViolationModal from '../../elements/osa coordinator/modals/AddViolationModal';
 import defaultProfile from '../../components/images/default_profile.jpg';
 
-import ViolationRecords from './GroupedTable';
+import ViolationRecords from '../../elements/osa coordinator/tables/GroupedTable';
 
 export default function IndividualStudentRecord() {
     const [studentInfo, setStudentInfo] = useState(null);
