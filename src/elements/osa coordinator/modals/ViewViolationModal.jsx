@@ -38,7 +38,7 @@ const ViewViolationModal = ({ show, onHide, selectedRecord, getCategoryName, get
                         <p>{getAcademicYearName(selectedRecord.acadyear_id)}</p>
 
                         <p style={{ fontWeight: 'bold' }}>Semester:</p>
-                        <p>{getSemesterName(selectedRecord.semester_id)}</p>
+                        <p>{selectedRecord.semester_name}</p>
 
                         <p style={{ fontWeight: 'bold' }}>Category:</p>
                         <p>{getCategoryName(selectedRecord.category_id)}</p>
