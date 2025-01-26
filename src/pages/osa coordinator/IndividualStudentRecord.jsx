@@ -9,6 +9,7 @@ import CoordinatorNavigation from './CoordinatorNavigation';
 import CoordinatorInfo from './CoordinatorInfo';
 import SFforViolationsTable from '../../elements/general/searchandfilters/SFforViolationsTable';
 import IndividualStudentRecordTable from '../../elements/osa coordinator/tables/IndividualStudentRecordTable';
+import IndividualHistoryViolationRecordTable from '../../elements/osa coordinator/tables/IndividualHistoryViolationRecordTable';
 import AddViolationModal from '../../elements/osa coordinator/modals/AddViolationModal';
 import defaultProfile from '../../components/images/default_profile.jpg';
 
@@ -159,6 +160,8 @@ return (
                     <li style={{ marginLeft: '5px', color: '#000' }}>Individual Violation Records</li>
                 </ol>
             </nav>
+
+            <IndividualHistoryViolationRecordTable />
 
      
 
