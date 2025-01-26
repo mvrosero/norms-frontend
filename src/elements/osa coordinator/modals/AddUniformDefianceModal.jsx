@@ -369,7 +369,6 @@ return (
                                 style={{
                                     width: '100%',
                                     minHeight: '100px',
-                                    padding: '10px',
                                     backgroundColor: '#f2f2f2',
                                     border: `1px solid ${focusedElement === 'description' ? '#FAD32E' : '#ced4da'}`, 
                                     borderRadius: '4px',
@@ -382,33 +381,6 @@ return (
                         </Form.Group>
                     </Row>
 
-                    <Row className="gy-4">
-                        <Form.Group className="description mb-3" style={{ marginBottom: '20px' }}>
-                            <Form.Label className="fw-bold">Description</Form.Label>
-                                <div style={{ position: 'relative' }}>
-                                <Form.Control
-                                    as="textarea"
-                                    name="description"
-                                    value={formData.description}
-                                    onChange={handleChange}
-                                    rows={3}
-                                    maxLength={maxLength}
-                                    onFocus={() => handleFocus('description')} 
-                                    onBlur={handleBlur} 
-                                    style={{
-                                        width: '100%',
-                                        minHeight: '100px',
-                                        padding: '10px',
-                                        backgroundColor: '#f2f2f2',
-                                        border: `1px solid ${focusedElement === 'description' ? '#FAD32E' : '#ced4da'}`, 
-                                        borderRadius: '4px',
-                                        boxShadow: focusedElement === 'description' ? '0 0 0 2px rgba(250, 211, 46, 1)' : 'none',
-                                    }}
-                                />
-                                <div style={{ position: 'absolute', bottom: '10px', right: '10px', fontSize: '12px', color: '#666' }}> {currentLength}/{maxLength} </div>
-                            </div>
-                        </Form.Group>
-                    </Row>
                         {/* Buttons */}
                         <div className="d-flex justify-content-end mt-3">
                             <button type="button" onClick={handleCancel} className='modal-cancel-button'>
