@@ -149,7 +149,7 @@ return (
                     <SFforViolationsTable /> 
                 </div>
                 <Button onClick={handleCreateNewRecord} title="Add Record" style={{ backgroundColor: '#FAD32E', color: 'white', fontWeight: '900', padding: '12px 36px', marginLeft: '20px', border: 'none', borderRadius: '10px', cursor: 'pointer', display: 'flex', alignItems: 'center', boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)' }} >
-                        Add Violation
+                    Add Violation
                     <FaPlus style={{ marginLeft: '10px' }} />
                 </Button>
             </div>
