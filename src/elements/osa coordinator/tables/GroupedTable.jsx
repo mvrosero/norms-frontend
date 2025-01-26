@@ -41,6 +41,7 @@ const ViolationRecords = () => {
     fetchViolationRecords();
   }, [student_idnumber]);
 
+  
   return (
     <div>
       {Object.entries(groupedRecords).map(([group, records]) => (
