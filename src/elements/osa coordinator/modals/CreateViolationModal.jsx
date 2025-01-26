@@ -105,6 +105,24 @@ export default function CreateViolationModal({ show, onHide, handleCloseModal })
     };
 
 
+    // Display offenses based on category selected
+    const handleCategoryChange = (e) => {
+        const selectedCategoryId = e.target.value;
+        setFormData({
+            ...formData,
+            category_id: selectedCategoryId,
+            offense_id: '', // Reset offense selection when category changes
+        });
+    };
+    
+    const filteredOffenses = offenses.filter(
+        (offense) => offense.category_id === Number(formData.category_id)
+    );
+    
+    console.log("Selected Category ID:", formData.category_id);
+    console.log("Filtered Offenses:", filteredOffenses);
+
+
     // Handle the create violation record
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -274,8 +292,10 @@ return (
                                     ...borderColorStyles(focusedElement, 'academic_year'), 
                                 }}
                             >
-                                <option disabled value="">Select Academic Year</option>
-                                {academicYears.map((year) => (
+                            <option disabled value="">Select Academic Year</option>
+                            {academicYears
+                                .sort((a, b) => (b.status === 'active' ? 1 : 0) - (a.status === 'active' ? 1 : 0)) 
+                                .map((year) => (
                                     <option key={year.acadyear_id} value={year.acadyear_id}>
                                         {year.start_year} - {year.end_year}
                                     </option>
@@ -298,8 +318,10 @@ return (
                                     ...borderColorStyles(focusedElement, 'semester'), 
                                 }}
                             >
-                                <option disabled value="">Select Semester</option>
-                                {semesters.map((sem) => (
+                            <option disabled value="">Select Semester</option>
+                            {semesters
+                                .filter((sem) => sem.status === 'active') 
+                                .map((sem) => (
                                     <option key={sem.semester_id} value={sem.semester_id}>
                                         {sem.semester_name}
                                     </option>
@@ -315,21 +337,23 @@ return (
                             <Form.Select
                                 name="category_id"
                                 value={formData.category_id}
-                                onChange={handleChange}
+                                onChange={handleCategoryChange}
                                 required
-                                onFocus={() => handleFocus('category')} 
-                                onBlur={handleBlur} 
+                                onFocus={() => handleFocus('category')}
+                                onBlur={handleBlur}
                                 style={{
                                     ...regularSelectStyles,
-                                    ...borderColorStyles(focusedElement, 'category'), 
+                                    ...borderColorStyles(focusedElement, 'category'),
                                 }}
                             >
                                 <option disabled value="">Select Category</option>
-                                {categories.map((cat) => (
-                                    <option key={cat.category_id} value={cat.category_id}>
-                                        {cat.category_name}
-                                    </option>
-                                ))}
+                                {categories
+                                    .filter((cat) => cat.status === 'active')
+                                    .map((cat) => (
+                                        <option key={cat.category_id} value={cat.category_id}>
+                                            {cat.category_name}
+                                        </option>
+                                    ))}
                             </Form.Select>
                         </Form.Group>  
                     </Row>
@@ -341,15 +365,16 @@ return (
                                 name="offense_id"
                                 value={formData.offense_id}
                                 onChange={handleChange}
-                                onFocus={() => handleFocus('offense')} 
-                                onBlur={handleBlur} 
+                                required
+                                onFocus={() => handleFocus('offense')}
+                                onBlur={handleBlur}
                                 style={{
                                     ...regularSelectStyles,
-                                    ...borderColorStyles(focusedElement, 'offense'), 
+                                    ...borderColorStyles(focusedElement, 'offense'),
                                 }}
                             >
                                 <option disabled value="">Select Offense</option>
-                                {offenses.map((off) => (
+                                {filteredOffenses.map((off) => (
                                     <option key={off.offense_id} value={off.offense_id}>
                                         {off.offense_name}
                                     </option>
@@ -359,20 +384,22 @@ return (
                     </Row>
 
                     <Row className="gy-4">
-                        <Form.Group className="sanctions mb-3">
-                            <Form.Label className="fw-bold">Sanctions</Form.Label>
-                            <Select
-                                isMulti
-                                name="sanctions"
-                                options={sanctions.map((sanction) => ({
+                    <Form.Group className="sanctions mb-3">
+                        <Form.Label className="fw-bold">Sanctions</Form.Label>
+                        <Select
+                            isMulti
+                            name="sanctions"
+                            options={sanctions
+                                .filter((sanction) => sanction.status === 'active') 
+                                .map((sanction) => ({
                                     value: sanction.sanction_id,
                                     label: sanction.sanction_name,
                                 }))}
-                                onChange={handleSelectChange}
-                                required
-                                styles={customSelectStyles}
-                            />
-                        </Form.Group>
+                            onChange={handleSelectChange}
+                            required
+                            styles={customSelectStyles}
+                        />
+                    </Form.Group>
                     </Row>
 
                     <Row className="gy-4">

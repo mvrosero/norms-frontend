@@ -61,16 +61,21 @@ const UniformDefianceTable = ({filters, searchQuery}) => {
     // Fetch the uniform defiances
     const fetchDefiances = useCallback(async () => {
         try {
-            let response = await axios.get('https://test-backend-api-2.onrender.com/uniform_defiances', { headers });
+            // Fetch data from the backend
+            let response = await axios.get('http://localhost:9000/uniform_defiances', { headers });
             let data = response.data;
-
-            data = data.filter(defiance => defiance.status === 'pending');
-
+    
+            // Remove the filtering for 'pending' status if you want all items
+            // data = data.filter(defiance => defiance.status === 'pending');
+    
+            // Now fetch employee names and update each defiance object with the full name
             const updatedData = await Promise.all(data.map(async (defiance) => {
                 const fullName = await fetchEmployeeName(defiance.submitted_by);
                 return { ...defiance, submitted_by: fullName };
             }));
-            setDefiances(data);
+    
+            // Update the state with the full data
+            setDefiances(updatedData);
         } catch (error) {
             console.error('Error fetching defiances:', error);
             setError('Failed to fetch uniform defiances.'); 
@@ -78,6 +83,7 @@ const UniformDefianceTable = ({filters, searchQuery}) => {
             setLoading(false); 
         }
     }, [headers]);
+    
     useEffect(() => {
         fetchDefiances();
         fetchNatures();
