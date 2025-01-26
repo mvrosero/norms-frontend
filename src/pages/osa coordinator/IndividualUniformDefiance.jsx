@@ -2,7 +2,6 @@ import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import axios from 'axios';
 import { Button } from 'react-bootstrap';
 import { useNavigate, useLocation, useParams } from 'react-router-dom';  
-import { Link } from 'react-router-dom';
 import { FaPlus } from 'react-icons/fa';
 import defaultProfile from '../../components/images/default_profile.jpg';
 
@@ -239,7 +238,7 @@ return (
             </div>
 
             {/* Breadcrumbs */}
-            <nav style={{ width: '100%', marginBottom: '5px', marginLeft: '250px' }}>
+            <nav style={{ width: '80%', marginBottom: '5px', marginLeft: '250px' }}>
                 <ol style={{ backgroundColor: 'transparent', padding: '0', margin: '0', listStyle: 'none', alignItems: 'center', display: 'flex', justifyContent: 'flex-start' }}>
                     <li style={{ marginRight: '5px' }}>
                         <Link to="/uniformdefiance-history" style={{ textDecoration: 'none', color: '#0D4809' }}>
