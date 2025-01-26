@@ -31,7 +31,7 @@ const IndividualStudentRecordTable = () => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const violationResponse = await axios.get(
+                const violationResponse = await axios.get( 
                     `https://test-backend-api-2.onrender.com/individual_violationrecords/${student_idnumber}`
                 );
                 setRecords(violationResponse.data);

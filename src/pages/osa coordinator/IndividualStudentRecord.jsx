@@ -12,6 +12,8 @@ import IndividualStudentRecordTable from '../../elements/osa coordinator/tables/
 import AddViolationModal from '../../elements/osa coordinator/modals/AddViolationModal';
 import defaultProfile from '../../components/images/default_profile.jpg';
 
+import ViolationRecords from './GroupedTable';
+
 export default function IndividualStudentRecord() {
     const [studentInfo, setStudentInfo] = useState(null);
     const [profilePhoto, setProfilePhoto] = useState(defaultProfile); 
@@ -158,6 +160,8 @@ return (
                     <li style={{ marginLeft: '5px', color: '#000' }}>Individual Violation Record</li>
                 </ol>
             </nav>
+
+            <ViolationRecords />
 
             {/* Table for displaying violation records */}
             <IndividualStudentRecordTable records={violationRecords} />
