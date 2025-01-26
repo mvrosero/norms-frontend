@@ -100,7 +100,6 @@ const IndividualUniformDefiance = () => {
             console.error('Error fetching defiances:', error);
         }
     }, [student_idnumber, fetchStudentInfo, fetchEmployeeName, headers]);
-
     useEffect(() => {
         fetchDefiances();
     }, [fetchDefiances]);
