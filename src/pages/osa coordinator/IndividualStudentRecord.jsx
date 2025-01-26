@@ -154,9 +154,9 @@ return (
             </div>
 
             {/* Breadcrumbs and Tab Buttons */}
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '5px' }}>
+            <div style={{ alignItems: 'flex-start', display: 'flex', justifyContent: 'space-between', marginBottom: '5px' }}>
                 {/* Breadcrumbs */}
-                <nav style={{ flex: 1, display: 'flex', justifyContent: 'flex-start', marginRight: '250px' }}>
+                <nav style={{ flex: 1, display: 'flex', justifyContent: 'flex-start', marginRight: '450px' }}>
                     <ol style={{ backgroundColor: 'transparent', padding: '0', margin: '0', listStyle: 'none', alignItems: 'center', display: 'flex', justifyContent: 'flex-start' }}>
                         <li style={{ marginRight: '5px' }}>
                             <Link to="/coordinator-studentrecords" style={{ textDecoration: 'none', color: '#0D4809' }}>
