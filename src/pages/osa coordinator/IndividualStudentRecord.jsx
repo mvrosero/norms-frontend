@@ -169,7 +169,7 @@ return (
                 </nav>
 
                 {/* Tab buttons for History and Stack */}
-                <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                <div style={{ display: 'flex' }}>
                     <GoStack size={20} onClick={() => handleTabClick('stack')} style={{ cursor: 'pointer', color: activeTab === 'stack' ? '#134E0F' : '#8C8C8C', marginLeft: '20px' }} />
                     <GoHistory size={20} onClick={() => handleTabClick('history')} style={{ cursor: 'pointer', color: activeTab === 'history' ? '#134E0F' : '#8C8C8C', marginLeft: '10px' }} />
                 </div>
