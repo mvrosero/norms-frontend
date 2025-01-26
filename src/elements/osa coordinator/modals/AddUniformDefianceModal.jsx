@@ -4,6 +4,8 @@ import Swal from 'sweetalert2';
 import { Modal, Button, Form, Row, Col } from 'react-bootstrap';
 import { useParams } from 'react-router-dom';
 import Select from 'react-select'; 
+import ReactQuill from 'react-quill';
+import 'react-quill/dist/quill.snow.css'; 
 import '../../../styles/style.css'
 
 const AddUniformDefianceModal = ({ show, onHide, handleCloseModal }) => {
@@ -27,7 +29,7 @@ const AddUniformDefianceModal = ({ show, onHide, handleCloseModal }) => {
 
 
     // Maximum text area length 
-    const maxLength = 1000;
+    const maxLength = 5000;
     const currentLength = formData.description.length;
 
     // Handle the focus state for both text area and semester select
@@ -344,6 +346,39 @@ return (
                                 required
                                 styles={customSelectStyles}
                             />
+                        </Form.Group>
+                    </Row>
+
+                    <Row className="gy-4">
+                        <Form.Group className="desscription mb-3" style={{ marginBottom: '20px' }}>
+                            <Form.Label className="fw-bold">Description</Form.Label>
+                            <ReactQuill
+                                theme="snow" 
+                                value={formData.description}
+                                onChange={(description) => handleChange({ target: { name: 'description', value: description.trim() } })}
+                                onFocus={() => setFocusedElement('description')}
+                                onBlur={() => setFocusedElement(null)}
+                                formats={[ 'header', 'bold', 'italic', 'underline', 'list', 'bullet', 'ordered' ]}
+                                modules={{
+                                    toolbar: [
+                                        [{ header: [1, 2, false] }],
+                                        ['bold', 'italic', 'underline'],
+                                        [{ list: 'ordered' }, { list: 'bullet' }]
+                                    ],
+                                }}
+                                style={{
+                                    width: '100%',
+                                    minHeight: '100px',
+                                    padding: '10px',
+                                    backgroundColor: '#f2f2f2',
+                                    border: `1px solid ${focusedElement === 'description' ? '#FAD32E' : '#ced4da'}`, 
+                                    borderRadius: '4px',
+                                    boxShadow: focusedElement === 'description' ? '0 0 0 2px rgba(250, 211, 46, 1)' : 'none',
+                                }}
+                            />
+                            <div style={{ marginTop: '10px', fontSize: '12px', color: '#666' }}>
+                                {formData.description.length}/{maxLength}
+                            </div>
                         </Form.Group>
                     </Row>
 

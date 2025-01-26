@@ -41,7 +41,7 @@ export default function DepartmentalCreateViolationModal({ show, onHide, handleC
 
 
     // Maximum text area length 
-    const maxLength = 1000;
+    const maxLength = 5000;
     const currentLength = formData.description.length;
 
     // Handle the focus state for both text area and semester select
