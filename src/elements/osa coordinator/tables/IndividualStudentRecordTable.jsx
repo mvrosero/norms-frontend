@@ -236,7 +236,7 @@ const IndividualStudentRecordTable = () => {
                             <td>{new Date(record.created_at).toLocaleString()}</td>
                             <td>{record.category_name}</td>
                             <td>{record.offense_name}</td>
-                            <td style={{ textAlign: 'center' }}>{`${record.start_year} - ${record.end_year}`}</td>
+                            <td style={{ textAlign: 'center' }}>{record.academic_year}</td>
                             <td style={{ textAlign: 'center' }}>{record.semester_name}</td>
                             <td style={{ display: 'flex', justifyContent: 'center' }}>
                                 <ViewButton onClick={() => handleViewDetails(record)}>View</ViewButton>

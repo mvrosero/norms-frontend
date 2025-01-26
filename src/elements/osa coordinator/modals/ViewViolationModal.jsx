@@ -35,7 +35,7 @@ const ViewViolationModal = ({ show, onHide, selectedRecord }) => {
                         </p>
 
                         <p style={{ fontWeight: 'bold' }}>Academic Year:</p>
-                        <p>{`${selectedRecord.start_year} - ${selectedRecord.end_year}`}</p>
+                        <p>{selectedRecord.academic_year}</p>
 
                         <p style={{ fontWeight: 'bold' }}>Semester:</p>
                         <p>{selectedRecord.semester_name}</p>
