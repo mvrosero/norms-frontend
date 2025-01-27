@@ -148,8 +148,8 @@ const renderTable = () => {
 
   return (
     <StyledTableContainer key={group}>
-        <h3 style={{ fontSize: '16px', fontWeight: '600', marginTop: '10px', marginBottom: '20px', marginLeft: '120px' }}>{group}</h3>
-          <Table bordered hover responsive style={{ borderRadius: '20px', marginBottom: '20px', marginLeft: '110px' }}>
+        <h3 style={{ fontSize: '16px', fontWeight: '600', marginTop: '20px', marginBottom: '20px', marginLeft: '120px' }}>{group}</h3>
+          <Table bordered hover responsive style={{ borderRadius: '20px', marginLeft: '110px' }}>
             <thead style={{ backgroundColor: '#f8f9fa' }}>
                 <tr>
                   <th style={{ width: '5%' }}>No.</th>
