@@ -62,7 +62,7 @@ const UniformDefianceTable = ({filters, searchQuery}) => {
     const fetchDefiances = useCallback(async () => {
         try {
             // Fetch data from the backend
-            let response = await axios.get('https://test-backend-api-2.onrender.com/uniform_defiances', { headers });
+            let response = await axios.get('https://test-backend-api-2.onrender.com/uniform_defiances-pending', { headers });
             let data = response.data;
     
             // Remove the filtering for 'pending' status if you want all items
@@ -83,7 +83,6 @@ const UniformDefianceTable = ({filters, searchQuery}) => {
             setLoading(false); 
         }
     }, [headers]);
-    
     useEffect(() => {
         fetchDefiances();
         fetchNatures();
