@@ -46,13 +46,11 @@ export default function AddViolationModal({ show, onHide, handleCloseModal }) {
         const fetchData = async () => {
             try {
                 const categoriesResponse = await axios.get('https://test-backend-api-2.onrender.com/categories');
-                const offensesResponse = await axios.get('https://test-backend-api-2.onrender.com/offenses');
                 const sanctionsResponse = await axios.get('https://test-backend-api-2.onrender.com/sanctions');
                 const academic_yearsResponse = await axios.get('https://test-backend-api-2.onrender.com/academic_years');
                 const semestersResponse = await axios.get('https://test-backend-api-2.onrender.com/semesters');
 
                 setCategories(categoriesResponse.data);
-                setOffenses(offensesResponse.data);
                 setSanctions(sanctionsResponse.data);
                 setAcademicYears(academic_yearsResponse.data);
                 setSemesters(semestersResponse.data);
@@ -62,6 +60,24 @@ export default function AddViolationModal({ show, onHide, handleCloseModal }) {
         };
         fetchData();
     }, []);
+
+
+    // Fetch offenses based on the selected category
+    useEffect(() => {
+        if (formData.category_id) {
+            const fetchOffenses = async () => {
+                try {
+                    const offensesResponse = await axios.get(`https://test-backend-api-2.onrender.com/active-offenses/${formData.category_id}`);
+                    setOffenses(offensesResponse.data);
+                } catch (error) {
+                    console.error('Error fetching offenses:', error);
+                }
+            };
+            fetchOffenses();
+        } else {
+            setOffenses([]); 
+        }
+    }, [formData.category_id]);
 
 
     // Handle input change for non-select inputs
@@ -127,7 +143,10 @@ export default function AddViolationModal({ show, onHide, handleCloseModal }) {
                     text: 'Violation record has been created successfully.',
                     showConfirmButton: false,
                     timer: 3000 
+                }).then(() => {
+                    window.location.reload(); 
                 });
+
                 setFormData({
                     student_idnumber: student_idnumber,
                     description: '',
@@ -236,7 +255,7 @@ return (
         <Modal.Body style={{ paddingLeft: '30px', paddingRight: '30px' }}>
             <form onSubmit={handleSubmit}>
             <Row className="gy-4">
-            <Form.Group className="student_idnumber mb-3">
+                    <Form.Group className="student_idnumber mb-3">
                         <Form.Label className="fw-bold">Student ID Number</Form.Label>
                         <Form.Control
                             name="student_idnumber"
@@ -265,11 +284,13 @@ return (
                             }}
                         >
                             <option disabled value="">Select Academic Year</option>
-                            {academic_years.map((year) => (
-                                <option key={year.acadyear_id} value={year.acadyear_id}>
-                                    {year.start_year} - {year.end_year}
-                                </option>
-                            ))}
+                            {academic_years
+                                .sort((a, b) => (b.status === 'active' ? 1 : 0) - (a.status === 'active' ? 1 : 0)) 
+                                .map((year) => (
+                                    <option key={year.acadyear_id} value={year.acadyear_id}>
+                                        {year.start_year} - {year.end_year}
+                                    </option>
+                                ))}
                         </Form.Select>
                     </Form.Group>
                 </Col>
@@ -289,11 +310,11 @@ return (
                             }}
                         >
                             <option disabled value="">Select Semester</option>
-                            {semesters.map((sem) => (
-                                <option key={sem.semester_id} value={sem.semester_id}>
-                                    {sem.semester_name}
-                                </option>
-                            ))}
+                                {semesters.filter((sem) => sem.status === 'active').map((sem) => (
+                                    <option key={sem.semester_id} value={sem.semester_id}>
+                                        {sem.semester_name}
+                                    </option>
+                                ))}
                         </Form.Select>
                     </Form.Group>
                 </Col>
@@ -315,11 +336,12 @@ return (
                             }}
                         >
                             <option disabled value="">Select Category</option>
-                            {categories.map((cat) => (
-                                <option key={cat.category_id} value={cat.category_id}>
-                                    {cat.category_name}
-                                </option>
-                            ))}
+                                {categories.filter((cat) => cat.status === 'active').map((cat) => (
+                                        <option key={cat.category_id} value={cat.category_id}>
+                                            {cat.category_name}
+                                        </option>
+                                    ))
+                                }
                         </Form.Select>
                     </Form.Group>  
                 </Row>
@@ -339,11 +361,15 @@ return (
                             }}
                         >
                             <option disabled value="">Select Offense</option>
-                            {offenses.map((off) => (
-                                <option key={off.offense_id} value={off.offense_id}>
-                                    {off.offense_name}
-                                </option>
-                            ))}
+                                {offenses && offenses.length > 0 ? (
+                                    offenses.map((off) => (
+                                        <option key={off.offense_id} value={off.offense_id}>
+                                            {off.offense_name}
+                                        </option>
+                                    ))
+                                ) : (
+                                    <option disabled>No offenses available</option>
+                                )}
                         </Form.Select>
                     </Form.Group>
                 </Row>
@@ -354,10 +380,12 @@ return (
                         <Select
                             isMulti
                             name="sanctions"
-                            options={sanctions.map((sanction) => ({
-                                value: sanction.sanction_id,
-                                label: sanction.sanction_name,
-                            }))}
+                            options={sanctions
+                                .filter((sanction) => sanction.status === 'active') 
+                                .map((sanction) => ({
+                                    value: sanction.sanction_id,
+                                    label: sanction.sanction_name,
+                                }))}
                             onChange={handleSelectChange}
                             required
                             styles={customSelectStyles}
