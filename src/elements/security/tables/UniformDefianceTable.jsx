@@ -10,7 +10,7 @@ import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import '../../../styles/General.css';
 
-const UniformDefianceTable = ({ filters, searchQuery }) => {
+const UniformDefianceTable = ({ show, filters, searchQuery }) => {
     const [records, setRecords] = useState([]);
     const [filteredRecords, setFilteredRecords] = useState([]);
     const [natures, setNatures] = useState([]);
@@ -19,7 +19,13 @@ const UniformDefianceTable = ({ filters, searchQuery }) => {
     const [selectedRecord, setSelectedRecord] = useState(null);
     const [employeeName, setEmployeeName] = useState('');
     const [showDetailsModal, setShowDetailsModal] = useState(false);
+    const [fileMetadata, setFileMetadata] = useState([]);
+    const [fileLoading, setFileLoading] = useState(true); 
+    const [fileErrors, setFileErrors] = useState({});
+    const [isFileClicked, setIsFileClicked] = useState(false);
+    const [clickedFile, setClickedFile] = useState('');
     const navigate = useNavigate();
+
 
     // Pagination state
     const [currentPage, setCurrentPage] = useState(1);
@@ -33,6 +39,138 @@ const UniformDefianceTable = ({ filters, searchQuery }) => {
         const token = localStorage.getItem('token');
         return token ? { Authorization: `Bearer ${token}` } : {};
     }, []);
+
+
+    // Reset state when modal is closed
+    useEffect(() => {
+        if (!show) {
+            setFileMetadata([]);
+            setFileLoading(true); 
+            setFileErrors({});
+            setIsFileClicked(false);
+            setClickedFile('');
+        }
+    }, [show]);
+
+        // Fetch file metadata when record changes
+        useEffect(() => {
+            if (selectedRecord) {
+                setFileMetadata([]);
+                const { photo_video_filenames } = selectedRecord;
+                const filenames = photo_video_filenames.split(",");
+    
+                // Fetch metadata for all files
+                const fetchMetadata = async () => {
+                    const metadataPromises = filenames.map(async (filename) => {
+                        const fileId = filename.trim();
+                        const fileUrl = `https://test-backend-api-2.onrender.com/uniform_defiance/${fileId}`;
+    
+                        // Set the file as loading before fetching it
+                        try {
+                            const response = await fetch(fileUrl);
+                            const contentType = response.headers.get("Content-Type");
+                            return {
+                                fileId,
+                                fileUrl,
+                                contentType,
+                            };
+                        } catch (error) {
+                            console.error(`Failed to fetch metadata for file: ${fileId}`, error);
+                            return { fileId, fileUrl, error: true };
+                        }
+                    });
+    
+                    const metadata = await Promise.all(metadataPromises);
+                    setFileMetadata(metadata);
+                    setFileLoading(false); 
+                };
+    
+                fetchMetadata();
+            }
+        }, [selectedRecord]);
+    
+    
+        // Handles zoom in of selected file
+        const handleFileClick = (fileId, fileUrl) => {
+            setClickedFile(fileUrl);
+            setIsFileClicked(true);
+        };
+    
+        const closeFullFileView = () => {
+            setIsFileClicked(false);
+            setClickedFile('');
+        };
+    
+        const handleFileLoad = (fileId) => {
+            setFileErrors((prev) => ({ ...prev, [fileId]: false }));
+        };
+    
+        const handleFileError = (fileId) => {
+            setFileErrors((prev) => ({ ...prev, [fileId]: true }));
+        };
+    
+    
+        // Render the file attachments
+        const renderFiles = () => {
+            if (fileLoading) {
+                // Show the spinner if the files are still loading
+                return (
+                    <div style={{ display: 'flex', justifyContent: 'center', marginTop: '20px' }}>
+                        <div style={{ width: '50px', height: '50px', border: '6px solid #f3f3f3', borderTop: '6px solid #a9a9a9', borderRadius: '50%', animation: 'spin 1s linear infinite' }}></div>
+                        <style>{`@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }`}</style>
+                    </div>
+                );
+            }
+    
+            return fileMetadata.map(({ fileId, fileUrl, contentType, error }) => {
+                if (error) {
+                    return (
+                        <p key={fileId} style={{ color: "red", marginBottom: "10px" }}>
+                            Failed to load file: {fileId}
+                        </p>
+                    );
+                }
+    
+                const fileExtension = contentType?.split("/")[1]?.toLowerCase();
+    
+                if (
+                    ["mp4", "avi", "mov", "mkv", "hevc"].includes(fileExtension) ||
+                    contentType === "video/quicktime"
+                ) {
+                    return (
+                        <div key={fileId} style={{ marginBottom: "10px" }}>
+                            <video
+                                controls
+                                src={fileUrl}
+                                style={{ maxWidth: "100%" }}
+                                onLoad={() => handleFileLoad(fileId)} 
+                                onError={() => handleFileError(fileId)} 
+                            />
+                        </div>
+                    );
+                } else if (["jpg", "jpeg", "png", "gif", "webp"].includes(fileExtension)) {
+                    return (
+                        <div key={fileId} style={{ marginBottom: "10px" }}>
+                            <img
+                                src={fileUrl}
+                                alt="File Preview"
+                                style={{ maxWidth: "100%", cursor: "pointer" }}
+                                onLoad={() => handleFileLoad(fileId)} 
+                                onError={() => handleFileError(fileId)} 
+                                onClick={() => handleFileClick(fileId, fileUrl)}
+                            />
+                        </div>
+                    );
+                } else {
+                    return (
+                        <p key={fileId} style={{ color: "red", marginBottom: "10px" }}>
+                            Unsupported file format: {fileId}
+                        </p>
+                    );
+                }
+            });
+        };
+    
 
     // Fetch uniform defiances
     useEffect(() => {
@@ -96,50 +234,6 @@ const UniformDefianceTable = ({ filters, searchQuery }) => {
 
     const handleCloseDetailsModal = () => {
         setShowDetailsModal(false);
-    };
-
-    const handleImageError = (e) => {
-        e.target.src = '/path/to/default-image.jpg'; 
-    };
-
-
-    // Render the file attachments
-    const renderFile = () => {
-        if (selectedRecord) {
-            const { photo_video_filenames } = selectedRecord;
-            const filenames = photo_video_filenames.split(',');
-
-            return (
-                <div>
-                    {filenames.map((filename, index) => {
-                        const fileExtension = filename.split('.').pop().toLowerCase();
-                        const fileUrl = `http://localhost:9000/uploads/${filename}`;
-
-                        if (fileExtension === 'mp4' || fileExtension === 'avi' || fileExtension === 'mov') {
-                            return (
-                                <a href={fileUrl} target="_blank" rel="noopener noreferrer" key={index}>
-                                    <video controls src={fileUrl} style={{ maxWidth: '100%', display: 'block', marginBottom: '10px' }} />
-                                </a>
-                            );
-                        } else if (fileExtension === 'jpg' || fileExtension === 'jpeg' || fileExtension === 'png' || fileExtension === 'gif') {
-                            return (
-                                <a href={fileUrl} target="_blank" rel="noopener noreferrer" key={index}>
-                                    <img
-                                        src={fileUrl}
-                                        alt={`File Preview ${index}`}
-                                        onError={handleImageError}
-                                        style={{ maxWidth: '100%', display: 'block', marginBottom: '10px' }}
-                                    />
-                                </a>
-                            );
-                        } else {
-                            return <p key={index}>Unsupported file format</p>;
-                        }
-                    })}
-                </div>
-            );
-        }
-        return null;
     };
 
 
@@ -252,6 +346,8 @@ const UniformDefianceTable = ({ filters, searchQuery }) => {
         };
 
     const renderPagination = () => {
+        if (loading) return null;
+
         const pageNumbers = Array.from({ length: totalPages }, (_, i) => i + 1);
         
             const buttonStyle = {
@@ -384,6 +480,16 @@ const renderTable = () => {
     
       const currentRecords = filteredRecords.slice(indexOfFirstRecord, indexOfLastRecord);
 
+        // Show loading spinner when data is being fetched
+        if (loading) {
+            return (
+                <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100%" }}>
+                    <div style={{ width: "50px", height: "50px", border: "6px solid #f3f3f3", borderTop: "6px solid #a9a9a9", borderRadius: "50%", animation: "spin 1s linear infinite" }}></div>
+                    <style> {`@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }`} </style>
+                </div>
+                );
+            }
+
 
     return (
         <div>
@@ -392,8 +498,8 @@ const renderTable = () => {
                 <Table bordered hover style={{ borderRadius: '20px', marginLeft: '75px', marginTop: '10px' }}>
                         <thead style={{ backgroundColor: '#f8f9fa' }}>
                             <tr>
-                                <th style={{ textAlign: 'center', padding: '0', verticalAlign: 'middle', width: '5%' }}>
-                                    <button style={{ border: 'none', background: 'none', cursor: 'pointer', display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center', width: '100%' }}
+                            <th style={{ textAlign: 'center', padding: '0', verticalAlign: 'middle', width: '5%' }}>
+                                <button style={{ border: 'none', background: 'none', cursor: 'pointer', display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center', width: '100%' }}
                                         onClick={handleSortSlipId}
                                         >
                                         <span style={{ textAlign: 'center' }}>ID</span>
@@ -404,7 +510,7 @@ const renderTable = () => {
                                         )}
                                     </button>
                                 </th>
-                                <th style={{ width: '23%' }}>
+                                <th style={{ textAlign: 'center', padding: '0', verticalAlign: 'middle', width: '20%' }}>
                                     <button style={{ border: 'none', background: 'none', cursor: 'pointer', display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center', width: '100%' }}
                                         onClick={handleSortDate}
                                         >
@@ -417,7 +523,8 @@ const renderTable = () => {
                                     </button>
                                 </th>
                                 <th style={{ textAlign: 'center', padding: '0', verticalAlign: 'middle', width: '13%' }}>
-                                    <button onClick={() => handleSort('student_idnumber')}>
+                                    <button  style={{ border: 'none', background: 'none', cursor: 'pointer', display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center', width: '100%' }}
+                                        onClick={() => handleSort('student_idnumber')}>
                                         ID Number {sortOrder === 'asc' ? 
                                         <ArrowDropUpIcon /> : 
                                         <ArrowDropDownIcon />}
@@ -452,32 +559,6 @@ const renderTable = () => {
                         </tbody>
                     </Table>
             </div>
-
-            {/* Cards for smaller screens */}
-            <div className="card-container">
-                {currentRecords.map((record, index) => (
-                    <div className="card-row" key={index}>
-                        <p>
-                            <strong>ID:</strong> {record.slip_id}
-                        </p>
-                        <p>
-                            <strong>Date:</strong> {new Date(record.created_at).toLocaleString()}
-                        </p>
-                        <p>
-                            <strong>ID Number:</strong> {record.student_idnumber}
-                        </p>
-                        <p>
-                            <strong>Nature of Violation:</strong> {record.nature_name}
-                        </p>
-                        <p>
-                            <strong>Status:</strong> {renderStatus(record.status)}
-                        </p>
-                        <div style={{ display: 'flex', justifyContent: 'center' }}>
-                            <ViewButton onClick={() => handleViewDetails(record)}>View</ViewButton>
-                        </div>
-                    </div>
-                ))}
-            </div>
         </div>
         );
     };
@@ -488,7 +569,7 @@ return (
     <div>
             {renderTable()}
 
-            {renderPagination()}
+            {!loading && renderPagination()}
 
             {/*View Uniform Defiance Modal*/}
             <Modal show={showDetailsModal} onHide={handleCloseDetailsModal} size="lg">
@@ -496,7 +577,7 @@ return (
                     <Button variant="link" onClick={handleCloseDetailsModal} style={{ position: 'absolute', top: '5px', right: '20px', textDecoration: 'none',fontSize: '30px', color: '#a9a9a9' }}>
                         ×
                     </Button>
-                    <Modal.Title style={{ fontSize: '40px', marginBottom: '10px', marginLeft: '90px', marginRight: '90px' }}>VIEW UNIFORM DEFIANCE</Modal.Title>
+                    <Modal.Title style={{ fontSize: '40px', marginBottom: '10px', textAlign: 'center', width: '100%' }}>VIEW UNIFORM DEFIANCE</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                     {selectedRecord && (
@@ -511,7 +592,7 @@ return (
                             <p>{selectedRecord.nature_name}</p>
                             
                             <p style={{ fontWeight: 'bold' }}>Files Attached:</p>
-                            <div>{renderFile()}</div>
+                            <div>{renderFiles()}</div>
 
                             <p style={{ fontWeight: 'bold' }}>Status:</p>
                             <p>{renderStatus(selectedRecord.status)}</p>
@@ -552,6 +633,18 @@ return (
                             <p>{selectedRecord.full_name}</p>
                         </div>
                     )}
+                </Modal.Body>
+            </Modal>
+
+            {/* Full File Modal for Enlarged View */}
+            <Modal show={isFileClicked} onHide={closeFullFileView} size="lg" backdrop="static" centered>
+                <Modal.Header>
+                    <Button variant="link" onClick={closeFullFileView} style={{ position: 'absolute', top: '5px', right: '20px', textDecoration: 'none', fontSize: '30px', color: '#a9a9a9' }}>
+                        ×
+                    </Button>
+                </Modal.Header>
+                <Modal.Body>
+                    <img src={clickedFile} alt="Enlarged Preview" style={{ width: '100%', height: 'auto', objectFit: 'contain', borderRadius: '5px' }} />
                 </Modal.Body>
             </Modal>
         </div>

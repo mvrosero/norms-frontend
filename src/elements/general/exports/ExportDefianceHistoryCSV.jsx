@@ -4,14 +4,14 @@ import Swal from 'sweetalert2';
 import FileDownloadRoundedIcon from '@mui/icons-material/FileDownloadRounded';
 
 const ExportDefianceHistoryCSV = () => {
-    const [loading, setLoading] = useState(false); // To show loading state
+    const [loading, setLoading] = useState(false); 
 
     const handleExportClick = async () => {
-        setLoading(true); // Start loading
+        setLoading(true);
 
         try {
             const response = await axios.get('https://test-backend-api-2.onrender.com/uniform_defiances-history/export', {
-                responseType: 'blob', // Handle the file download
+                responseType: 'blob', 
             });
 
             // Check if the response is a valid CSV file (could be based on content-type)
@@ -23,8 +23,8 @@ const ExportDefianceHistoryCSV = () => {
                 const fileURL = URL.createObjectURL(response.data);
                 const link = document.createElement('a');
                 link.href = fileURL;
-                link.download = `uniform_defiances_history(${timestamp}).csv`; // Set the file name
-                link.click(); // Trigger the download
+                link.download = `uniform_defiances_history(${timestamp}).csv`; 
+                link.click(); 
 
                 Swal.fire('Success', 'CSV file exported successfully!', 'success');
             } else {
@@ -34,7 +34,7 @@ const ExportDefianceHistoryCSV = () => {
             console.error('Error exporting CSV:', error);
             Swal.fire('Error', 'Failed to export CSV. Please try again.', 'error');
         } finally {
-            setLoading(false); // End loading
+            setLoading(false); 
         }
     };
 
