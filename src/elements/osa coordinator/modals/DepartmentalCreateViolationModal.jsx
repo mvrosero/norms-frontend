@@ -56,20 +56,20 @@ export default function DepartmentalCreateViolationModal({ show, onHide, handleC
         setFocusedElement(null); 
     };
 
+
+    // Student form data
     useEffect(() => {
         const fetchData = async () => {
             try {
                 const [
                     studentsResponse,
                     categoriesResponse,
-                    offensesResponse,
                     sanctionsResponse,
                     academicYearsResponse,
                     semestersResponse,
                 ] = await Promise.all([
-                    axios.get(`https://test-backend-api-2.onrender.com/coordinator-studentrecords/${department_code}`), // Fetch students by department_code
+                    axios.get(`https://test-backend-api-2.onrender.com/coordinator-studentrecords/${department_code}`),
                     axios.get('https://test-backend-api-2.onrender.com/categories'),
-                    axios.get('https://test-backend-api-2.onrender.com/offenses'),
                     axios.get('https://test-backend-api-2.onrender.com/sanctions'),
                     axios.get('https://test-backend-api-2.onrender.com/academic_years'),
                     axios.get('https://test-backend-api-2.onrender.com/semesters'),
@@ -77,7 +77,6 @@ export default function DepartmentalCreateViolationModal({ show, onHide, handleC
 
                 setStudents(studentsResponse.data.filter((student) => student.status === 'active'));
                 setCategories(categoriesResponse.data);
-                setOffenses(offensesResponse.data);
                 setSanctions(sanctionsResponse.data);
                 setAcademicYears(academicYearsResponse.data);
                 setSemesters(semestersResponse.data);
@@ -85,9 +84,26 @@ export default function DepartmentalCreateViolationModal({ show, onHide, handleC
                 console.error('Error fetching data:', error);
             }
         };
-
         fetchData();
     }, []);
+
+    // Fetch offenses based on the selected category
+    useEffect(() => {
+        if (formData.category_id) {
+            const fetchOffenses = async () => {
+                try {
+                    const offensesResponse = await axios.get(`https://test-backend-api-2.onrender.com/active-offenses/${formData.category_id}`);
+                    setOffenses(offensesResponse.data);
+                } catch (error) {
+                    console.error('Error fetching offenses:', error);
+                }
+            };
+            fetchOffenses();
+        } else {
+            setOffenses([]); 
+        }
+    }, [formData.category_id]);
+
 
     // Handle input change for non-select inputs
     const handleChange = (e) => {
@@ -250,7 +266,7 @@ return (
                         name="users"
                         options={filteredOptions.map((student) => ({
                             value: student.user_id,
-                            label: `${student.first_name} ${student.last_name}`,
+                            label: `${student.first_name} ${student.middle_name} ${student.last_name} ${student.suffix}`,
                         }))}
                             onChange={handleSelectChange}
                             required
@@ -276,8 +292,10 @@ return (
                                     ...borderColorStyles(focusedElement, 'academic_year'), 
                                 }}
                             >
-                                <option disabled value="">Select Academic Year</option>
-                                {academicYears.map((year) => (
+                            <option disabled value="">Select Academic Year</option>
+                            {academicYears
+                                .sort((a, b) => (b.status === 'active' ? 1 : 0) - (a.status === 'active' ? 1 : 0)) 
+                                .map((year) => (
                                     <option key={year.acadyear_id} value={year.acadyear_id}>
                                         {year.start_year} - {year.end_year}
                                     </option>
@@ -300,8 +318,8 @@ return (
                                     ...borderColorStyles(focusedElement, 'semester'), 
                                 }}
                             >
-                                <option disabled value="">Select Semester</option>
-                                {semesters.map((sem) => (
+                            <option disabled value="">Select Semester</option>
+                                {semesters.filter((sem) => sem.status === 'active').map((sem) => (
                                     <option key={sem.semester_id} value={sem.semester_id}>
                                         {sem.semester_name}
                                     </option>
@@ -326,12 +344,13 @@ return (
                                     ...borderColorStyles(focusedElement, 'category'), 
                                 }}
                             >
-                                <option disabled value="">Select Category</option>
-                                {categories.map((cat) => (
-                                    <option key={cat.category_id} value={cat.category_id}>
-                                        {cat.category_name}
-                                    </option>
-                                ))}
+                            <option disabled value="">Select Category</option>
+                                {categories.filter((cat) => cat.status === 'active').map((cat) => (
+                                        <option key={cat.category_id} value={cat.category_id}>
+                                            {cat.category_name}
+                                        </option>
+                                    ))
+                                }
                             </Form.Select>
                         </Form.Group>  
                     </Row>
@@ -351,11 +370,15 @@ return (
                                 }}
                                 >
                                 <option disabled value="">Select Offense</option>
-                                {offenses.map((off) => (
-                                    <option key={off.offense_id} value={off.offense_id}>
-                                        {off.offense_name}
-                                    </option>
-                                ))}
+                                {offenses && offenses.length > 0 ? (
+                                    offenses.map((off) => (
+                                        <option key={off.offense_id} value={off.offense_id}>
+                                            {off.offense_name}
+                                        </option>
+                                    ))
+                                ) : (
+                                    <option disabled>No offenses available</option>
+                                )}
                             </Form.Select>
                         </Form.Group>
                     </Row>
@@ -366,10 +389,12 @@ return (
                             <Select
                                 isMulti
                                 name="sanctions"
-                                options={sanctions.map((sanction) => ({
-                                    value: sanction.sanction_id,
-                                    label: sanction.sanction_name,
-                                }))}
+                                options={sanctions
+                                    .filter((sanction) => sanction.status === 'active') 
+                                    .map((sanction) => ({
+                                        value: sanction.sanction_id,
+                                        label: sanction.sanction_name,
+                                    }))}
                                 onChange={handleSelectChange}
                                 required
                                 styles={customSelectStyles}

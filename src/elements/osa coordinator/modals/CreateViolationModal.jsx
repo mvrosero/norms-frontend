@@ -26,9 +26,6 @@ export default function CreateViolationModal({ show, onHide, handleCloseModal })
     const [isFocused, setIsFocused] = useState(false);
     const [focusedElement, setFocusedElement] = useState(null); 
     const [filteredOptions, setFilteredOptions] = useState(students.slice(0, 10));
-    const [filteredOffenses, setFilteredOffenses] = useState([]);
-    const [categoryId, setCategoryId] = useState('');
-    const [offenseId, setOffenseId] = useState('');
 
 
     // Filter to only display 10 students on the dropdown options
@@ -86,39 +83,7 @@ export default function CreateViolationModal({ show, onHide, handleCloseModal })
             }
         };
         fetchData();
-    }, []); // Empty dependency array to run only once
-
-    
-    // Fetch offenses and categories
-    // Fetch necessary data from the backend
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const [
-                    studentsResponse,
-                    categoriesResponse,
-                    sanctionsResponse,
-                    academicYearsResponse,
-                    semestersResponse,
-                ] = await Promise.all([
-                    axios.get('https://test-backend-api-2.onrender.com/students'),
-                    axios.get('https://test-backend-api-2.onrender.com/categories'),
-                    axios.get('https://test-backend-api-2.onrender.com/sanctions'),
-                    axios.get('https://test-backend-api-2.onrender.com/academic_years'),
-                    axios.get('https://test-backend-api-2.onrender.com/semesters'),
-                ]);
-
-                setStudents(studentsResponse.data.filter((student) => student.status === 'active'));
-                setCategories(categoriesResponse.data);
-                setSanctions(sanctionsResponse.data);
-                setAcademicYears(academicYearsResponse.data);
-                setSemesters(semestersResponse.data);
-            } catch (error) {
-                console.error('Error fetching data:', error);
-            }
-        };
-        fetchData();
-    }, []); // Empty dependency array to run only once
+    }, []); 
 
     // Fetch offenses based on the selected category
     useEffect(() => {
@@ -133,9 +98,10 @@ export default function CreateViolationModal({ show, onHide, handleCloseModal })
             };
             fetchOffenses();
         } else {
-            setOffenses([]); // Reset offenses if no category is selected
+            setOffenses([]); 
         }
     }, [formData.category_id]);
+
 
     // Handle input change for non-select inputs
     const handleChange = (e) => {
@@ -309,7 +275,7 @@ return (
                 </Row>
 
                 <Row className="gy-4">
-                        <Col md={6}>
+                    <Col md={6}>
                         <Form.Group className="academic_year mb-3">
                             <Form.Label className="fw-bold">Academic Year</Form.Label>
                             <Form.Select
