@@ -1,34 +1,40 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
 import Table from 'react-bootstrap/Table';
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
+import Swal from 'sweetalert2';
 import styled from '@emotion/styled';
 import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import '../../../styles/General.css';
 
-const UniformDefianceTable = ({}) => {
+const UniformDefianceTable = ({ filters, searchQuery }) => {
     const [records, setRecords] = useState([]);
+    const [filteredRecords, setFilteredRecords] = useState([]);
+    const [natures, setNatures] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState('');
     const [selectedRecord, setSelectedRecord] = useState(null);
     const [employeeName, setEmployeeName] = useState('');
     const [showDetailsModal, setShowDetailsModal] = useState(false);
-    const [error, setError] = useState('');
-    const [loading, setLoading] = useState(true);
-
+    const navigate = useNavigate();
 
     // Pagination state
     const [currentPage, setCurrentPage] = useState(1);
     const [rowsPerPage, setRowsPerPage] = useState(10);
 
-    
-    // Sorting state for full name
-    const [sortOrder, setSortOrder] = useState('asc'); 
-    const [sortOrderDate, setSortOrderDate] = useState('asc'); 
+    // Sorting state
+    const [sortOrder, setSortOrder] = useState('asc');
+    const [sortOrderDate, setSortOrderDate] = useState('asc');
 
+    const headers = useMemo(() => {
+        const token = localStorage.getItem('token');
+        return token ? { Authorization: `Bearer ${token}` } : {};
+    }, []);
 
-    // Fetch the uniform defiances submitted by the employee currently logged in
-
+    // Fetch uniform defiances
     useEffect(() => {
         const fetchData = async () => {
             try {
@@ -37,37 +43,49 @@ const UniformDefianceTable = ({}) => {
                     throw new Error('Employee ID number not found in local storage');
                 }
 
-                const response = await axios.get(`https://test-backend-api-2.onrender.com/uniform_defiances/submitted_by/${employeeIdNumber}`);
+                const response = await axios.get(
+                    `https://test-backend-api-2.onrender.com/uniform_defiances/submitted_by/${employeeIdNumber}`,
+                    { headers }
+                );
                 setRecords(response.data);
+                setFilteredRecords(response.data); // Initialize filtered records
             } catch (error) {
                 setError(error.message || 'An error occurred');
             } finally {
                 setLoading(false);
             }
         };
-
         fetchData();
-    }, []);
+    }, [headers]);
 
-    const fetchEmployeeName = async (employeeIdNumber) => {
+
+    // Fetch violation natures
+    const fetchNatures = useCallback(async () => {
+        try {
+            const response = await axios.get('https://test-backend-api-2.onrender.com/violation-natures', { headers });
+            setNatures(response.data);
+        } catch (error) {
+            console.error('Error fetching nature of violations:', error);
+            Swal.fire('Error', 'Failed to fetch nature of violations.', 'error');
+        }
+    }, [headers]);
+
+    useEffect(() => {
+        fetchNatures();
+    }, [fetchNatures]);
+
+
+        // Fetch the employee
+        const fetchEmployeeName = async (employeeIdNumber) => {
         try {
             const response = await axios.get(`https://test-backend-api-2.onrender.com/employees/${employeeIdNumber}`);
             return response.data.name;
         } catch (error) {
             console.error('Error fetching employee data:', error);
-            return 'Unknown Employee';
+            return 'Unknown Employee'; 
         }
     };
 
-    const fetchFileFromDrive = async (fileId) => {
-        try {
-            const response = await axios.get(`https://test-backend-api-2.onrender.com/uniform_defiance/${fileId}`);
-            return response.data.fileUrl;
-        } catch (error) {
-            console.error('Error fetching file from Google Drive:', error);
-            return '/path/to/default-image.jpg';
-        }
-    };
 
     const handleViewDetails = async (record) => {
         setSelectedRecord(record);
@@ -81,7 +99,7 @@ const UniformDefianceTable = ({}) => {
     };
 
     const handleImageError = (e) => {
-        e.target.src = '/path/to/default-image.jpg';
+        e.target.src = '/path/to/default-image.jpg'; 
     };
 
 
@@ -94,28 +112,35 @@ const UniformDefianceTable = ({}) => {
             return (
                 <div>
                     {filenames.map((filename, index) => {
-                        // Fetch the Google Drive file URL for each file ID
-                        const fileUrl = `https://test-backend-api-2.onrender.com/uniform_defiance/${filename}`;
+                        const fileExtension = filename.split('.').pop().toLowerCase();
+                        const fileUrl = `http://localhost:9000/uploads/${filename}`;
 
-                        return (
-                            <a href={fileUrl} target="_blank" rel="noopener noreferrer" key={index}>
-                                <img
-                                    src={fileUrl}
-                                    alt={`File Preview ${index}`}
-                                    onError={handleImageError}
-                                    style={{ maxWidth: '100%', display: 'block', marginBottom: '10px' }}
-                                />
-                            </a>
-                        );
+                        if (fileExtension === 'mp4' || fileExtension === 'avi' || fileExtension === 'mov') {
+                            return (
+                                <a href={fileUrl} target="_blank" rel="noopener noreferrer" key={index}>
+                                    <video controls src={fileUrl} style={{ maxWidth: '100%', display: 'block', marginBottom: '10px' }} />
+                                </a>
+                            );
+                        } else if (fileExtension === 'jpg' || fileExtension === 'jpeg' || fileExtension === 'png' || fileExtension === 'gif') {
+                            return (
+                                <a href={fileUrl} target="_blank" rel="noopener noreferrer" key={index}>
+                                    <img
+                                        src={fileUrl}
+                                        alt={`File Preview ${index}`}
+                                        onError={handleImageError}
+                                        style={{ maxWidth: '100%', display: 'block', marginBottom: '10px' }}
+                                    />
+                                </a>
+                            );
+                        } else {
+                            return <p key={index}>Unsupported file format</p>;
+                        }
                     })}
                 </div>
             );
         }
         return null;
     };
-
-    if (loading) return <p>Loading...</p>;
-    if (error) return <p>Error: {error}</p>;
 
 
     // Set the styles for the status
@@ -339,6 +364,27 @@ const UniformDefianceTable = ({}) => {
 
 // Render uniform defiance history table
 const renderTable = () => {
+
+    const filteredRecords = records.filter(record => {
+         
+        const nature = record.nature_name ? record.nature_name.toLowerCase() : '';
+        const matchesSearchQuery = nature.includes(searchQuery.toLowerCase()) || 
+            record.student_idnumber.toString().toLowerCase().includes(searchQuery.toLowerCase());
+    
+        const matchesFilters = Object.keys(filters).every(key => {
+          if (filters[key]) {  
+            if (key === 'nature' && nature !== filters[key].toLowerCase()) return false;
+            if (key === 'status' && record.status !== filters[key]) return false;
+            if (key === 'filterDate' && new Date(record.created_at).getTime() !== new Date(filters[key]).getTime()) return false;
+          }
+          return true;
+        });
+        return matchesSearchQuery && matchesFilters; 
+      });
+    
+      const currentRecords = filteredRecords.slice(indexOfFirstRecord, indexOfLastRecord);
+
+
     return (
         <div>
             {/* Table for larger screens */}
@@ -383,7 +429,8 @@ const renderTable = () => {
                             </tr>
                         </thead>
                         <tbody>
-                            {currentRecords.map((record, index) => (
+                        {filteredRecords?.length > 0 ? (
+                        currentRecords.map((record, index) => (
                                 <tr key={index}>
                                     <td style={{ textAlign: 'center' }}>{record.slip_id}</td>
                                     <td>{new Date(record.created_at).toLocaleString()}</td>
@@ -396,7 +443,12 @@ const renderTable = () => {
                                         </ViewButton>
                                     </td>
                                 </tr>
-                            ))}
+                                ))
+                            ) : (
+                                <tr>
+                                    <td colSpan="6" style={{ textAlign: 'center' }}>No uniform defiances found</td>
+                                </tr>
+                            )}
                         </tbody>
                     </Table>
             </div>
@@ -444,7 +496,7 @@ return (
                     <Button variant="link" onClick={handleCloseDetailsModal} style={{ position: 'absolute', top: '5px', right: '20px', textDecoration: 'none',fontSize: '30px', color: '#a9a9a9' }}>
                         ×
                     </Button>
-                    <Modal.Title style={{ fontSize: '40px', marginBottom: '10px', textAlign: 'center', width: '100%' }}>VIEW UNIFORM DEFIANCE</Modal.Title>
+                    <Modal.Title style={{ fontSize: '40px', marginBottom: '10px', marginLeft: '90px', marginRight: '90px' }}>VIEW UNIFORM DEFIANCE</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                     {selectedRecord && (
