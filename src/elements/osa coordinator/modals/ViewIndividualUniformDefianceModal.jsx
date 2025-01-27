@@ -1,11 +1,65 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Modal, Button } from 'react-bootstrap';
 
 const ViewIndividualUniformDefianceModal = ({ show, onHide, selectedRecord }) => {
+    const [fileMetadata, setFileMetadata] = useState([]);
+    const [fileLoading, setFileLoading] = useState(true); 
+    const [fileErrors, setFileErrors] = useState({});
     const [isFileClicked, setIsFileClicked] = useState(false);
     const [clickedFile, setClickedFile] = useState('');
 
-    const handleFileClick = (fileUrl) => {
+    // Reset state when modal is closed
+    useEffect(() => {
+        if (!show) {
+            setFileMetadata([]);
+            setFileLoading(true); 
+            setFileErrors({});
+            setIsFileClicked(false);
+            setClickedFile('');
+        }
+    }, [show]);
+
+
+    // Fetch file metadata when record changes
+    useEffect(() => {
+        if (selectedRecord) {
+            setFileMetadata([]);
+            const { photo_video_filenames } = selectedRecord;
+            const filenames = photo_video_filenames.split(",");
+
+            // Fetch metadata for all files
+            const fetchMetadata = async () => {
+                const metadataPromises = filenames.map(async (filename) => {
+                    const fileId = filename.trim();
+                    const fileUrl = `https://test-backend-api-2.onrender.com/uniform_defiance/${fileId}`;
+
+                    // Set the file as loading before fetching it
+                    try {
+                        const response = await fetch(fileUrl);
+                        const contentType = response.headers.get("Content-Type");
+                        return {
+                            fileId,
+                            fileUrl,
+                            contentType,
+                        };
+                    } catch (error) {
+                        console.error(`Failed to fetch metadata for file: ${fileId}`, error);
+                        return { fileId, fileUrl, error: true };
+                    }
+                });
+
+                const metadata = await Promise.all(metadataPromises);
+                setFileMetadata(metadata);
+                setFileLoading(false); 
+            };
+
+            fetchMetadata();
+        }
+    }, [selectedRecord]);
+
+
+    // Handles zoom in of selected file
+    const handleFileClick = (fileId, fileUrl) => {
         setClickedFile(fileUrl);
         setIsFileClicked(true);
     };
@@ -15,38 +69,78 @@ const ViewIndividualUniformDefianceModal = ({ show, onHide, selectedRecord }) =>
         setClickedFile('');
     };
 
-    const renderFile = () => {
-        if (selectedRecord) {
-            const { photo_video_filenames } = selectedRecord;
-            const filenames = photo_video_filenames.split(',');
+    const handleFileLoad = (fileId) => {
+        setFileErrors((prev) => ({ ...prev, [fileId]: false }));
+    };
 
-            return filenames.map((filename, index) => {
-                const fileExtension = filename.split('.').pop().toLowerCase();
-                const fileUrl = `http://localhost:9000/uploads/${filename.trim()}`;
-
-                if (['mp4', 'avi', 'mov'].includes(fileExtension)) {
-                    return (
-                        <div key={index} style={{ marginBottom: '10px' }}>
-                            <video controls src={fileUrl} style={{ maxWidth: '100%' }} 
-                            onClick={() => handleFileClick(fileUrl)}/>
-                        </div>
-                    );
-                } else if (['jpg', 'jpeg', 'png', 'gif'].includes(fileExtension)) {
-                    return (
-                        <div key={index} style={{ marginBottom: '10px' }}>
-                            <img src={fileUrl} alt="File Preview" style={{ maxWidth: '100%' }} 
-                            onClick={() => handleFileClick(fileUrl)}/>
-                        </div>
-                    );
-                } else {
-                    return <p key={index}>Unsupported file format</p>;
-                }
-            });
-        }
-        return null;
+    const handleFileError = (fileId) => {
+        setFileErrors((prev) => ({ ...prev, [fileId]: true }));
     };
 
 
+    // Render the file attachments
+    const renderFiles = () => {
+        if (fileLoading) {
+            // Show the spinner if the files are still loading
+            return (
+                <div style={{ display: 'flex', justifyContent: 'center', marginTop: '20px' }}>
+                    <div style={{ width: '50px', height: '50px', border: '6px solid #f3f3f3', borderTop: '6px solid #a9a9a9', borderRadius: '50%', animation: 'spin 1s linear infinite' }}></div>
+                    <style>{`@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }`}</style>
+                </div>
+            );
+        }
+
+        return fileMetadata.map(({ fileId, fileUrl, contentType, error }) => {
+            if (error) {
+                return (
+                    <p key={fileId} style={{ color: "red", marginBottom: "10px" }}>
+                        Failed to load file: {fileId}
+                    </p>
+                );
+            }
+
+            const fileExtension = contentType?.split("/")[1]?.toLowerCase();
+
+            if (
+                ["mp4", "avi", "mov", "mkv", "hevc"].includes(fileExtension) ||
+                contentType === "video/quicktime"
+            ) {
+                return (
+                    <div key={fileId} style={{ marginBottom: "10px" }}>
+                        <video
+                            controls
+                            src={fileUrl}
+                            style={{ maxWidth: "100%" }}
+                            onLoad={() => handleFileLoad(fileId)} 
+                            onError={() => handleFileError(fileId)} 
+                        />
+                    </div>
+                );
+            } else if (["jpg", "jpeg", "png", "gif", "webp"].includes(fileExtension)) {
+                return (
+                    <div key={fileId} style={{ marginBottom: "10px" }}>
+                        <img
+                            src={fileUrl}
+                            alt="File Preview"
+                            style={{ maxWidth: "100%", cursor: "pointer" }}
+                            onLoad={() => handleFileLoad(fileId)} 
+                            onError={() => handleFileError(fileId)} 
+                            onClick={() => handleFileClick(fileId, fileUrl)}
+                        />
+                    </div>
+                );
+            } else {
+                return (
+                    <p key={fileId} style={{ color: "red", marginBottom: "10px" }}>
+                        Unsupported file format: {fileId}
+                    </p>
+                );
+            }
+        });
+    };
+
+
+    // Styles for the status
     const renderStatus = (status) => {
         let backgroundColor, textColor;
         if (status === 'approved') {
@@ -88,22 +182,24 @@ const ViewIndividualUniformDefianceModal = ({ show, onHide, selectedRecord }) =>
 
 return (
     <>
-        <Modal show={show} onHide={onHide} size="lg">
-            <Modal.Header>
-                <Button variant="link" onClick={onHide} style={{ position: 'absolute', top: '5px', right: '20px', textDecoration: 'none', fontSize: '30px', color: '#a9a9a9' }}>
-                    ×
-                </Button>
-                <Modal.Title style={{ fontSize: '40px', marginBottom: '10px', textAlign: 'center', width: '100%' }}>VIEW UNIFORM DEFIANCE</Modal.Title>
-            </Modal.Header>
+    <Modal show={show} onHide={onHide} size="lg">
+        <Modal.Header>
+            <Button variant="link" onClick={onHide} style={{ position: 'absolute', top: '5px', right: '20px', textDecoration: 'none', fontSize: '30px', color: '#a9a9a9' }}>
+                ×
+            </Button>
+            <Modal.Title style={{ fontSize: '40px', marginBottom: '10px', textAlign: 'center', width: '100%' }}>VIEW UNIFORM DEFIANCE</Modal.Title>
+        </Modal.Header>
             <Modal.Body>
                 {selectedRecord ? (
                     <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', rowGap: '10px', marginLeft: '20px', marginRight: '20px' }}>
-
+                        <p style={{ fontWeight: 'bold' }}>Slip ID:</p>
+                        <p>{selectedRecord.slip_id}</p>
+                        
                         <p style={{ fontWeight: 'bold' }}>Nature of Violation:</p>
                         <p>{selectedRecord.nature_name}</p>
 
                         <p style={{ fontWeight: 'bold' }}>Files Attached:</p>
-                        <div>{renderFile()}</div>
+                        <div>{renderFiles()}</div>
 
                         <p style={{ fontWeight: 'bold' }}>Status:</p>
                         <p>{renderStatus(selectedRecord.status)}</p>
@@ -148,6 +244,7 @@ return (
                 )}
             </Modal.Body>
         </Modal>
+
         {/* Full File Modal for Enlarged View */}
         <Modal show={isFileClicked} onHide={closeFullFileView} size="lg" backdrop="static" centered>
             <Modal.Header>
@@ -156,7 +253,7 @@ return (
                 </Button>
             </Modal.Header>
             <Modal.Body>
-                <img src={clickedFile} alt="Enlarged Preview" style={{ width: '100%', height: 'auto', objectFit: 'contain', borderRadius: '5px' }}/>
+                <img src={clickedFile} alt="Enlarged Preview" style={{ width: '100%', height: 'auto', objectFit: 'contain', borderRadius: '5px' }} />
             </Modal.Body>
         </Modal>
         </>

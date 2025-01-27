@@ -26,6 +26,9 @@ export default function CreateViolationModal({ show, onHide, handleCloseModal })
     const [isFocused, setIsFocused] = useState(false);
     const [focusedElement, setFocusedElement] = useState(null); 
     const [filteredOptions, setFilteredOptions] = useState(students.slice(0, 10));
+    const [filteredOffenses, setFilteredOffenses] = useState([]);
+    const [categoryId, setCategoryId] = useState('');
+    const [offenseId, setOffenseId] = useState('');
 
 
     // Filter to only display 10 students on the dropdown options
@@ -54,20 +57,20 @@ export default function CreateViolationModal({ show, onHide, handleCloseModal })
         setFocusedElement(null); 
     };
 
+
+    // Student form data
     useEffect(() => {
         const fetchData = async () => {
             try {
                 const [
                     studentsResponse,
                     categoriesResponse,
-                    offensesResponse,
                     sanctionsResponse,
                     academicYearsResponse,
                     semestersResponse,
                 ] = await Promise.all([
                     axios.get('https://test-backend-api-2.onrender.com/students'),
                     axios.get('https://test-backend-api-2.onrender.com/categories'),
-                    axios.get('https://test-backend-api-2.onrender.com/offenses'),
                     axios.get('https://test-backend-api-2.onrender.com/sanctions'),
                     axios.get('https://test-backend-api-2.onrender.com/academic_years'),
                     axios.get('https://test-backend-api-2.onrender.com/semesters'),
@@ -75,7 +78,6 @@ export default function CreateViolationModal({ show, onHide, handleCloseModal })
 
                 setStudents(studentsResponse.data.filter((student) => student.status === 'active'));
                 setCategories(categoriesResponse.data);
-                setOffenses(offensesResponse.data);
                 setSanctions(sanctionsResponse.data);
                 setAcademicYears(academicYearsResponse.data);
                 setSemesters(semestersResponse.data);
@@ -83,9 +85,57 @@ export default function CreateViolationModal({ show, onHide, handleCloseModal })
                 console.error('Error fetching data:', error);
             }
         };
-
         fetchData();
-    }, []);
+    }, []); // Empty dependency array to run only once
+
+    
+    // Fetch offenses and categories
+    // Fetch necessary data from the backend
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const [
+                    studentsResponse,
+                    categoriesResponse,
+                    sanctionsResponse,
+                    academicYearsResponse,
+                    semestersResponse,
+                ] = await Promise.all([
+                    axios.get('https://test-backend-api-2.onrender.com/students'),
+                    axios.get('https://test-backend-api-2.onrender.com/categories'),
+                    axios.get('https://test-backend-api-2.onrender.com/sanctions'),
+                    axios.get('https://test-backend-api-2.onrender.com/academic_years'),
+                    axios.get('https://test-backend-api-2.onrender.com/semesters'),
+                ]);
+
+                setStudents(studentsResponse.data.filter((student) => student.status === 'active'));
+                setCategories(categoriesResponse.data);
+                setSanctions(sanctionsResponse.data);
+                setAcademicYears(academicYearsResponse.data);
+                setSemesters(semestersResponse.data);
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
+        };
+        fetchData();
+    }, []); // Empty dependency array to run only once
+
+    // Fetch offenses based on the selected category
+    useEffect(() => {
+        if (formData.category_id) {
+            const fetchOffenses = async () => {
+                try {
+                    const offensesResponse = await axios.get(`https://test-backend-api-2.onrender.com/active-offenses/${formData.category_id}`);
+                    setOffenses(offensesResponse.data);
+                } catch (error) {
+                    console.error('Error fetching offenses:', error);
+                }
+            };
+            fetchOffenses();
+        } else {
+            setOffenses([]); // Reset offenses if no category is selected
+        }
+    }, [formData.category_id]);
 
     // Handle input change for non-select inputs
     const handleChange = (e) => {
@@ -103,24 +153,6 @@ export default function CreateViolationModal({ show, onHide, handleCloseModal })
             [name]: selectedOptions ? selectedOptions.map((option) => option.value) : [],
         }));
     };
-
-
-    // Display offenses based on category selected
-    const handleCategoryChange = (e) => {
-        const selectedCategoryId = e.target.value;
-        setFormData({
-            ...formData,
-            category_id: selectedCategoryId,
-            offense_id: '', // Reset offense selection when category changes
-        });
-    };
-    
-    const filteredOffenses = offenses.filter(
-        (offense) => offense.category_id === Number(formData.category_id)
-    );
-    
-    console.log("Selected Category ID:", formData.category_id);
-    console.log("Filtered Offenses:", filteredOffenses);
 
 
     // Handle the create violation record
@@ -266,7 +298,7 @@ return (
                         name="users"
                         options={filteredOptions.map((student) => ({
                             value: student.user_id,
-                            label: `${student.first_name} ${student.last_name}`,
+                            label: `${student.first_name} ${student.middle_name} ${student.last_name} ${student.suffix}`,
                         }))}
                         onChange={handleSelectChange}
                         required
@@ -319,9 +351,7 @@ return (
                                 }}
                             >
                             <option disabled value="">Select Semester</option>
-                            {semesters
-                                .filter((sem) => sem.status === 'active') 
-                                .map((sem) => (
+                            {semesters.filter((sem) => sem.status === 'active').map((sem) => (
                                     <option key={sem.semester_id} value={sem.semester_id}>
                                         {sem.semester_name}
                                     </option>
@@ -336,8 +366,8 @@ return (
                             <Form.Label className="fw-bold">Category</Form.Label>
                             <Form.Select
                                 name="category_id"
-                                value={formData.category_id}
-                                onChange={handleCategoryChange}
+                                value={formData.category_id}  
+                                onChange={handleChange}  
                                 required
                                 onFocus={() => handleFocus('category')}
                                 onBlur={handleBlur}
@@ -346,16 +376,15 @@ return (
                                     ...borderColorStyles(focusedElement, 'category'),
                                 }}
                             >
-                                <option disabled value="">Select Category</option>
-                                {categories
-                                    .filter((cat) => cat.status === 'active')
-                                    .map((cat) => (
-                                        <option key={cat.category_id} value={cat.category_id}>
-                                            {cat.category_name}
-                                        </option>
-                                    ))}
+                            <option disabled value="">Select Category</option>
+                            {categories.filter((cat) => cat.status === 'active').map((cat) => (
+                                    <option key={cat.category_id} value={cat.category_id}>
+                                        {cat.category_name}
+                                    </option>
+                                ))
+                            }
                             </Form.Select>
-                        </Form.Group>  
+                        </Form.Group>
                     </Row>
 
                     <Row className="gy-4">
@@ -363,8 +392,8 @@ return (
                             <Form.Label className="fw-bold">Offense</Form.Label>
                             <Form.Select
                                 name="offense_id"
-                                value={formData.offense_id}
-                                onChange={handleChange}
+                                value={formData.offense_id}  
+                                onChange={handleChange}  
                                 required
                                 onFocus={() => handleFocus('offense')}
                                 onBlur={handleBlur}
@@ -374,32 +403,36 @@ return (
                                 }}
                             >
                                 <option disabled value="">Select Offense</option>
-                                {filteredOffenses.map((off) => (
-                                    <option key={off.offense_id} value={off.offense_id}>
-                                        {off.offense_name}
-                                    </option>
-                                ))}
+                                {offenses && offenses.length > 0 ? (
+                                    offenses.map((off) => (
+                                        <option key={off.offense_id} value={off.offense_id}>
+                                            {off.offense_name}
+                                        </option>
+                                    ))
+                                ) : (
+                                    <option disabled>No offenses available</option>
+                                )}
                             </Form.Select>
                         </Form.Group>
                     </Row>
 
                     <Row className="gy-4">
-                    <Form.Group className="sanctions mb-3">
-                        <Form.Label className="fw-bold">Sanctions</Form.Label>
-                        <Select
-                            isMulti
-                            name="sanctions"
-                            options={sanctions
-                                .filter((sanction) => sanction.status === 'active') 
-                                .map((sanction) => ({
-                                    value: sanction.sanction_id,
-                                    label: sanction.sanction_name,
-                                }))}
-                            onChange={handleSelectChange}
-                            required
-                            styles={customSelectStyles}
-                        />
-                    </Form.Group>
+                        <Form.Group className="sanctions mb-3">
+                            <Form.Label className="fw-bold">Sanctions</Form.Label>
+                            <Select
+                                isMulti
+                                name="sanctions"
+                                options={sanctions
+                                    .filter((sanction) => sanction.status === 'active') 
+                                    .map((sanction) => ({
+                                        value: sanction.sanction_id,
+                                        label: sanction.sanction_name,
+                                    }))}
+                                onChange={handleSelectChange}
+                                required
+                                styles={customSelectStyles}
+                            />
+                        </Form.Group>
                     </Row>
 
                     <Row className="gy-4">
