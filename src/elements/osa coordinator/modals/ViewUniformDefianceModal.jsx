@@ -3,7 +3,7 @@ import { Modal, Button } from 'react-bootstrap';
 
 const ViewUniformDefianceModal = ({ show, onHide, record }) => {
     const [fileMetadata, setFileMetadata] = useState([]);
-    const [fileLoading, setFileLoading] = useState(true); // Track overall loading state for files
+    const [fileLoading, setFileLoading] = useState(true); 
     const [fileErrors, setFileErrors] = useState({});
     const [isFileClicked, setIsFileClicked] = useState(false);
     const [clickedFile, setClickedFile] = useState('');
@@ -12,12 +12,13 @@ const ViewUniformDefianceModal = ({ show, onHide, record }) => {
     useEffect(() => {
         if (!show) {
             setFileMetadata([]);
-            setFileLoading(true); // Reset loading state
+            setFileLoading(true); 
             setFileErrors({});
             setIsFileClicked(false);
             setClickedFile('');
         }
     }, [show]);
+
 
     // Fetch file metadata when record changes
     useEffect(() => {
@@ -49,12 +50,13 @@ const ViewUniformDefianceModal = ({ show, onHide, record }) => {
 
                 const metadata = await Promise.all(metadataPromises);
                 setFileMetadata(metadata);
-                setFileLoading(false); // All files fetched, hide the spinner
+                setFileLoading(false); 
             };
 
             fetchMetadata();
         }
     }, [record]);
+
 
     // Handles zoom in of selected file
     const handleFileClick = (fileId, fileUrl) => {
@@ -75,26 +77,15 @@ const ViewUniformDefianceModal = ({ show, onHide, record }) => {
         setFileErrors((prev) => ({ ...prev, [fileId]: true }));
     };
 
+
     // Render the file attachments
     const renderFiles = () => {
         if (fileLoading) {
             // Show the spinner if the files are still loading
             return (
                 <div style={{ display: 'flex', justifyContent: 'center', marginTop: '20px' }}>
-                    <div style={{
-                        width: '50px',
-                        height: '50px',
-                        border: '6px solid #f3f3f3',
-                        borderTop: '6px solid #a9a9a9',
-                        borderRadius: '50%',
-                        animation: 'spin 1s linear infinite'
-                    }}></div>
-                    <style>{`
-                        @keyframes spin {
-                            0% { transform: rotate(0deg); }
-                            100% { transform: rotate(360deg); }
-                        }
-                    `}</style>
+                    <div style={{ width: '50px', height: '50px', border: '6px solid #f3f3f3', borderTop: '6px solid #a9a9a9', borderRadius: '50%', animation: 'spin 1s linear infinite' }}></div>
+                    <style>{`@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }`}</style>
                 </div>
             );
         }
@@ -120,8 +111,8 @@ const ViewUniformDefianceModal = ({ show, onHide, record }) => {
                             controls
                             src={fileUrl}
                             style={{ maxWidth: "100%" }}
-                            onLoad={() => handleFileLoad(fileId)} // File loaded
-                            onError={() => handleFileError(fileId)} // Handle error
+                            onLoad={() => handleFileLoad(fileId)} 
+                            onError={() => handleFileError(fileId)} 
                         />
                     </div>
                 );
@@ -132,8 +123,8 @@ const ViewUniformDefianceModal = ({ show, onHide, record }) => {
                             src={fileUrl}
                             alt="File Preview"
                             style={{ maxWidth: "100%", cursor: "pointer" }}
-                            onLoad={() => handleFileLoad(fileId)} // File loaded
-                            onError={() => handleFileError(fileId)} // Handle error
+                            onLoad={() => handleFileLoad(fileId)} 
+                            onError={() => handleFileError(fileId)} 
                             onClick={() => handleFileClick(fileId, fileUrl)}
                         />
                     </div>
@@ -147,6 +138,7 @@ const ViewUniformDefianceModal = ({ show, onHide, record }) => {
             }
         });
     };
+
 
     // Styles for the status
     const renderStatus = (status) => {
@@ -187,15 +179,16 @@ const ViewUniformDefianceModal = ({ show, onHide, record }) => {
         );
     };
 
-    return (
-        <>
-            <Modal show={show} onHide={onHide} size="lg">
-                <Modal.Header>
-                    <Button variant="link" onClick={onHide} style={{ position: 'absolute', top: '5px', right: '20px', textDecoration: 'none', fontSize: '30px', color: '#a9a9a9' }}>
-                        ×
-                    </Button>
-                    <Modal.Title style={{ fontSize: '40px', marginBottom: '10px', textAlign: 'center', width: '100%' }}>VIEW UNIFORM DEFIANCE</Modal.Title>
-                </Modal.Header>
+
+return (
+    <>
+        <Modal show={show} onHide={onHide} size="lg">
+            <Modal.Header>
+                <Button variant="link" onClick={onHide} style={{ position: 'absolute', top: '5px', right: '20px', textDecoration: 'none', fontSize: '30px', color: '#a9a9a9' }}>
+                    ×
+                </Button>
+                <Modal.Title style={{ fontSize: '40px', marginBottom: '10px', textAlign: 'center', width: '100%' }}>VIEW UNIFORM DEFIANCE</Modal.Title>
+            </Modal.Header>
                 <Modal.Body>
                     {record && (
                         <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', rowGap: '10px', marginLeft: '20px', marginRight: '20px' }}>
@@ -221,11 +214,13 @@ const ViewUniformDefianceModal = ({ show, onHide, record }) => {
                                         year: 'numeric',
                                         month: 'long',
                                         day: 'numeric',
+                                        timeZone: 'UTC',
                                     })}, ${new Date(record.created_at).toLocaleTimeString('en-US', {
                                         hour: '2-digit',
                                         minute: '2-digit',
                                         second: '2-digit',
                                         hour12: true,
+                                        timeZone: 'UTC',
                                     })}`
                                     : 'N/A'}
                             </p>
@@ -251,5 +246,6 @@ const ViewUniformDefianceModal = ({ show, onHide, record }) => {
         </>
     );
 };
+
 
 export default ViewUniformDefianceModal;

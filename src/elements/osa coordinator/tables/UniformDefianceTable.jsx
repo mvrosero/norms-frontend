@@ -3,7 +3,6 @@ import axios from 'axios';
 import { Button, Table } from 'react-bootstrap';
 import Swal from 'sweetalert2';
 import { useNavigate } from 'react-router';
-import Fuse from 'fuse.js';
 
 import CheckIcon from '@mui/icons-material/Check';
 import CloseIcon from '@mui/icons-material/Close';
@@ -64,9 +63,6 @@ const UniformDefianceTable = ({filters, searchQuery}) => {
             // Fetch data from the backend
             let response = await axios.get('https://test-backend-api-2.onrender.com/uniform_defiances-pending', { headers });
             let data = response.data;
-    
-            // Remove the filtering for 'pending' status if you want all items
-            // data = data.filter(defiance => defiance.status === 'pending');
     
             // Now fetch employee names and update each defiance object with the full name
             const updatedData = await Promise.all(data.map(async (defiance) => {
@@ -366,7 +362,7 @@ const renderTable = () => {
                 currentDefiances.map((defiance, index) => (
                         <tr key={index}>
                             <td style={{ textAlign: 'center' }}>{defiance.slip_id}</td>
-                            <td>{new Date(defiance.created_at).toLocaleString()}</td> 
+                            <td>{new Date(defiance.created_at).toLocaleString('en-US', { timeZone: 'UTC' })}</td>
                             <td>{defiance.student_idnumber}</td>
                             <td>{defiance.nature_name}</td>
                             <td>

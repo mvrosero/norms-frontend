@@ -399,8 +399,20 @@ const renderTable = () => {
                             <td style={{ textAlign: 'center' }}>{index + 1}</td>
                             <td>{user.student_idnumber}</td>
                             <td>
-                                <a href="#" onClick={() => handleReadModalShow(user)} style={{ textDecoration: 'none', color: 'black', cursor: 'pointer' }}>
-                                    {`${user.first_name} ${user.middle_name || ''} ${user.last_name} ${user.suffix || ''}`}
+                                <a
+                                href="#"
+                                onClick={() => handleRedirect(user.student_idnumber)}
+                                style={{ textDecoration: 'none', color: 'black', cursor: 'pointer', transition: 'color 0.3s ease, text-decoration 0.3s ease' }}
+                                onMouseEnter={(e) => {
+                                    e.target.style.textDecoration = 'underline'; 
+                                    e.target.style.color = '#4682B4';  
+                                }}
+                                onMouseLeave={(e) => {
+                                    e.target.style.textDecoration = 'none'; 
+                                    e.target.style.color = 'black';  
+                                }}
+                                >
+                                {`${user.first_name} ${user.middle_name} ${user.last_name} ${user.suffix}`}
                                 </a>
                             </td>
                             <td>{user.year_level}</td>
