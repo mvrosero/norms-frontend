@@ -88,23 +88,7 @@ const UniformDefianceTable = ({filters, searchQuery}) => {
         fetchDefiances();
         fetchNatures();
     }, [fetchNatures, fetchDefiances]);
-
-
-     // Handle redirect to selected uniform defiance slip
-    const handleRedirect = async (slip_id) => {
-        try {
-            const response = await axios.get(`https://test-backend-api-2.onrender.com/uniform_defiance/${slip_id}`);
-            const defiance = response.data;
-            localStorage.setItem('selectedDefiance', JSON.stringify(defiance));
-            navigate(`/individualdefiancerecord/${slip_id}`);
-        } catch (error) {
-            console.error('Error fetching defiance:', error);
-            Swal.fire({
-                icon: 'error',
-                text: 'An error occurred while fetching defiance data. Please try again later.',
-            });
-        }
-    };
+    
 
 
      // Handle update status of uniform defiance slip
