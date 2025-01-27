@@ -73,7 +73,7 @@ const ViewUniformDefianceModal = ({ show, onHide, record }) => {
   
         const fileExtension = contentType?.split("/")[1]?.toLowerCase();
   
-        if (["mp4", "avi", "mov", "mkv"].includes(fileExtension)) {
+        if (["mp4", "avi", "mov", "mkv", "hevc"].includes(fileExtension)) {
           return (
             <div key={fileId} style={{ marginBottom: "10px" }}>
               {fileLoading[fileId] ? (
@@ -103,19 +103,6 @@ const ViewUniformDefianceModal = ({ show, onHide, record }) => {
                   onError={() => handleFileError(fileId)}
                 />
               )}
-            </div>
-          );
-        } else if (["pdf", "doc", "docx"].includes(fileExtension)) {
-          return (
-            <div key={fileId} style={{ marginBottom: "10px" }}>
-              <a
-                href={fileUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                style={{ textDecoration: "underline", color: "blue" }}
-              >
-                {fileId}
-              </a>
             </div>
           );
         } else {
