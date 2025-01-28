@@ -37,13 +37,8 @@ return (
                 <h6 className="section-title" style={{ fontFamily: 'Poppins, sans-serif', color: '#242424', fontSize: '40px', fontWeight: 'bold', marginTop: '20px', marginLeft: '50px' }}>Violations</h6>
             </div>
 
-            {/* Search And Filter Section */}
-            <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', marginLeft: '70px', padding: '0 20px' }}>
-                <SearchAndFilter />
-            </div>
-
             {/* Breadcrumbs */}
-            <nav style={{ marginTop: '5px', marginBottom: '30px', marginLeft: '120px' }}>
+            <nav style={{ marginTop: '30px', marginBottom: '30px', marginLeft: '120px' }}>
                 <ol style={{ backgroundColor: 'transparent', padding: '0', margin: '0', listStyle: 'none', display: 'flex' }}>
                     <li className="breadcrumb-item" onClick={() => navigate('/student-faqs')} style={{ marginRight: '5px', color: '#0D4809' }}>
                         FAQs

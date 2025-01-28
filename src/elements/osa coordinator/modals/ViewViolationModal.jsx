@@ -56,7 +56,6 @@ const ViewViolationModal = ({ show, onHide, selectedRecord }) => {
                                 __html: selectedRecord.description,
                             }} />
                     </div>
-                    
                 )}
             </Modal.Body>
         </Modal>

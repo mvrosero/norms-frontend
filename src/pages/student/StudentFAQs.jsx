@@ -46,17 +46,12 @@ return (
                 </h6>
             </div>
 
-            {/* Search And Filter Section */}
-            <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', marginBottom: '10px', marginLeft: '10px', padding: '0 20px' }}>
-                <SearchAndFilter />
-            </div>
-
             {/* FAQs Container Section */}
             <div className="faqs-container" style={{ marginBottom: '50px', marginLeft: '80px' }}>
                 <div className="row justify-content-center"> 
                     {categoryData.map((category, index) => (
                         <div key={index} className="col-md-4 mb-3" onClick={() => navigate(category.path)} 
-                             style={{ cursor: 'pointer', textAlign: 'center', padding: '10px', border: '1px solid #ccc', borderRadius: '8px', background: '#FFFFFF', transition: 'background-color 0.3s', height: '320px', width: '320px', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', margin: '10px', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)' }}
+                             style={{ cursor: 'pointer', textAlign: 'center', padding: '10px', border: '1px solid #ccc', borderRadius: '8px', background: '#FFFFFF', transition: 'background-color 0.3s', height: '300px', width: '300px', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', margin: '10px', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)' }}
                              onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#e2e6ea'}
                              onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#f8f9fa'}
                             >

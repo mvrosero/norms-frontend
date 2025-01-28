@@ -4,11 +4,13 @@ import axios from 'axios';
 import { Card, Row, Col } from 'react-bootstrap';
 import { FaRegClock } from 'react-icons/fa';
 import { MdFilePresent } from "react-icons/md";
+import ReactQuill from 'react-quill';
  
 import StudentInfo from './StudentInfo';
 import StudentNavigation from './StudentNavigation';
-import SearchAndFilter from '../general/SearchAndFilter';
 import ViewAnnouncementModal from '../../elements/student/modals/ViewAnnouncementModal';
+import 'react-quill/dist/quill.snow.css'; 
+import '../../styles/style.css'
 
 export default function StudentAnnouncements() {
     const navigate = useNavigate();
@@ -20,7 +22,6 @@ export default function StudentAnnouncements() {
     const [activeAnnouncement, setActiveAnnouncement] = useState(null);
     const [hoveredAnnouncement, setHoveredAnnouncement] = useState(null);
     const [sortOrder, setSortOrder] = useState('asc');
-    const [searchKeyword, setSearchKeyword] = useState('');
 
 
     useEffect(() => {
@@ -48,19 +49,6 @@ export default function StudentAnnouncements() {
     }, [navigate]);
 
 
-    const handleSearch = (keyword) => {
-        setSearchKeyword(keyword);
-        if (keyword.trim() === '') {
-            setFilteredAnnouncements(announcements);
-        } else {
-            const lowerCaseKeyword = keyword.toLowerCase();
-            const filtered = announcements.filter(announcement =>
-                announcement.title.toLowerCase().includes(lowerCaseKeyword) ||
-                announcement.content.toLowerCase().includes(lowerCaseKeyword)
-            );
-            setFilteredAnnouncements(filtered);
-        }
-    };
 
 
     const handleViewAnnouncement = (announcement) => {
@@ -165,13 +153,8 @@ return (
         <StudentInfo />
 
             {/* Title Section */}
-            <div style={{ width: '90%', margin: '0 auto', display: 'flex', justifyContent: 'flex-start' }}>
+            <div style={{ marginBottom: '30px', width: '90%', margin: '0 auto', display: 'flex', justifyContent: 'flex-start' }}>
                 <h6 className="section-title" style={{ fontFamily: 'Poppins, sans-serif', color: '#242424', fontSize: '40px', fontWeight: 'bold', marginTop: '20px', marginLeft: '50px' }}>Announcements</h6>
-            </div>
-
-            {/* Search And Filter Section */}
-            <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', marginBottom: '20px', marginLeft: '70px', padding: '0 20px' }}>
-                <SearchAndFilter />
             </div>
             
             {/* Pinned Announcements Section */}
@@ -210,8 +193,14 @@ return (
                                     <div style={{ flex: 1 }}>
                                         <Card.Title style={{ marginTop: '20px', marginBottom: '20px', fontSize: '28px' }}>{a.title}</Card.Title>
                                         <Card.Text style={{ marginRight: '30px', fontSize: '16px' }}>
-                                            {truncateText(a.content, 700)}{' '}
-                                            {a.content.length > 700 && (
+                                            <div className="quill-content"
+                                                dangerouslySetInnerHTML={{
+                                                __html: a.content.length > 750 
+                                                    ? `${truncateText(a.content, 750)}...` 
+                                                    : a.content,
+                                                }}>
+                                            </div>
+                                            {a.content.length > 750 && (
                                                 <span
                                                     onClick={() => handleViewAnnouncement(a)}
                                                     style={{ color: '#007bff', cursor: 'pointer', textDecoration: 'underline' }}
@@ -249,7 +238,14 @@ return (
                             <Card.Body style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                                 <div style={{ flex: 1 }}>
                                     <Card.Title style={{ marginTop: '7px', marginLeft: '10px', fontSize: '20px' }}>{a.title}</Card.Title>
-                                    <Card.Text style={{ marginLeft: '10px', marginRight: '50px', fontSize: '14px' }}> {truncateText(a.content, 250)}{' '} {a.content.length > 250 && (
+                                    <Card.Text style={{ marginLeft: '10px', marginRight: '50px', fontSize: '14px' }}>   
+                                            <div className="quill-content"
+                                                dangerouslySetInnerHTML={{
+                                                __html: a.content.length > 250 
+                                                    ? `${truncateText(a.content, 250)}...` 
+                                                    : a.content,
+                                                }}>
+                                            </div> {a.content.length > 250 && (
                                         <span onClick={() => handleViewAnnouncement(a)} style={{ color: '#007bff', cursor: 'pointer', textDecoration: 'underline' }}> See more... </span>)}
                                     </Card.Text>
                                     <Card.Text className="text-muted" style={{ marginTop: '10px', marginLeft: '10px', fontSize: '13px' }}> {renderStatus(a.status)} {renderDateTime(a.created_at, a.updated_at)} </Card.Text>

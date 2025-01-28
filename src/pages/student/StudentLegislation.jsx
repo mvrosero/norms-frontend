@@ -39,14 +39,8 @@ return (
 
             {/* Title Section */}
             <div style={{ width: '90%', margin: '0 auto', display: 'flex', justifyContent: 'flex-start' }}>
-                <h6 className="section-title" style={{ fontFamily: 'Poppins, sans-serif', color: '#242424', fontSize: '40px', fontWeight: 'bold', marginTop: '20px', marginLeft: '50px' }}>Legislations</h6>
+                <h6 className="section-title" style={{ fontFamily: 'Poppins, sans-serif', color: '#242424', fontSize: '40px', fontWeight: 'bold', marginTop: '20px', marginBottom: '20px', marginLeft: '50px' }}>Legislations</h6>
             </div>
-
-            {/* Search And Filter Section */}
-            <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', marginLeft: '70px', padding: '0 20px' }}>
-                <SearchAndFilter />
-            </div>
-
 
             <style>
                 {`
