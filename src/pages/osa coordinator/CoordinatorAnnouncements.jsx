@@ -543,7 +543,7 @@ return (
                                                 return isImage ? (
                                                     <Card.Img
                                                         variant="top"
-                                                        src={`http://localhost:9000/announcement/${firstFile}`}
+                                                        src={`https://test-backend-api-2.onrender.com/announcement/${firstFile}`}
                                                         alt="Announcement Image"
                                                         style={{ maxHeight: '250px', maxWidth: '250px', marginTop: '20px', marginBottom: '20px', marginLeft: '20px', marginRight: '50px' }}
                                                     />
@@ -639,19 +639,26 @@ return (
                                     </Card.Text>
                                     <Card.Text className="text-muted" style={{ marginTop: '10px', marginLeft: '10px', fontSize: '13px' }}> {renderStatus(a.status)} {renderDateTime(a.created_at, a.updated_at)} </Card.Text>
                                 </div>
-                                    {a.filenames && (() => {
-                                            const firstFile = a.filenames.split(',')[0];
-                                            const fileExtension = firstFile.split('.').pop().toLowerCase();
-                                            const isImage = ['jpg', 'jpeg', 'png', 'gif'].includes(fileExtension);
+                                        {/* Image on the right */}
+                                        {a.filenames && (() => {
+                                                const firstFile = a.filenames.split(',')[0];
+                                                const fileExtension = firstFile.split('.').pop().toLowerCase();
+                                                const isImage = ['jpg', 'jpeg', 'png', 'gif'].includes(fileExtension);
 
-                                            return isImage ? (
-                                                <Card.Img
-                                                    variant="top"
-                                                    src={`http://localhost:9000/uploads/${firstFile}`}
-                                                    alt="Announcement Image"
-                                                    style={{ maxHeight: '100px', maxWidth: '100px' }}
-                                                />
-                                            ) : null;
+                                                return isImage ? (
+                                                    <Card.Img
+                                                        variant="top"
+                                                        src={`http://localhost:9000/uploads/${firstFile}`}
+                                                        alt="Announcement Image"
+                                                        style={{ maxHeight: '100px', maxWidth: '100px' }}
+                                                    />
+                                                ) :  (
+                                                    <Card style={{ maxHeight: '100px', maxWidth: '100px', border: '1px solid #0D4809' }}>
+                                                        <Card.Body style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
+                                                            <MdFilePresent style={{ fontSize: '50px', color: '#0D4809' }} />
+                                                        </Card.Body>
+                                                    </Card>
+                                                );
                                      })()}
                                 <Dropdown style={{ marginLeft: '10px' }}>
                                     <Dropdown.Toggle variant="link" id={`dropdown-${a.announcement_id}`} style={{ boxShadow: 'none', color: '#FFFFFF', fontSize: '0px', padding: '0' }}>
