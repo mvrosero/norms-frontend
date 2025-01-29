@@ -396,23 +396,20 @@ export default function CoordinatorAnnouncements() {
 
     // Handle file removal
     const handleRemoveFile = (file, isOriginal = false) => {
-        const filename = typeof file === 'string' ? file : file.name;  // Ensure filename is a string
-        
+        const filename = isOriginal ? file.name : file.name;
+    
         if (isOriginal) {
-            // Delete the file from the backend
             axios.delete(`https://test-backend-api-2.onrender.com/announcement/${editing}/file/${filename}`, {
                 headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
             })
             .then(() => {
-                // Update state after successful deletion
-                setOriginalFiles(prevFiles => prevFiles.filter(f => (typeof f === 'string' ? f : f.name) !== filename));
-                fetchAnnouncements();  // Refresh announcement list
+                setOriginalFiles(prevFiles => prevFiles.filter(f => f.name !== filename));
+                fetchAnnouncements(); 
             })
             .catch(error => {
                 console.error('Error removing file:', error.response?.data?.error || 'An error occurred');
             });
         } else {
-            // Remove new (temporary) files from state
             setFiles(prevFiles => prevFiles.filter(f => f.name !== filename));
         }
     };

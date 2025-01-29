@@ -465,6 +465,7 @@ const renderTable = () => {
          
         const nature = record.nature_name ? record.nature_name.toLowerCase() : '';
         const matchesSearchQuery = nature.includes(searchQuery.toLowerCase()) || 
+            record.slip_id.toString().toLowerCase().includes(searchQuery.toLowerCase()) || 
             record.student_idnumber.toString().toLowerCase().includes(searchQuery.toLowerCase());
     
         const matchesFilters = Object.keys(filters).every(key => {
@@ -540,7 +541,7 @@ const renderTable = () => {
                         currentRecords.map((record, index) => (
                                 <tr key={index}>
                                     <td style={{ textAlign: 'center' }}>{record.slip_id}</td>
-                                    <td>{new Date(record.created_at).toLocaleString()}</td>
+                                    <td>{new Date(record.created_at).toLocaleString('en-US', { timeZone: 'UTC' })}</td>
                                     <td>{record.student_idnumber}</td>
                                     <td>{record.nature_name}</td> 
                                     <td style={{ textAlign: 'center' }}>{renderStatus(record.status)}</td>
@@ -599,18 +600,20 @@ return (
 
                             <p style={{ fontWeight: 'bold' }}>Date Created:</p>
                             <p>
-                            {selectedRecord.created_at
-                                ? `${new Date(selectedRecord.created_at).toLocaleDateString('en-US', {
-                                    year: 'numeric',
-                                    month: 'long',
-                                    day: 'numeric',
-                                })}, ${new Date(selectedRecord.created_at).toLocaleTimeString('en-US', {
-                                    hour: '2-digit',
-                                    minute: '2-digit',
-                                    second: '2-digit',
-                                    hour12: true,
-                                })}`
-                                : 'N/A'}
+                                {selectedRecord.created_at
+                                    ? `${new Date(selectedRecord.created_at).toLocaleDateString('en-US', {
+                                        year: 'numeric',
+                                        month: 'long',
+                                        day: 'numeric',
+                                        timeZone: 'UTC',
+                                    })}, ${new Date(selectedRecord.created_at).toLocaleTimeString('en-US', {
+                                        hour: '2-digit',
+                                        minute: '2-digit',
+                                        second: '2-digit',
+                                        hour12: true,
+                                        timeZone: 'UTC',
+                                    })}`
+                                    : 'N/A'}
                             </p>
 
                             <p style={{ fontWeight: 'bold' }}>Date Updated:</p>

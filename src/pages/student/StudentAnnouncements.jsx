@@ -153,8 +153,8 @@ return (
         <StudentInfo />
 
             {/* Title Section */}
-            <div style={{ marginBottom: '30px', width: '90%', margin: '0 auto', display: 'flex', justifyContent: 'flex-start' }}>
-                <h6 className="section-title" style={{ fontFamily: 'Poppins, sans-serif', color: '#242424', fontSize: '40px', fontWeight: 'bold', marginTop: '20px', marginLeft: '50px' }}>Announcements</h6>
+            <div style={{ width: '90%', margin: '0 auto', display: 'flex', justifyContent: 'flex-start' }}>
+                <h6 className="section-title" style={{ fontFamily: 'Poppins, sans-serif', color: '#242424', fontSize: '40px', fontWeight: 'bold', marginTop: '20px', marginBottom: '30px', marginLeft: '50px' }}>Announcements</h6>
             </div>
             
             {/* Pinned Announcements Section */}
@@ -250,6 +250,7 @@ return (
                                     </Card.Text>
                                     <Card.Text className="text-muted" style={{ marginTop: '10px', marginLeft: '10px', fontSize: '13px' }}> {renderStatus(a.status)} {renderDateTime(a.created_at, a.updated_at)} </Card.Text>
                                 </div>
+                                    {/* Image on the right */}
                                     {a.filenames && (() => {
                                             const firstFile = a.filenames.split(',')[0];
                                             const fileExtension = firstFile.split('.').pop().toLowerCase();
@@ -258,12 +259,18 @@ return (
                                             return isImage ? (
                                                 <Card.Img
                                                     variant="top"
-                                                    src={`https://test-backend-api-2.onrender.com/uploads/${firstFile}`}
+                                                    src={`http://localhost:9000/uploads/${firstFile}`}
                                                     alt="Announcement Image"
                                                     style={{ maxHeight: '100px', maxWidth: '100px' }}
                                                 />
-                                            ) : null;
-                                        })()}
+                                            ) :  (
+                                                <Card style={{ maxHeight: '100px', maxWidth: '100px', border: '1px solid #0D4809' }}>
+                                                    <Card.Body style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
+                                                        <MdFilePresent style={{ fontSize: '50px', color: '#0D4809' }} />
+                                                    </Card.Body>
+                                                </Card>
+                                            );
+                                     })()}
                             </Card.Body>
                         </Card>
                     </Col>
