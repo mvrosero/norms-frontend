@@ -5,16 +5,10 @@ import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import ViewViolationRecordModal from '../modals/ViewViolationRecordModal';
 
-const MyRecordsTable = () => {
+export default function MyRecordsTable ({ filters, searchQuery }) {
     const [records, setRecords] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const [categories, setCategories] = useState([]);
-    const [offenses, setOffenses] = useState([]);
-    const [sanctions, setSanctions] = useState([]);
-    const [academicYears, setAcademicYears] = useState([]);
-    const [semesters, setSemesters] = useState([]);
-    const [subcategories, setSubcategories] = useState([]); 
     const [selectedRecord, setSelectedRecord] = useState(null);
 
 
@@ -38,29 +32,6 @@ const MyRecordsTable = () => {
                 const recordsResponse = await axios.get(`https://test-backend-api-2.onrender.com/myrecords/${studentIdNumber}`);
                 setRecords(recordsResponse.data);
 
-                // Fetch categories
-                const categoriesResponse = await axios.get('https://test-backend-api-2.onrender.com/categories');
-                setCategories(categoriesResponse.data);
-
-                // Fetch offenses
-                const offensesResponse = await axios.get('https://test-backend-api-2.onrender.com/offenses');
-                setOffenses(offensesResponse.data);
-
-                // Fetch sanctions
-                const sanctionsResponse = await axios.get('https://test-backend-api-2.onrender.com/sanctions');
-                setSanctions(sanctionsResponse.data);
-
-                // Fetch academic years
-                const academicYearsResponse = await axios.get('https://test-backend-api-2.onrender.com/academic_years');
-                setAcademicYears(academicYearsResponse.data);
-
-                // Fetch semesters
-                const semestersResponse = await axios.get('https://test-backend-api-2.onrender.com/semesters');
-                setSemesters(semestersResponse.data);
-
-                // Fetch subcategories 
-                const subcategoriesResponse = await axios.get('https://test-backend-api-2.onrender.com/subcategories');
-                    setSubcategories(subcategoriesResponse.data);
                 } catch (error) {
                     setError(error.message || 'An error occurred');
                 } finally {
@@ -70,49 +41,6 @@ const MyRecordsTable = () => {
             fetchData();
         }, []);
 
-
-    const getSubcategoryName = (subcategory_id) => {
-        const subcategory = subcategories.find(subcategory => subcategory.subcategory_id === subcategory_id);
-        return subcategory ? subcategory.subcategory_name : 'Unknown';
-    };
-
-    const getCategoryName = (category_id) => {
-        const category = categories.find(cat => cat.category_id === category_id);
-        return category ? category.category_name : 'Unknown';
-    };
-
-    const getOffenseName = (offense_id) => {
-        const offense = offenses.find(offense => offense.offense_id === offense_id);
-        return offense ? offense.offense_name : 'Unknown';
-    };
-
-    const getSanctionNames = (sanction_ids) => {
-        if (!sanction_ids) return 'Unknown';
-        
-        const ids = sanction_ids.split(',').map(id => id.trim());
-        
-        const sanctionNames = ids.map(id => getSanctionName(id));
-
-        console.log('Sanction Names:', sanctionNames);
-
-        return sanctionNames.every(name => name === 'Unknown') ? 'Unknown' : sanctionNames.join(', ');
-    };
-
-    const getSanctionName = (sanction_id) => {
-        sanction_id = String(sanction_id);
-        const sanction = sanctions.find(sanction => String(sanction.sanction_id) === sanction_id);
-        return sanction ? sanction.sanction_name : 'Unknown';
-    };
-
-    const getAcademicYearName = (acadyear_id) => {
-        const academicYear = academicYears.find(year => year.acadyear_id === acadyear_id);
-        return academicYear ? `${academicYear.start_year} - ${academicYear.end_year}` : 'Unknown';
-    };
-
-    const getSemesterName = (semester_id) => {
-        const semester = semesters.find(sem => sem.semester_id === semester_id);
-        return semester ? semester.semester_name : 'Unknown';
-    };
 
 
     const handleViewDetails = (record) => {
@@ -159,6 +87,8 @@ const handleRowsPerPageChange = (e) => {
 };
 
 const renderPagination = () => {
+    if (loading) return null;
+
     const pageNumbers = Array.from({ length: totalPages }, (_, i) => i + 1);
 
           const buttonStyle = {
@@ -252,50 +182,106 @@ const renderPagination = () => {
         );
     };  
 
-    
+
+
+// Render student records table
+const renderTable = () => {
+
+    const filteredRecords = records.filter(record => {
+        // Ensure these properties are not undefined before calling toLowerCase()
+        const category = record.category_name?.toLowerCase() || '';
+        const semester = record.semester_name?.toLowerCase() || '';
+        const offense = record.offense_name?.toLowerCase() || '';
+
+        // Ensure searchQuery is not undefined
+        const matchesSearchQuery = searchQuery ? offense.includes(searchQuery.toLowerCase()) : true;
+
+        // Check filters
+        const matchesFilters = Object.keys(filters).every(key => {
+            if (filters[key]) {  
+                if (key === 'category' && category !== filters[key].toLowerCase()) return false;
+                if (key === 'academic_year' && (record.academic_year?.toLowerCase() || '') !== filters[key].toLowerCase()) return false;
+                if (key === 'semester' && semester !== filters[key].toLowerCase()) return false;
+            }
+            return true;
+        });
+
+        return matchesSearchQuery && matchesFilters; 
+    });
+
+    const currentRecords = filteredRecords.slice(indexOfFirstRecord, indexOfLastRecord);
+
+
+
+        // Show loading spinner when data is being fetched
+        if (loading) {
+            return (
+            <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100%" }}>
+                <div style={{ width: "50px", height: "50px", border: "6px solid #f3f3f3", borderTop: "6px solid #a9a9a9", borderRadius: "50%", animation: "spin 1s linear infinite" }}></div>
+                <style> {`@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }`} </style>
+            </div>
+            );
+        }
+
+// Render the individual student records table
 return (
     <div>
-           <Table bordered hover responsive style={{ borderRadius: '20px', marginTop: '10px', marginBottom: '20px', marginLeft: '110px' }}>
-                <thead>
-                    <tr>
-                        <th style={{ width: '5%' }}>No.</th>
-                        <th style={{ width: '20%' }}>
-                            <button style={{ cursor: 'pointer', display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100%' }}
-                                onClick={handleSortDate}
-                                >
-                                <span>Date</span>
-                                {sortOrderDate === 'asc' ? (
-                                    <ArrowDropUpIcon style={{ marginLeft: '5px' }} />
-                                ) : (
-                                    <ArrowDropDownIcon style={{ marginLeft: '5px' }} />
-                                )}
-                            </button>
-                        </th>
-                        <th style={{ width: '13%' }}>Category</th>
-                        <th>Offense</th>
-                        <th style={{ width: '25%' }}>Sanctions</th>
-                        <th style={{ width: '10%' }}>Action</th>
-                    </tr>
-                </thead>
-                        <tbody>
-                            {currentRecords.map((record, index) => (
-                                <tr key={record.record_id}>
-                                    <td style={{ textAlign: 'center' }}>{ (currentPage - 1) * rowsPerPage + (index + 1) }</td>
-                                    <td style={{ textAlign: 'center' }}>{new Date(record.created_at).toLocaleString()}</td>
-                                    <td>{getCategoryName(record.category_id)}</td>
-                                    <td>{getOffenseName(record.offense_id)}</td>
-                                    <td>{getSanctionNames(record.sanction_ids)}</td>
-                                    <td style={{ display: 'flex', justifyContent: 'center' }}>
-                                        <Button style={buttonStyles} onClick={() => handleViewDetails(record)}>
-                                            View
-                                        </Button>
-                                    </td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </Table>
+        <Table bordered hover responsive style={{ borderRadius: '20px', marginTop: '10px', marginBottom: '20px', marginLeft: '110px' }}>
+            <thead>
+                <tr>
+                    <th style={{ width: '5%' }}>No.</th>
+                    <th style={{ textAlign: 'center', padding: '0', verticalAlign: 'middle', width: '20%' }}>
+                    <button style={{ border: 'none', background: 'none', cursor: 'pointer', display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center', width: '100%' }}
+                            onClick={handleSortDate}
+                            >
+                            <span>Date</span>
+                            {sortOrderDate === 'asc' ? (
+                                <ArrowDropUpIcon style={{ marginLeft: '5px' }} />
+                            ) : (
+                                <ArrowDropDownIcon style={{ marginLeft: '5px' }} />
+                            )}
+                        </button>
+                    </th>
+                    <th style={{ width: '13%' }}>Category</th>
+                    <th>Offense</th>
+                    <th style={{ width: '25%' }}>Sanctions</th>
+                    <th style={{ width: '10%' }}>Action</th>
+                </tr>
+            </thead>
+                    <tbody>
+                    {currentRecords.length > 0 ? (
+                    currentRecords.map((record, index) => (
+                    <tr key={index}>
+                                <td style={{ textAlign: 'center' }}>{ (currentPage - 1) * rowsPerPage + (index + 1) }</td>
+                                <td style={{ textAlign: 'center' }}>{new Date(record.created_at).toLocaleString()}</td>
+                                <td>{record.category_name}</td>
+                                <td>{record.offense_name}</td>
+                                <td>{record.sanction_names}</td>
+                                <td style={{ display: 'flex', justifyContent: 'center' }}>
+                                    <Button style={buttonStyles} onClick={() => handleViewDetails(record)}>
+                                        View
+                                    </Button>
+                                </td>
+                            </tr>
+                        ))
+                ) : (
+                <tr>
+                    <td colSpan="6" style={{ textAlign: 'center' }}>No violation records found</td>
+                </tr>
+                )}
+                    </tbody>
+                </Table>
+            </div>
+        );
+    };
 
-            {renderPagination()}
+
+
+return (
+    <div>
+        {renderTable()}
+        
+        {!loading && renderPagination()}
 
             {/* View Record Modal */}
             {selectedRecord && (
@@ -303,12 +289,6 @@ return (
                     show={selectedRecord !== null} 
                     onHide={() => setSelectedRecord(null)} 
                     record={selectedRecord}
-                    getCategoryName={getCategoryName}
-                    getOffenseName={getOffenseName}
-                    getSubcategoryName={getSubcategoryName}
-                    getSanctionNames={getSanctionNames}
-                    getAcademicYearName={getAcademicYearName} 
-                    getSemesterName={getSemesterName} 
                 />
             )}
        </div>
@@ -316,4 +296,4 @@ return (
 };
 
 
-export default MyRecordsTable;
+

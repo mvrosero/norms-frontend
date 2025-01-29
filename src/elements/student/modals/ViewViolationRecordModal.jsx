@@ -1,8 +1,10 @@
 import React from 'react';
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
+import 'react-quill/dist/quill.snow.css';
+import '../../../styles/index.css';
 
-const ViewViolationRecordModal = ({ show, onHide, record, getCategoryName, getOffenseName, getSubcategoryName, getSanctionNames, getAcademicYearName, getSemesterName }) => {
+const ViewViolationRecordModal = ({ show, onHide, record }) => {
     return (
         <Modal show={show} onHide={onHide} size="lg" backdrop="static" >
             <Modal.Header>
@@ -30,25 +32,29 @@ const ViewViolationRecordModal = ({ show, onHide, record, getCategoryName, getOf
                     </p>
 
                     <p style={{ fontWeight: 'bold' }}>Academic Year:</p>
-                    <p>{getAcademicYearName(record.acadyear_id)}</p>
+                    <p>{record.academic_year}</p>
 
                     <p style={{ fontWeight: 'bold' }}>Semester:</p>
-                    <p>{getSemesterName(record.semester_id)}</p>
+                    <p>{record.semester_name}</p>
 
                     <p style={{ fontWeight: 'bold' }}>Category:</p>
-                    <p>{getCategoryName(record.category_id)}</p>
+                    <p>{record.category_name}</p>
 
                     <p style={{ fontWeight: 'bold' }}>Subcategory:</p>
-                    <p>{getSubcategoryName(record.subcategory_id)}</p>
+                    <p>{record.subcategory_name}</p>
 
                     <p style={{ fontWeight: 'bold' }}>Offense:</p>
-                    <p>{getOffenseName(record.offense_id)}</p>
+                    <p>{record.offense_name}</p>
 
                     <p style={{ fontWeight: 'bold' }}>Sanctions:</p>
-                    <p>{getSanctionNames(record.sanction_ids)}</p>
+                    <p>{record.sanction_names}</p>
 
-                    <p style={{ fontWeight: 'bold', textAlign: 'justify' }}>Description:</p>
-                    <p>{record.description}</p>
+                    <p style={{ fontWeight: 'bold' }}>Description:</p>
+                    <p className="quill-content"
+                        style={{ textAlign: 'justify' }}
+                        dangerouslySetInnerHTML={{
+                            __html: record.description,
+                        }} />
                 </div>
             </Modal.Body>
         </Modal>
