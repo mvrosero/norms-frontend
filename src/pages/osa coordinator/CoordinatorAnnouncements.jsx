@@ -363,43 +363,56 @@ export default function CoordinatorAnnouncements() {
             <Card
                 key={isOriginal ? `original-${index}` : index}
                 style={{ width: '120px', height: '120px', position: 'relative', margin: '10px', display: 'inline-block' }}
-                >
+            >
                 <Card.Body style={{ padding: 0 }}>
                     {file.name.match(/\.(jpg|jpeg|png|gif)$/) ? (
                         <img
-                            src={isOriginal ? `http://localhost:9000/uploads/${file.name}` : URL.createObjectURL(file)}
+                            src={isOriginal ? `https://test-backend-api-2.onrender.com/announcement/${file.id}` : URL.createObjectURL(file)} // Use the correct file_id for Google Drive
                             alt={file.name}
-                            style={{ width: '100%', height: '100%', objectFit: 'cover' }}/>
+                            style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                            onError={(e) => {
+                                e.target.onerror = null;
+                                e.target.src = 'path/to/default-image.jpg'; // Fallback image if the file doesn't load
+                            }}
+                        />
                     ) : (
                         <MdFilePresent style={{ fontSize: '100px', color: '#0D4809', display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%', width: '100%' }} />
                     )}
-                        <p style={{ textAlign: 'center', marginTop: '5px', fontSize: '10px', wordWrap: 'break-word' }}> {file.name.trim()} </p>
-                    <MdClose onClick={() => handleRemoveFile(file, isOriginal)} style={{ position: 'absolute', top: '5px', right: '5px', cursor: 'pointer', color: '#888' }}/>
+                    <p style={{ textAlign: 'center', marginTop: '5px', fontSize: '10px', wordWrap: 'break-word' }}>{file.name.trim()}</p>
+                    <MdClose 
+                        onClick={() => handleRemoveFile(file, isOriginal)} 
+                        style={{ position: 'absolute', top: '5px', right: '5px', cursor: 'pointer', color: '#888' }} 
+                    />
                 </Card.Body>
             </Card>
         ))
     );
-
+    
 
     // Handle file removal
     const handleRemoveFile = (file, isOriginal = false) => {
-        const filename = isOriginal ? file.name : file.name;
-    
+        const filename = file.name;  // The filename is the same for both cases
+        
+        // Check if the file is original or a new file (not original)
         if (isOriginal) {
+            // Delete the file for the original files
             axios.delete(`https://test-backend-api-2.onrender.com/announcement/${editing}/file/${filename}`, {
                 headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
             })
             .then(() => {
+                // Update the state after successful deletion
                 setOriginalFiles(prevFiles => prevFiles.filter(f => f.name !== filename));
-                fetchAnnouncements(); 
+                fetchAnnouncements();  // Fetch updated announcements list
             })
             .catch(error => {
                 console.error('Error removing file:', error.response?.data?.error || 'An error occurred');
             });
         } else {
+            // Remove the file from the state for new (temporary) files
             setFiles(prevFiles => prevFiles.filter(f => f.name !== filename));
         }
     };
+    
 
 
     // Set the proper format for date and time
@@ -480,11 +493,7 @@ export default function CoordinatorAnnouncements() {
         outline: 'none',
     };
 
-    const borderColorStyles = (focusedElement, element, editing) => ({
-        border: `1px solid ${focusedElement === element ? (editing ? '#3B71CA' : '#FAD32E') : '#ced4da'}`,
-        boxShadow: focusedElement === element ? (editing ? '0 0 0 2px rgba(59, 113, 202, 1)' : '0 0 0 2px rgba(250, 211, 46, 1)') : 'none',
-    });
-    
+
     
 return (
     <div>
