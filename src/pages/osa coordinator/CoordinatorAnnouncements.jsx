@@ -291,12 +291,17 @@ export default function CoordinatorAnnouncements() {
                 content: announcement.content,
                 status: announcement.status
             });
-            setOriginalFiles(announcement.filenames.split(',').map(filename => ({ name: filename }))); 
-            setFiles([]);
+    
+            // Ensure that we don't set an empty file list when there are no filenames
+            const filenames = announcement.filenames.split(',').filter(filename => filename.trim() !== '');
+            setOriginalFiles(filenames.map(filename => ({ name: filename }))); 
+    
+            setFiles([]);  
             setEditing(id);
             setShowAnnouncementModal(true);
         }
     };
+    
 
 
     // Handle the delete announcement
@@ -367,12 +372,12 @@ export default function CoordinatorAnnouncements() {
                 <Card.Body style={{ padding: 0 }}>
                     {file.name.match(/\.(jpg|jpeg|png|gif)$/) ? (
                         <img
-                            src={isOriginal ? `https://test-backend-api-2.onrender.com/announcement/${file.id}` : URL.createObjectURL(file)} // Use the correct file_id for Google Drive
+                            src={isOriginal ? `https://test-backend-api-2.onrender.com/announcement/${file.id}` : URL.createObjectURL(file)} 
                             alt={file.name}
                             style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                             onError={(e) => {
                                 e.target.onerror = null;
-                                e.target.src = 'path/to/default-image.jpg'; // Fallback image if the file doesn't load
+                                e.target.src = 'path/to/default-image.jpg'; 
                             }}
                         />
                     ) : (
@@ -391,27 +396,27 @@ export default function CoordinatorAnnouncements() {
 
     // Handle file removal
     const handleRemoveFile = (file, isOriginal = false) => {
-        const filename = file.name;  // The filename is the same for both cases
+        const filename = typeof file === 'string' ? file : file.name;  // Ensure filename is a string
         
-        // Check if the file is original or a new file (not original)
         if (isOriginal) {
-            // Delete the file for the original files
+            // Delete the file from the backend
             axios.delete(`https://test-backend-api-2.onrender.com/announcement/${editing}/file/${filename}`, {
                 headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
             })
             .then(() => {
-                // Update the state after successful deletion
-                setOriginalFiles(prevFiles => prevFiles.filter(f => f.name !== filename));
-                fetchAnnouncements();  // Fetch updated announcements list
+                // Update state after successful deletion
+                setOriginalFiles(prevFiles => prevFiles.filter(f => (typeof f === 'string' ? f : f.name) !== filename));
+                fetchAnnouncements();  // Refresh announcement list
             })
             .catch(error => {
                 console.error('Error removing file:', error.response?.data?.error || 'An error occurred');
             });
         } else {
-            // Remove the file from the state for new (temporary) files
+            // Remove new (temporary) files from state
             setFiles(prevFiles => prevFiles.filter(f => f.name !== filename));
         }
     };
+    
     
 
 
@@ -538,7 +543,7 @@ return (
                                                 return isImage ? (
                                                     <Card.Img
                                                         variant="top"
-                                                        src={`http://localhost:9000/uploads/${firstFile}`}
+                                                        src={`http://localhost:9000/announcement/${firstFile}`}
                                                         alt="Announcement Image"
                                                         style={{ maxHeight: '250px', maxWidth: '250px', marginTop: '20px', marginBottom: '20px', marginLeft: '20px', marginRight: '50px' }}
                                                     />

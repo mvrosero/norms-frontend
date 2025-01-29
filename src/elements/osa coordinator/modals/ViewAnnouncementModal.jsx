@@ -10,8 +10,7 @@ const ViewAnnouncementModal = ({ show, onHide, selectedAnnouncement }) => {
     const [fileErrors, setFileErrors] = useState({});
     const [isFileClicked, setIsFileClicked] = useState(false);
     const [clickedFile, setClickedFile] = useState('');
-    const [isImageClicked, setIsImageClicked] = useState(false);  
-    const [clickedImage, setClickedImage] = useState('');  
+
 
     // Reset state when modal is closed
     useEffect(() => {
@@ -20,9 +19,7 @@ const ViewAnnouncementModal = ({ show, onHide, selectedAnnouncement }) => {
             setFileLoading(true); 
             setFileErrors({});
             setIsFileClicked(false);
-            setClickedFile('');
-            setIsImageClicked(false);  
-            setClickedImage('');  
+            setClickedFile(''); 
         }
     }, [show]);
 
@@ -161,8 +158,8 @@ const ViewAnnouncementModal = ({ show, onHide, selectedAnnouncement }) => {
                 );
             } else {
                 return (
-                    <p key={fileId} style={{ color: "red", marginBottom: "10px" }}>
-                        Unsupported file format: {fileId}
+                    <p key={fileId} style={{ color: "#888", marginBottom: "10px" }}>
+                        No files attached
                     </p>
                 );
             }
@@ -277,14 +274,14 @@ return (
             </Modal>
 
             {/* Full Image Modal for Enlarged View */}
-            <Modal show={isImageClicked} onHide={() => setIsImageClicked(false)} size="lg" backdrop="static" centered>
+            <Modal show={isFileClicked} onHide={closeFullFileView} size="lg" backdrop="static" centered>
                 <Modal.Header>
-                    <Button variant="link" onClick={() => setIsImageClicked(false)} style={{ position: 'absolute', top: '5px', right: '20px', textDecoration: 'none', fontSize: '30px', color: '#a9a9a9' }}>
+                    <Button variant="link" onClick={closeFullFileView} style={{ position: 'absolute', top: '5px', right: '20px', textDecoration: 'none', fontSize: '30px', color: '#a9a9a9' }}>
                         ×
                     </Button>
                 </Modal.Header>
                 <Modal.Body>
-                    <img src={clickedImage} alt="Enlarged Preview" style={{ width: '100%', height: 'auto', objectFit: 'contain', borderRadius: '5px' }} />
+                    <img src={clickedFile} alt="Enlarged Preview" style={{ width: '100%', height: 'auto', objectFit: 'contain', borderRadius: '5px' }} />
                 </Modal.Body>
             </Modal>
         </>
