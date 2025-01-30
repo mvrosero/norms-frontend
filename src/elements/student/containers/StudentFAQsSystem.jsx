@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 
 import StudentNavigation from '../../../pages/student/StudentNavigation';
 import StudentInfo from '../../../pages/student/StudentInfo';
-import SearchAndFilter from '../../../pages/general/SearchAndFilter';
+import iconColorImage from "../../../components/images/icon_colors.png";
 
 const StudentFAQsSystem = () => {
     const navigate = useNavigate();
@@ -107,7 +107,8 @@ return (
                 'Question 2: How can I access my profile?', 
                 'Question 3: How do I change my password?', 
                 'Question 4: Who can I contact for support?',
-                'Question 5: Can I access the system from any device?'].map((question, index) => (
+                'Question 5: Can I access the system from any device?',
+                'Question 6: What is the purpose of the "Student My Records - Visual View" function?'].map((question, index) => (
                 <div key={index} style={{ marginLeft: '80px' }}>
                     <button
                         type="button"
@@ -129,6 +130,17 @@ return (
                             {index === 2 && "You can change your password by navigating to the 'Account Settings' section after logging in. There, you'll find an option to change your password. Follow the instructions, enter your current password, and set a new one to complete the process."}
                             {index === 3 && "For technical support or assistance with the system, you can contact the IT support team via email at support@ncf-osa.org. Our team is available to assist with any issues you may encounter."}
                             {index === 4 && "Yes, the NCF-OSA Records Management System (NORMS) is designed to be accessible from any device with an internet connection, including desktops, laptops, and smartphones. Simply visit the system's login page through your preferred browser to access your account."}
+                            {index === 5 && (
+                                <div style={{ marginBottom: '20px', height: 'auto' }}>
+                                <p>
+                                    It is a visual representation of violation records categorized by subcategories. With each offense represented by an icon and color-coded based on severity. A tooltip appears showing the offense name and count. Red icon color remains for beyond three offenses.
+                                </p>
+                                <img
+                                    src={iconColorImage} 
+                                    style={{ width: '45%', maxWidth: '600px', display: 'block', margin: '0 auto', objectFit: 'contain' }}
+                                />
+                                </div>
+                            )}
                         </p>
                     </div>
                 </div>

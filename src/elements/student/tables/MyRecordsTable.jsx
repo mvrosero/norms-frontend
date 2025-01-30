@@ -226,7 +226,7 @@ const renderTable = () => {
 // Render the individual student records table
 return (
     <div>
-        <Table bordered hover responsive style={{ borderRadius: '20px', marginTop: '10px', marginBottom: '20px', marginLeft: '110px' }}>
+        <Table bordered hover responsive style={{ borderRadius: '20px', marginTop: '10px', marginBottom: '20px', marginLeft: '105px' }}>
             <thead>
                 <tr>
                     <th style={{ width: '5%' }}>No.</th>
