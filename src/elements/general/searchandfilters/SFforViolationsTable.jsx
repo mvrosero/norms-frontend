@@ -95,7 +95,7 @@ export default function SFforViolationsTable({ onSearch, onFilterChange }) {
   return (
     <div className="searchAndFilterContainer">
       <div className="searchAndFilterWrapper">
-        <input type="text" placeholder="Search..." value={searchQuery} onChange={handleInputChange} className="searchInput" />
+        <input type="text" placeholder="Search offenses..." value={searchQuery} onChange={handleInputChange} className="searchInput" />
         <button onClick={toggleFilterDropdown} className={`filterButton ${isFilterActive ? 'active' : ''}`}>
           <RiEqualizerLine className={`filterIcon ${isFilterActive ? 'active' : ''}`} />
         </button>
