@@ -51,6 +51,16 @@ export default function AdminUserLogs() {
     });
     const [userStatusCounts, setUserStatusCounts] = useState({ active: 0, inactive: 0, archived: 0 });
 
+    
+    useEffect(() => {
+      const token = localStorage.getItem('token');
+      const roleId = localStorage.getItem('role_id');
+
+      if (!token || roleId !== '1') {
+          navigate('/unauthorized');
+      }
+  }, [navigate]);
+
 
     // Fetch user counts by status
     useEffect(() => {

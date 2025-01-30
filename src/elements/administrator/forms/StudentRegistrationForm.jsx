@@ -30,6 +30,15 @@ export default function StudentRegistrationForm() {
     const [filteredPrograms, setFilteredPrograms] = useState([]);
     const [createdBy, setCreatedBy] = useState(''); // State to hold the full name or user info
 
+    useEffect(() => {
+        const token = localStorage.getItem('token');
+        const roleId = localStorage.getItem('role_id');
+
+        if (!token || roleId !== '1') {
+            navigate('/unauthorized');
+        }
+    }, [navigate]);
+
   
       useEffect(() => {
         const token = localStorage.getItem('token');

@@ -22,6 +22,15 @@ const SecurityCreateSlip = () => {
     const [isFocused, setIsFocused] = useState(false);
     const [filteredOptions, setFilteredOptions] = useState(students.slice(0, 10)); 
 
+    useEffect(() => {
+        const token = localStorage.getItem('token');
+        const roleId = localStorage.getItem('role_id');
+
+        if (!token || roleId !== '4') {
+            navigate('/unauthorized');
+        }
+    }, [navigate]);
+
 
     // Filter to only display 10 students on the dropdown options
     const handleSearch = (inputValue) => {

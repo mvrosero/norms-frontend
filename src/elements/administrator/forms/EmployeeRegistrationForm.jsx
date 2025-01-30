@@ -31,7 +31,7 @@ export default function EmployeeRegistrationForm() {
     const userId = localStorage.getItem('user_id'); // Extract user ID from localStorage
     
     if (token && roleId === '1') {
-        setCreatedBy(userId); // Directly set userId as the createdBy value
+        setCreatedBy(userId); 
     } else {
         console.error('Token is required for accessing the dashboard or invalid role.');
     }

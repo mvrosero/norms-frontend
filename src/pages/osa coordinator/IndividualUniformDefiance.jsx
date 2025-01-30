@@ -31,6 +31,14 @@ const IndividualUniformDefiance = () => {
     });
     const navigate = useNavigate();
 
+    useEffect(() => {
+        const token = localStorage.getItem('token');
+        const roleId = localStorage.getItem('role_id');
+
+        if (!token || roleId !== '2') {
+            navigate('/unauthorized');
+        }
+    }, [navigate]);
 
     const headers = useMemo(() => {
         const token = localStorage.getItem('token');

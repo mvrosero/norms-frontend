@@ -1,4 +1,5 @@
 import React from 'react';
+import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import backgroundImage from '../../components/images/yellow_background.png';
@@ -7,6 +8,15 @@ import secondCardImage from '../../components/images/createdefiance.png';
 
 const SecurityLandingPage = () => {
   const navigate = useNavigate();
+
+  useEffect(() => {
+      const token = localStorage.getItem('token');
+      const roleId = localStorage.getItem('role_id');
+
+      if (!token || roleId !== '4') {
+          navigate('/unauthorized');
+      }
+  }, [navigate]);
 
   const handleFirstCardClick = () => {
     navigate('/view-slips');

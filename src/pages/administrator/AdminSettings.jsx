@@ -1,4 +1,5 @@
 import React from 'react';
+import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUserCog, faBuilding, faBook, faCalendarAlt, faChevronRight, faArchive } from '@fortawesome/free-solid-svg-icons';
@@ -9,6 +10,15 @@ import AdminInfo from "./AdminInfo";
 export default function AdminSettings() {
     const navigate = useNavigate();
     const user_id = localStorage.getItem('user_id');
+
+    useEffect(() => {
+        const token = localStorage.getItem('token');
+        const roleId = localStorage.getItem('role_id');
+
+        if (!token || roleId !== '1') {
+            navigate('/unauthorized');
+        }
+    }, [navigate]);
 
     const handleNavigation = (path) => {
         const fullPath = path === '/account-settings' && user_id ? `${path}/${user_id}` : path;

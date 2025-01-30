@@ -105,6 +105,7 @@ const CoordinatorDashboard = () => {
       console.error("Token is required for accessing the dashboard or invalid role.");
     }
   }, []);
+  
 
   const fetchUserCounts = async (token) => {
     try {

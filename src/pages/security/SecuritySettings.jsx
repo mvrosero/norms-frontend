@@ -1,5 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUserCog, faChevronRight } from '@fortawesome/free-solid-svg-icons';
 
@@ -15,9 +16,14 @@ export default function SecuritySettings() {
         navigate(fullPath);
     };
 
-    if (role_id !== "4") {
-        return <p>You do not have access to this page.</p>;
-    }
+    useEffect(() => {
+        const token = localStorage.getItem('token');
+        const roleId = localStorage.getItem('role_id');
+
+        if (!token || roleId !== '4') {
+            navigate('/unauthorized');
+        }
+    }, [navigate]);
 
 
     const containerStyle = {

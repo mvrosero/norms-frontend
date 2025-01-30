@@ -45,6 +45,15 @@ export default function CoordinatorAnnouncements() {
     const [allItems, setAllItems] = useState([]);  
     const [searchQuery, setSearchQuery] = useState('');
 
+    useEffect(() => {
+        const token = localStorage.getItem('token');
+        const roleId = localStorage.getItem('role_id');
+
+        if (!token || roleId !== '2') {
+            navigate('/unauthorized');
+        }
+    }, [navigate]);
+
 
     // Maximum text area length 
     const maxLength = 1000;

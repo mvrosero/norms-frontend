@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Link, useParams } from 'react-router-dom';
 import AdminNavigation from "./AdminNavigation";
 import AdminInfo from "./AdminInfo";
@@ -8,9 +9,18 @@ export default function AdminAccountHistory() {
   const [userHistories, setUserHistories] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
+  const navigate = useNavigate();
   const { user_id } = useParams();
   console.log("User ID from URL:", user_id); 
+
+  useEffect(() => {
+      const token = localStorage.getItem('token');
+      const roleId = localStorage.getItem('role_id');
+
+      if (!token || roleId !== '1') {
+          navigate('/unauthorized');
+      }
+  }, [navigate]);
 
   // Generate action sentences for the timeline
   const generateActionSentence = (history) => {
