@@ -84,7 +84,7 @@ export default function SFforDefianceTable({ onSearch, onFilterChange }) {
       <div className="searchAndFilterWrapper">
         <input
           type="text"
-          placeholder="Search..."
+          placeholder="Search id, id number, or nature of violation..."
           value={searchQuery}
           onChange={handleInputChange}
           className="searchInput"

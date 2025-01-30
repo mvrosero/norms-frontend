@@ -105,7 +105,7 @@ export default function SFforOffensesTable({ onSearch, onFilterChange }) {
   return (
     <div className="searchAndFilterContainer">
       <div className="searchAndFilterWrapper">
-        <input type="text" placeholder="Search..." value={searchQuery} onChange={handleInputChange} className="searchInput" style={{ color: '#333' }}/>
+        <input type="text" placeholder="Search name..." value={searchQuery} onChange={handleInputChange} className="searchInput" style={{ color: '#333' }}/>
         <button onClick={toggleFilterDropdown} className={`filterButton ${isFilterActive ? 'active' : ''}`}>
             <RiEqualizerLine className={`filterIcon ${isFilterActive ? 'active' : ''}`} />
         </button>

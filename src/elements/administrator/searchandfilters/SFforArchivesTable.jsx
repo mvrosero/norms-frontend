@@ -110,7 +110,7 @@ export default function SFforArchivesTable({ onSearch, onFilterChange }) {
   return (
     <div className="fullWidthSearchContainer">
     <div className="fullWidthSearchAndFilterWrapper">
-      <input type="text" placeholder="Search..." value={searchQuery} onChange={handleInputChange} className="fullWidthSearchInput"/>
+      <input type="text" placeholder="Search name..." value={searchQuery} onChange={handleInputChange} className="fullWidthSearchInput"/>
       <button onClick={toggleFilterDropdown} className={`filterButton ${isFilterActive ? 'active' : ''}`}>
           <RiEqualizerLine className={`filterIcon ${isFilterActive ? 'active' : ''}`} />
       </button> 

@@ -70,7 +70,7 @@ export default function SFforUniformDefiance({ onSearch, onFilterChange }) {
       <div className="searchAndFilterWrapper">
         <input
           type="text"
-          placeholder="Search..."
+          placeholder="Search nature of violation..."
           value={searchQuery}
           onChange={handleInputChange}
           className="searchInput"

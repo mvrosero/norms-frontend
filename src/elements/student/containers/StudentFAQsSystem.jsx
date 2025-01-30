@@ -103,12 +103,12 @@ return (
 
 
             {/* Collapsibles */}
-            {['Question 1: What is NCF-OSA Records Management System?', 
-                'Question 2: How can I access my profile?', 
-                'Question 3: How do I change my password?', 
-                'Question 4: Who can I contact for support?',
-                'Question 5: Can I access the system from any device?',
-                'Question 6: What is the purpose of the "Student My Records - Visual View" function?'].map((question, index) => (
+            {['What is NCF-OSA Records Management System?', 
+                'How can I access my profile?', 
+                'How do I change my password?', 
+                'Who can I contact for support?',
+                'Can I access the system from any device?',
+                'What is the purpose of the "Student My Records - Visual View" function?'].map((question, index) => (
                 <div key={index} style={{ marginLeft: '80px' }}>
                     <button
                         type="button"
