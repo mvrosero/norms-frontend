@@ -32,41 +32,34 @@ export default function IndividualHistoryViolationRecordTable ({ filters, search
 
   // Fetch violation records based on student_idnumber
   useEffect(() => {
-    const fetchData = async () => {
-        setLoading(true); 
-        try {
-            const studentIdNumber = localStorage.getItem('student_idnumber');
-            if (!studentIdNumber) {
-                throw new Error('Student ID number not found in local storage');
-            }
+    const fetchViolationRecords = async () => {
+      setLoading(true); 
+      try {
+        const response = await axios.get(
+          `https://test-backend-api-2.onrender.com/violationrecords-history/${student_idnumber}`
+        );
+        const records = response.data;
 
-            // Fetch violation records
-            const recordsResponse = await axios.get(
-                `https://test-backend-api-2.onrender.com/violationrecords-history/${studentIdNumber}`
-            );
-            const records = recordsResponse.data;
+        // Group records by department_name and program_name
+        const grouped = records.reduce((acc, record) => {
+          const key = `${record.department_name} - ${record.program_name}`;
+          if (!acc[key]) {
+            acc[key] = [];
+          }
+          acc[key].push(record);
+          return acc;
+        }, {});
 
-            // Group records by department_name and program_name
-            const grouped = records.reduce((acc, record) => {
-                const key = `${record.department_name} - ${record.program_name}`;
-                if (!acc[key]) {
-                    acc[key] = [];
-                }
-                acc[key].push(record);
-                return acc;
-            }, {});
-
-            // Set state with grouped records
-            setGroupedRecords(grouped);
-        } catch (error) {
+        setGroupedRecords(grouped);
+      } catch (error) {
             console.error('Error fetching data:', error);
-            setError(error.message || 'Failed to fetch data');
+            setError('Failed to fetch data'); 
         } finally {
             setLoading(false); 
         }
     };
-    fetchData();
-}, []);
+    fetchViolationRecords();
+  }, [student_idnumber]);
 
 
   // Sort records based on date inside each group

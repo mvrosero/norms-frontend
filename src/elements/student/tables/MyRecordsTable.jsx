@@ -183,7 +183,6 @@ const renderPagination = () => {
     };  
 
 
-
 // Render student records table
 const renderTable = () => {
 
@@ -211,8 +210,6 @@ const renderTable = () => {
 
     const currentRecords = filteredRecords.slice(indexOfFirstRecord, indexOfLastRecord);
 
-
-
         // Show loading spinner when data is being fetched
         if (loading) {
             return (
@@ -222,6 +219,7 @@ const renderTable = () => {
             </div>
             );
         }
+
 
 // Render the individual student records table
 return (
@@ -274,7 +272,6 @@ return (
             </div>
         );
     };
-
 
 
 return (

@@ -2,12 +2,14 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { MdOutlineDashboardCustomize } from "react-icons/md";
 import { VscTable } from "react-icons/vsc";
+import { HiOutlineSquare3Stack3D } from "react-icons/hi2";
 import axios from 'axios';
 
 import StudentNavigation from '../student/StudentNavigation';
 import StudentInfo from '../student/StudentInfo';
 import SFforViolationsTable from '../../elements/general/searchandfilters/SFforViolationsTable';
 import MyRecordsTable from '../../elements/student/tables/MyRecordsTable';
+import MyRecordsHistoryTable from '../../elements/student/tables/MyRecordsHistoryTable';
 import MyRecordsVisual from '../../elements/student/visuals/MyRecordsVisual';
 
 export default function StudentMyRecords() {
@@ -19,14 +21,13 @@ export default function StudentMyRecords() {
         academic_year: '',
         semester: '',
     });
-    const [loading, setLoading] = useState(false); // Initialize loading state
-    const [error, setError] = useState(false); // Initialize error state
+    const [loading, setLoading] = useState(false); 
+    const [error, setError] = useState(false); 
     const navigate = useNavigate();
-    const [activeView, setActiveView] = useState('table');
+    const [activeView, setActiveView] = useState('dashboard');
 
-    const student_idnumber = localStorage.getItem('student_idnumber'); // Get student ID from localStorage
+    const student_idnumber = localStorage.getItem('student_idnumber'); 
 
-    // Move the authentication check inside useEffect to avoid early return breaking hooks
     useEffect(() => {
         const token = localStorage.getItem('token');
         const roleId = localStorage.getItem('role_id');
@@ -34,11 +35,12 @@ export default function StudentMyRecords() {
         if (!token || roleId !== '3') {
             navigate('/unauthorized', { replace: true });
         } else {
-            fetchRecords(); // Fetch records only if the user is authorized
+            fetchRecords(); 
         }
-    }, [navigate]); // Only call this effect on mount or when navigate changes
+    }, [navigate]); 
 
-    // Fetch records
+
+    // Fetch violation records
     const fetchRecords = useCallback(async () => {
         setLoading(true);
         setError(false);
@@ -56,6 +58,7 @@ export default function StudentMyRecords() {
         }
     }, [student_idnumber]);
 
+
     // Handle search query changes
     const handleSearch = (query) => {
         setSearchQuery(query);
@@ -67,7 +70,6 @@ export default function StudentMyRecords() {
         });
         setFilteredRecords(filtered);  
     };
-
 
     // Handle filter changes
     const handleFilterChange = (filters) => {
@@ -96,35 +98,45 @@ export default function StudentMyRecords() {
     }, [fetchRecords]);
 
     
-
-    return (
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '20px' }}>
-            <StudentNavigation />
-            <StudentInfo />
+return (
+    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '20px' }}>
+        <StudentNavigation />
+        <StudentInfo />
 
             {/* Title Section */}
             <div style={{ width: '90%', margin: '0 auto', display: 'flex', justifyContent: 'flex-start' }}>
                 <h6 className="settings-title" style={{ fontFamily: 'Poppins, sans-serif', color: '#242424', fontSize: '40px', fontWeight: 'bold', marginLeft: '30px' }}> My Records </h6>
             </div>
 
-            {/* Search And Filter Section */}
             <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'center', marginLeft: '70px', padding: '0 20px' }}>
+                 {/* Search And Filter Section */}
                 <div style={{ flex: '1', minWidth: '400px' }}>
                     <SFforViolationsTable onSearch={handleSearch} onFilterChange={handleFilterChange} />
                 </div>
+                 {/* Icon Toggle Bar Section */}
                 <div style={{ display: 'flex', alignItems: 'center', gap: '15px', marginLeft: '20px' }}>
-                    <VscTable size={52} style={{ cursor: 'pointer', color: activeView === 'table' ? 'FAD32E' : 'C1C1C1' }} onClick={() => setActiveView('table')} />
                     <MdOutlineDashboardCustomize size={50} style={{ cursor: 'pointer', color: activeView === 'dashboard' ? 'FAD32E' : 'C1C1C1' }} onClick={() => setActiveView('dashboard')} />
+                    <VscTable size={52} style={{ cursor: 'pointer', color: activeView === 'table' ? 'FAD32E' : 'C1C1C1' }} onClick={() => setActiveView('table')} />
+                    <HiOutlineSquare3Stack3D size={48} style={{ cursor: 'pointer', color: activeView === 'history' ? 'FAD32E' : 'C1C1C1' }} onClick={() => setActiveView('history')} />
                 </div>
             </div>
 
             {/* Conditional Rendering of Views */}
-            {activeView === 'table' ? 
+            {activeView === 'table' ? (
             <MyRecordsTable 
                 filteredRecords={filteredRecords}  
                 filters={filters}  
-                searchQuery={searchQuery}/> 
-            : <MyRecordsVisual />}
+                searchQuery={searchQuery} 
+            />
+            ) : activeView === 'dashboard' ? (
+            <MyRecordsVisual />
+            ) : activeView === 'history' ? (
+            <MyRecordsHistoryTable 
+                filteredRecords={filteredRecords}  
+                filters={filters}  
+                searchQuery={searchQuery} 
+            />
+            ) : null} 
         </div>
     );
 };
