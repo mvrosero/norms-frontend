@@ -28,7 +28,7 @@ export default function StudentRegistrationForm() {
     const [batch, setBatch] = useState('');
     const [errors, setErrors] = useState({});
     const [filteredPrograms, setFilteredPrograms] = useState([]);
-    const [createdBy, setCreatedBy] = useState(''); // State to hold the full name or user info
+    const [createdBy, setCreatedBy] = useState('');
 
     useEffect(() => {
         const token = localStorage.getItem('token');
@@ -43,10 +43,10 @@ export default function StudentRegistrationForm() {
       useEffect(() => {
         const token = localStorage.getItem('token');
         const roleId = localStorage.getItem('role_id');
-        const userId = localStorage.getItem('user_id'); // Extract user ID from localStorage
+        const userId = localStorage.getItem('user_id'); 
       
         if (token && roleId === '1') {
-          setCreatedBy(userId); // Directly set userId as the createdBy value
+          setCreatedBy(userId); 
         } else {
           console.error('Token is required for accessing this.');
         }
